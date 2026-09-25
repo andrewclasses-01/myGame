@@ -28,7 +28,7 @@
 // Danh sách game — thêm game mới = thêm 1 mục vào ĐẦU mảng.
 const GAMES = [
   { dir: "rocket-race", name: "ROCKET RACE · FIGHT 3D", tag: "AWORD · 26/9/2026",
-    desc: "Đua tên lửa 3D cho chế độ Fight trên TOMKO. Mẫu thầy chọn: Đuổi theo — bản mới nhất 2h (mở màn, kết trận vệt sáng đánh tàu thua, hết giật màn, camera bay lên khi chênh ≥ 3 nấc hoặc gần đích; khung thấp lộ hàng nút AWord, cột đáp án giữa khung sát mép, 60 khung/giây)." }
+    desc: "Đua tên lửa 3D cho chế độ Fight trên TOMKO. Mẫu thầy chọn: Đuổi theo — bản mới nhất 2i (hàng nút kiểu game, mở màn, kết trận vệt sáng đánh tàu thua, hết giật màn, camera bay lên khi chênh ≥ 3 nấc hoặc gần đích; khung thấp lộ hàng nút AWord, cột đáp án giữa khung sát mép, 60 khung/giây)." }
 ];
 document.getElementById("games").innerHTML = GAMES.map(g =>
   `<a class="card" href="${g.dir}/"><div class="n">${g.tag}</div><h2>${g.name}</h2><p>${g.desc}</p></a>`).join("");

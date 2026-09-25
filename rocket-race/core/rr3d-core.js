@@ -1165,6 +1165,20 @@ export async function createRace(cfg) {
   function settleRound(winnerSide) {
     if (G.settled) return;
     G.settled = true;
+    if (cfg.revealMode === "winner") {
+      // 2i: ô đúng được chọn chỉ XANH (không dấu tích); đội kia MẤT MÀU cả bàn tới bộ đáp án mới;
+      // không ai đúng ⇒ ô chọn sai đỏ ✗, còn lại mất màu, KHÔNG lộ ô đúng.
+      consoles.forEach(c => c.tiles.forEach((t, k) => {
+        const a = G.answers[c.side][k]; if (!a) return;
+        if (winnerSide != null && c.side !== winnerSide) { t.state = "dim"; t.mark.material.opacity = 0; return; }
+        if (winnerSide != null && G.picked[c.side] === k) { t.state = "correct"; t.mark.material.opacity = 0; t.pulse = 1; }
+        else if (G.picked[c.side] === k && !a.correct) { t.state = "wrong"; t.mark.material.map = markTex.bad; t.mark.material.opacity = 1; t.mark.material.needsUpdate = true; }
+        else t.state = "dim";
+      }));
+      if (G.phase !== "play") return;
+      setTimeout(() => { if (G.phase === "play") nextRound(); }, 1500);
+      return;
+    }
     // lộ đáp án: ô đúng xanh, ô bị chọn sai đỏ
     consoles.forEach(c => c.tiles.forEach((t, k) => {
       const a = G.answers[c.side][k]; if (!a) return;
@@ -1306,7 +1320,7 @@ export async function createRace(cfg) {
   }
   function raceWon(w, loserDown) {
     if (G.phase !== "play") return;
-    G.phase = "over"; G.winner = w.idx; G.settled = true;
+    G.phase = "over"; G.winner = w.idx; G.settled = true; G.playEnd = performance.now();
     const loser = rockets[1 - w.idx];
     if (w.p < L) { w.p = L; w.homeRun = true; w.boost = 1; }
     if (cfg.finale) { finale(w, loser, loserDown); return; }
@@ -1323,7 +1337,7 @@ export async function createRace(cfg) {
     banners.forEach(b => { b.t = Math.max(b.t, b.ms - 0.35); });   // chữ tiêu đề nhường chỗ cho 3-2-1
     const seq = ["3", "2", "1", "GO!"];
     seq.forEach((s, i) => setTimeout(() => banner(s, i === 3 ? "gold" : "white", 850, i === 3 ? 0.9 : 1.0), i * 900));
-    setTimeout(() => { G.phase = "play"; consoles.forEach(c => c.tiles.forEach(t => (t.g.visible = true))); nextRound(); }, 3600);
+    setTimeout(() => { G.phase = "play"; G.playStart = performance.now(); G.playEnd = 0; consoles.forEach(c => c.tiles.forEach(t => (t.g.visible = true))); nextRound(); }, 3600);
   }
   function restart() {
     clearWreckage();
