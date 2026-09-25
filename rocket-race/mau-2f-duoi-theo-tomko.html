@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 2f · Đuổi theo (TOMKO)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<style>
+  /* 2c (26/9): KHUNG GAME rộng hết màn, dính mép trên, CAO = cửa sổ − dải nút AWord (--bar), tối đa 1 : 2.
+     Điểm/ván của myActivity nằm NGOÀI trang (myActivity tự vẽ) nên trang chỉ chừa đúng hàng nút AWord. */
+  :root { --bar: 80px; }
+  #frame { position: fixed; left: 0; top: 0; width: 100vw; height: min(50vw, calc(100vh - var(--bar))); overflow: hidden; }
+  #stage { position: absolute; inset: 0; }
+  /* CHỖ GIẢ hàng nút AWord (nút 44px như thật) — chỉ để hình dung bố cục */
+  #below { position: fixed; left: 0; right: 0; top: min(50vw, calc(100vh - var(--bar))); bottom: 0; background: #0b0f1a;
+           display: flex; align-items: center; justify-content: center; gap: 10px; }
+  #below .b { height: 44px; min-width: 44px; padding: 0 14px; box-sizing: border-box; border-radius: 12px; background: #1a2238; color: #8795b3;
+              display: grid; place-items: center; font: 700 15px "Exo 2", sans-serif; }
+  #below .sep { width: 24px; }
+  #panel { top: auto; bottom: 18px; flex-direction: column-reverse; }
+</style>
+<script>/* ?bar=90 đổi chiều cao dải nút AWord (px) */ { const b = new URLSearchParams(location.search).get("bar"); if (b) document.documentElement.style.setProperty("--bar", (+b) + "px"); }</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="frame"><div id="stage"></div></div>
+<div id="below"><div class="b">☰</div><div class="b">‹</div><div class="b">1 of 10</div><div class="b">›</div><div class="b">🔊</div><div class="b">00:00</div><div class="sep"></div><div class="b">Options</div><div class="b">Question screen</div><div class="b">Mode</div></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-2-duoi-theo.html">2 · bản đầu</a>
+      <a href="mau-2b-duoi-theo-tomko.html">2b</a>
+      <a href="mau-2c-duoi-theo-tomko.html">2c</a>
+      <a href="mau-2d-duoi-theo-tomko.html">2d</a>
+      <a href="mau-2e-duoi-theo-tomko.html">2e</a>
+      <a class="cur" href="mau-2f-duoi-theo-tomko.html">2f · mới nhất</a>
+    </div>
+    <h4>GIẢ LẬP</h4>
+    <div class="row">
+      <button class="t1" data-act="ok:0">Đội 1 đúng</button><button class="t2" data-act="ok:1">Đội 2 đúng</button>
+      <button class="t1" data-act="bad:0">Đội 1 sai</button><button class="t2" data-act="bad:1">Đội 2 sai</button>
+      <button class="t1" data-act="turbo:0">Đội 1 turbo</button><button class="t2" data-act="turbo:1">Đội 2 turbo</button>
+      <button class="t1" data-act="boom:0">Nổ đội 1</button><button class="t2" data-act="boom:1">Nổ đội 2</button>
+    </div>
+    <div class="row">
+      <button data-act="auto">Tự chơi</button><button data-act="again">Chơi lại</button>
+      <button data-act="fs" style="grid-column:span 2">Toàn màn hình</button>
+    </div>
+    <h4>CHẤT LƯỢNG</h4>
+    <select><option value="high" selected>Cao</option><option value="ultra">Siêu</option><option value="low">Nhẹ</option></select>
+  </div>
+</div>
+<script type="module">
+import { boot } from "./core/shell.js";
+import { THREE } from "./core/rr3d-core.js";
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// MẪU 2f (26/9/2026): mở màn ANDREW CLASSES → ROCKET RACE → START; thanh trên đầu ghi ANDREW CLASSES, chỉ hiện sau mở màn ·
+// cổng đích bỏ đèn chạy · tàu thua VỠ VỤN, mảnh trôi chầm chậm về sau · đổi góc máy chậm (3,2 s) · nền sao/tinh vân xoay nhẹ ·
+// thiên thạch bay qua, góc đuổi theo đôi khi lao thẳng vào màn + rung · tàu thắng xuyên cổng bay ra khỏi màn ·
+// có tàu vào 3 nấc cuối ⇒ cũng toàn cảnh · mẫu dài 10 nấc (= bài 20 câu) để thấy rõ các góc máy.
+// Kế thừa MẪU 2e (26/9/2026): hai tàu chênh nhau TỪ 3 NẤC trở lên ⇒ camera bay lên cao nhìn xuống, thấy rõ khoảng cách hai tàu
+// và cả đoạn đường tới đích; chênh ≤ 2 nấc ⇒ về góc đuổi theo sau lưng. (Lõi tự làm mượt đường bay của camera.)
+// Kế thừa MẪU 2d (26/9/2026): cột đáp án lên GIỮA chiều cao khung (vừa tầm học sinh), dính sát mép màn, bỏ kính + viền,
+// nghiêng vào trong (xoay quanh mép ngoài) · thân tàu bớt chói (thân xám mờ hơn, đèn động cơ yếu hơn) · khói sau ngọn lửa ·
+// thêm hành tinh xa.
+// Kế thừa MẪU 2c (26/9/2026, thầy thử trên màn Viewsonic 16:9): khung THẤP hơn để lộ hàng nút AWord;
+// đáp án mỗi đội xếp thành CỘT sát viền trái/phải, nhường giữa cho hai tàu. Lệch màu rìa giảm (chữ ở rìa không nhoè).
+// Kế thừa từ MẪU 2b (26/9/2026) — "Đuổi theo" cho TOMKO 86" 4K:
+//  · khung cao 1 : rộng 2, rộng hết màn, dính mép trên (dải dưới dành cho nút AWord + điểm myActivity)
+//  · chất lượng CAO, giới hạn 60 khung/giây (màn TOMKO 60 Hz)
+//  · bảng chữ đo bằng CM THẬT trên màn: ô đáp án 14 × 5,5 cm, dòng câu hỏi cao 7 cm
+const Z0 = 0, Z1 = -64, NOSE = 2.9;
+const GAP_HIGH = 3;                                  // chênh từ 3 nấc ⇒ camera bay lên cao
+const LAST_STEPS = 3;                                // có tàu vào 3 nấc cuối ⇒ cũng toàn cảnh (2f)
+const CAM_SECS = 3.2;                                // thời gian đổi góc máy (2f: chậm lại)
+let camK = 0, camLastT = 0;
+const M = 2, EDGE = 0.3;                                       // lề mép khung (cm)
+const CON_W = 17.5, CON_H = 33;                      // cột đáp án 1×4 (cm) — ô 14 × 5,5 cm
+boot({
+  title: "ANDREW CLASSES",
+  introTitles: [{ text: "ANDREW CLASSES", at: 0.5, ms: 2300, size: 0.55 }, { text: "ROCKET RACE", at: 3.0, ms: 2300, size: 0.7 }], startAt: 5.4,
+  shatter: { pieces: 44 }, flyOut: true, skySpin: 0.006, asteroids: { every: [5, 11], headOn: 0.35 },
+  quality: "high", maxFps: 60,
+  fov: 38, steps: 10, lives: 3, uiDepth: 9, rocketScale: 1.1, bannerY: 0.35, startY: 0.5, startCm: [22, 7],
+  exhaust: { fire: 0.3, smoke: 0.9, flame: 0.45, smokeBack: 3.4, smokeLife: 0.75, smokeSize: 0.55, smokeSizeEnd: 2.4, smokeAlpha: 0.16 },
+  nearFade: [7, 13], bloom: 0.6, ca: 0.0012,
+  hull: { color: "#a9b1bd", roughness: 0.48, clearcoat: 0.35, env: 0.55 }, engineLight: 0.3,
+  sunPos: V(-260, 150, -1300), sunScale: 300, rimPos: V(60, 40, 60),
+  nebula: { c1: "#1d0d4a", c2: "#0d3e73", c3: "#4f7dd6", bright: 0.9 },
+  planets: [
+    { type: "ice", radius: 330, pos: V(40, -372, -520), a: "#08214d", b: "#1c6aa6", c: "#3f7a45", atmo: "#62b4ff", atmoPow: 2.2, tilt: 0.2 },
+    { type: "gas", radius: 22, pos: V(170, 90, -700), a: "#b98a6a", b: "#e8d2b8", c: "#7a4a3a", atmo: "#ffd0a0", rings: true, ringColor: "#dcc8a8", tilt: 0.4 },
+    // 2d — vài hành tinh xa xa
+    { type: "gas", radius: 14, pos: V(-340, 120, -1150), a: "#a2452e", b: "#d9825a", c: "#5c1f14", atmo: "#ff9a6a", tilt: 0.2 },
+    { type: "ice", radius: 9, pos: V(330, 210, -1250), a: "#6f93c9", b: "#cfe2f7", c: "#ffffff", atmo: "#a8d6ff", tilt: 0.1 },
+    { type: "gas", radius: 30, pos: V(-620, 260, -1500), a: "#5b4a8f", b: "#b7a3dd", c: "#2e2152", atmo: "#c4a8ff", rings: true, ringColor: "#b9a8e0", tilt: 0.55, ringTilt: 0.6 },
+    { type: "ice", radius: 5, pos: V(120, 150, -820), a: "#8a8a8a", b: "#c9c9c9", c: "#eeeeee", atmo: "#dddddd", tilt: 0.1 }
+  ],
+  gate: { pos: V(0, 0.2, Z1 - NOSE), normal: V(0, 0, 1), radius: 5.6, lamps: false },
+  travelDir: V(0, 0, -1),
+  dustBox: { c: V(0, 0, 0), s: V(56, 26, 90), follow: true },
+  track(i, t, time) {
+    const x = i === 0 ? -2.3 : 2.3;
+    return { pos: V(x + Math.sin(time * 0.6 + i * 2) * 0.25, Math.sin(time * 0.9 + i) * 0.15, lerp(Z0, Z1, t)), dir: V(Math.cos(time * 0.6 + i * 2) * 0.03, 0, -1) };
+  },
+  camera({ t, trail, rockets, L }) {
+    const dt = Math.max(0, Math.min(0.1, t - camLastT)); camLastT = t;
+    const zc = lerp(Z0, Z1, Math.min(1, trail));   // bám tàu ĐI SAU
+    const p0 = rockets[0].p, p1 = rockets[1].p;
+    // Góc TOÀN CẢNH khi: chênh ≥ 3 nấc (2e) HOẶC có tàu đã vào 3 nấc cuối (2f — thấy sắp có tàu về đích)
+    const want = (Math.abs(p0 - p1) >= GAP_HIGH || Math.max(p0, p1) >= L - LAST_STEPS) ? 1 : 0;
+    // 2f — đổi góc TỪ TỪ: hệ số chạy đều 0→1 trong CAM_SECS giây, rồi làm mượt hai đầu
+    camK += Math.max(-dt / CAM_SECS, Math.min(dt / CAM_SECS, want - camK));
+    const k = camK * camK * (3 - 2 * camK);
+    const chase = { pos: V(Math.sin(t * 0.21) * 0.6, 3.3 + Math.sin(t * 0.33) * 0.2, zc + 16.5), look: V(0, 0.1, zc - 14) };
+    const zA = zc + 5, zB = Z1 - 8;              // đuôi tàu đi sau … qua cổng đích một chút
+    const zMid = (zA + zB) / 2, D = (zA - zB) * 1.05 + 8;
+    const high = { pos: V(D * 0.8 + Math.sin(t * 0.15) * 1.2, D * 0.5, zMid), look: V(0, -1, zMid) };
+    return { pos: chase.pos.lerp(high.pos, k), look: chase.look.lerp(high.look, k), mode: camK < 0.02 ? "chase" : "high" };
+  },
+  introSecs: 3.6,
+  introCamera(k, cp) {
+    const a = lerp(0.1, Math.PI, k);
+    const pos = V(Math.sin(a) * 13 * (1 - k) + cp.pos.x * k, lerp(1.5, cp.pos.y, k), Math.cos(a) * -13 * (1 - k) + cp.pos.z * k);
+    return { pos, look: V(0, 0, 0).lerp(cp.look, k * k) };
+  },
+  layout(_s, _z, _a, U) {
+    const qW = 90, qH = 7;
+    return {
+      question: { x: 0.5 - U.cw(qW) / 2, y: U.ch(M), w: U.cw(qW), h: U.ch(qH) },
+      consoles: [
+        { x: U.cw(EDGE), y: 0.5 - U.ch(CON_H) / 2, w: U.cw(CON_W), h: U.ch(CON_H), cols: 1, rows: 4, headerFrac: 0.11, rotY: 0.32, pivot: "outer", noPanel: true },
+        { x: 1 - U.cw(EDGE + CON_W), y: 0.5 - U.ch(CON_H) / 2, w: U.cw(CON_W), h: U.ch(CON_H), cols: 1, rows: 4, headerFrac: 0.11, rotY: -0.32, pivot: "outer", noPanel: true }
+      ]
+    };
+  }
+});
+</script>
+</body>
+</html>

@@ -477,7 +477,7 @@ function setDamageLook(r) {
 // =============================================================
 // CỔNG ĐÍCH
 // =============================================================
-function makeGate(radius) {
+function makeGate(radius, withLamps = true) {
   const g = new THREE.Group();
   const metal = new THREE.MeshPhysicalMaterial({ color: "#9aa4b5", metalness: 1, roughness: 0.25, clearcoat: 1 });
   const ring = new THREE.Mesh(new THREE.TorusGeometry(radius, radius * 0.07, 24, 128), metal);
@@ -488,7 +488,7 @@ function makeGate(radius) {
   // 12 đèn định vị
   const lampMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(4, 3, 1.2) });
   const lamps = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < (withLamps ? 12 : 0); i++) {
     const a = i / 12 * TAU;
     const l = new THREE.Mesh(new THREE.SphereGeometry(radius * 0.045, 12, 8), lampMat.clone());
     l.position.set(Math.cos(a) * radius, Math.sin(a) * radius, radius * 0.08);
@@ -615,7 +615,7 @@ export async function createRace(cfg) {
   if (cfg.nearFade) { fire.mat.uniforms.uNear.value.set(...cfg.nearFade); smoke.mat.uniforms.uNear.value.set(...cfg.nearFade); }
 
   // cổng đích
-  const gate = makeGate(cfg.gate.radius);
+  const gate = makeGate(cfg.gate.radius, cfg.gate.lamps !== false);
   gate.position.copy(cfg.gate.pos);
   gate.quaternion.setFromUnitVectors(new V3(0, 0, 1), cfg.gate.normal.clone().normalize());
   scene.add(gate);
@@ -634,6 +634,7 @@ export async function createRace(cfg) {
   let trauma = 0;           // rung camera
   let fovKick = 0;
   let introT = 0;
+  const introShown = [];
 
   // =========================================================
   // BẢNG 3D gắn vào camera
@@ -761,6 +762,7 @@ export async function createRace(cfg) {
       const tm = new THREE.Mesh(new THREE.PlaneGeometry(s.w * 0.96, s.h * 0.9), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
       tm.position.z = 0.04;
       g.add(panel, tm); g.position.copy(p);
+      g.visible = !(cfg.introTitles && G.phase === "intro");
       if (r.rotX) g.rotation.x = r.rotX;
       ui.add(g);
       questionPanel = { g, cv, tex, tm, text: "" };
@@ -1011,6 +1013,114 @@ export async function createRace(cfg) {
   }
 
   // =========================================================
+  // 2f — TÀU VỠ VỤN: mảnh vỏ/cánh/khung bung ra mọi hướng, rồi TẤT CẢ chầm chậm trôi về phía sau
+  // =========================================================
+  const wreckage = [];
+  let camMode = "chase";
+  function shatter(r) {
+    r.hidden = true;
+    const c = new V3().setFromMatrixPosition(r.ship.matrixWorld);
+    const back = cfg.travelDir.clone().normalize().multiplyScalar(-1);
+    const sc = cfg.rocketScale ?? 1;
+    const mats = [r.hullMat, r.teamMat, new THREE.MeshStandardMaterial({ color: "#2a2f38", metalness: 0.9, roughness: 0.4 })];
+    const N = cfg.shatter.pieces ?? 44;
+    for (let i = 0; i < N; i++) {
+      const kind = i % 4;
+      const s = sc * rand(0.12, 0.42);
+      const geo = kind === 0 ? new THREE.BoxGeometry(s * 2.2, s * 0.08 + 0.02, s * 1.4)          // mảnh vỏ mỏng
+        : kind === 1 ? new THREE.TetrahedronGeometry(s * 0.8)                                        // mảnh vụn
+        : kind === 2 ? new THREE.CylinderGeometry(s * 0.5, s * 0.6, s * 1.4, 10, 1, true, 0, rand(1, 2.5)) // mảnh thân cong
+        : new THREE.BoxGeometry(s * 0.5, s * 0.5, s * 0.5);                                           // khối máy
+      const m = mats[i % 3].clone();
+      m.side = THREE.DoubleSide; m.emissive = new THREE.Color(2.2, 0.7, 0.15); m.emissiveIntensity = rand(0.5, 1.2);
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.position.copy(c).add(new V3(rand(-0.6, 0.6), rand(-0.4, 0.4), rand(-0.6, 0.6)).multiplyScalar(sc));
+      const out = new V3(rand(-1, 1), rand(-1, 1), rand(-1, 1)).normalize().multiplyScalar(rand(4, 13));
+      scene.add(mesh);
+      wreckage.push({ mesh, v: out, spin: new V3(rand(-6, 6), rand(-6, 6), rand(-6, 6)), drift: back.clone().multiplyScalar(rand(1.6, 3.2)).add(new V3(rand(-0.4, 0.4), rand(-0.3, 0.3), rand(-0.4, 0.4))), t: 0, smoky: Math.random() < 0.35 });
+    }
+  }
+  function updateWreckage(dt) {
+    for (let i = wreckage.length - 1; i >= 0; i--) {
+      const w = wreckage[i]; w.t += dt;
+      // nổ bung ra rồi chậm dần, hoà vào dòng trôi chầm chậm về phía sau
+      w.v.lerp(w.drift, Math.min(1, dt * 0.9));
+      w.mesh.position.addScaledVector(w.v, dt);
+      w.spin.multiplyScalar(1 - Math.min(1, dt * 0.35));
+      w.mesh.rotation.x += w.spin.x * dt + dt * 0.3; w.mesh.rotation.y += w.spin.y * dt; w.mesh.rotation.z += w.spin.z * dt;
+      w.mesh.material.emissiveIntensity = Math.max(0, w.mesh.material.emissiveIntensity - dt * 0.35);
+      if (w.smoky && w.t < 4 && Math.random() < dt * 14) smoke.emit({ pos: w.mesh.position.clone(), vel: new V3(0, 0.25, 0), life: 1.3, size: 0.25, sizeEnd: 1.3, color: new THREE.Color(0.22, 0.22, 0.24), alpha: 0.4, drag: 0.5 });
+      if (w.mesh.position.distanceTo(camera.position) > 260) { scene.remove(w.mesh); w.mesh.geometry.dispose(); wreckage.splice(i, 1); }
+    }
+  }
+  function clearWreckage() { wreckage.forEach(w => { scene.remove(w.mesh); w.mesh.geometry.dispose(); }); wreckage.length = 0; }
+
+  // =========================================================
+  // 2f — THIÊN THẠCH bay ngang qua; ở góc đuổi theo đôi khi lao THẲNG vào màn (có rung)
+  // =========================================================
+  const rocks = [];
+  const rockGeos = [];
+  if (cfg.asteroids) {
+    for (let k = 0; k < 4; k++) {
+      const g = new THREE.IcosahedronGeometry(1, 3);
+      const p = g.attributes.position, v = new V3();
+      const seed = rand(0, 100);
+      for (let i = 0; i < p.count; i++) {
+        v.fromBufferAttribute(p, i);
+        const n = Math.sin(v.x * 3.1 + seed) * Math.sin(v.y * 2.7 + seed * 0.7) * Math.sin(v.z * 3.3 + seed * 1.3);
+        v.multiplyScalar(1 + n * 0.28 + rand(-0.05, 0.05));
+        v.x *= 1 + k * 0.12;
+        p.setXYZ(i, v.x, v.y, v.z);
+      }
+      g.computeVertexNormals();
+      rockGeos.push(g);
+    }
+  }
+  const rockMat = new THREE.MeshStandardMaterial({ color: "#6e645b", roughness: 0.95, metalness: 0.05, flatShading: true });
+  let rockT = cfg.asteroids ? rand(2, 5) : Infinity;
+  function spawnRock(headOn) {
+    const f = new V3(); camera.getWorldDirection(f);
+    const right = new V3().crossVectors(f, camera.up).normalize(), up = new V3().crossVectors(right, f).normalize();
+    const size = headOn ? rand(1.1, 1.7) : rand(0.5, 2.4);
+    const mesh = new THREE.Mesh(rockGeos[Math.floor(Math.random() * rockGeos.length)], rockMat);
+    mesh.scale.setScalar(size);
+    let pos, vel;
+    if (headOn) {
+      // lao thẳng về camera, lệch vừa đủ để lướt sát mép màn chứ không xuyên qua
+      const miss = right.clone().multiplyScalar((Math.random() < 0.5 ? -1 : 1) * rand(1.6, 2.6)).addScaledVector(up, rand(-0.6, 1.4));
+      pos = camera.position.clone().addScaledVector(f, 150).add(miss.clone().multiplyScalar(4));
+      vel = camera.position.clone().add(miss).sub(pos).normalize().multiplyScalar(rand(55, 70));
+    } else {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      pos = camera.position.clone().addScaledVector(f, rand(45, 90)).addScaledVector(right, side * rand(30, 45)).addScaledVector(up, rand(-6, 12));
+      vel = right.clone().multiplyScalar(-side * rand(12, 20)).addScaledVector(f, -rand(2, 6)).addScaledVector(up, rand(-1.5, 1.5));
+    }
+    mesh.position.copy(pos);
+    scene.add(mesh);
+    rocks.push({ mesh, vel, spin: new V3(rand(-1.5, 1.5), rand(-1.5, 1.5), rand(-1.5, 1.5)), headOn, shook: false, t: 0 });
+  }
+  function updateAsteroids(dt) {
+    if (!cfg.asteroids) return;
+    if (G.phase !== "intro") {
+      rockT -= dt;
+      if (rockT <= 0) {
+        const A = cfg.asteroids;
+        rockT = rand(A.every[0], A.every[1]);
+        spawnRock(camMode === "chase" && Math.random() < (A.headOn ?? 0.3));
+        if (Math.random() < 0.35) setTimeout(() => spawnRock(false), rand(300, 900));   // đôi khi đi theo cặp
+      }
+    }
+    const f = new V3(); camera.getWorldDirection(f);
+    for (let i = rocks.length - 1; i >= 0; i--) {
+      const r = rocks[i]; r.t += dt;
+      r.mesh.position.addScaledVector(r.vel, dt);
+      r.mesh.rotation.x += r.spin.x * dt; r.mesh.rotation.y += r.spin.y * dt; r.mesh.rotation.z += r.spin.z * dt;
+      const ahead = new V3().subVectors(r.mesh.position, camera.position).dot(f);
+      if (r.headOn && !r.shook && ahead < 3) { r.shook = true; trauma = Math.min(1, trauma + 0.55); }
+      if (ahead < -15 || r.t > 14) { scene.remove(r.mesh); rocks.splice(i, 1); }
+    }
+  }
+  // =========================================================
   // LUẬT TRẬN (bản mẫu: Same words, trả lời đúng trước ăn câu)
   // =========================================================
   function nextRound() {
@@ -1096,6 +1206,7 @@ export async function createRace(cfg) {
     if (r.wreck || r.exploding > 0) return;
     r.exploding = 0.001;
     explosion(new V3().setFromMatrixPosition(r.ship.matrixWorld));
+    if (cfg.shatter) shatter(r);
     setTimeout(() => { r.wreck = true; r.exploding = 0; setDamageLook(r); }, 350);
   }
   function raceWon(w, loserDown) {
@@ -1103,6 +1214,7 @@ export async function createRace(cfg) {
     G.phase = "over"; G.winner = w.idx; G.settled = true;
     const loser = rockets[1 - w.idx];
     if (w.p < L) { w.p = L; w.homeRun = true; w.boost = 1; }
+    if (cfg.flyOut) setTimeout(() => { if (G.phase === "over") w.flyOut = true; }, w.homeRun ? 1300 : 500);
     banner(w.team.name + " WINS!", "gold", 3200, 0.62);
     const gp = gate.position.clone();
     setTimeout(() => { gate.userData.flash = 1; fireworks(gp); }, w.homeRun ? 1100 : 350);
@@ -1118,7 +1230,8 @@ export async function createRace(cfg) {
     setTimeout(() => { G.phase = "play"; consoles.forEach(c => c.tiles.forEach(t => (t.g.visible = true))); nextRound(); }, 3600);
   }
   function restart() {
-    rockets.forEach(r => { r.p = 0; r.vis = 0; r.dmg = 0; r.wreck = false; r.exploding = 0; r.stall = 0; r.boost = 0; r.turbo = 0; r.homeRun = false; setDamageLook(r); r.ship.rotation.set(0, 0, 0); });
+    clearWreckage();
+    rockets.forEach(r => { r.p = 0; r.vis = 0; r.dmg = 0; r.wreck = false; r.hidden = false; r.flyOut = false; r.flyV = 0; r.exploding = 0; r.stall = 0; r.boost = 0; r.turbo = 0; r.homeRun = false; setDamageLook(r); r.ship.rotation.set(0, 0, 0); });
     G.lives = [LIVES, LIVES]; G.streak = [0, 0]; G.round = -1; G.order = shuffle(G.order); G.winner = null; G.q = null;
     consoles.forEach(c => { drawHeader(c.header, LIVES); c.tiles.forEach(t => { t.g.visible = false; t.state = "idle"; t.mark.material.opacity = 0; }); });
     startBtn.g.visible = false;
@@ -1206,7 +1319,9 @@ export async function createRace(cfg) {
       r.ship.position.set(r.boost * 0.5 + rand(-jit, jit), bob + rand(-jit, jit), rand(-jit, jit));
       if (r.wreck) { r.ship.rotation.x += dt * 0.6; r.ship.rotation.z += dt * 0.25; r.ship.position.y -= 0.3; }
       else { r.ship.rotation.x = Math.sin(G.t * 1.3 + r.wob) * 0.18 + (r.stall > 0 ? Math.sin(G.t * 40) * 0.08 : 0); r.ship.rotation.z = Math.sin(G.t * 2.4 + r.wob + 0.5) * 0.03; }
-      r.model.visible = !(r.exploding > 0 && r.exploding < 0.3);
+      r.model.visible = !r.hidden && !(r.exploding > 0 && r.exploding < 0.3);
+      // 2f: tàu thắng bay xuyên cổng rồi lao tiếp ra khỏi màn hình
+      if (r.flyOut) { r.flyV = (r.flyV || 1.2) + dt * 2.5; r.p += r.flyV * dt; r.boost = Math.max(r.boost, 0.8); }
       if (r.exploding > 0) r.exploding += dt;
       // lửa
       const on = !r.wreck && r.exploding === 0;
@@ -1239,13 +1354,18 @@ export async function createRace(cfg) {
       const k = easeInOut(Math.min(1, introT / (cfg.introSecs ?? 3.2)));
       const ip = cfg.introCamera ? cfg.introCamera(k, cp) : cp;
       camBase.pos.copy(ip.pos); camBase.look.copy(ip.look);
-      if (introT >= (cfg.introSecs ?? 3.2)) {
+      if (cfg.introTitles) {
+        // 2f: ANDREW CLASSES → ROCKET RACE → START (thanh trên đầu chỉ hiện khi START hiện)
+        cfg.introTitles.forEach((it, i) => { if (!introShown[i] && introT >= it.at) { introShown[i] = true; banner(it.text, it.kind || "gold", it.ms || 2000, it.size || 0.62); } });
+        if (introT >= (cfg.startAt ?? 5)) { G.phase = "start"; startBtn.g.visible = true; if (questionPanel) questionPanel.g.visible = true; }
+      } else if (introT >= (cfg.introSecs ?? 3.2)) {
         G.phase = "start"; startBtn.g.visible = true;
         banner("ROCKET RACE", "gold", 2400, 0.62);
       }
     } else {
-      camBase.pos.lerp(cp.pos, Math.min(1, dt * 1.8));
-      camBase.look.lerp(cp.look, Math.min(1, dt * 1.8));
+      camBase.pos.lerp(cp.pos, Math.min(1, dt * (cfg.camLerp ?? 1.8)));
+      camBase.look.lerp(cp.look, Math.min(1, dt * (cfg.camLerp ?? 1.8)));
+      camMode = cp.mode || "chase";
     }
     trauma = Math.max(0, trauma - dt * 1.3);
     const sh = trauma * trauma;
@@ -1257,6 +1377,9 @@ export async function createRace(cfg) {
 
     // nền đi theo camera (xa vô cực)
     nebula.position.copy(camera.position); stars.position.copy(camera.position);
+    if (cfg.skySpin) { nebula.rotation.y += dt * cfg.skySpin; stars.rotation.y += dt * cfg.skySpin * 1.25; stars.rotation.x += dt * cfg.skySpin * 0.3; }
+    updateAsteroids(dt);
+    updateWreckage(dt);
     nebula.material.uniforms.uTime.value = G.t; stars.material.uniforms.uTime.value = G.t;
     planets.forEach(p => { p.userData.mat.uniforms.uTime.value = G.t; p.children[0].rotation.y += dt * 0.01; });
 
@@ -1352,6 +1475,8 @@ export async function createRace(cfg) {
     step(n = 1, dt = 1 / 60) { manual = true; for (let i = 0; i < n; i++) tick(dt); },
     resume() { manual = false; clock.getDelta(); },
     rockets, camera,
+    rock(headOn) { spawnRock(!!headOn); return rocks.length; },   // bàn thử: thả thiên thạch
+    rocksInfo() { return rocks.map(r => ({ headOn: r.headOn, shook: r.shook })); },
     // bàn thử: chép khung hình vừa vẽ ra một ảnh tĩnh phủ màn (khung xem trước ẩn không chụp được canvas WebGL)
     snap() {
       let img = document.getElementById("__snap");
