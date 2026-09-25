@@ -150,11 +150,11 @@ class Particles {
     geo.setAttribute("aSize", new THREE.BufferAttribute(this.size, 1).setUsage(THREE.DynamicDrawUsage));
     geo.setAttribute("aAlpha", new THREE.BufferAttribute(this.alpha, 1).setUsage(THREE.DynamicDrawUsage));
     this.mat = new THREE.ShaderMaterial({
-      uniforms: { uMap: { value: map }, uScale: { value: 800 } },
+      uniforms: { uMap: { value: map }, uScale: { value: 800 }, uNear: { value: new THREE.Vector2(3, 11) } },
       vertexShader: `attribute vec3 aColor; attribute float aSize; attribute float aAlpha;
-        uniform float uScale; varying vec3 vC; varying float vA;
+        uniform float uScale; uniform vec2 uNear; varying vec3 vC; varying float vA;
         void main(){ vec4 mv = modelViewMatrix*vec4(position,1.0); gl_Position = projectionMatrix*mv;
-          gl_PointSize = aSize*uScale/max(0.1,-mv.z); vC = aColor; vA = aAlpha*smoothstep(3.0, 11.0, -mv.z); }`,
+          gl_PointSize = aSize*uScale/max(0.1,-mv.z); vC = aColor; vA = aAlpha*smoothstep(uNear.x, uNear.y, -mv.z); }`,
       fragmentShader: `uniform sampler2D uMap; varying vec3 vC; varying float vA;
         void main(){ vec4 t = texture2D(uMap, gl_PointCoord); if (vA <= 0.001) discard; gl_FragColor = vec4(vC*t.rgb, t.a*vA); }`,
       transparent: true, depthWrite: false,
@@ -348,7 +348,7 @@ function makeSun(pos, scale = 220) {
 // =============================================================
 function lathe(points, segs = 64) { return new THREE.LatheGeometry(points.map(([r, y]) => new THREE.Vector2(r, y)), segs); }
 
-function makeRocket(team, idx) {
+function makeRocket(team, idx, H = {}) {
   const rig = new THREE.Group();        // vị trí + hướng bay
   const ship = new THREE.Group();       // nhấp nhô, lắc, xoay
   rig.add(ship);
@@ -356,7 +356,7 @@ function makeRocket(team, idx) {
   model.rotation.z = -Math.PI / 2;
   ship.add(model);
 
-  const hullMat = new THREE.MeshPhysicalMaterial({ color: "#e8edf3", metalness: 0.6, roughness: 0.26, clearcoat: 1, clearcoatRoughness: 0.12 });
+  const hullMat = new THREE.MeshPhysicalMaterial({ color: H.color ?? "#e8edf3", metalness: H.metalness ?? 0.6, roughness: H.roughness ?? 0.26, clearcoat: H.clearcoat ?? 1, clearcoatRoughness: 0.12, envMapIntensity: H.env ?? 1 });
   const teamMat = new THREE.MeshPhysicalMaterial({ color: team.color, metalness: 0.45, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1, emissive: team.color, emissiveIntensity: 0.12 });
   const darkMat = new THREE.MeshStandardMaterial({ color: "#2a2f38", metalness: 0.9, roughness: 0.35 });
 
@@ -612,6 +612,7 @@ export async function createRace(cfg) {
   const fire = new Particles(4000, { additive: true, map: radialTex([[0, "rgba(255,255,255,1)"], [0.25, "rgba(255,255,255,0.7)"], [1, "rgba(255,255,255,0)"]], 64) });
   const smoke = new Particles(2400, { additive: false, map: smokeTex() });
   scene.add(smoke.points, fire.points);
+  if (cfg.nearFade) { fire.mat.uniforms.uNear.value.set(...cfg.nearFade); smoke.mat.uniforms.uNear.value.set(...cfg.nearFade); }
 
   // cổng đích
   const gate = makeGate(cfg.gate.radius);
@@ -620,7 +621,7 @@ export async function createRace(cfg) {
   scene.add(gate);
 
   // tên lửa
-  const rockets = TEAMS.map((t, i) => { const r = makeRocket(t, i); r.rig.scale.setScalar(cfg.rocketScale ?? 1); r.nozzleGlow.material.color.multiplyScalar(cfg.exhaust?.flame ?? 1); scene.add(r.rig); return r; });
+  const rockets = TEAMS.map((t, i) => { const r = makeRocket(t, i, cfg.hull); r.rig.scale.setScalar(cfg.rocketScale ?? 1); r.nozzleGlow.material.color.multiplyScalar(cfg.exhaust?.flame ?? 1); scene.add(r.rig); return r; });
 
   // ----- trạng thái trận -----
   const L = cfg.steps ?? 5;
@@ -772,18 +773,28 @@ export async function createRace(cfg) {
       const depth = c.depth ?? UID;
       const p = screenToLocal(c.x + c.w / 2, c.y + c.h / 2, depth);
       const s = screenSize(c.w, c.h, depth);
-      const grp = new THREE.Group(); grp.position.copy(p);
+      // pivot "outer" (2d): xoay quanh MÉP NGOÀI ⇒ nghiêng bao nhiêu mép ngoài vẫn dính đúng mép màn
+      const outer = c.pivot === "outer";
+      const grp = new THREE.Group();
+      const inner = new THREE.Group(); grp.add(inner);
+      if (outer) {
+        const edgeX = side === 0 ? c.x : c.x + c.w;
+        grp.position.copy(screenToLocal(edgeX, c.y + c.h / 2, depth));
+        inner.position.x = side === 0 ? s.w / 2 : -s.w / 2;
+      } else grp.position.copy(p);
       if (c.rotY) grp.rotation.y = c.rotY;
       if (c.rotX) grp.rotation.x = c.rotX;
-      const panel = glassPanel(s.w, s.h, team.color, 0.62);
-      panel.position.z = -0.1;
-      grp.add(panel);
+      if (!c.noPanel) {                       // noPanel (2d): không kính, không viền — chỉ còn ô + tên đội
+        const panel = glassPanel(s.w, s.h, team.color, 0.62);
+        panel.position.z = -0.1;
+        inner.add(panel);
+      }
       const headerH = s.h * (c.headerFrac ?? 0.2);
       const pad = Math.min(s.w, s.h) * 0.07;
       const hd = makeHeader(s.w - pad * 2, headerH, team);
       const headerOnTop = c.header !== "bottom";
       hd.m.position.set(0, headerOnTop ? s.h / 2 - pad * 0.6 - headerH / 2 : -s.h / 2 + pad * 0.6 + headerH / 2, 0.02);
-      grp.add(hd.m);
+      inner.add(hd.m);
       drawHeader(hd, G.lives[side]);
       const cols = c.cols, rows = c.rows;
       const areaH = s.h - headerH - pad * 2.2, areaW = s.w - pad * 2;
@@ -797,7 +808,7 @@ export async function createRace(cfg) {
         t.g.position.set(-areaW / 2 + tw / 2 + col * (tw + gap), y0 - th / 2 - row * (th + gap), 0.05);
         t.home = t.g.position.clone();
         t.side = side; t.idx = k;
-        grp.add(t.g);
+        inner.add(t.g);
         hitList.push(t.body);
         tiles.push(t);
         const cur = G.answers[side][k];
@@ -893,8 +904,8 @@ export async function createRace(cfg) {
     }
     if (Math.random() < dt * 22 * (EX.smoke ?? 1)) {
       smoke.emit({
-        pos: n.clone().addScaledVector(f, -1.6), vel: f.clone().multiplyScalar(-rand(2.5, 4)).add(new V3(rand(-0.3, 0.3), rand(-0.1, 0.4), rand(-0.3, 0.3))),
-        life: rand(1.2, 2.0), size: 0.9, sizeEnd: 3.2, color: new THREE.Color(0.55, 0.58, 0.66), alpha: 0.22, drag: 0.8
+        pos: n.clone().addScaledVector(f, -(EX.smokeBack ?? 1.6)).add(new V3(rand(-0.15, 0.15), rand(-0.15, 0.15), rand(-0.15, 0.15))), vel: f.clone().multiplyScalar(-rand(2.5, 4)).add(new V3(rand(-0.3, 0.3), rand(-0.1, 0.4), rand(-0.3, 0.3))),
+        life: rand(1.2, 2.0) * (EX.smokeLife ?? 1), size: EX.smokeSize ?? 0.9, sizeEnd: EX.smokeSizeEnd ?? 3.2, color: new THREE.Color(0.55, 0.58, 0.66), alpha: EX.smokeAlpha ?? 0.22, drag: 0.8
       });
     }
   }
@@ -1206,7 +1217,7 @@ export async function createRace(cfg) {
       if (r.turbo > 0) { r.flameOuter.material.uniforms.uCol.value.setRGB(0.4, 1.6, 4); r.flameOuter.material.uniforms.uCore.value.setRGB(3, 5, 7); }
       else { r.flameOuter.material.uniforms.uCol.value.setRGB(3.2, 0.9, 0.2); r.flameOuter.material.uniforms.uCore.value.setRGB(4, 3.2, 2); }
       r.nozzleGlow.visible = on;
-      r.light.intensity = on ? (10 + r.boost * 30) * pow * (0.85 + Math.random() * 0.3) : 0;
+      r.light.intensity = on ? (10 + r.boost * 30) * (cfg.engineLight ?? 1) * pow * (0.85 + Math.random() * 0.3) : 0;
       r.light.color.set(r.turbo > 0 ? 0x6cc8ff : 0xff8a3d);
       r.shield.material.uniforms.uA.value = lerp(r.shield.material.uniforms.uA.value, r.turbo > 0 ? 0.9 : 0, dt * 5);
     });
