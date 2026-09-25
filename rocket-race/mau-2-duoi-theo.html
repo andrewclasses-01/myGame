@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 2 · Đuổi theo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-1-ngang-dien-anh.html">1 · Ngang</a>
+      <a class="cur" href="mau-2-duoi-theo.html">2 · Đuổi theo</a>
+      <a href="mau-3-quy-dao.html">3 · Quỹ đạo</a>
+    </div>
+    <h4>GIẢ LẬP</h4>
+    <div class="row">
+      <button class="t1" data-act="ok:0">Đội 1 đúng</button><button class="t2" data-act="ok:1">Đội 2 đúng</button>
+      <button class="t1" data-act="bad:0">Đội 1 sai</button><button class="t2" data-act="bad:1">Đội 2 sai</button>
+      <button class="t1" data-act="turbo:0">Đội 1 turbo</button><button class="t2" data-act="turbo:1">Đội 2 turbo</button>
+      <button class="t1" data-act="boom:0">Nổ đội 1</button><button class="t2" data-act="boom:1">Nổ đội 2</button>
+    </div>
+    <div class="row">
+      <button data-act="auto">Tự chơi</button><button data-act="again">Chơi lại</button>
+      <button data-act="fs" style="grid-column:span 2">Toàn màn hình</button>
+    </div>
+    <h4>CHẤT LƯỢNG</h4>
+    <select><option value="ultra">Siêu (máy mạnh)</option><option value="high">Cao</option><option value="low">Nhẹ</option></select>
+  </div>
+</div>
+<script type="module">
+import { boot } from "./core/shell.js";
+import { THREE } from "./core/rr3d-core.js";
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// MẪU 2 — camera ĐUỔI THEO sau lưng hai tàu: bay thẳng vào sâu màn hình, lướt trên một
+// hành tinh xanh, cổng đích lớn dần phía trước. Bàn đáp án là hai màn buồng lái nghiêng
+// ở hai mép trái/phải (4 ô xếp dọc), câu hỏi trên cùng.
+const Z0 = 0, Z1 = -64, NOSE = 2.9;
+boot({
+  title: "ROCKET RACE",
+  fov: 50, steps: 5, lives: 3, uiDepth: 9, rocketScale: 1.25, bannerY: 1.1, startY: 0.45, exhaust: { fire: 0.3, smoke: 0, flame: 0.45 }, bloom: 0.6,
+  sunPos: V(-260, 150, -1300), sunScale: 300, rimPos: V(60, 40, 60),
+  nebula: { c1: "#1d0d4a", c2: "#0d3e73", c3: "#4f7dd6", bright: 0.9 },
+  planets: [
+    { type: "ice", radius: 330, pos: V(40, -372, -520), a: "#08214d", b: "#1c6aa6", c: "#3f7a45", atmo: "#62b4ff", atmoPow: 2.2, tilt: 0.2 },
+    { type: "gas", radius: 22, pos: V(170, 90, -700), a: "#b98a6a", b: "#e8d2b8", c: "#7a4a3a", atmo: "#ffd0a0", rings: true, ringColor: "#dcc8a8", tilt: 0.4 }
+  ],
+  gate: { pos: V(0, 0.2, Z1 - NOSE), normal: V(0, 0, 1), radius: 5.6 },
+  travelDir: V(0, 0, -1),
+  dustBox: { c: V(0, 0, 0), s: V(46, 26, 90), follow: true },
+  track(i, t, time) {
+    const x = i === 0 ? -2.3 : 2.3;
+    return { pos: V(x + Math.sin(time * 0.6 + i * 2) * 0.25, Math.sin(time * 0.9 + i) * 0.15, lerp(Z0, Z1, t)), dir: V(Math.cos(time * 0.6 + i * 2) * 0.03, 0, -1) };
+  },
+  camera({ t, trail, lead }) {
+    const zc = lerp(Z0, Z1, trail);   // bám tàu ĐI SAU ⇒ cả hai luôn trong khung, tàu dẫn xa dần
+    return { pos: V(Math.sin(t * 0.21) * 0.6, 2.5 + Math.sin(t * 0.33) * 0.2, zc + 12), look: V(0, -0.4, zc - 14) };
+  },
+  introSecs: 3.6,
+  introCamera(k, cp) {
+    // bắt đầu TRƯỚC MẶT hai tàu nhìn ngược lại, rồi vòng ra sau lưng
+    const a = lerp(0.1, Math.PI, k);
+    const pos = V(Math.sin(a) * 13 * (1 - k) + cp.pos.x * k, lerp(1.5, cp.pos.y, k), Math.cos(a) * -13 * (1 - k) + cp.pos.z * k);
+    return { pos, look: V(0, 0, 0).lerp(cp.look, k * k) };
+  },
+  layout() {
+    return {
+      question: { x: 0.22, y: 0.022, w: 0.56, h: 0.09 },
+      consoles: [
+        { x: 0.012, y: 0.14, w: 0.225, h: 0.84, cols: 1, rows: 4, headerFrac: 0.1, rotY: 0.3 },
+        { x: 0.763, y: 0.14, w: 0.225, h: 0.84, cols: 1, rows: 4, headerFrac: 0.1, rotY: -0.3 }
+      ]
+    };
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 2b · Đuổi theo (TOMKO)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<style>
+  /* KHUNG GAME: cao 1 : rộng 2, rộng hết màn, dính mép trên */
+  #frame { position: fixed; left: 0; top: 0; width: 100vw; height: 50vw; max-height: 100vh; overflow: hidden; }
+  #stage { position: absolute; inset: 0; }
+  /* Dải dưới: CHỖ GIẢ cho hàng nút AWord + điểm/ván myActivity (chỉ để hình dung bố cục) */
+  #below { position: fixed; left: 0; right: 0; top: min(50vw, 100vh); bottom: 0; background: #0b0f1a; border-top: 1px solid #1f2a44;
+           display: flex; align-items: center; justify-content: center; gap: 2vw; color: #56657f; font-size: 1.1vw; letter-spacing: .15em; }
+  #below span { border: 1px dashed #2c3a5a; border-radius: 10px; padding: .6vw 1.4vw; }
+  #panel { top: auto; bottom: 12px; flex-direction: column-reverse; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="frame"><div id="stage"></div></div>
+<div id="below"><span>AWORD TOOLBAR</span><span>MYACTIVITY · SCORE · ROUND</span></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-2-duoi-theo.html">2 · bản đầu</a>
+      <a class="cur" href="mau-2b-duoi-theo-tomko.html">2b · TOMKO</a>
+    </div>
+    <h4>GIẢ LẬP</h4>
+    <div class="row">
+      <button class="t1" data-act="ok:0">Đội 1 đúng</button><button class="t2" data-act="ok:1">Đội 2 đúng</button>
+      <button class="t1" data-act="bad:0">Đội 1 sai</button><button class="t2" data-act="bad:1">Đội 2 sai</button>
+      <button class="t1" data-act="turbo:0">Đội 1 turbo</button><button class="t2" data-act="turbo:1">Đội 2 turbo</button>
+      <button class="t1" data-act="boom:0">Nổ đội 1</button><button class="t2" data-act="boom:1">Nổ đội 2</button>
+    </div>
+    <div class="row">
+      <button data-act="auto">Tự chơi</button><button data-act="again">Chơi lại</button>
+      <button data-act="fs" style="grid-column:span 2">Toàn màn hình</button>
+    </div>
+    <h4>CHẤT LƯỢNG</h4>
+    <select><option value="high" selected>Cao</option><option value="ultra">Siêu</option><option value="low">Nhẹ</option></select>
+  </div>
+</div>
+<script type="module">
+import { boot } from "./core/shell.js";
+import { THREE } from "./core/rr3d-core.js";
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// MẪU 2b (26/9/2026) — "Đuổi theo" cho TOMKO 86" 4K:
+//  · khung cao 1 : rộng 2, rộng hết màn, dính mép trên (dải dưới dành cho nút AWord + điểm myActivity)
+//  · chất lượng CAO, giới hạn 60 khung/giây (màn TOMKO 60 Hz)
+//  · bảng chữ đo bằng CM THẬT trên màn: ô đáp án 14 × 5,5 cm, dòng câu hỏi cao 7 cm
+const Z0 = 0, Z1 = -64, NOSE = 2.9;
+const M = 2;                                       // lề mép khung (cm)
+const CON_W = 31.5, CON_H = 19;                      // bàn đáp án 2×2 (cm)
+boot({
+  title: "ROCKET RACE",
+  quality: "high", maxFps: 60,
+  fov: 38, steps: 5, lives: 3, uiDepth: 9, rocketScale: 1.25, bannerY: 0.35, startY: 0.5, startCm: [22, 7],
+  exhaust: { fire: 0.3, smoke: 0, flame: 0.45 }, bloom: 0.6,
+  sunPos: V(-260, 150, -1300), sunScale: 300, rimPos: V(60, 40, 60),
+  nebula: { c1: "#1d0d4a", c2: "#0d3e73", c3: "#4f7dd6", bright: 0.9 },
+  planets: [
+    { type: "ice", radius: 330, pos: V(40, -372, -520), a: "#08214d", b: "#1c6aa6", c: "#3f7a45", atmo: "#62b4ff", atmoPow: 2.2, tilt: 0.2 },
+    { type: "gas", radius: 22, pos: V(170, 90, -700), a: "#b98a6a", b: "#e8d2b8", c: "#7a4a3a", atmo: "#ffd0a0", rings: true, ringColor: "#dcc8a8", tilt: 0.4 }
+  ],
+  gate: { pos: V(0, 0.2, Z1 - NOSE), normal: V(0, 0, 1), radius: 5.6 },
+  travelDir: V(0, 0, -1),
+  dustBox: { c: V(0, 0, 0), s: V(56, 26, 90), follow: true },
+  track(i, t, time) {
+    const x = i === 0 ? -2.3 : 2.3;
+    return { pos: V(x + Math.sin(time * 0.6 + i * 2) * 0.25, Math.sin(time * 0.9 + i) * 0.15, lerp(Z0, Z1, t)), dir: V(Math.cos(time * 0.6 + i * 2) * 0.03, 0, -1) };
+  },
+  camera({ t, trail }) {
+    const zc = lerp(Z0, Z1, trail);   // bám tàu ĐI SAU ⇒ cả hai luôn trong khung, tàu dẫn xa dần
+    return { pos: V(Math.sin(t * 0.21) * 0.6, 3.3 + Math.sin(t * 0.33) * 0.2, zc + 16.5), look: V(0, 0.1, zc - 14) };
+  },
+  introSecs: 3.6,
+  introCamera(k, cp) {
+    const a = lerp(0.1, Math.PI, k);
+    const pos = V(Math.sin(a) * 13 * (1 - k) + cp.pos.x * k, lerp(1.5, cp.pos.y, k), Math.cos(a) * -13 * (1 - k) + cp.pos.z * k);
+    return { pos, look: V(0, 0, 0).lerp(cp.look, k * k) };
+  },
+  layout(_s, _z, _a, U) {
+    const qW = 90, qH = 7;
+    return {
+      question: { x: 0.5 - U.cw(qW) / 2, y: U.ch(M), w: U.cw(qW), h: U.ch(qH) },
+      consoles: [
+        { x: U.cw(M), y: 1 - U.ch(M + CON_H), w: U.cw(CON_W), h: U.ch(CON_H), cols: 2, rows: 2, headerFrac: 0.19, rotY: 0.08 },
+        { x: 1 - U.cw(M + CON_W), y: 1 - U.ch(M + CON_H), w: U.cw(CON_W), h: U.ch(CON_H), cols: 2, rows: 2, headerFrac: 0.19, rotY: -0.08 }
+      ]
+    };
+  }
+});
+</script>
+</body>
+</html>

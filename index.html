@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>myGame — thiết kế game thử</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 30% 20%, #1b2a5c, #05070f 70%); color: #e8eefc; font-family: "Exo 2", sans-serif; }
+  main { width: min(1100px, 92vw); margin: 0 auto; padding: 48px 0; }
+  h1 { margin: 0 0 6px; font-size: 44px; letter-spacing: .06em; }
+  p.sub { margin: 0 0 30px; color: #9fb4e0; font-size: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  a.card { display: block; text-decoration: none; color: inherit; background: rgba(20,30,60,.6); border: 1px solid rgba(143,211,255,.25); border-radius: 22px; padding: 26px; transition: transform .2s, border-color .2s; }
+  a.card:hover { transform: translateY(-4px); border-color: #8fd3ff; }
+  .n { font-size: 14px; letter-spacing: .2em; color: #ffcf4a; }
+  h2 { margin: 8px 0 10px; font-size: 28px; }
+  .card p { margin: 0; color: #c3d0ee; line-height: 1.5; font-size: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>myGame</h1>
+  <p class="sub">Kho thiết kế game để thử trước khi đưa vào app/web chính (AWord, myActivity…).</p>
+  <div class="grid" id="games"></div>
+</main>
+<script>
+// Danh sách game — thêm game mới = thêm 1 mục vào ĐẦU mảng.
+const GAMES = [
+  { dir: "rocket-race", name: "ROCKET RACE · FIGHT 3D", tag: "AWORD · 26/9/2026",
+    desc: "Đua tên lửa 3D cho chế độ Fight trên TOMKO. Mẫu thầy chọn: 2b Đuổi theo (khung cao 1 : rộng 2, 60 khung/giây)." }
+];
+document.getElementById("games").innerHTML = GAMES.map(g =>
+  `<a class="card" href="${g.dir}/"><div class="n">${g.tag}</div><h2>${g.name}</h2><p>${g.desc}</p></a>`).join("");
+</script>
+</body>
+</html>

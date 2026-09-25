@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 3 · Quỹ đạo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-1-ngang-dien-anh.html">1 · Ngang</a>
+      <a href="mau-2-duoi-theo.html">2 · Đuổi theo</a>
+      <a class="cur" href="mau-3-quy-dao.html">3 · Quỹ đạo</a>
+    </div>
+    <h4>GIẢ LẬP</h4>
+    <div class="row">
+      <button class="t1" data-act="ok:0">Đội 1 đúng</button><button class="t2" data-act="ok:1">Đội 2 đúng</button>
+      <button class="t1" data-act="bad:0">Đội 1 sai</button><button class="t2" data-act="bad:1">Đội 2 sai</button>
+      <button class="t1" data-act="turbo:0">Đội 1 turbo</button><button class="t2" data-act="turbo:1">Đội 2 turbo</button>
+      <button class="t1" data-act="boom:0">Nổ đội 1</button><button class="t2" data-act="boom:1">Nổ đội 2</button>
+    </div>
+    <div class="row">
+      <button data-act="auto">Tự chơi</button><button data-act="again">Chơi lại</button>
+      <button data-act="fs" style="grid-column:span 2">Toàn màn hình</button>
+    </div>
+    <h4>CHẤT LƯỢNG</h4>
+    <select><option value="ultra">Siêu (máy mạnh)</option><option value="high">Cao</option><option value="low">Nhẹ</option></select>
+  </div>
+</div>
+<script type="module">
+import { boot } from "./core/shell.js";
+import { THREE } from "./core/rr3d-core.js";
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// MẪU 3 — QUỸ ĐẠO: hai tàu bay vòng cung trên một hành tinh xanh khổng lồ, mặt trời
+// mọc sau vành hành tinh (ngược sáng kiểu phim), đích là cổng ở cuối cung.
+// Bàn đáp án nằm dưới như MẶT BÀN nghiêng, mỗi đội một hàng 4 ô.
+const C = V(0, -40, -8);                   // tâm hành tinh
+const R0 = [37.2, 34.8];                   // bán kính quỹ đạo từng làn (đội 1 ngoài, đội 2 trong)
+const A0 = 119 * Math.PI / 180, A1 = 64 * Math.PI / 180;
+const NOSE = 3.5 / 36;                     // mũi tàu ~2.9 đơn vị trước tâm, quy ra góc
+const orbit = (i, a) => V(C.x + Math.cos(a) * R0[i], C.y + Math.sin(a) * R0[i], C.z + (i === 0 ? -1.2 : 1.2));
+const ga = A1 - NOSE;
+boot({
+  title: "ROCKET RACE",
+  fov: 36, steps: 5, lives: 3, uiDepth: 9, rocketScale: 1.5, bannerY: 1.2, startY: 0.4, exposure: 1.15,
+  sunPos: V(-170, -205, -900), sunScale: 150, rimPos: V(70, 40, 80),
+  nebula: { c1: "#130a35", c2: "#0a2f5e", c3: "#7a3fb0", bright: 0.85 },
+  planets: [
+    { type: "ice", radius: 32, pos: C, a: "#061c44", b: "#1b5e9a", c: "#6d8f4a", atmo: "#6cc0ff", atmoPow: 2.6, tilt: 0.3 },
+    { type: "gas", radius: 5, pos: V(-40, 14, -90), a: "#9a6a8a", b: "#d8b6c9", c: "#5a3050", atmo: "#f0b8e0", rings: true, ringColor: "#cdb8d8", tilt: 0.5 }
+  ],
+  gate: { pos: V(C.x + Math.cos(ga) * 36, C.y + Math.sin(ga) * 36, C.z), normal: V(Math.sin(ga), -Math.cos(ga), 0), radius: 4.6 },
+  travelDir: V(1, -0.15, 0),
+  dustBox: { c: V(0, -4, -14), s: V(90, 40, 22) },
+  track(i, t) {
+    const a = lerp(A0, A1, t);
+    return { pos: orbit(i, a), dir: V(Math.sin(a), -Math.cos(a), 0) };
+  },
+  camera({ t, lead }) {
+    return { pos: V(Math.sin(t * 0.07) * 2 + lead * 1.5, 2.2 + Math.sin(t * 0.11) * 0.4, 31), look: V(lead * 1.2, -8.6, -8) };
+  },
+  introSecs: 3.8,
+  introCamera(k, cp) {
+    const from = { pos: V(0, 40, 70), look: V(0, -30, -8) };
+    return { pos: from.pos.clone().lerp(cp.pos, k), look: from.look.clone().lerp(cp.look, k) };
+  },
+  layout() {
+    return {
+      question: { x: 0.22, y: 0.022, w: 0.56, h: 0.085 },
+      consoles: [
+        { x: 0.012, y: 0.64, w: 0.482, h: 0.345, cols: 2, rows: 2, headerFrac: 0.2, header: "bottom", rotX: -0.32 },
+        { x: 0.506, y: 0.64, w: 0.482, h: 0.345, cols: 2, rows: 2, headerFrac: 0.2, header: "bottom", rotX: -0.32 }
+      ]
+    };
+  }
+});
+</script>
+</body>
+</html>

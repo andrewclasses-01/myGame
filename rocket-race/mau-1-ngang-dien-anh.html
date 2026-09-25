@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 1 · Ngang điện ảnh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a class="cur" href="mau-1-ngang-dien-anh.html">1 · Ngang</a>
+      <a href="mau-2-duoi-theo.html">2 · Đuổi theo</a>
+      <a href="mau-3-quy-dao.html">3 · Quỹ đạo</a>
+    </div>
+    <h4>GIẢ LẬP</h4>
+    <div class="row">
+      <button class="t1" data-act="ok:0">Đội 1 đúng</button><button class="t2" data-act="ok:1">Đội 2 đúng</button>
+      <button class="t1" data-act="bad:0">Đội 1 sai</button><button class="t2" data-act="bad:1">Đội 2 sai</button>
+      <button class="t1" data-act="turbo:0">Đội 1 turbo</button><button class="t2" data-act="turbo:1">Đội 2 turbo</button>
+      <button class="t1" data-act="boom:0">Nổ đội 1</button><button class="t2" data-act="boom:1">Nổ đội 2</button>
+    </div>
+    <div class="row">
+      <button data-act="auto">Tự chơi</button><button data-act="again">Chơi lại</button>
+      <button data-act="fs" style="grid-column:span 2">Toàn màn hình</button>
+    </div>
+    <h4>CHẤT LƯỢNG</h4>
+    <select><option value="ultra">Siêu (máy mạnh)</option><option value="high">Cao</option><option value="low">Nhẹ</option></select>
+  </div>
+</div>
+<script type="module">
+import { boot } from "./core/shell.js";
+import { THREE } from "./core/rr3d-core.js";
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// MẪU 1 — góc máy NGANG kiểu phim: hai tàu bay trái → phải, hành tinh vành đai phía sau,
+// hai bàn đáp án 2×2 nằm dưới, câu hỏi một dòng trên cùng.
+const X0 = -9.4, X1 = 7.6;          // tâm tàu lúc xuất phát / lúc mũi chạm cổng
+boot({
+  title: "ROCKET RACE",
+  fov: 38, steps: 5, lives: 3, uiDepth: 9, rocketScale: 1.3, bannerY: 0.75, startY: 0.42,
+  sunPos: V(700, 260, -620), sunScale: 260, rimPos: V(-60, 30, 40),
+  nebula: { c1: "#2a0f5c", c2: "#0c4f86", c3: "#c2508a", bright: 1 },
+  planets: [
+    { type: "gas", radius: 62, pos: V(-120, -34, -330), a: "#c98b4f", b: "#f0d6a8", c: "#8a4a2a", atmo: "#ffc58a", rings: true, ringColor: "#e2cfa8", tilt: 0.35, ringTilt: 0.42 },
+    { type: "ice", radius: 7, pos: V(62, 26, -150), a: "#8fb3d9", b: "#dbe9f7", c: "#ffffff", atmo: "#9cd0ff", tilt: 0.1 }
+  ],
+  gate: { pos: V(X1 + 3.0, 0.1, 0), normal: V(1, 0, 0), radius: 3.9 },
+  travelDir: V(1, 0, 0),
+  dustBox: { c: V(0, 0, -14), s: V(90, 44, 22) },
+  track(i, t, time) {
+    const y = i === 0 ? 1.55 : -1.35, z = i === 0 ? -1.3 : 1.3;
+    return { pos: V(lerp(X0, X1, t), y, z), dir: V(1, Math.sin(time * 0.8 + i) * 0.03, 0) };
+  },
+  camera({ t, lead }) {
+    const sway = Math.sin(t * 0.13) * 0.9;
+    return { pos: V(0.4 + sway + lead * 0.6, -0.8 + Math.sin(t * 0.17) * 0.3, 24.5), look: V(0.6 + lead * 0.8, -2.55, 0) };
+  },
+  introSecs: 3.4,
+  introCamera(k, cp) {
+    const from = { pos: V(-34, 7, 12), look: V(-12, 0, 0) };
+    return { pos: from.pos.clone().lerp(cp.pos, k), look: from.look.clone().lerp(cp.look, k) };
+  },
+  layout() {
+    return {
+      question: { x: 0.2, y: 0.022, w: 0.6, h: 0.085 },
+      consoles: [
+        { x: 0.012, y: 0.585, w: 0.482, h: 0.4, cols: 2, rows: 2, headerFrac: 0.19 },
+        { x: 0.506, y: 0.585, w: 0.482, h: 0.4, cols: 2, rows: 2, headerFrac: 0.19 }
+      ]
+    };
+  }
+});
+</script>
+</body>
+</html>
