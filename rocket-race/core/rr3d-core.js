@@ -1236,6 +1236,17 @@ export async function createRace(cfg) {
   function meteorStrike(r, n, total) {
     const target = new V3().setFromMatrixPosition(r.ship.matrixWorld);
     const start = target.clone().add(new V3(rand(-10, 10), rand(14, 22), rand(-26, -12)));
+    if (cfg.finale && cfg.finale.strike === "streak") {
+      // 2h: chính là một VỆT SÁNG như bụi tốc độ đang chạy trên màn (cùng màu, cùng hướng trôi) — nó lao vào trúng tàu
+      const tv = cfg.travelDir.clone().normalize();
+      const s2 = target.clone().addScaledVector(tv, rand(34, 44)).add(new V3(rand(-3, 3), rand(-1.5, 2.5), 0).applyQuaternion(r.rig.quaternion).projectOnPlane(tv));
+      const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6), 3));
+      const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: new THREE.Color(1.1, 1.5, 2.4), transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }));
+      line.frustumCulled = false;
+      scene.add(line);
+      meteors.push({ line, tv, start: s2, r, n, total, t: 0, dur: s2.distanceTo(target) / 48 });
+      return;
+    }
     const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: flareTex, color: new THREE.Color(5, 4, 3), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
     head.scale.setScalar(1.4); head.position.copy(start);
     scene.add(head);
@@ -1246,11 +1257,21 @@ export async function createRace(cfg) {
       const m = meteors[i]; m.t += dt;
       const k = Math.min(1, m.t / m.dur);
       const target = new V3().setFromMatrixPosition(m.r.ship.matrixWorld);
-      m.head.position.lerpVectors(m.start, target, k * k);
-      for (let j = 0; j < 6; j++) fire.emit({ pos: m.head.position.clone().add(new V3(rand(-0.15, 0.15), rand(-0.15, 0.15), rand(-0.15, 0.15))), vel: new V3(rand(-0.4, 0.4), rand(-0.4, 0.4), rand(-0.4, 0.4)),
-        life: rand(0.3, 0.55), size: 0.55, sizeEnd: 0.05, color: new THREE.Color(4, 2.6, 1.2), colorEnd: new THREE.Color(1.2, 0.25, 0.05), drag: 1 });
+      if (m.line) {
+        // vệt sáng trôi ĐỀU (như bụi), đầu vệt ở phía tàu, đuôi kéo về phía trước dài ~2,4 đv
+        const head = new V3().lerpVectors(m.start, target, k);
+        const a = m.line.geometry.attributes.position;
+        a.setXYZ(0, head.x, head.y, head.z);
+        const tail = head.clone().addScaledVector(m.tv, 2.4);
+        a.setXYZ(1, tail.x, tail.y, tail.z); a.needsUpdate = true;
+      } else {
+        m.head.position.lerpVectors(m.start, target, k * k);
+        for (let j = 0; j < 6; j++) fire.emit({ pos: m.head.position.clone().add(new V3(rand(-0.15, 0.15), rand(-0.15, 0.15), rand(-0.15, 0.15))), vel: new V3(rand(-0.4, 0.4), rand(-0.4, 0.4), rand(-0.4, 0.4)),
+          life: rand(0.3, 0.55), size: 0.55, sizeEnd: 0.05, color: new THREE.Color(4, 2.6, 1.2), colorEnd: new THREE.Color(1.2, 0.25, 0.05), drag: 1 });
+      }
       if (k >= 1) {
-        scene.remove(m.head); meteors.splice(i, 1);
+        if (m.line) { scene.remove(m.line); m.line.geometry.dispose(); } else scene.remove(m.head);
+        meteors.splice(i, 1);
         const r = m.r;
         burst(target, { n: 110, speed: 9, size: 0.18, life: 0.7 });
         for (let j = 0; j < 10; j++) smoke.emit({ pos: target.clone(), vel: new V3(rand(-2, 2), rand(0, 2.5), rand(-2, 2)), life: 1.6, size: 0.6, sizeEnd: 2.8, color: new THREE.Color(0.2, 0.2, 0.22), alpha: 0.5, drag: 1 });
@@ -1455,10 +1476,21 @@ export async function createRace(cfg) {
     }
     trauma = Math.max(0, trauma - dt * 1.3);
     const sh = trauma * trauma;
-    camera.position.copy(camBase.pos).add(new V3(rand(-1, 1) * sh * 0.5, rand(-1, 1) * sh * 0.5, 0));
-    camera.lookAt(camBase.look);
+    if (cfg.steadyUI) {
+      // 2h: rung CHỈ cảnh vật — dời camera song song theo trục ngang/dọc CỦA NÓ rồi dời bảng (con của camera) NGƯỢC lại
+      // ⇒ ô đáp án + câu hỏi đứng yên tuyệt đối trên màn.
+      camera.position.copy(camBase.pos); camera.lookAt(camBase.look);
+      const sx = rand(-1, 1) * sh * 0.5, sy = rand(-1, 1) * sh * 0.5;
+      const off = new V3(sx, sy, 0).applyQuaternion(camera.quaternion);
+      camera.position.add(off);
+      ui.position.set(-sx, -sy, 0);
+    } else {
+      camera.position.copy(camBase.pos).add(new V3(rand(-1, 1) * sh * 0.5, rand(-1, 1) * sh * 0.5, 0));
+      camera.lookAt(camBase.look);
+    }
     fovKick = Math.max(0, fovKick - dt * 2);
-    const fovT = (cfg.fov ?? 40) + fovKick * 1.5;
+    // ⛔ 2h: "nhún" góc nhìn mỗi lần trả lời đúng làm CẢ MÀN co giãn (bảng gắn camera cũng co theo) ⇒ tắt bằng fovKick: 0
+    const fovT = (cfg.fov ?? 40) + fovKick * (cfg.fovKick ?? 1.5);
     if (Math.abs(camera.fov - fovT) > 0.01) { camera.fov = fovT; camera.updateProjectionMatrix(); }
 
     // nền đi theo camera (xa vô cực)
