@@ -845,7 +845,7 @@ export async function createRace(cfg) {
   // =========================================================
   const banners = [];
   const shadeTex = radialTex([[0, "rgba(0,0,8,0.75)"], [0.55, "rgba(0,0,8,0.45)"], [1, "rgba(0,0,8,0)"]], 128);
-  function banner(text, kind = "gold", ms = 1100, size = 0.55) {
+  function banner(text, kind = "gold", ms = 1100, size = 0.55, y) {
     if (!font) return;
     const geo = new TextGeometry(text, { font, size, depth: size * 0.28, curveSegments: 8, bevelEnabled: true, bevelThickness: size * 0.06, bevelSize: size * 0.035, bevelSegments: 4 });
     geo.computeBoundingBox(); geo.center();
@@ -859,7 +859,7 @@ export async function createRace(cfg) {
     shade.scale.set((bb.max.x - bb.min.x) * 1.5, (bb.max.y - bb.min.y) * 3.2, 1);
     shade.position.z = -size * 0.6;
     holder.add(shade, mesh);
-    holder.position.set(0, cfg.bannerY ?? 0.2, -7);
+    holder.position.set(0, y ?? cfg.bannerY ?? 0.2, -7);
     ui.add(holder);
     banners.push({ holder, mesh, face, t: 0, ms: ms / 1000 });
   }
@@ -929,7 +929,7 @@ export async function createRace(cfg) {
       for (let i = 0; i < 10 * lvl; i++) fire.emit({ pos: c.clone().add(new V3(rand(-0.6, 0.6), rand(-0.2, 0.4), 0.3)), vel: new V3(rand(-4, 4), rand(-1, 5), rand(-2, 2)),
         life: rand(0.2, 0.5), size: 0.12, sizeEnd: 0.02, color: new THREE.Color(5, 3, 1), colorEnd: new THREE.Color(2, 0.4, 0), drag: 1 });
     }
-    if (lvl >= 3 && !r.wreck && Math.random() < dt * 30) {
+    if (lvl >= 3 && !r.wreck && Math.random() < dt * (r.burning ? 110 : 30)) {
       fire.emit({ pos: c.clone().add(new V3(rand(-0.8, 0.4), rand(0, 0.5), 0.35)), vel: new V3(rand(-2, -0.5), rand(0.5, 2), 0),
         life: rand(0.25, 0.45), size: 0.5, sizeEnd: 0.1, color: new THREE.Color(4, 1.8, 0.4), colorEnd: new THREE.Color(1.5, 0.2, 0), drag: 1 });
     }
@@ -1180,7 +1180,7 @@ export async function createRace(cfg) {
     r.boost = 1; fovKick = 1;
     const n0 = nozzleWorld(r, new V3());
     burst(n0, { n: 60, speed: 6, color: new THREE.Color(2, 2.6, 4), colorEnd: new THREE.Color(0.4, 0.6, 2), size: 0.25, life: 0.6 });
-    if (G.streak[r.idx] >= 3 && r.turbo <= 0) { r.turbo = 4.5; banner("TURBO!", "cyan", 1100, 0.5); }
+    if (G.streak[r.idx] >= 3 && r.turbo <= 0) { r.turbo = 4.5; turboCue(r); }
     if (r.p >= L) raceWon(r);
   }
   function stallRocket(r) {
@@ -1209,11 +1209,86 @@ export async function createRace(cfg) {
     if (cfg.shatter) shatter(r);
     setTimeout(() => { r.wreck = true; r.exploding = 0; setDamageLook(r); }, 350);
   }
+  // =========================================================
+  // 2g — KẾT TRẬN: tàu thắng xuyên cổng bay khỏi màn → cổng co về tâm rồi biến mất →
+  // sao băng đánh tàu thua vài nhát → tàu bốc cháy → nổ vỡ vụn. Chữ WINS nhỏ ở 1/3 dưới, giữa màn.
+  // =========================================================
+  const finTimers = [];
+  function later(fn, ms) { finTimers.push(setTimeout(() => { if (G.phase === "over") fn(); }, ms)); }
+  function finale(w, loser, loserDown) {
+    const F = cfg.finale, WB = cfg.winBanner || {};
+    const cross = w.homeRun ? 1100 : 250;
+    banner(w.team.name + " WINS!", "gold", WB.ms ?? 7000, WB.size ?? 0.3, WB.y);
+    setQuestionText(w.team.pilot + "  " + w.team.name + " WINS!");
+    later(() => { gate.userData.flash = 1; w.flyOut = true; }, cross);
+    later(() => { gate.userData.shrink = 0.0001; }, cross + (F.gateAfter ?? 1800));
+    let tEnd = cross + (F.gateAfter ?? 1800) + 900;
+    if (!loserDown) {
+      const hits = F.hits ?? 3, gap = F.hitGap ?? 600;
+      for (let i = 0; i < hits; i++) later(() => meteorStrike(loser, i + 1, hits), tEnd + 400 + i * gap);
+      const burnAt = tEnd + 400 + (hits - 1) * gap + 450;
+      later(() => blowUp(loser), burnAt + (F.burnMs ?? 1800));
+      tEnd = burnAt + (F.burnMs ?? 1800);
+    }
+    later(() => { startBtn.g.visible = true; setTileText(startBtn, "↻  PLAY AGAIN"); }, tEnd + 1800);
+  }
+  const meteors = [];
+  function meteorStrike(r, n, total) {
+    const target = new V3().setFromMatrixPosition(r.ship.matrixWorld);
+    const start = target.clone().add(new V3(rand(-10, 10), rand(14, 22), rand(-26, -12)));
+    const head = new THREE.Sprite(new THREE.SpriteMaterial({ map: flareTex, color: new THREE.Color(5, 4, 3), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+    head.scale.setScalar(1.4); head.position.copy(start);
+    scene.add(head);
+    meteors.push({ head, start, r, n, total, t: 0, dur: 0.5 });
+  }
+  function updateMeteors(dt) {
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i]; m.t += dt;
+      const k = Math.min(1, m.t / m.dur);
+      const target = new V3().setFromMatrixPosition(m.r.ship.matrixWorld);
+      m.head.position.lerpVectors(m.start, target, k * k);
+      for (let j = 0; j < 6; j++) fire.emit({ pos: m.head.position.clone().add(new V3(rand(-0.15, 0.15), rand(-0.15, 0.15), rand(-0.15, 0.15))), vel: new V3(rand(-0.4, 0.4), rand(-0.4, 0.4), rand(-0.4, 0.4)),
+        life: rand(0.3, 0.55), size: 0.55, sizeEnd: 0.05, color: new THREE.Color(4, 2.6, 1.2), colorEnd: new THREE.Color(1.2, 0.25, 0.05), drag: 1 });
+      if (k >= 1) {
+        scene.remove(m.head); meteors.splice(i, 1);
+        const r = m.r;
+        burst(target, { n: 110, speed: 9, size: 0.18, life: 0.7 });
+        for (let j = 0; j < 10; j++) smoke.emit({ pos: target.clone(), vel: new V3(rand(-2, 2), rand(0, 2.5), rand(-2, 2)), life: 1.6, size: 0.6, sizeEnd: 2.8, color: new THREE.Color(0.2, 0.2, 0.22), alpha: 0.5, drag: 1 });
+        r.stall = 1.1; trauma = Math.min(1, trauma + 0.3);
+        r.dmg = Math.min(3, Math.max(r.dmg, Math.ceil(3 * m.n / m.total)));
+        if (m.n >= m.total) r.burning = true;          // nhát cuối ⇒ bốc cháy
+        setDamageLook(r);
+      }
+    }
+  }
+  const flareTex = radialTex([[0, "rgba(255,255,255,1)"], [0.2, "rgba(255,230,190,0.9)"], [0.5, "rgba(255,150,70,0.25)"], [1, "rgba(0,0,0,0)"]], 128);
+  // TURBO: chữ NHỎ ngay trên con tàu (2g), thay banner to giữa màn
+  const labels = [];
+  function turboCue(r) {
+    if (cfg.turboLabel !== "small") { banner("TURBO!", "cyan", 1100, 0.5); return; }
+    const cv = document.createElement("canvas"); cv.width = 512; cv.height = 128;
+    const g = cv.getContext("2d");
+    g.font = `900 92px ${FONT_UI}`; g.textAlign = "center"; g.textBaseline = "middle";
+    g.shadowColor = "rgba(0,40,80,.9)"; g.shadowBlur = 16; g.fillStyle = "#7fe6ff"; g.fillText("TURBO!", 256, 68);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: canvasTex(cv), transparent: true, depthWrite: false, color: new THREE.Color(1.3, 1.3, 1.3) }));
+    sp.scale.set(2.8, 0.7, 1); sp.position.set(0, 1.9, 0);
+    r.rig.add(sp);
+    labels.push({ sp, r, t: 0 });
+  }
+  function updateLabels(dt) {
+    for (let i = labels.length - 1; i >= 0; i--) {
+      const l = labels[i]; l.t += dt;
+      l.sp.position.y = 1.9 + l.t * 0.5;
+      l.sp.material.opacity = l.t < 0.15 ? l.t / 0.15 : Math.max(0, 1 - (l.t - 1.1) / 0.6);
+      if (l.t > 1.7) { l.r.rig.remove(l.sp); labels.splice(i, 1); }
+    }
+  }
   function raceWon(w, loserDown) {
     if (G.phase !== "play") return;
     G.phase = "over"; G.winner = w.idx; G.settled = true;
     const loser = rockets[1 - w.idx];
     if (w.p < L) { w.p = L; w.homeRun = true; w.boost = 1; }
+    if (cfg.finale) { finale(w, loser, loserDown); return; }
     if (cfg.flyOut) setTimeout(() => { if (G.phase === "over") w.flyOut = true; }, w.homeRun ? 1300 : 500);
     banner(w.team.name + " WINS!", "gold", 3200, 0.62);
     const gp = gate.position.clone();
@@ -1231,6 +1306,9 @@ export async function createRace(cfg) {
   }
   function restart() {
     clearWreckage();
+    finTimers.forEach(clearTimeout); finTimers.length = 0;
+    gate.visible = true; gate.scale.setScalar(1); gate.userData.shrink = 0;
+    rockets.forEach(r => { r.burning = false; });
     rockets.forEach(r => { r.p = 0; r.vis = 0; r.dmg = 0; r.wreck = false; r.hidden = false; r.flyOut = false; r.flyV = 0; r.exploding = 0; r.stall = 0; r.boost = 0; r.turbo = 0; r.homeRun = false; setDamageLook(r); r.ship.rotation.set(0, 0, 0); });
     G.lives = [LIVES, LIVES]; G.streak = [0, 0]; G.round = -1; G.order = shuffle(G.order); G.winner = null; G.q = null;
     consoles.forEach(c => { drawHeader(c.header, LIVES); c.tiles.forEach(t => { t.g.visible = false; t.state = "idle"; t.mark.material.opacity = 0; }); });
@@ -1321,7 +1399,7 @@ export async function createRace(cfg) {
       else { r.ship.rotation.x = Math.sin(G.t * 1.3 + r.wob) * 0.18 + (r.stall > 0 ? Math.sin(G.t * 40) * 0.08 : 0); r.ship.rotation.z = Math.sin(G.t * 2.4 + r.wob + 0.5) * 0.03; }
       r.model.visible = !r.hidden && !(r.exploding > 0 && r.exploding < 0.3);
       // 2f: tàu thắng bay xuyên cổng rồi lao tiếp ra khỏi màn hình
-      if (r.flyOut) { r.flyV = (r.flyV || 1.2) + dt * 2.5; r.p += r.flyV * dt; r.boost = Math.max(r.boost, 0.8); }
+      if (r.flyOut) { r.flyV = (r.flyV || 1.2) + dt * 2.5; r.p += r.flyV * dt; r.boost = Math.max(r.boost, 0.8); if (r.p > L * 4) { r.flyOut = false; r.hidden = true; } }
       if (r.exploding > 0) r.exploding += dt;
       // lửa
       const on = !r.wreck && r.exploding === 0;
@@ -1345,6 +1423,14 @@ export async function createRace(cfg) {
     gate.userData.film.material.uniforms.uFlash.value = gate.userData.flash;
     gate.userData.lamps.forEach((l, i) => { const on = (Math.floor(G.t * 6) + i) % 12 < 4 || gate.userData.flash > 0; l.material.color.setRGB(on ? 5 : 0.6, on ? 3.6 : 0.4, on ? 1.2 : 0.1); });
     gate.rotation.z += dt * 0.05;
+    if (gate.userData.shrink > 0) {
+      gate.userData.shrink += dt / 0.9;
+      const k = Math.min(1, gate.userData.shrink);
+      gate.scale.setScalar(Math.max(0.001, 1 - k * k * (3 - 2 * k)));
+      gate.rotation.z += dt * 3 * k;
+      if (k >= 1) { gate.visible = false; gate.userData.shrink = 0; }
+    }
+    updateMeteors(dt); updateLabels(dt);
 
     // camera
     const lead = Math.max(rockets[0].vis, rockets[1].vis) / L, trail = Math.min(rockets[0].vis, rockets[1].vis) / L;
@@ -1468,7 +1554,7 @@ export async function createRace(cfg) {
       const k = G.answers[side].findIndex(a => a.correct === correct);
       if (k >= 0) { G.lockUntil = 0; onTap(consoles[side].tiles[k]); }
     },
-    turbo(side) { const r = rockets[side]; r.turbo = 4.5; banner("TURBO!", "cyan", 1100, 0.5); },
+    turbo(side) { const r = rockets[side]; r.turbo = 4.5; turboCue(r); },
     explode(side) { if (G.phase !== "play") return; G.lives[side] = 1; loseLife(side); },
     restart() { if (G.phase === "intro") return; restart(); },
     auto(on) { G.auto = on; G.autoT = 0.5; },
