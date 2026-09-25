@@ -567,11 +567,11 @@ export async function createRace(cfg) {
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
   const grade = new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uGrain: { value: 1 } },
+    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uGrain: { value: 1 }, uCA: { value: cfg.ca ?? 0.0045 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime, uGrain; uniform vec2 uRes; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime, uGrain, uCA; uniform vec2 uRes; varying vec2 vUv;
       void main(){ vec2 c = vUv - 0.5; float d = length(c*vec2(uRes.x/uRes.y, 1.0))*0.8;
-        vec2 off = c*d*0.0045;
+        vec2 off = c*d*uCA;   // lệch màu ở rìa — ô chữ nằm ở rìa thì phải nhỏ, không chữ bị nhoè đôi
         vec3 col = vec3(texture2D(tDiffuse, vUv + off).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - off).b);
         col *= mix(1.0, 0.72, smoothstep(0.45, 1.0, d));
         float g = fract(sin(dot(vUv*uRes + fract(uTime)*97.0, vec2(12.9898, 78.233)))*43758.5453);
