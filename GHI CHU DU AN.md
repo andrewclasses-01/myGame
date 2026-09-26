@@ -102,8 +102,18 @@ Thầy: "trả về góc nhìn camera của bản trước và logo của bản 
 - `mau-4h-logo-cu-can-doi.html` + `core/launch-aerial-h.js`: logo CŨ (vòng viền + mũi tên đỏ), chữ nghiêng cũ, bỏ gạch chân; `drawLockup` chỉ căn: vòng cao ≈ 1,6 lần chữ hoa, tâm vòng = giữa chữ, khe 0,55 chữ, cụm căn giữa tường (31 % chiều cao, rộng ≤ 72 %). Nền bệ giữ vị trí trước 2 tàu (như 4g) với cùng cụm logo cũ.
 - ⛔ Bài học: thầy nói "cân đối hơn" = GIỮ thiết kế, chỉ căn chỉnh — đừng vẽ logo mới.
 
+## Chặng 10 — 26/9/2026 · MẪU 4i "âm thanh intro"
+`mau-4i-am-thanh.html` + `core/launch-aerial-i.js` (thêm `cfg.onTick({phase,t,T,passT,handed})` mỗi khung) + `core/intro-sound.js` (Web Audio) + `assets/sound-intro/*.ogg|mp3` (tool `tools/tao-am-thanh-intro.py`, ~30 s, tự tổng hợp numpy/scipy — không bản quyền).
+- Thầy: không nhạc nền; màn chờ = tiếng nhà máy nhỏ + chim hót + gió buổi sáng; phóng = động cơ rú thật lớn, khói, tàu vận hành.
+- Nền lặp liền (trộn đè đuôi vào đầu; đo chỗ nối ≈ bước mẫu thường): wind (gió giật + huýt + lá) · factory (ù điện 50 Hz, quạt, máy dập 1,6 s, xì khí nén 3,2 s, kim loại lách cách, băng chuyền 7 Hz — lọc tối + vọng như TRONG nhà xưởng) · birds (4 kiểu: chíp, láy, huýt có rung, líu lo FM; xa gần, trái phải) · vent · roar.
+- Phóng: ignite (nổ đanh + bùng 58→26 Hz + gầm dâng sáng dần) · steam · roar (rền + gầm dải trung + "rú" rung 17 Hz + LÁCH TÁCH xung Pareto, bão hoà tanh) · flyby (đổi tần kiểu Doppler + lia trái→phải) · warp (dâng vút → "thoom" ở 1,5 s đúng lúc hoà cảnh → lấp lánh).
+- ⚠️ Bẫy: chuẩn hoá theo ĐỈNH làm gầm nhỏ (–23 dB, vài xung lách tách quyết định âm lượng) ⇒ `loud()`: kéo RMS lên mức đích rồi nén đỉnh tanh (gầm –12,5 dB). Gầm từng dồn 88 % dưới 150 Hz (loa TV nghe lép) ⇒ thêm dải trung.
+- Nhịp tiếng theo TRẠNG THÁI cảnh (không đồng hồ riêng): màn chờ 3 lớp · START ⇒ xì hơi · T.ign ⇒ đánh lửa + khói + gầm dâng tới đỉnh lúc rời bệ, nền lùi xuống · passT ⇒ vút qua, gầm tối/xa dần, nền tắt · T.warp ⇒ nhảy tốc độ · hoà cảnh ⇒ `end()` tắt dần, đóng AudioContext. Chặn đỉnh DynamicsCompressor ở master. Đo trên bàn thử: ign 5,0 s · pass 8,5 s · warp 10,9 s · hoà cảnh 12,6 s.
+- Trình duyệt chặn tiếng tới cú chạm đầu ⇒ màn chờ có tiếng từ cú chạm/phím đầu (TOMKO/Electron thường mở sẵn). Nút bảng thử 🔊 bật/tắt tiếng intro.
+- ⛔ Claude KHÔNG nghe được — chỉ kiểm bằng số đo (độ to, dải tần, chỗ nối, mốc phát).
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem mẫu 4h trên TOMKO.
+- ⬜ Thầy NGHE mẫu 4i trên TOMKO (độ to gầm, cân bằng gió/máy/chim).
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.

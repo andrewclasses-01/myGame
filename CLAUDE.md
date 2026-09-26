@@ -24,6 +24,7 @@ rocket-race/
   core/launch-aerial-f.js     (26/9) mẫu 4f: bãi xe + xe 3D 5 mẫu, trời/mây shader/chim
   core/launch-aerial-g.js     (26/9) mẫu 4g: huy hiệu + cụm chữ ANDREW STUDIO cân đối, chữ nền bệ ra trước
   core/launch-aerial-h.js     (26/9) mẫu 4h: logo CŨ chỉ căn cân đối (thầy bỏ huy hiệu 4g)
+  core/launch-aerial-i.js     (26/9) mẫu 4i: + cfg.onTick cho tiếng; core/intro-sound.js phát tiếng intro (assets/sound-intro, tools/tao-am-thanh-intro.py)
   aword/                      BẢN CHÉP game mới nhất từ AWord (tools/chep-game-aword.py) — đừng sửa tay
   assets/                     ảnh địa hình mới nhất (tools/tao-dia-hinh.py sinh ra); assets/4b/ = bộ cũ của mẫu 4b
 tools/tao-dia-hinh.py         sinh ảnh địa hình (numpy + pillow + scipy), ~5 phút
