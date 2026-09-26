@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 5c · Mượt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;0,900;1,900&family=Baloo+2:wght@600;700;800&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<style>
+  /* khung game như AWord trên TOMKO: rộng hết màn, cao = min(1/2 bề rộng, màn − dải nút) */
+  :root { --bar: 80px; }
+  #frame { position: fixed; left: 0; top: 0; width: 100vw; height: min(50vw, calc(100vh - var(--bar))); overflow: hidden; background: #000; }
+  #stage, #launch { position: absolute; inset: 0; }
+  #launch { z-index: 2; }
+  #launch.is-gone { display: none; }                 /* mẫu 5: cắt tức thì (không mờ chồng 2 bộ tàu) */
+  #flash { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, #fff 0%, #eaf3ff 55%, #cfe2ff 100%); opacity: 0; }
+  #flash.on { opacity: .92; }
+  #flash.off { opacity: 0; transition: opacity .75s cubic-bezier(.2,.7,.3,1); }
+  #below { position: fixed; left: 0; right: 0; top: min(50vw, calc(100vh - var(--bar))); bottom: 0; background: linear-gradient(#070b16, #04060d); }
+  #hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: "Exo 2", sans-serif; }
+  #hud .title { font-weight: 900; font-size: clamp(34px, 4.6vw, 130px); letter-spacing: .08em; color: #ffe7b8;
+                text-shadow: 0 0 28px rgba(255,170,70,.55), 0 4px 18px rgba(0,0,0,.55); opacity: 0; transform: translateY(12px); transition: opacity 1.2s, transform 1.2s; }
+  #hud .title.on { opacity: 1; transform: none; }
+  #start { pointer-events: auto; margin-top: 2.4%; padding: .5em 1.8em; font: 900 clamp(16px, 1.5vw, 44px) "Exo 2", sans-serif; letter-spacing: .12em; color: #ffe39a; cursor: pointer;
+           background: linear-gradient(180deg, rgba(120,76,0,.75), rgba(60,34,0,.85)); border: 2px solid #ffcf4a; border-radius: 16px;
+           box-shadow: 0 0 26px rgba(255,190,60,.55), inset 0 1px 0 rgba(255,255,255,.25); opacity: 0; transition: opacity .8s, transform .12s; }
+  #start.on { opacity: 1; }
+  #start:active { transform: scale(.95); }
+  #count { position: absolute; font: 900 clamp(60px, 9vw, 260px) "Exo 2", sans-serif; color: #fff; text-shadow: 0 0 40px rgba(255,190,90,.8), 0 6px 20px rgba(0,0,0,.5); opacity: 0; }
+  #count.pop { animation: pop .9s ease-out forwards; }
+  @keyframes pop { 0% { opacity: 0; transform: scale(1.6); } 15% { opacity: 1; transform: scale(1); } 70% { opacity: 1; } 100% { opacity: 0; transform: scale(.92); } }
+  #hud.is-launch .title, #hud.is-launch #start { opacity: 0 !important; pointer-events: none; }
+  #hud.is-gone { display: none; }
+  /* bảng kết (bản thử — ở AWord là bảng kết quả của core) */
+  #over { position: absolute; left: 50%; bottom: 8%; transform: translateX(-50%); z-index: 4; display: none; gap: 14px; align-items: center; font: 800 clamp(14px, 1.3vw, 36px) "Exo 2", sans-serif; }
+  #over.on { display: flex; }
+  #over span { color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.6); letter-spacing: .06em; }
+  #over button { font: inherit; padding: .4em 1.2em; border-radius: 14px; border: 2px solid #8fd3ff; color: #e8f6ff; background: rgba(10,30,60,.75); cursor: pointer; }
+  #panel .src { font: 600 11px ui-monospace, monospace; color: #9fb4e0; line-height: 1.4; margin-top: 4px; word-break: break-word; }
+</style>
+<script>/* ?bar=90 đổi chiều cao dải nút AWord (px) */ { const b = new URLSearchParams(location.search).get("bar"); if (b) document.documentElement.style.setProperty("--bar", (+b) + "px"); }</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="frame">
+  <div id="stage"></div>
+  <div id="launch"></div>
+  <div id="hud">
+    <div class="title">ROCKET RACE</div>
+    <button id="start" type="button">▶&nbsp; START</button>
+    <div id="count"></div>
+  </div>
+  <div id="flash"></div>
+  <div id="over"><span id="overText"></span><button id="again" type="button">↻ Chơi lại</button></div>
+</div>
+<div id="below"></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-4c-nha-xuong-nhay-toc-do.html">4c</a>
+      <a href="mau-4d-ban-do-nhu-anh.html">4d · bản đồ như ảnh</a>
+      <a href="mau-4e-noi-game-moi.html">4e · nối game mới</a>
+      <a href="mau-4f-bai-xe-bau-troi.html">4f · bãi xe + bầu trời</a>
+      <a href="mau-4g-logo-can-doi.html">4g · huy hiệu mới</a>
+      <a href="mau-4h-logo-cu-can-doi.html">4h · logo cũ cân đối</a>
+      <a href="mau-4i-am-thanh.html">4i · âm thanh intro</a>
+      <a href="mau-5-game-hoan-chinh.html">5 · game hoàn chỉnh</a>
+      <a href="mau-5b-lien-mach.html">5b · liền mạch</a>
+      <a class="cur" href="mau-5c-muot.html">5c · mượt (tự giữ 60 khung)</a>
+    </div>
+    <h4>THỬ</h4>
+    <div class="row">
+      <button data-act="start">START</button><button data-act="again">Xem lại từ đầu</button>
+      <button data-act="auto">Tự chơi</button><button data-act="fs">Toàn màn hình</button>
+      <button data-act="mute" style="grid-column:span 2">🔊 Tiếng intro: BẬT</button>
+    </div>
+    <h4>ĐỘ NÉT (tự giữ 60 khung)</h4>
+    <div class="src" id="res">…</div>
+    <h4>BẢN GAME ĐANG NỐI</h4>
+    <div class="src" id="src">…</div>
+  </div>
+</div>
+<script type="module">
+import * as V from "./game5c/rr3d-view.js";
+import { RR3D_CFG } from "./game5c/rr3d-cfg.js";
+import { createRr3dSound } from "./game5c/rr3d-sfx.js";
+import { createLaunch } from "./core/launch-aerial-5c.js";
+import { createIntroSound } from "./core/intro-sound-5b.js";
+
+// MẪU 5c (26/9/2026, thầy — hiệu suất trong myActivity): hình/tiếng y hệt 5b; tự giữ 60 khung (core/auto-res.js) ở cả cảnh phóng lẫn cảnh đua,
+// cảnh phóng giới hạn 60 khung + thôi vẽ mặt đất khi đã lên cao + dịch sẵn shader; báo myActivity "MYACT:3D:ON/OFF" để app tạm lặng hiệu ứng nền.
+// Kế thừa MẪU 5b (26/9/2026, thầy): tàu đặt thẳng ngay lúc nối · START = tiếng nổ tăng tốc thật · tàu thua bị đánh + nổ nhanh, máy quay xoay đều.
+// Kế thừa MẪU 5 (26/9/2026, thầy) — GAME HOÀN CHỈNH: intro + ván đua nối liền; game = bản rẽ nhánh rocket-race/game5/ (đội 2 VÀNG, bỏ ✗ ô sai,
+// tiếng sai = động cơ nổ khục, bỏ đá né nhưng giữ lượn né, tàu thắng biến mất trong cổng + loé sáng). Tiếng intro: bùm START, túc 3-2-1,
+// vượt ánh sáng thật (core/intro-sound-5.js, assets/sound-5, tools/tao-am-thanh-5.py). CẮT CẢNH tức thì ở đỉnh chớp sáng (#flash).
+// Kế thừa MẪU 4i (26/9/2026, thầy): TIẾNG intro (core/intro-sound.js + assets/sound-intro, tổng hợp bằng tools/tao-am-thanh-intro.py) — không nhạc nền.
+// Kế thừa MẪU 4h (26/9/2026, thầy): logo CŨ căn cân đối (core/launch-aerial-h.js). Còn lại như 4g.
+// Kế thừa MẪU 4g (26/9/2026, thầy): logo + chữ nhà xưởng cân đối, chữ nền bệ ra phía trước (core/launch-aerial-g.js). Còn lại như 4f.
+// Kế thừa MẪU 4f (26/9/2026, thầy): bãi xe + xe 3D 5 mẫu, trời/mây/chim vẽ lại (core/launch-aerial-f.js). Còn lại như 4e.
+// Kế thừa MẪU 4e (26/9/2026, thầy): intro "phóng từ mặt đất" (bản đồ 4d + cây thật, máy quay luôn trôi, rút gọn sau 3-2-1, chữ trên nền bệ,
+// sửa nhấp nháy) NỐI VÀO BẢN GAME MỚI NHẤT — rocket-race/aword/ là bản chép rr3d-view.js + cấu hình RR3D_CFG + bộ tiếng của AWord
+// (tools/chep-game-aword.py; mã commit ở aword/NGUON.json, hiện trong bảng thử). Luật chơi ở đây là BẢN THỬ gọn (câu mẫu, đội đúng
+// trước ăn câu, sai thì khựng, 3 đúng liền TURBO, về đích thì cảnh kết của game) — trên AWord, rocket-race.js + core/fight.js giữ luật.
+const HULL = { color: "#a9b1bd", roughness: 0.48, clearcoat: 0.35, env: 0.55 };
+const QUESTIONS = [
+  ["Which planet is closest to the Sun?", "Mercury", ["Venus", "Mars", "Earth"]],
+  ["What do we call a shooting star?", "Meteor", ["Comet", "Planet"]],
+  ["The Sun is a …", "Star", ["Moon", "Galaxy", "Comet"]],
+  ["Who was the first person on the Moon?", "Armstrong", ["Gagarin", "Newton"]],
+  ["Which planet has beautiful rings?", "Saturn", ["Jupiter", "Neptune", "Mars"]],
+  ["A vehicle that travels in space is a …", "Rocket", ["Truck", "Boat"]],
+  ["Our galaxy is called the …", "Milky Way", ["Big Dipper", "Orion", "Andromeda"]],
+  ["The red planet is …", "Mars", ["Venus", "Pluto", "Mercury"]],
+  ["An astronaut wears a …", "Spacesuit", ["Raincoat", "Swimsuit", "Pyjamas"]],
+  ["The Moon goes around the …", "Earth", ["Sun", "Mars"]]
+];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const $ = s => document.querySelector(s);
+const fpsEl = $("#panel .fps"), hud = $("#hud"), countEl = $("#count"), startBtn = $("#start"), launchEl = $("#launch");
+fetch("aword/NGUON.json").then(r => r.json()).then(j => { $("#src").textContent = "AWord " + j.aword_commit + " · chép " + j.copied; }).catch(() => {});
+
+// ----- game (bản mới nhất) dựng sẵn bên dưới, đứng ở góc đuổi, KHÔNG mở màn, không nút START — chờ intro hoà cảnh -----
+const sound = createRr3dSound();
+// 5c: báo myActivity đang chạy game 3D ⇒ app tạm lặng hiệu ứng nền (sao nhấp nháy…) để nhường card đồ hoạ; rời trang ⇒ OFF
+console.log("MYACT:3D:ON");
+addEventListener("pagehide", () => console.log("MYACT:3D:OFF"));
+const introSound = createIntroSound();          // tiếng intro: gió, nhà máy, chim → phóng (khớp nhịp qua onTick)
+let live = false, ambientWanted = null;
+let view, launch;
+try {
+  view = await V.createView({ ...RR3D_CFG(V), container: $("#stage"), title: "ROCKET RACE", teams: V.DEFAULT_TEAMS,
+    introTitles: [], startAt: 0, startHidden: true,            // vào thẳng pha "wait": không chữ mở màn, không START thứ hai
+    introCamera: null,                                        // mẫu 5: KHÔNG bay vòng mở màn — đứng sẵn ĐÚNG góc đuổi như cuối intro (tàu liền mạch)
+    onTap: (side, k) => tap(side, k),
+    onFps: f => { if (live) fpsEl.textContent = f + " fps"; },
+    sfx: (n, v) => { if (live) sound.play(n, v); },
+    loop: (n, on, v, f) => { if (!live) { if (n === "ambient") ambientWanted = on ? [n, on, v, f] : null; return; } sound.loop(n, on, v, f); },
+    swell: (n, a, b, u, d) => sound.swell && sound.swell(n, a, b, u, d) });
+  view.step(1);                                   // đóng băng game (ẩn dưới cảnh phóng) tới lúc hoà cảnh
+  const qs = new URLSearchParams(location.search), num = k => (qs.get(k) || "").split(",").map(Number);
+  const idle = qs.get("cam") ? { pos: num("cam"), look: num("look") } : undefined, idleFov = qs.get("fov") ? +qs.get("fov") : undefined;   /* ?cam=x,y,z&look=x,y,z&fov= chỉnh góc máy màn chờ */
+  launch = await createLaunch({ container: launchEl, idle, idleFov, hull: HULL, rocketScale: 1.1, fov: 38, onFps: f => { if (!live) fpsEl.textContent = f + " fps"; }, onHandoff: handoff, onTick: s => introSound.update(s) });
+} catch (e) { $("#loading").textContent = "Lỗi dựng cảnh 3D: " + e.message; console.error(e); throw e; }
+$("#loading").remove();
+window.__view = view; window.__launch = launch; window.__introSound = introSound;
+setInterval(() => { const r = (live ? view.res : launch && !launch.G.handed ? launch.res : view.res) || {}; $("#res").textContent = (live ? "cảnh đua" : "cảnh phóng") + " · tỉ lệ điểm ảnh " + r.pr + " / tối đa " + r.max + (r.drops ? " · đã hạ " + r.drops + " lần" : ""); }, 1000);
+
+// ----- luật chơi thử gọn -----
+const L = 5;
+const G = { p: [0, 0], streak: [0, 0], correct: [-1, -1], picked: [false, false], locked: true, over: false, order: shuffle(QUESTIONS.map((_, i) => i)), qi: 0, timer: 0 };
+view.setTrack(L); view.setLivesMax(0);
+function nextRound() {
+  if (G.over) return;
+  if (G.qi >= G.order.length) { G.order = shuffle(G.order); G.qi = 0; }
+  const [q, right, wrong] = QUESTIONS[G.order[G.qi++]];
+  view.setQuestion(q, q);
+  [0, 1].forEach(side => { const opts = shuffle([right, ...wrong]); G.correct[side] = opts.indexOf(right); view.setAnswers(side, opts); });
+  G.picked = [false, false]; G.locked = false;
+}
+function tap(side, k) {
+  if (G.locked || G.over || G.picked[side] || view.phase !== "play") return;
+  G.picked[side] = true; view.pick(side, k);
+  const n = view.state.answers[side].length, other = 1 - side;
+  if (k === G.correct[side]) {
+    G.locked = true;
+    view.tileStates(side, Array.from({ length: n }, (_, i) => i === k ? "correct" : "dim"));
+    view.tileStates(other, Array.from({ length: view.state.answers[other].length }, () => "dim"));
+    G.p[side]++; view.move(side, G.p[side], "up");
+    if (++G.streak[side] >= 3) { G.streak[side] = 0; view.turbo(side); }
+    G.streak[other] = 0;
+    if (G.p[side] >= L) return finish(side);
+    G.timer = setTimeout(nextRound, 1500);
+  } else {
+    view.tileStates(side, Array.from({ length: n }, (_, i) => i === k ? "wrong" : "dim"));
+    view.stall(side); G.streak[side] = 0;
+    if (G.picked[other]) { G.locked = true; G.timer = setTimeout(nextRound, 1300); }
+  }
+}
+function finish(side) {
+  G.over = true; clearTimeout(G.timer); stopAuto();
+  const ms = view.win(side, { loserDown: false }) || 6000;
+  setTimeout(() => { view.resultView(); $("#overText").textContent = V.DEFAULT_TEAMS[side].name + " WINS!"; $("#over").classList.add("on"); }, ms + 300);
+}
+$("#again").onclick = () => location.reload();
+
+// ----- intro -----
+setTimeout(() => hud.querySelector(".title").classList.add("on"), 900);
+setTimeout(() => startBtn.classList.add("on"), 2400);
+function pop(txt) { countEl.textContent = txt; countEl.classList.remove("pop"); void countEl.offsetWidth; countEl.classList.add("pop"); }
+function go() {
+  if (!launch.start()) return;
+  introSound.fx("startboom", 0.9);                // bấm START: "bùm" nhỏ
+  hud.classList.add("is-launch");
+  const Lf = launch.T.lift;
+  [["3", Lf - 2.7], ["2", Lf - 1.8], ["1", Lf - 0.9], ["LIFTOFF!", Lf]].forEach(([s, at]) => setTimeout(() => pop(s), Math.max(0, at) * 1000));
+  setTimeout(() => hud.classList.add("is-gone"), (Lf + 1) * 1000);
+}
+function handoff() {
+  live = true;
+  introSound.end();
+  nextRound();                                     // câu đầu có sẵn khi màn game hiện ra
+  view.resume(); view.go();
+  if (ambientWanted) sound.loop(...ambientWanted);
+  // cắt cảnh ngay ĐỈNH chớp sáng: lớp trắng che chỗ nối rồi tan ⇒ tàu intro và tàu game là MỘT (cùng mô hình, cùng chỗ, cùng góc nhìn)
+  const fl = $("#flash"); fl.className = "on"; void fl.offsetWidth; fl.className = "off";
+  launchEl.classList.add("is-gone");
+  setTimeout(() => launch.destroy(), 300);        // huỷ hẳn renderer intro (giải phóng GPU)
+}
+startBtn.onclick = go;
+
+// ----- bảng thử -----
+let autoT = 0;
+function stopAuto() { clearInterval(autoT); autoT = 0; document.querySelector('[data-act="auto"]').classList.remove("is-on"); }
+$("#panel .toggle").onclick = () => $("#panel").classList.toggle("is-open");
+document.querySelectorAll("#panel [data-act]").forEach(b => b.onclick = () => {
+  const a = b.dataset.act;
+  if (a === "start") go();
+  else if (a === "again") location.reload();
+  else if (a === "mute") { introSound.setMuted(!introSound.muted); b.textContent = "🔊 Tiếng intro: " + (introSound.muted ? "TẮT" : "BẬT"); }
+  else if (a === "fs") { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
+  else if (a === "auto") {
+    if (autoT) return stopAuto();
+    b.classList.add("is-on");
+    autoT = setInterval(() => { const side = Math.random() < 0.5 ? 0 : 1, n = (view.state.answers[side] || []).length; if (!n) return;
+      tap(side, Math.random() < 0.6 ? G.correct[side] : Math.floor(Math.random() * n)); }, 900);
+  }
+});
+</script>
+</body>
+</html>

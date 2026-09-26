@@ -133,8 +133,17 @@ Thầy: "ok, ghép bản 5b vào AWord thay cho bản cũ" + chọn cảnh phón
 `launch/` (= assets/4d), `sfx-intro/` (= assets/sound-5b), `rr3d-view.js` (= game5b), `sfx/stall.mp3`; `rocket-race.js` `rr3dLaunch()`
 + `skipCount` (vào thẳng GO). ⚠️ Từ nay sửa intro: làm ở myGame trước → thầy OK → chép sang AWord (xem AWord GHI CHU ROCKET-RACE mục 32).
 
+## Chặng 14 — 26/9/2026 · MẪU 5c "mượt" (hiệu suất trong myActivity) + myActivity v2.23.0 `ef75dff`
+Thầy: game 3D chạy trên myActivity — tìm phương án đồng bộ 2 bên cho hiệu suất/độ mượt/nhạy tối đa; chọn gói "myActivity nhẹ hơn" + "game tự giữ 60 khung".
+- Đo (bơm nguyên AWORD_CSS/AWORD_JS của myActivity vào trang thử AWord 1600×900): KHÔNG bóp khung 3D; MutationObserver 255 đổi/10 s, `apply()` ≤ 0,1 ms; Fight 2D ẩn chỉ ghi 1 thuộc tính/50 ms; chạm = `pointerdown` (nhận ngay).
+- Game (mẫu 5c, hình/tiếng = 5b): `core/auto-res.js` MỚI — đo nhịp khung thật, TB > 18,2 ms ⇒ hạ tỉ lệ điểm ảnh 0,1 (0,2 nếu > 24 ms), êm ~7 s ⇒ thử +0,05, thử mà rớt ⇒ chốt trần; giả lập 4 máy: khoẻ giữ 1,5 · yếu dừng 1,15 · vừa 1,2 · rất yếu 0,8. Cảnh phóng sàn 0,8, cảnh đua sàn 1,0 (chữ ô đáp án vẽ bằng WebGL — thấp hơn là mềm chữ); đổi độ nét KHÔNG `buildUI` (`applyPR`). Cảnh phóng: giới hạn 60 khung (như cảnh đua) · BÓNG ĐỔ chỉ vẽ lại khi vật đổ bóng di chuyển (`shadowMap.autoUpdate=false`; đo: màn chờ 0 lần/120 khung, cả đoạn phóng 304/743 khung) · mây sắp xếp 2 khung/lần · `renderer.compile` với lửa + quầng loa + vệt nhảy tốc độ bật tạm ⇒ hết dịch shader giữa lúc đánh lửa/nhảy. Trang phát `MYACT:3D:ON/OFF`.
+- ⛔ Đã thử và BỎ: ẩn mặt đất khi trời tối — tàu nằm ngang ở ~100 đv nên mặt đất VẪN trong tầm (sương xa 1.600); ẩn là mất dải chân trời xanh dưới vệt sao (chụp so trước/sau thấy rõ).
+- myActivity v2.23.0: cờ `force_high_performance_gpu` + `ignore-gpu-blocklist`; sao bảng điểm lấp lánh đổi opacity lớp ảnh sao nhoè (trước đổi `filter: drop-shadow` ⇒ vẽ lại mỗi khung); marker `MYACT:3D:ON/OFF` ⇒ `body.is-3d-live` dừng quầng sao.
+- ⬜ Thầy chạy mẫu 5c trong myActivity v2.23.0 trên TOMKO (mở ☰ BẢNG THỬ xem "tỉ lệ điểm ảnh … / tối đa …", có "đã hạ" không). OK ⇒ chép sang AWord: `core/auto-res.js` → `templates/rocket-race/rr3d-autores.js`, sửa `rr3d-launch.js` + `rr3d-view.js` như 5c, `rocket-race.js` rr3dScene phát `MYACT:3D:ON` lúc dựng / `OFF` lúc `destroy()`.
+
 ## VIỆC ĐANG CHỜ
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
+- ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
