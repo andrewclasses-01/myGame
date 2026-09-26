@@ -175,8 +175,18 @@ Thầy: game 3D chạy trên myActivity — tìm phương án đồng bộ 2 bê
 - Tự kiểm: tay robot đưa ra/thu vào + cửa liền (ảnh chụp cận), đường bay vòng lên lao xuống ở góc rộng, trúng lùi đúng nấc, BOOST sớm giữ nút / trong 1,5 s né
   + mất nút, góc rộng tắt đúng câu trả lời kế tiếp, 0 lỗi Console.
 
+## Chặng 17 — 27/9/2026 · MẪU 6c "không khung + né lùi"
+`mau-6c-khong-khung.html` + `game6c/` (rẽ từ game6b) + `core/launch-aerial-6c.js`.
+- Thầy: "khung trông xấu quá" ⇒ BỎ HẾT khung ô tên lửa + BOOST: quả to (lên nòng) + ≤ 2 quả nhỏ nổi tự do dưới cột đáp án, quầng đỏ mềm dưới
+  quả to khi sẵn sàng, chưa có quả ⇒ BÓNG MỜ hình quả (biết chỗ chạm). BOOST = rãnh mờ + dải CYAN bo tròn 2 đầu (ShapeGeometry vẽ lại khi độ dài đổi —
+  kéo giãn thì 2 đầu méo), quầng cyan khi đầy. Vùng chạm = mặt phẳng TÀNG HÌNH (opacity 0) phủ rộng hơn hình vẽ.
+- Thầy: "bấm sai bị lùi đúng thời điểm cũng tránh được đạn, với điều kiện có trừ điểm khi sai" ⇒ Points off > 0 và tàu còn lùi được: sai trong 1,5 s
+  cuối ⇒ `dodge(side, { back: true })` (tàu giật LÙI thêm 3,6 đv rồi về đúng chỗ nấc mới, tên lửa lao hụt). Sai sớm hơn: vẫn lùi nhưng vẫn trúng.
+  Tàu ở vạch xuất phát (không lùi được) ⇒ không né. Bản thử: `?off=0|1|2|3` (mặc định 1).
+- Tự kiểm: sai sớm lùi 1 rồi trúng lùi 2 (2→1→0) · sai trong 1,5 s cuối: 2→1, né, không bị lùi thêm · 0 lỗi Console.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 6b trên TOMKO ⇒ chọn sắc cam + OK thì ghép AWord.
+- ⬜ Thầy thử MẪU 6c trên TOMKO ⇒ chọn sắc cam + OK thì ghép AWord.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
