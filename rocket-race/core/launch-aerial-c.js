@@ -1,5 +1,10 @@
 // =============================================================
-// MẪU 4b — INTRO "PHÓNG TỪ MẶT ĐẤT", GÓC NHÌN TỪ TRÊN CAO (thầy 26/9/2026, ảnh Starship nhìn từ drone)
+// MẪU 4c (thầy 26/9/2026, ảnh nhà xưởng SpaceX nhìn từ drone): MỞ ĐẦU như ảnh — nhà xưởng lớn trắng mái xanh xám
+// chữ ANDREW STUDIO ở tiền cảnh, bãi xe, bãi cỏ, ao hồ; 2 BỆ PHÓNG Ở XA. START ⇒ máy quay mới bay lại gần 2 tàu (độ cao
+// vừa phải, như màn chờ của 4b). Đuổi đuôi: trời lốm đốm SAO → NHẢY TỐC ĐỘ vượt thời gian (sao kéo vệt, nới góc nhìn,
+// loé sáng) nối vào màn chơi. Sửa NHẤP NHÁY của 4b (render target composer không MSAA ⇒ thanh thép mảnh răng cưa
+// lấp loá khi flycam bay; đốm nắng trên nước nhỏ hơn 1 điểm ảnh).
+// Kế thừa MẪU 4b — INTRO "PHÓNG TỪ MẶT ĐẤT", GÓC NHÌN TỪ TRÊN CAO (thầy 26/9/2026, ảnh Starship nhìn từ drone)
 // Mặt đất = ẢNH ĐỊA HÌNH sinh sẵn (tools/tao-dia-hinh.py): biển + sóng, bãi cát, đụn cây bụi, đầm lầy,
 // khu phóng (bê tông, đường, bãi xe). Trên đó là công trình 3D: 2 bệ + 2 tháp tay kẹp, khu bồn inox,
 // nhà xưởng lớn mái in "ANDREW STUDIO", biển hiệu ANDREW STUDIO ở cổng, cột đèn, bụi cây.
@@ -21,8 +26,8 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const rand = (a, b) => a + Math.random() * (b - a);
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-const ASSETS = new URL("../assets/4b/", import.meta.url).href;   // mẫu 4b giữ bộ ảnh riêng (4c sinh lại bố cục mới)
-const TERR = 240, SITE = 64;                 // phủ của ảnh địa hình / ảnh khu phóng (khớp tools/tao-dia-hinh.py)
+const ASSETS = new URL("../assets/", import.meta.url).href;
+const TERR = 240, SITE = 80;                 // phủ của ảnh địa hình / ảnh khu phóng (khớp tools/tao-dia-hinh.py)
 
 // ---------- kết cấu ----------
 function canvas(w, h) { const c = document.createElement("canvas"); c.width = w; c.height = h; return [c, c.getContext("2d")]; }
@@ -232,10 +237,12 @@ export async function createLaunch(cfg) {
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.append(renderer.domElement);
   const scene = new THREE.Scene();
-  const HAZE = new THREE.Color(0.66, 0.7, 0.74), SPACE = new THREE.Color(0.012, 0.018, 0.04);
-  scene.fog = new THREE.Fog(HAZE.clone(), 160, 900);
-  const camera = new THREE.PerspectiveCamera(cfg.fov ?? 38, 2, 0.1, 30000);
-  const composer = new EffectComposer(renderer);
+  const HAZE = new THREE.Color(0.62, 0.72, 0.84), SPACE = new THREE.Color(0.012, 0.018, 0.04);
+  scene.fog = new THREE.Fog(HAZE.clone(), 140, 700);
+  const camera = new THREE.PerspectiveCamera(cfg.fov ?? 38, 2, 0.5, 20000);
+  // ⛔ NHẤP NHÁY (4b): EffectComposer mặc định vẽ vào render target KHÔNG khử răng cưa ⇒ thanh thép/hàng rào mảnh
+  // lấp loá khi máy quay trôi. Render target có MSAA 4 mẫu.
+  const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(16, 16, { type: THREE.HalfFloatType, samples: 4 }));
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.45, 0.5, 0.9);
   composer.addPass(bloom); composer.addPass(new OutputPass());
@@ -247,7 +254,7 @@ export async function createLaunch(cfg) {
   const sunDir = new V3(-0.55, 0.62, -0.56).normalize();          // khớp hướng đổ bóng đụn trong ảnh địa hình
   const skyMat = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: { uSun: { value: sunDir.clone() }, uZen: { value: new THREE.Color(0.22, 0.38, 0.66) }, uHor: { value: new THREE.Color(0.74, 0.78, 0.82) }, uFog: { value: HAZE.clone() }, uFogK: { value: 0 } },
+    uniforms: { uSun: { value: sunDir.clone() }, uZen: { value: new THREE.Color(0.12, 0.3, 0.66) }, uHor: { value: new THREE.Color(0.6, 0.72, 0.86) }, uFog: { value: HAZE.clone() }, uFogK: { value: 0 } },
     vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); vec4 p = projectionMatrix*modelViewMatrix*vec4(position,1.0); gl_Position = p.xyww; }`,
     fragmentShader: `uniform vec3 uSun, uZen, uHor, uFog; uniform float uFogK; varying vec3 vDir;
       void main(){ vec3 d = normalize(vDir); float h = d.y; float sd = max(dot(d, normalize(uSun)), 0.0);
@@ -257,7 +264,13 @@ export async function createLaunch(cfg) {
         c = mix(c, uFog, uFogK*(1.0 - smoothstep(-0.05, 0.3, h)));
         gl_FragColor = vec4(c, 1.0); }`
   });
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(15000, 48, 24), skyMat); sky.renderOrder = -2; scene.add(sky);
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(12000, 48, 24), skyMat); sky.renderOrder = -2; scene.add(sky);
+  // mây tích trắng thấp gần chân trời (như ảnh) — mờ dần khi bay lên
+  const cloudSprites = [];
+  { const ct = (() => { const s2 = 256, [c, g] = canvas(s2, s2); for (let i = 0; i < 40; i++) { const x = rand(40, 216), y = rand(90, 170), r = rand(18, 50); const gr = g.createRadialGradient(x, y - r * 0.3, 0, x, y, r); gr.addColorStop(0, "rgba(255,255,255,.9)"); gr.addColorStop(0.7, "rgba(235,240,248,.5)"); gr.addColorStop(1, "rgba(220,228,240,0)"); g.fillStyle = gr; g.fillRect(0, 0, s2, s2); } return tex(c); })();
+    for (let i = 0; i < 40; i++) { const az = rand(0, TAU), el = THREE.MathUtils.degToRad(rand(2, 12)), d = rand(5000, 9000);
+      const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: ct, transparent: true, opacity: rand(0.55, 0.9), depthWrite: false, fog: false }));
+      m.position.setFromSphericalCoords(d, Math.PI / 2 - el, az); m.scale.set(rand(500, 1200), rand(160, 320), 1); m.renderOrder = -1; scene.add(m); cloudSprites.push(m); } }
   const pmrem = new THREE.PMREMGenerator(renderer);
   { const es = new THREE.Scene(); es.add(new THREE.Mesh(new THREE.SphereGeometry(100, 32, 16), skyMat)); scene.environment = pmrem.fromScene(es).texture; scene.environmentIntensity = 0.9; }
 
@@ -267,13 +280,14 @@ export async function createLaunch(cfg) {
   Object.assign(sun.shadow.camera, { left: -60, right: 60, top: 60, bottom: -60, near: 1, far: 420 });
   sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.02;
   scene.add(sun, sun.target);
+  scene.add(camera);
   scene.add(new THREE.HemisphereLight(0xc6d6ee, 0x6b5a44, 0.75));
 
   // ----- mặt đất: ảnh địa hình + ảnh khu phóng chi tiết -----
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(TERR * 2, TERR * 2), new THREE.MeshStandardMaterial({ map: tAlb, color: new THREE.Color(0.86, 0.86, 0.86), normalMap: tNor, normalScale: new THREE.Vector2(1.2, 1.2), roughness: 0.95, metalness: 0 }));
   ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
   const site = new THREE.Mesh(new THREE.PlaneGeometry(SITE * 2, SITE * 2), new THREE.MeshStandardMaterial({ map: tSite, color: new THREE.Color(0.8, 0.8, 0.8), roughness: 0.9, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2 }));
-  site.rotation.x = -Math.PI / 2; site.position.y = 0.01; site.receiveShadow = true;
+  site.rotation.x = -Math.PI / 2; site.position.y = 0.05; site.receiveShadow = true;
   // mép tấm khu phóng mờ dần vào tấm toàn cảnh (không lộ đường cắt)
   site.material.onBeforeCompile = sh => {
     sh.fragmentShader = sh.fragmentShader.replace("#include <map_fragment>", `#include <map_fragment>
@@ -282,12 +296,12 @@ export async function createLaunch(cfg) {
   site.material.transparent = true; site.material.depthWrite = false; site.renderOrder = 1;
   scene.add(site);
   // biển ngoài rìa ảnh (đảo chắn giữa biển)
-  const outer = new THREE.Mesh(new THREE.PlaneGeometry(40000, 40000), new THREE.MeshStandardMaterial({ color: new THREE.Color(0.02, 0.07, 0.1), roughness: 0.35, metalness: 0.1 }));
+  const outer = new THREE.Mesh(new THREE.PlaneGeometry(40000, 40000), new THREE.MeshStandardMaterial({ color: new THREE.Color(0.05, 0.15, 0.2), roughness: 0.6, metalness: 0 }));
   outer.rotation.x = -Math.PI / 2; outer.position.y = -0.06; scene.add(outer);
   // mặt nước động: gợn + lấp lánh nắng + BỌT SÓNG chạy vào bờ (theo mặt nạ: R nước, G cách bờ, B biển)
   const waterMat = new THREE.ShaderMaterial({
     transparent: true, depthWrite: false,
-    uniforms: { uMask: { value: tMask }, uTime: { value: 0 }, uSun: { value: sunDir.clone() }, uFogC: { value: HAZE.clone() }, uFogN: { value: 160 }, uFogF: { value: 900 } },
+    uniforms: { uMask: { value: tMask }, uTime: { value: 0 }, uSun: { value: sunDir.clone() }, uFogC: { value: HAZE.clone() }, uFogN: { value: 140 }, uFogF: { value: 700 } },
     vertexShader: `varying vec2 vUv; varying vec3 vW; void main(){ vUv = uv; vec4 w = modelMatrix*vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }`,
     fragmentShader: `uniform sampler2D uMask; uniform float uTime, uFogN, uFogF; uniform vec3 uSun, uFogC; varying vec2 vUv; varying vec3 vW;
       float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
@@ -298,7 +312,8 @@ export async function createLaunch(cfg) {
         float r1 = n2(p*1.6 + vec2(uTime*0.6, uTime*0.4)), r2 = n2(p*3.7 - vec2(uTime*0.9, -uTime*0.5));
         vec3 nrm = normalize(vec3((r1 - 0.5)*0.35 + (r2 - 0.5)*0.2, 1.0, (r2 - 0.5)*0.35 - (r1 - 0.5)*0.2));
         vec3 V = normalize(cameraPosition - vW), Hh = normalize(normalize(uSun) + V);
-        float spec = pow(max(dot(nrm, Hh), 0.0), 220.0)*1.6;
+        float dist = length(cameraPosition - vW);
+        float spec = pow(max(dot(nrm, Hh), 0.0), 70.0)*0.55*(1.0 - smoothstep(40.0, 160.0, dist));
         float fres = pow(1.0 - max(V.y, 0.0), 4.0)*0.35;
         // bọt: vạch sóng dời VÀO bờ theo thời gian, chỉ ngoài biển (B), tan dần ra khơi
         float d = m.g*30.0;
@@ -312,7 +327,7 @@ export async function createLaunch(cfg) {
         gl_FragColor = vec4(col, a); }`
   });
   const water = new THREE.Mesh(new THREE.PlaneGeometry(TERR * 2, TERR * 2), waterMat);
-  water.rotation.x = -Math.PI / 2; water.position.y = 0.03; water.renderOrder = 2; scene.add(water);
+  water.rotation.x = -Math.PI / 2; water.position.y = 0.09; water.renderOrder = 2; scene.add(water);
 
   // ----- vật liệu -----
   const steel = new THREE.MeshStandardMaterial({ color: "#3a3d42", metalness: 0.7, roughness: 0.55, envMapIntensity: 0.7 });
@@ -384,15 +399,67 @@ export async function createLaunch(cfg) {
     const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mats); b.position.set(cx, h / 2, cz); b.castShadow = b.receiveShadow = true; scene.add(b);
     return b;
   }
-  const hbFront = new THREE.MeshStandardMaterial({ map: wallTex(16, 15, true), color: 0xb8bcc2, roughness: 0.75, metalness: 0.15 });
-  const hbSide = new THREE.MeshStandardMaterial({ map: wallTex(12, 15, false), color: 0xb8bcc2, roughness: 0.75, metalness: 0.15 });
-  building(31, 18, 16, 12, 15, roofTex(16, 12), hbFront, hbSide);
-  for (let k = 0; k < 6; k++) S.box(new V3(25 + k * 2.2, 15.35, 23), 1.2, 0.7, 1.2);                        // máy lạnh mái
-  const whSide = new THREE.MeshStandardMaterial({ map: wallTex(16, 5, false), color: 0xb0b4ba, roughness: 0.75, metalness: 0.15 });
-  const whRoof = (() => { const [c, g] = canvas(1024, 640); g.fillStyle = "#9aa0a6"; g.fillRect(0, 0, 1024, 640); for (let x = 0; x < 1024; x += 8) { g.fillStyle = x % 16 ? "rgba(0,0,0,.08)" : "rgba(255,255,255,.12)"; g.fillRect(x, 0, 4, 640); } g.fillStyle = "rgba(200,230,255,.55)"; for (let x = 60; x < 1000; x += 150) g.fillRect(x, 60, 40, 520); return tex(c); })();
-  building(-29, 18, 16, 10, 5, whRoof, whSide, whSide);
-  building(-13, 26, 8, 5, 3.2, whRoof, whSide, whSide);
-  building(13, 20, 6, 8, 3.6, whRoof, whSide, whSide);
+  // NHÀ XƯỞNG LỚN kiểu ảnh: tường trắng, mái xanh xám dốc nhẹ có gờ, chữ ANDREW STUDIO xanh đậm cỡ lớn + logo trên mặt
+  // dài hướng NAM (quay về flycam), cửa cuốn khổng lồ ở đầu hồi ĐÔNG, dãy nhà phụ thấp sát chân mặt nam
+  {
+    const W = 34, D = 16, H = 11, cx = -23, cz = 46;
+    const white = c => new THREE.MeshStandardMaterial({ map: c, roughness: 0.7, metalness: 0.05 });
+    const facade = (() => {                               // mặt nam: tôn trắng + chữ + logo
+      const [c, g] = canvas(3400, 1100);
+      g.fillStyle = "#e9ecef"; g.fillRect(0, 0, 3400, 1100);
+      for (let x = 0; x < 3400; x += 14) { g.fillStyle = x % 28 ? "rgba(0,0,0,.045)" : "rgba(255,255,255,.35)"; g.fillRect(x, 0, 6, 1100); }
+      for (let i = 0; i < 40; i++) { g.fillStyle = `rgba(90,80,70,${rand(0.015, 0.04)})`; g.fillRect(rand(0, 3400), rand(500, 1100), rand(20, 120), rand(80, 500)); }
+      g.fillStyle = "#1f3057"; g.textBaseline = "middle"; g.textAlign = "left";
+      g.font = `900 300px "Bahnschrift", "Segoe UI Black", "Arial Black", sans-serif`;
+      g.fillText("ANDREW STUDIO", 1080, 470);
+      const lx = 620, ly = 470, lr = 230;                   // logo
+      g.lineWidth = 34; g.strokeStyle = "#1f3057"; g.beginPath(); g.arc(lx, ly, lr, 0, TAU); g.stroke();
+      g.fillStyle = "#e3342f"; g.beginPath(); g.moveTo(lx, ly - lr * 0.72); g.lineTo(lx + lr * 0.34, ly + lr * 0.45); g.lineTo(lx, ly + lr * 0.22); g.lineTo(lx - lr * 0.34, ly + lr * 0.45); g.closePath(); g.fill();
+      g.fillStyle = "#c9ced4"; g.fillRect(2900, 760, 180, 340);                     // cửa đi
+      return tex(c);
+    })();
+    const plain = (w, h, door) => {
+      const [c, g] = canvas(Math.round(w * 90), Math.round(h * 90));
+      g.fillStyle = "#e6e9ec"; g.fillRect(0, 0, c.width, c.height);
+      for (let x = 0; x < c.width; x += 14) { g.fillStyle = x % 28 ? "rgba(0,0,0,.045)" : "rgba(255,255,255,.35)"; g.fillRect(x, 0, 6, c.height); }
+      if (door) {                                          // cửa cuốn đầu hồi
+        g.fillStyle = "#8f979f"; g.fillRect(c.width * 0.12, c.height * 0.12, c.width * 0.76, c.height * 0.88);
+        for (let y = c.height * 0.12; y < c.height; y += 10) { g.fillStyle = "rgba(0,0,0,.12)"; g.fillRect(c.width * 0.12, y, c.width * 0.76, 3); }
+      }
+      return tex(c);
+    };
+    const roof = (() => {
+      const [c, g] = canvas(2048, 1024);
+      g.fillStyle = "#7f98ad"; g.fillRect(0, 0, 2048, 1024);
+      for (let x = 0; x < 2048; x += 10) { g.fillStyle = x % 20 ? "rgba(0,0,0,.06)" : "rgba(255,255,255,.1)"; g.fillRect(x, 0, 5, 1024); }
+      for (let i = 0; i < 60; i++) { g.fillStyle = `rgba(255,255,255,${rand(0.02, 0.06)})`; g.fillRect(rand(0, 2048), rand(0, 1024), rand(40, 300), rand(40, 200)); }
+      g.fillStyle = "rgba(20,30,40,.25)"; g.fillRect(0, 500, 2048, 24);               // nóc mái
+      return tex(c);
+    })();
+    const wallN = white(plain(W, H, false)), wallE = white(plain(D, H, true)), wallW = white(plain(D, H, false));
+    const body = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), [wallE, wallW, concrete, concrete, white(facade), wallN]);
+    body.position.set(cx, H / 2, cz); body.castShadow = body.receiveShadow = true; scene.add(body);
+    // mái dốc 2 bên (lăng trụ tam giác thấp) + gờ mái
+    const rs = new THREE.Shape(); rs.moveTo(-D / 2 - 0.4, 0); rs.lineTo(0, 1.6); rs.lineTo(D / 2 + 0.4, 0); rs.closePath();
+    const rg = new THREE.ExtrudeGeometry(rs, { depth: W + 0.8, bevelEnabled: false }); rg.rotateY(Math.PI / 2); rg.translate(-(W + 0.8) / 2, 0, 0);
+    const roofM = new THREE.Mesh(rg, new THREE.MeshStandardMaterial({ map: roof, roughness: 0.55, metalness: 0.35 }));
+    roofM.position.set(cx, H, cz); roofM.castShadow = true; scene.add(roofM);
+    // dãy nhà phụ thấp sát chân mặt nam (như ảnh)
+    const annex = new THREE.Mesh(new THREE.BoxGeometry(W * 0.62, 3.4, 3.2), [wallW, wallW, new THREE.MeshStandardMaterial({ color: "#8da3b5", roughness: 0.6, metalness: 0.3 }), concrete, white(plain(W * 0.62, 3.4, false)), wallW]);
+    annex.position.set(cx + W * 0.16, 1.7, cz + D / 2 + 1.6); annex.castShadow = annex.receiveShadow = true; scene.add(annex);
+    // mái hắt đầu hồi phía tây (như ảnh)
+    const can = new THREE.Mesh(new THREE.BoxGeometry(6, 0.3, 9), new THREE.MeshStandardMaterial({ color: "#f1f3f5", roughness: 0.6 }));
+    can.position.set(cx - W / 2 - 2.6, 6.2, cz); can.rotation.z = 0.35; can.castShadow = true; scene.add(can);
+    // máy lạnh trên mái
+    for (let k = 0; k < 5; k++) S.box(new V3(cx - 12 + k * 5.5, H + 1.0, cz - 3.5), 1.4, 0.8, 1.4);
+  }
+  // nhà phụ trắng mái xanh (đông bãi xe) + nhà nhỏ giữa vòng đường cong
+  const smallWall = new THREE.MeshStandardMaterial({ color: "#e4e7ea", roughness: 0.75 });
+  const smallRoof = new THREE.MeshStandardMaterial({ color: "#8ea4b6", roughness: 0.6, metalness: 0.3 });
+  [[41, 44, 12, 10, 4.5], [39, 58, 12, 6, 3.6], [-58, 14, 6, 6, 3]].forEach(([x, z, w, d, h]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [smallWall, smallWall, smallRoof, concrete, smallWall, smallWall]);
+    b.position.set(x, h / 2, z); b.castShadow = b.receiveShadow = true; scene.add(b);
+  });
 
   // ----- BIỂN HIỆU CỔNG "ANDREW STUDIO" (bên đường vào, quay về phía nam) -----
   {
@@ -406,21 +473,21 @@ export async function createLaunch(cfg) {
     for (let k = 0; k < 12; k++) { const b = new THREE.Mesh(new THREE.IcosahedronGeometry(rand(0.3, 0.5), 1), bush); b.position.set(-5 + k * 0.9 + rand(-0.2, 0.2), 0.45, 0.9); b.castShadow = true; g.add(b); }
     // 2 đèn hắt lên chữ
     [-3, 3].forEach(x => { const l = new THREE.SpotLight(0xfff0d0, 30, 6, 0.8, 0.6); l.position.set(x, 0.3, 2.2); l.target.position.set(x, 1.8, 0); g.add(l, l.target); });
-    g.position.set(-11, 0, 37); g.rotation.y = -0.5;          // bên đường vào, quay về phía flycam
+    g.position.set(19.5, 0, 68); g.rotation.y = -0.55;         // cạnh đường cổng vào, quay về phía flycam
     scene.add(g);
   }
 
   // ----- bụi cây 3D quanh khu (tạo chiều sâu khi flycam bay) -----
   {
     const geo = new THREE.IcosahedronGeometry(1, 1);
-    const N = 900, im = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: "#2f3b25", roughness: 1 }), N);
+    const N = 1600, im = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: "#2f3b25", roughness: 1 }), N);
     const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color();
     let n = 0;
     for (let i = 0; i < N * 3 && n < N; i++) {
-      const x = rand(-75, 75), z = rand(-60, 75);
-      if (Math.abs(x) < 48 && z > -34 && z < 42) continue;                  // chừa khu san phẳng
+      const x = rand(-110, 100), z = rand(-70, 110);
+      if (x > -70 && x < 62 && z > -34 && z < 78) continue;                // chừa khu công ty (bãi cỏ)
       if (x * 0.55 - z * 0.835 > 56) continue;                               // không mọc trên bãi biển
-      const s = rand(0.18, 0.55);
+      const s = rand(0.25, 1.1);
       m4.compose(new V3(x, s * 0.35, z), q.setFromAxisAngle(new V3(0, 1, 0), rand(0, TAU)), new V3(s * rand(1, 1.6), s * rand(0.5, 0.8), s));
       im.setMatrixAt(n, m4); im.setColorAt(n, col.setHSL(rand(0.2, 0.28), rand(0.2, 0.35), rand(0.14, 0.24))); n++;
     }
@@ -454,6 +521,24 @@ export async function createLaunch(cfg) {
   // sao + cầu "vũ trụ"
   const starG = new THREE.BufferGeometry(); { const n = 4000, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const v = new V3(rand(-1, 1), rand(-0.2, 1), rand(-1, 1)).normalize().multiplyScalar(9000); a.set([v.x, v.y, v.z], i * 3); } starG.setAttribute("position", new THREE.BufferAttribute(a, 3)); }
   const stars = new THREE.Points(starG, new THREE.PointsMaterial({ color: 0xffffff, size: 2, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false, fog: false })); scene.add(stars);
+  const bsG = new THREE.BufferGeometry(); { const n = 260, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const v = new V3(rand(-1, 1), rand(0.05, 1), rand(-1, 1)).normalize().multiplyScalar(8800); a.set([v.x, v.y, v.z], i * 3); } bsG.setAttribute("position", new THREE.BufferAttribute(a, 3)); }
+  const brightStars = new THREE.Points(bsG, new THREE.PointsMaterial({ color: 0xffffff, size: 2.8, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false })); scene.add(brightStars);
+  // vệt sao nhảy tốc độ: đoạn thẳng trong KHÔNG GIAN MÁY QUAY, lao về phía máy quay, dài ra theo tốc độ
+  const warp = (() => {
+    const N = 1400, pos = new Float32Array(N * 6), P = [];
+    for (let i = 0; i < N; i++) { const a = rand(0, TAU), r = 7 + Math.pow(Math.random(), 0.7) * 40; /* chừa tâm: không che 2 tàu */ P.push({ x: Math.cos(a) * r, y: Math.sin(a) * r * 0.62, z: -rand(5, 420) }); }
+    const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
+    const mat = new THREE.LineBasicMaterial({ color: new THREE.Color(0.75, 0.88, 1.6), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, fog: false });
+    const L = new THREE.LineSegments(g, mat); L.frustumCulled = false; L.renderOrder = 20; camera.add(L);
+    return { set(w, dt) {
+      mat.opacity = Math.min(1, w * 1.4); L.visible = w > 0.002;
+      if (!L.visible) return;
+      const v = 40 + w * 900, len = 0.5 + w * 70;
+      for (let i = 0; i < N; i++) { const p = P[i]; p.z += v * dt; if (p.z > -1) p.z -= 420; const j = i * 6;
+        pos[j] = p.x; pos[j + 1] = p.y; pos[j + 2] = p.z; pos[j + 3] = p.x; pos[j + 4] = p.y; pos[j + 5] = p.z - len; }
+      g.attributes.position.needsUpdate = true;
+    } };
+  })();
   const spaceMat = new THREE.MeshBasicMaterial({ color: SPACE.clone(), side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false, fog: false });
   const space = new THREE.Mesh(new THREE.SphereGeometry(8500, 32, 16), spaceMat); space.renderOrder = -1; scene.add(space);
 
@@ -462,14 +547,13 @@ export async function createLaunch(cfg) {
   const camBase = { pos: new V3(), look: new V3() };
   const endCam = { pos: new V3(0, 3.3, 16.5), look: new V3(0, 0.1, -14) };
   const LANES = cfg.lanes || [-2.3, 2.3];
-  const T = { move: 2.4, ign: 3.2, lift: 4.0, pitch1: 0, fade: 0 };      // pitch1/fade tính khi tàu vụt qua máy quay
-  const AERIAL = { pos: new V3(0.5, 40, 13), look: new V3(0, 3, -1) };    // góc drone nhìn xuống như ảnh
+  const T = { move: 4.2, ign: 5.0, lift: 5.8, pitch1: 0, fade: 0, warp: 0 };   // pitch1/fade/warp tính khi tàu vụt qua máy quay
+  // góc chờ phóng: gần 2 tàu, độ cao vừa phải (như màn chờ của 4b)
+  const AERIAL = { pos: new V3(-7, 24, 46), look: new V3(1.5, 4.5, 0) };
 
-  function idleCam(t) {                                    // flycam bay vòng chậm quanh khu phóng
-    // khung: 2 bệ ở giữa, mái "ANDREW STUDIO" bên phải, biển hiệu cổng góc dưới trái, biển + bãi cát phía xa
-    const a = -0.28 + Math.sin(t * 0.045) * 0.3;
-    const R = 60, hgt = 34 + Math.sin(t * 0.07) * 2;
-    return { pos: new V3(Math.sin(a) * R + 6, hgt, Math.cos(a) * R + 10), look: new V3(8 + Math.sin(a) * 3, 0.5, 8) };
+  function idleCam(t) {                                    // flycam như ảnh: trên cao phía tây nam nhà xưởng, nhìn qua mái về 2 bệ ở xa
+    const k = Math.sin(t * 0.05);
+    return { pos: new V3(-78 + k * 5, 24 + Math.sin(t * 0.08) * 1.2, 90 - k * 4), look: new V3(2 + k * 3, 1, 12) };
   }
   function ventVapor(dt) {
     rockets.forEach(r => {
@@ -553,13 +637,13 @@ export async function createLaunch(cfg) {
       // 1) từ flycam bay tới góc DRONE NHÌN XUỐNG (như ảnh), rồi từ từ lên cao
       const k0 = ease(smooth(0, T.move, t));
       const ic = idleCam(G.t);
-      const aerial = { pos: AERIAL.pos.clone().add(new V3(0, Math.max(0, t - T.lift) * 0.8, 0)), look: AERIAL.look.clone() };
+      const aerial = { pos: AERIAL.pos.clone().add(new V3(0, Math.max(0, t - T.lift) * 0.5, 0)), look: AERIAL.look.clone() };
       // nhìn theo tàu khi tàu lên (tàu lao THẲNG VỀ phía máy quay)
       aerial.look.lerp(mid.clone().add(new V3(0, -2, 0)), smooth(T.lift + 0.5, T.lift + 3.5, t) * 0.9);
       const A = { pos: ic.pos.lerp(aerial.pos, k0), look: ic.look.lerp(aerial.look, k0) };
       follow = t < T.move ? 1 : Math.min(1, dt * 3);
       // 2) tàu VỤT QUA độ cao máy quay ⇒ máy quay quay theo, tụt ra sau đuôi, đuổi theo
-      if (!G.passT && mid.y > A.pos.y - 3) { G.passT = t; T.pitch1 = t + 6.5; T.fade = t + 7.4; }
+      if (!G.passT && mid.y > A.pos.y + 2) { G.passT = t; T.pitch1 = t + 4.6; T.warp = t + 4.2; T.fade = t + 5.7; }
       if (G.passT) {
         const pk = ease(smooth(G.passT + 0.4, T.pitch1, t));
         const fwd = new V3(0, Math.cos(pk * Math.PI / 2), -Math.sin(pk * Math.PI / 2));
@@ -572,11 +656,20 @@ export async function createLaunch(cfg) {
       } else cam = A;
       // trời tối dần thành vũ trụ
       const alt = mid.y;
-      const dk = G.passT ? Math.max(smooth(60, 420, alt), smooth(G.passT + 2.5, T.fade, t)) : 0;
-      spaceMat.opacity = dk; stars.material.opacity = smooth(0.3, 0.9, dk);
+      const dk = G.passT ? Math.max(smooth(60, 420, alt), smooth(G.passT + 0.6, T.warp, t)) : 0;
+      spaceMat.opacity = dk; stars.material.opacity = smooth(0.35, 0.95, dk);
+      cloudSprites.forEach(c => { c.material.opacity = (c.userData.a0 ??= c.material.opacity) * (1 - smooth(0.05, 0.4, dk)); });
+      // vài ngôi sao SÁNG lốm đốm ngay khi đuổi đuôi (trời còn xanh thẫm)
+      brightStars.material.opacity = G.passT ? smooth(G.passT + 0.3, G.passT + 2.0, t) : 0;
+      // NHẢY TỐC ĐỘ: sao kéo thành vệt lao qua, nới góc nhìn, loé sáng lúc hoà cảnh
+      const w = G.passT ? ease(smooth(T.warp, T.fade, t)) * (G.handed ? Math.max(0.25, 1 - (t - T.fade) / 0.9) : 1) : 0;
+      warp.set(w, dt);
+      camera.fov = (cfg.fov ?? 38) + 24 * w * (G.handed ? Math.max(0, 1 - (t - T.fade) / 0.9) : 1);
+      camera.updateProjectionMatrix();
+      renderer.toneMappingExposure = 0.9 + 1.6 * Math.exp(-Math.pow((t - T.fade) / 0.18, 2)) * (G.passT ? 1 : 0);
       const fk = smooth(30, 180, alt);
       scene.fog.color.copy(HAZE).lerp(SPACE, dk);
-      scene.fog.near = lerp(160, 6, fk); scene.fog.far = lerp(900, 260, fk);
+      scene.fog.near = lerp(140, 6, fk); scene.fog.far = lerp(700, 260, fk);
       waterMat.uniforms.uFogC.value.copy(scene.fog.color); waterMat.uniforms.uFogN.value = scene.fog.near; waterMat.uniforms.uFogF.value = scene.fog.far;
       skyMat.uniforms.uFog.value.copy(scene.fog.color); skyMat.uniforms.uFogK.value = fk;
       if (!G.handed && G.passT && t >= T.fade) { G.handed = true; cfg.onHandoff && cfg.onHandoff(); }
@@ -586,7 +679,7 @@ export async function createLaunch(cfg) {
     camera.position.copy(camBase.pos);
     if (G.shake > 0) camera.position.add(new V3(rand(-1, 1), rand(-1, 1), rand(-1, 1)).multiplyScalar(0.07 * G.shake));
     camera.lookAt(camBase.look);
-    space.position.copy(camera.position); stars.position.copy(camera.position);
+    space.position.copy(camera.position); stars.position.copy(camera.position); brightStars.position.copy(camera.position);
     steam.update(dt, camera.position); clouds.update(dt, camera.position); fire.update(dt, camera.position);
     composer.render(dt);
   }

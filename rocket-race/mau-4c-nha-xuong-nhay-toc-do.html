@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 4c · Nhà xưởng + nhảy tốc độ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<style>
+  /* khung game như mẫu 2i: rộng hết màn, cao = min(1/2 bề rộng, màn − dải nút) */
+  :root { --bar: 80px; }
+  #frame { position: fixed; left: 0; top: 0; width: 100vw; height: min(50vw, calc(100vh - var(--bar))); overflow: hidden; background: #000; }
+  #stage, #launch { position: absolute; inset: 0; }
+  #launch { z-index: 2; transition: opacity .9s ease; }
+  #launch.is-gone { opacity: 0; pointer-events: none; }
+  #below { position: fixed; left: 0; right: 0; top: min(50vw, calc(100vh - var(--bar))); bottom: 0; background: linear-gradient(#070b16, #04060d); }
+  /* HUD màn chờ (chữ + START) và đếm ngược — nằm trên cảnh phóng */
+  #hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: "Exo 2", sans-serif; }
+  #hud .brand { position: absolute; top: 5%; letter-spacing: .45em; font-weight: 800; font-size: clamp(12px, 1.05vw, 30px); color: rgba(255,236,210,.85); text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+  #hud .title { font-weight: 900; font-size: clamp(34px, 4.6vw, 130px); letter-spacing: .08em; color: #ffe7b8;
+                text-shadow: 0 0 28px rgba(255,170,70,.55), 0 4px 18px rgba(0,0,0,.55); opacity: 0; transform: translateY(12px); transition: opacity 1.2s, transform 1.2s; }
+  #hud .title.on { opacity: 1; transform: none; }
+  #start { pointer-events: auto; margin-top: 2.4%; padding: .5em 1.8em; font: 900 clamp(16px, 1.5vw, 44px) "Exo 2", sans-serif; letter-spacing: .12em; color: #ffe39a; cursor: pointer;
+           background: linear-gradient(180deg, rgba(120,76,0,.75), rgba(60,34,0,.85)); border: 2px solid #ffcf4a; border-radius: 16px;
+           box-shadow: 0 0 26px rgba(255,190,60,.55), inset 0 1px 0 rgba(255,255,255,.25); opacity: 0; transition: opacity .8s, transform .12s; }
+  #start.on { opacity: 1; }
+  #start:active { transform: scale(.95); }
+  #count { position: absolute; font: 900 clamp(60px, 9vw, 260px) "Exo 2", sans-serif; color: #fff; text-shadow: 0 0 40px rgba(255,190,90,.8), 0 6px 20px rgba(0,0,0,.5); opacity: 0; }
+  #count.pop { animation: pop .9s ease-out forwards; }
+  @keyframes pop { 0% { opacity: 0; transform: scale(1.6); } 15% { opacity: 1; transform: scale(1); } 70% { opacity: 1; } 100% { opacity: 0; transform: scale(.92); } }
+  #hud.is-launch .title, #hud.is-launch #start { opacity: 0 !important; pointer-events: none; }
+  #hud.is-gone .brand { opacity: 0; transition: opacity .8s; }
+</style>
+<script>/* ?bar=90 đổi chiều cao dải nút AWord (px) */ { const b = new URLSearchParams(location.search).get("bar"); if (b) document.documentElement.style.setProperty("--bar", (+b) + "px"); }</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="frame">
+  <div id="stage"></div>
+  <div id="launch"></div>
+  <div id="hud">
+    <div class="title">ROCKET RACE</div>
+    <button id="start" type="button">▶&nbsp; START</button>
+    <div id="count"></div>
+  </div>
+</div>
+<div id="below"></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-2i-duoi-theo-tomko.html">2i · game hiện tại</a>
+      <a href="mau-4-phong-tu-mat-dat.html">4 · phóng từ mặt đất</a>
+      <a href="mau-4b-phong-nhin-tu-tren.html">4b · nhìn từ trên cao</a>
+      <a class="cur" href="mau-4c-nha-xuong-nhay-toc-do.html">4c · nhà xưởng + nhảy tốc độ</a>
+    </div>
+    <h4>THỬ</h4>
+    <div class="row">
+      <button data-act="start">START</button><button data-act="again">Xem lại từ đầu</button>
+      <button data-act="fs" style="grid-column:span 2">Toàn màn hình</button>
+    </div>
+  </div>
+</div>
+<script type="module">
+import { createRace, THREE } from "./core/rr3d-core.js";
+import { createLaunch } from "./core/launch-aerial-c.js";
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// MẪU 4c (26/9/2026, thầy, ảnh nhà xưởng SpaceX): mở đầu nhìn qua nhà xưởng ANDREW STUDIO, 2 bệ ở xa; START mới bay
+// lại gần 2 tàu; đuổi đuôi thấy sao lốm đốm rồi NHẢY TỐC ĐỘ vào màn chơi; sửa nhấp nháy.
+// Kế thừa MẪU 4b (26/9/2026, thầy: "thiết kế vẫn còn quá xấu" + ảnh Starship nhìn từ drone): góc nhìn TỪ TRÊN CAO, mặt đất là ảnh
+// địa hình chi tiết sinh sẵn (tools/tao-dia-hinh.py), biển hiệu ANDREW STUDIO dưới đất thay chữ ANDREW CLASSES.
+// Kế thừa MẪU 4 (26/9/2026, thầy): MÀN CHỜ + INTRO mới — 2 tàu đứng trên 2 bệ phóng ở trung tâm vũ trụ ven biển lúc
+// hoàng hôn. START ⇒ 3-2-1 → đánh lửa, mây hơi tràn ngang → cất cánh → máy quay đuổi theo đuôi → tàu nghiêng
+// nằm ngang, trời tối thành vũ trụ → hoà cảnh vào màn game (mẫu 2i, vào thẳng câu hỏi — không đếm lần 2).
+// Màn game bên dưới dựng sẵn ở chế độ `hold` (đứng đúng góc đuổi, không mở màn) và đóng băng tới lúc hoà cảnh.
+const Z0 = 0, Z1 = -64, NOSE = 2.9, GAP_HIGH = 3, LAST_STEPS = 3, CAM_SECS = 3.2;
+let camK = 0, camLastT = 0;
+const M = 2, EDGE = 0.3, CON_W = 17.5, CON_H = 33;
+const HULL = { color: "#a9b1bd", roughness: 0.48, clearcoat: 0.35, env: 0.55 };
+const GAME = {
+  title: "ANDREW CLASSES", hold: true,
+  shatter: { pieces: 44 }, flyOut: true, skySpin: 0.006, turboLabel: "small",
+  winBanner: { size: 0.3, y: -1.05, ms: 7000 },
+  finale: { gateAfter: 1800, hits: 3, hitGap: 650, burnMs: 1800, strike: "streak" },
+  fovKick: 0, steadyUI: true, revealMode: "winner", quality: "high", maxFps: 60,
+  fov: 38, steps: 10, lives: 3, uiDepth: 9, rocketScale: 1.1, bannerY: 0.35, startY: 0.5, startCm: [22, 7],
+  exhaust: { fire: 0.3, smoke: 0.9, flame: 0.45, smokeBack: 3.4, smokeLife: 0.75, smokeSize: 0.55, smokeSizeEnd: 2.4, smokeAlpha: 0.16 },
+  nearFade: [7, 13], bloom: 0.6, ca: 0.0012, hull: HULL, engineLight: 0.3,
+  sunPos: V(-260, 150, -1300), sunScale: 300, rimPos: V(60, 40, 60),
+  nebula: { c1: "#1d0d4a", c2: "#0d3e73", c3: "#4f7dd6", bright: 0.9 },
+  planets: [
+    { type: "ice", radius: 330, pos: V(40, -372, -520), a: "#08214d", b: "#1c6aa6", c: "#3f7a45", atmo: "#62b4ff", atmoPow: 2.2, tilt: 0.2 },
+    { type: "gas", radius: 22, pos: V(170, 90, -700), a: "#b98a6a", b: "#e8d2b8", c: "#7a4a3a", atmo: "#ffd0a0", rings: true, ringColor: "#dcc8a8", tilt: 0.4 },
+    { type: "gas", radius: 14, pos: V(-340, 120, -1150), a: "#a2452e", b: "#d9825a", c: "#5c1f14", atmo: "#ff9a6a", tilt: 0.2 },
+    { type: "ice", radius: 9, pos: V(330, 210, -1250), a: "#6f93c9", b: "#cfe2f7", c: "#ffffff", atmo: "#a8d6ff", tilt: 0.1 },
+    { type: "gas", radius: 30, pos: V(-620, 260, -1500), a: "#5b4a8f", b: "#b7a3dd", c: "#2e2152", atmo: "#c4a8ff", rings: true, ringColor: "#b9a8e0", tilt: 0.55, ringTilt: 0.6 },
+    { type: "ice", radius: 5, pos: V(120, 150, -820), a: "#8a8a8a", b: "#c9c9c9", c: "#eeeeee", atmo: "#dddddd", tilt: 0.1 }
+  ],
+  gate: { pos: V(0, 0.2, Z1 - NOSE), normal: V(0, 0, 1), radius: 5.6, lamps: false },
+  travelDir: V(0, 0, -1),
+  dustBox: { c: V(0, 0, 0), s: V(56, 26, 90), follow: true },
+  track(i, t, time) {
+    const x = i === 0 ? -2.3 : 2.3;
+    return { pos: V(x + Math.sin(time * 0.6 + i * 2) * 0.25, Math.sin(time * 0.9 + i) * 0.15, lerp(Z0, Z1, t)), dir: V(Math.cos(time * 0.6 + i * 2) * 0.03, 0, -1) };
+  },
+  camera({ t, trail, rockets, L }) {
+    const dt = Math.max(0, Math.min(0.1, t - camLastT)); camLastT = t;
+    const zc = lerp(Z0, Z1, Math.min(1, trail));
+    const p0 = rockets[0].p, p1 = rockets[1].p;
+    const want = (Math.abs(p0 - p1) >= GAP_HIGH || Math.max(p0, p1) >= L - LAST_STEPS) ? 1 : 0;
+    camK += Math.max(-dt / CAM_SECS, Math.min(dt / CAM_SECS, want - camK));
+    const k = camK * camK * (3 - 2 * camK);
+    const chase = { pos: V(Math.sin(t * 0.21) * 0.6, 3.3 + Math.sin(t * 0.33) * 0.2, zc + 16.5), look: V(0, 0.1, zc - 14) };
+    const zA = zc + 5, zB = Z1 - 8, zMid = (zA + zB) / 2, D = (zA - zB) * 1.05 + 8;
+    const high = { pos: V(D * 0.8 + Math.sin(t * 0.15) * 1.2, D * 0.5, zMid), look: V(0, -1, zMid) };
+    return { pos: chase.pos.lerp(high.pos, k), look: chase.look.lerp(high.look, k), mode: camK < 0.02 ? "chase" : "high" };
+  },
+  layout(_s, _z, _a, U) {
+    const qW = 90, qH = 7;
+    return {
+      question: { x: 0.5 - U.cw(qW) / 2, y: U.ch(M), w: U.cw(qW), h: U.ch(qH) },
+      consoles: [
+        { x: U.cw(EDGE), y: 0.5 - U.ch(CON_H) / 2, w: U.cw(CON_W), h: U.ch(CON_H), cols: 1, rows: 4, headerFrac: 0.11, rotY: 0.32, pivot: "outer", noPanel: true },
+        { x: 1 - U.cw(EDGE + CON_W), y: 0.5 - U.ch(CON_H) / 2, w: U.cw(CON_W), h: U.ch(CON_H), cols: 1, rows: 4, headerFrac: 0.11, rotY: -0.32, pivot: "outer", noPanel: true }
+      ]
+    };
+  }
+};
+
+const $ = s => document.querySelector(s);
+const fpsEl = $("#panel .fps"), hud = $("#hud"), countEl = $("#count"), startBtn = $("#start"), launchEl = $("#launch");
+let race, launch;
+try {
+  race = await createRace({ ...GAME, container: $("#stage") });
+  race.step(1);                                   // đóng băng màn game (ẩn dưới cảnh phóng) tới lúc hoà cảnh
+  launch = await createLaunch({ container: launchEl, hull: HULL, rocketScale: 1.1, fov: 38, onFps: f => { fpsEl.textContent = f + " fps"; }, onHandoff: handoff });
+} catch (e) { $("#loading").textContent = "Lỗi dựng cảnh 3D: " + e.message; console.error(e); throw e; }
+$("#loading").remove();
+window.__race = race; window.__launch = launch;
+
+// màn chờ: chữ hiện dần rồi mới có START
+setTimeout(() => hud.querySelector(".title").classList.add("on"), 900);
+setTimeout(() => startBtn.classList.add("on"), 2400);
+
+function pop(txt) { countEl.textContent = txt; countEl.classList.remove("pop"); void countEl.offsetWidth; countEl.classList.add("pop"); }
+function go() {
+  if (!launch.start()) return;
+  hud.classList.add("is-launch");
+  // 3-2-1 khớp nhịp cảnh: đánh lửa ở T.ign, rời bệ ở T.lift
+  const L = launch.T.lift;
+  [["3", L - 2.7], ["2", L - 1.8], ["1", L - 0.9], ["LIFTOFF!", L]].forEach(([s, at]) => setTimeout(() => pop(s), Math.max(0, at) * 1000));
+  setTimeout(() => hud.classList.add("is-gone"), (L + 1) * 1000);
+}
+function handoff() {
+  race.resume();
+  race.beginPlay();
+  launchEl.classList.add("is-gone");
+  setTimeout(() => { launch.stop(); }, 1000);
+}
+startBtn.onclick = go;
+
+$("#panel .toggle").onclick = () => $("#panel").classList.toggle("is-open");
+document.querySelectorAll("#panel [data-act]").forEach(b => b.onclick = () => {
+  const a = b.dataset.act;
+  if (a === "start") go();
+  else if (a === "again") location.reload();
+  else if (a === "fs") { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
+});
+</script>
+</body>
+</html>

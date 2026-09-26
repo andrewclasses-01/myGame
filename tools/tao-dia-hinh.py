@@ -10,7 +10,7 @@ Ra (rocket-race/assets/):
   terrain-albedo.jpg   4096²  phủ [-240, 240]²   màu (đã đổ bóng đụn nhẹ)
   terrain-normal.jpg   2048²  phủ [-240, 240]²   pháp tuyến (x, z, y lên)
   terrain-mask.png     1024²  phủ [-240, 240]²   R = nước, G = cách bờ (0 ở bờ → 1 ở 30 đv ngoài khơi), B = biển(255)/đầm(0)
-  site-albedo.jpg      4096²  phủ [-64, 64]²     khu phóng: bê tông, đường, vạch sơn, bãi xe, vết cháy
+  site-albedo.jpg      4096²  phủ [-80, 80]²     khu công ty + khu phóng: bãi cỏ, bê tông, đường, vạch sơn, bãi xe, vết cháy
 Chạy:  python tools/tao-dia-hinh.py
 """
 import os, math
@@ -74,8 +74,13 @@ def fields(x, z):
     F["clump"] = fbm(x, z, 0.7, 3, 56)
     F["trail"] = 1 - np.abs(fbm(x, z, 0.045, 4, 58) * 2 - 1)
     # khu san phẳng quanh bệ phóng (hình chữ nhật bo góc, mép răng cưa nhẹ)
-    sx = np.maximum(np.abs(x) - 44, 0); sz = np.maximum(np.abs(z - 2) - 36, 0)
-    F["site"] = 1 - smooth(0, 7, np.sqrt(sx * sx + sz * sz) + (fbm(x, z, 0.08, 2, 50) - 0.5) * 6)
+    # Đợt ảnh SpaceX (thầy): khu công ty phủ CỎ XANH cắt tỉa (rộng, tới nhà xưởng phía nam); chỉ quanh 2 bệ + khu bồn là SỎI
+    sx = np.maximum(np.abs(x + 4) - 62, 0); sz = np.maximum(np.abs(z - 22) - 52, 0)
+    F["site"] = 1 - smooth(0, 8, np.sqrt(sx * sx + sz * sz) + (fbm(x, z, 0.08, 2, 50) - 0.5) * 7)
+    px_ = np.maximum(np.abs(x) - 34, 0); pz_ = np.maximum(np.abs(z + 7) - 23, 0)
+    F["pad"] = 1 - smooth(0, 5, np.sqrt(px_ * px_ + pz_ * pz_) + (fbm(x, z, 0.1, 2, 51) - 0.5) * 5)
+    # ao hồ nội địa (như ảnh: mặt nước xanh giữa đồng cỏ), tránh khu công ty
+    F["pond"] = (fbm(x, z, 0.018, 4, 53) - 0.7) * 60 - F["site"] * 40
     return F
 
 
@@ -83,7 +88,7 @@ def height(F):
     s = F["coast"]
     beach = smooth(-18, 0, s)
     h = (1 - beach) * (0.3 + F["dune"] * 1.4 + F["dune_r"] * 0.9 * smooth(-50, -16, s) * (1 - smooth(-16, -10, s)))
-    h = h * (1 - F["site"] * 0.9) + F["site"] * 0.15
+    h = h * (1 - F["site"] * 0.85) + F["site"] * 0.15
     h = np.where(s > 0, -0.4 - s * 0.02, h)
     h = np.where(F["lag"] > 0, np.minimum(h, 0.05 - F["lag"] * 0.01), h)
     return h
@@ -95,6 +100,12 @@ def albedo(x, z, F, px_units):
     sand = mix(C(0.80, 0.73, 0.60), C(0.72, 0.64, 0.50), big)
     sand = mix(sand, C(0.86, 0.80, 0.68), smooth(0.55, 0.8, F["veg2"]) * 0.5)
     col = sand * (0.93 + 0.14 * n[..., None])
+    # ĐỒNG CỎ nội địa (xa biển): xanh cỏ loang, chuyển dần sang cát khi gần đụn ven biển
+    inland = 1 - smooth(-42, -20, s)
+    grass = mix(C(0.27, 0.36, 0.15), C(0.38, 0.43, 0.21), smooth(0.3, 0.7, F["dens"]))
+    grass = mix(grass, C(0.44, 0.44, 0.27), smooth(0.65, 0.85, F["veg2"]) * 0.6)      # cỏ úa
+    grass = grass * (0.9 + 0.2 * n[..., None])
+    col = mix(col, grass, inland)
     # ---- cây bụi trên đụn: mảng xanh thẫm/ô liu rời rạc, lối mòn cát ----
     vegZone = smooth(-70, -15, s) * (1 - smooth(-13, -7, s)) + (1 - smooth(-95, -60, s)) * 0.9
     vegZone = np.clip(vegZone, 0, 1) * (1 - F["site"])
@@ -104,7 +115,7 @@ def albedo(x, z, F, px_units):
     cover = smooth(0.98 - D * 0.62, 1.06 - D * 0.62, fine)
     cover *= 1 - smooth(0.955, 0.985, F["trail"]) * 0.95                # lối mòn cát mảnh xuyên qua bụi
     tone = F["veg2"]
-    shrub = mix(C(0.15, 0.19, 0.13), C(0.30, 0.31, 0.20), smooth(0.35, 0.65, tone))
+    shrub = mix(C(0.11, 0.19, 0.10), C(0.24, 0.30, 0.15), smooth(0.35, 0.65, tone))
     shrub = mix(shrub, C(0.40, 0.36, 0.27), smooth(0.7, 0.85, tone) * 0.7)   # bụi khô nâu
     shrub = shrub * (0.78 + 0.44 * F["grain2"][..., None])
     col = mix(col, shrub, cover)
@@ -140,7 +151,9 @@ def albedo(x, z, F, px_units):
     lagWater = mix(lagWater, C(0.14, 0.24, 0.30), chan)
     bars = smooth(0.6, 0.7, fbm(x * 0.5 + z * 0.3, z * 1.4, 0.05, 4, 70)) * smooth(0, 5, lg) * (1 - smooth(20, 45, lg))
     lagWater = mix(lagWater, C(0.70, 0.66, 0.56), bars * 0.85)            # doi cát trong đầm
-    isLag = (lg > 0) & (s <= 0)
+    pond = F["pond"]
+    col = mix(col, mud * 0.9, smooth(-4, 0, pond) * (pond <= 0) * (s <= 0) * 0.7)       # bờ ao (chỉ trên đất liền)
+    isLag = ((lg > 0) | (pond > 0)) & (s <= 0)
     col = np.where(isLag[..., None], lagWater, col)
     # lạch nước cắt vào bãi bồi
     col = mix(col, C(0.20, 0.30, 0.34), chan * flat * (lg <= 0) * 0.9)
@@ -148,7 +161,12 @@ def albedo(x, z, F, px_units):
     gravel = mix(C(0.74, 0.70, 0.62), C(0.64, 0.60, 0.53), smooth(0.3, 0.7, F["dens"]))
     gravel = mix(gravel, C(0.58, 0.55, 0.49), smooth(0.62, 0.75, F["clump"]) * 0.5)       # vệt ẩm / đất nén
     gravel = gravel * (0.9 + 0.2 * F["grain2"][..., None])
-    col = mix(col, gravel, F["site"])
+    # bãi cỏ cắt tỉa của khu công ty: vệt máy cắt cỏ sáng/tối xen kẽ
+    stripe = (np.sin(x * 1.25 + (F["big"] - 0.5) * 2) > 0).astype(np.float32)
+    lawn = mix(C(0.34, 0.45, 0.20), C(0.38, 0.49, 0.22), stripe * 0.6 + F["grain2"] * 0.4)
+    lawn = mix(lawn, C(0.45, 0.46, 0.28), smooth(0.66, 0.8, F["dens"]) * 0.5)         # mảng cỏ úa
+    col = mix(col, lawn, F["site"] * (1 - F["pad"]))
+    col = mix(col, gravel, F["pad"])
     water = ((s > 0) | isLag)
     return np.clip(col, 0, 1), water
 
@@ -203,7 +221,7 @@ del x, z, F, h, col, water, sh, nx, ny, nz, nm
 
 # ----------------------------------------------------------------------------------------------
 print("khu phóng 4096² …")
-SE = 64.0
+SE = 80.0
 N2 = 4096
 x, z = grid(SE, N2)
 F = fields(x, z)
@@ -251,41 +269,60 @@ def road(pts, w=2.4, center=True, edge=True):
                 d.line([P(ax + (bx - ax) * t0, az + (bz - az) * t0), P(ax + (bx - ax) * t1, az + (bz - az) * t1)], fill=(232, 190, 60, 230), width=max(2, int(0.12 * PX)))
                 k += 2.6
 
-# đường chính: từ phía nam (cổng) vào, rẽ tới bãi xe, tới khu bồn, tới 2 bệ
-road([(-6, 64), (-6, 40), (-6, 30)], 3.2)
-road([(-6, 30), (26, 30)], 2.6)
-road([(-6, 30), (-34, 30), (-40, 22)], 2.6)
-road([(-6, 30), (-6, 14), (0, 10)], 2.6)
-road([(-40, 22), (-40, -26), (40, -26), (40, 22), (26, 30)], 2.2, center=False)
-# sân 2 bệ phóng (bê tông, ron tấm) + vết cháy loang
+def fence(pts):
+    d.line([P(*p) for p in pts], fill=(236, 236, 230, 200), width=max(2, int(0.12 * PX)))
+    for i in range(len(pts) - 1):                                       # cọc rào
+        (ax, az), (bx, bz) = pts[i], pts[i + 1]; L = math.hypot(bx - ax, bz - az); k = 0
+        while k < L:
+            u = k / L; c = P(ax + (bx - ax) * u, az + (bz - az) * u); r = 0.12 * PX
+            d.ellipse([c[0] - r, c[1] - r, c[0] + r, c[1] + r], fill=(245, 245, 240, 230)); k += 2.5
+
+def arc(cx, cz, r, a0, a1, n=40):
+    return [(cx + r * math.cos(a0 + (a1 - a0) * i / n), cz + r * math.sin(a0 + (a1 - a0) * i / n)) for i in range(n + 1)]
+
+# --- đường: vành đai khu phóng, trục bệ ↔ nhà xưởng, trục đông–tây, cổng vào phía nam, vòng cong phía tây ---
+road([(-34, -28), (34, -28), (34, 14), (-34, 14), (-34, -28)], 2.2, center=False)
+road([(0, 14), (0, 32)], 3.4)
+road([(-66, 32), (52, 32)], 2.8)
+road([(14, 80), (14, 32)], 3.0)
+road(arc(-58, 14, 13, math.pi * 0.5, math.pi * 2.3), 2.2, center=False)
+road([(-58, 27), (-58, 32)], 2.2, center=False)
+# sân 2 bệ phóng (bê tông, ron tấm) + móng tháp
 for px_ in (-9, 9):
     slab(px_ - 8.5, -8.5, px_ + 8.5, 8.5, (150, 148, 142))
     tx = px_ + (-4.6 if px_ < 0 else 4.6)
-    slab(tx - 2.2, -2.2, tx + 2.2, 2.2, (128, 127, 124), 2.2)          # móng tháp
-# khu bồn chứa + mái hắt
+    slab(tx - 2.2, -2.2, tx + 2.2, 2.2, (128, 127, 124), 2.2)
+# khu bồn chứa
 slab(-22, -24, 22, -12, (156, 154, 148), 4)
-# nền nhà xưởng / văn phòng / bãi xe
-slab(22, 10, 40, 26, (146, 146, 142), 4)
-slab(-38, 12, -20, 24, (146, 146, 142), 4)
-slab(-20, 33, 12, 44, (74, 75, 78), 50)                                  # bãi xe nhựa
-for i in range(16):
-    for row, zz in enumerate((33.6, 43.4)):
-        xx = -19.2 + i * 1.9
-        d.line([P(xx, zz), P(xx, zz + (2.6 if row == 0 else -2.6))], fill=(230, 230, 225, 220), width=max(2, int(0.1 * PX)))
-        if rng.random() < 0.72:                                          # ô tô đậu
+# nhà xưởng lớn (nền + sân trước cửa đầu hồi phía đông) + 2 nhà phụ + nhà nhỏ giữa vòng cong
+slab(-44, 36, -2, 56, (160, 160, 156), 6)
+slab(34, 38, 48, 50, (160, 160, 156), 5)
+slab(32, 54, 46, 62, (160, 160, 156), 5)
+slab(-62, 10, -54, 18, (160, 160, 156), 4)
+# bãi xe 3 dãy
+slab(4, 38, 30, 56, (72, 73, 76), 60)
+for row, zz in enumerate((38.6, 46.0, 47.0, 55.4)):
+    up = row % 2 == 0
+    for i in range(13):
+        xx = 4.8 + i * 1.95
+        d.line([P(xx, zz), P(xx, zz + (2.6 if up else -2.6))], fill=(230, 230, 225, 220), width=max(2, int(0.1 * PX)))
+        if rng.random() < 0.74:
             cc = [(210, 210, 214), (30, 32, 36), (160, 30, 34), (120, 124, 130), (230, 232, 236), (40, 70, 130), (90, 90, 96)][int(rng.integers(0, 7))]
-            cx0 = xx + 0.35; cz0 = zz + (0.3 if row == 0 else -2.3)
+            cx0 = xx + 0.35; cz0 = zz + (0.3 if up else -2.3)
             d.rounded_rectangle(R(cx0, cz0, cx0 + 1.2, cz0 + 2.0), radius=int(0.25 * PX), fill=cc + (255,))
-            d.rectangle(R(cx0 + 0.18, cz0 + (0.45 if row == 0 else 1.1), cx0 + 1.02, cz0 + (0.85 if row == 0 else 1.5)), fill=(25, 30, 38, 235))
-# vết bánh xe cong trên nền sỏi
+            d.rectangle(R(cx0 + 0.18, cz0 + (0.45 if up else 1.1), cx0 + 1.02, cz0 + (0.85 if up else 1.5)), fill=(25, 30, 38, 235))
+# hàng rào trắng quanh khu phóng + quanh bãi cỏ phía tây
+fence([(-40, -34), (40, -34), (40, 20), (-40, 20), (-40, -34)])
+fence([(-74, 0), (-74, 40), (-46, 40)])
+# vết bánh xe cong trên nền sỏi (chỉ khu phóng)
 for _ in range(40):
-    x0_, z0_ = rng.uniform(-44, 44), rng.uniform(-30, 36); a = rng.uniform(0, 6.28); pts = []
-    for k in range(30):
+    x0_, z0_ = rng.uniform(-32, 32), rng.uniform(-28, 12); a = rng.uniform(0, 6.28); pts = []
+    for k in range(24):
         a += rng.uniform(-0.08, 0.08); x0_ += math.cos(a) * 0.8; z0_ += math.sin(a) * 0.8; pts.append(P(x0_, z0_))
     for off in (-0.45, 0.45):
         d.line([(p[0] + off * PX * math.sin(a), p[1] - off * PX * math.cos(a)) for p in pts], fill=(120, 112, 100, 40), width=max(2, int(0.2 * PX)))
 # vạch dừng + chữ STOP trước bãi
-d.line([P(-8, 31.5), P(-4, 31.5)], fill=(235, 235, 230, 230), width=int(0.3 * PX))
+d.line([P(12.4, 34.2), P(15.6, 34.2)], fill=(235, 235, 230, 230), width=int(0.3 * PX))
 img = img.filter(ImageFilter.GaussianBlur(0.6))
 # vết cháy đen loang quanh 2 bệ (vẽ sau cùng, mềm)
 arr = np.asarray(img).astype(np.float32) / 255

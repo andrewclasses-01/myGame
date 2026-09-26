@@ -34,6 +34,23 @@ Rocket Race Fight 3D: mẫu 1 (ngang điện ảnh), 2 (đuổi theo), 3 (quỹ 
 
 **Đã kiểm (localhost 1600×900):** flycam · góc drone lúc phóng (mây nâu ửng cam, 2 tàu lao lên) · vụt qua · đuổi đuôi · vũ trụ · hoà cảnh ⇒ `__race.state.phase = "play"` · khung ~8 ms với 4.200 hạt mây sắp thứ tự · 0 lỗi console.
 
+## Chặng 3 — 26/9/2026 · MẪU 4c: mở đầu kiểu ảnh nhà xưởng SpaceX · START mới lại gần · sao + NHẢY TỐC ĐỘ · sửa nhấp nháy
+**Bối cảnh (thầy, kèm ảnh drone nhà xưởng SpaceX, bệ phóng ở xa):** "Để khu vực phóng ra xa, cảnh ban đầu tương tự ảnh này. Khi bấm START mới chuyển góc quay gần về khu 2 tàu. Góc chuẩn bị phóng không cần quá cao, như màn chờ START hiện tại" · "Có hiện tượng nhấp nháy, cần fix" · "Khi camera đuổi vào đuôi, nhìn lên trời phải lốm đốm vài ngôi sao, sau đó dùng hiệu ứng tăng tốc vượt thời gian để nối liền vào màn chơi".
+
+**Đã làm:**
+- `tools/tao-dia-hinh.py`: đồng cỏ nội địa XANH (cỏ + cỏ úa, bụi thẫm), ao hồ nội địa (`pond`, viền bùn chỉ trên đất liền), khu công ty = BÃI CỎ cắt tỉa có vệt máy cắt, chỉ quanh 2 bệ + khu bồn là sỏi (`pad`); tấm chi tiết mở rộng ±80; sơ đồ mới: vành đai khu phóng, trục bệ → nhà xưởng, trục đông–tây z = 32, đường cổng vào phía nam x = 14, đường vòng cong phía tây, sân nhà xưởng lớn (−44…−2, 36…56), bãi xe 3 dãy, sân 2 nhà phụ, hàng rào trắng có cọc.
+- `rocket-race/assets/4b/` giữ bộ ảnh cũ cho mẫu 4b (`launch-aerial.js` trỏ vào đó) — bộ ảnh mới ở `assets/` cho 4c.
+- `rocket-race/core/launch-aerial-c.js` (sinh từ `launch-aerial.js` bằng script vá): nhà xưởng 34 × 16 × 11 tường tôn trắng, mái dốc xanh xám, mặt nam chữ ANDREW STUDIO xanh đậm + logo, cửa cuốn đầu hồi đông, dãy nhà phụ thấp, mái hắt tây, máy lạnh mái; 3 nhà phụ trắng mái xanh; biển hiệu cổng dời cạnh đường cổng vào; 1.600 bụi/cây quanh khu công ty; trời xanh hơn + 40 mây tích trắng sát chân trời (mờ dần khi bay lên); biển ngoài rìa cùng màu biển sâu trên ảnh.
+  - Máy quay: màn chờ = flycam phía tây nam nhà xưởng nhìn qua mái về 2 bệ ở xa (như ảnh); START ⇒ 4,2 s bay tới góc chờ phóng GẦN 2 tàu, cao vừa (−7; 24; 46) → đánh lửa 5,0 s → rời bệ 5,8 s → tàu vượt độ cao máy quay (`passT`) → đuổi đuôi.
+  - Sao: 260 ngôi sao SÁNG hiện từ passT + 0,3 s (trời còn xanh thẫm), sao mờ theo độ tối trời.
+  - NHẢY TỐC ĐỘ (`warp`): 1.400 vệt thẳng trong không gian máy quay lao về phía máy quay (tốc độ 40 → 940 đv/s, dài 0,5 → 70 đv, chừa tâm bán kính 7 để không che 2 tàu), nới góc nhìn 38° → 62°, loé sáng (phơi sáng tăng vọt quanh lúc hoà cảnh), hoà cảnh passT + 5,7 s; sau hoà cảnh vệt chậm lại + góc nhìn trả về 38° trong 0,9 s mờ dần.
+  - NHẤP NHÁY: composer vẽ vào render target MSAA 4 mẫu (mặc định không khử răng cưa ⇒ thanh thép/hàng rào mảnh lấp loá khi flycam trôi) · camera near 0,5 / far 20.000 · tấm khu phóng y 0,05, mặt nước y 0,09 · đốm nắng trên nước bớt nhọn (mũ 70) + tắt dần theo khoảng cách (đốm nhỏ hơn 1 điểm ảnh nhấp nháy).
+- `rocket-race/mau-4c-nha-xuong-nhay-toc-do.html`.
+
+**Lỗi đã gặp:** chèn ghi chú `//` giữa một dòng JS dồn nhiều lệnh ⇒ phần sau thành ghi chú ⇒ SyntaxError, trang kẹt LOADING (bài học: ghi chú giữa dòng dùng `/* */`) · nhà xưởng che mất 2 bệ ở góc flycam đầu tiên ⇒ dời flycam sang tây nam.
+
+**Đã kiểm (localhost 1600×900):** flycam (nhà xưởng tiền cảnh, 2 bệ ở xa bên phải, biển hiệu cổng) · góc chờ phóng gần · mây khói lúc rời bệ · đuổi đuôi có sao lốm đốm · nhảy tốc độ · hoà cảnh ⇒ `phase = "play"` · mẫu 4b vẫn chạy với `assets/4b/`.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem MẪU 4b trên máy thật / TOMKO rồi góp ý (độ "như thật" của mặt đất/mây, bố cục khu phóng, biển hiệu ANDREW STUDIO, nhịp máy quay). Mẫu 4 giữ để so sánh. Cũ: thầy xem mẫu 4 rồi góp ý (hình khu phóng, mây hơi, nhịp máy quay, độ dài intro ~16 s, âm thanh — mẫu CHƯA có tiếng).
+- ⬜ Thầy xem MẪU 4c trên máy thật (nhấp nháy còn không? nhịp nhảy tốc độ?). Trước: thầy xem MẪU 4b trên máy thật / TOMKO rồi góp ý (độ "như thật" của mặt đất/mây, bố cục khu phóng, biển hiệu ANDREW STUDIO, nhịp máy quay). Mẫu 4 giữ để so sánh. Cũ: thầy xem mẫu 4 rồi góp ý (hình khu phóng, mây hơi, nhịp máy quay, độ dài intro ~16 s, âm thanh — mẫu CHƯA có tiếng).
 - ⬜ Duyệt xong mới đưa vào AWord (Rocket race Fight 3D): vendor `Water.js`, thay mở màn ANDREW CLASSES/ROCKET RACE/START hiện tại.
