@@ -96,8 +96,14 @@ Bản mới (4c giữ nguyên): `rocket-race/mau-4d-ban-do-nhu-anh.html` + `core
 - `drawEmblem` (huy hiệu tròn mực xanh, viền trắng, tên lửa trắng mũi đỏ chếch 45° + lửa, quỹ đạo quấn trước/sau) + `drawLockup` (huy hiệu + ANDREW STUDIO nghiêng + gạch chân đỏ, tự thu cỡ theo maxW) — dùng chung cho tường nhà xưởng (giữa bề ngang, 31 % chiều cao — trên dãy nhà phụ) và nền bệ.
 - Nền bệ: rãnh thoát lửa chuyển ra SAU (bắc); cụm chữ ở z = +7,4 (trước 2 tàu, hướng máy quay), alpha 0,42.
 
+## Chặng 9 — 26/9/2026 · MẪU 4h "logo cũ cân đối"
+Thầy: "trả về góc nhìn camera của bản trước và logo của bản trước, chỉ điều chỉnh logo cân đối hơn chứ không thay đổi".
+- Góc máy: code 4f/4g/4h GIỐNG HỆT (đã diff) — khung xem trước của Claude đang để `?cam=` soi cận nhà xưởng nên thầy tưởng đổi. ⚠️ Soi xong nhớ mở lại trang KHÔNG tham số.
+- `mau-4h-logo-cu-can-doi.html` + `core/launch-aerial-h.js`: logo CŨ (vòng viền + mũi tên đỏ), chữ nghiêng cũ, bỏ gạch chân; `drawLockup` chỉ căn: vòng cao ≈ 1,6 lần chữ hoa, tâm vòng = giữa chữ, khe 0,55 chữ, cụm căn giữa tường (31 % chiều cao, rộng ≤ 72 %). Nền bệ giữ vị trí trước 2 tàu (như 4g) với cùng cụm logo cũ.
+- ⛔ Bài học: thầy nói "cân đối hơn" = GIỮ thiết kế, chỉ căn chỉnh — đừng vẽ logo mới.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem mẫu 4g trên TOMKO.
+- ⬜ Thầy xem mẫu 4h trên TOMKO.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
