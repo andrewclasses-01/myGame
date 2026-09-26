@@ -185,8 +185,13 @@ Thầy: game 3D chạy trên myActivity — tìm phương án đồng bộ 2 bê
   Tàu ở vạch xuất phát (không lùi được) ⇒ không né. Bản thử: `?off=0|1|2|3` (mặc định 1).
 - Tự kiểm: sai sớm lùi 1 rồi trúng lùi 2 (2→1→0) · sai trong 1,5 s cuối: 2→1, né, không bị lùi thêm · 0 lỗi Console.
 
+## Chặng 18 — 27/9/2026 · ✅ ĐÃ GHÉP MẪU 6c VÀO AWORD (Đợt 407, `a7e4e99`, LIVE 9/9 mã băm)
+Thầy: "ok, dùng cam đậm, ghép vào AWord". AWord `templates/rocket-race/rr3d-missile.js` = chép NGUYÊN `game6c/rr3d-missile.js`; view móc như game6c
+(đội 2 `#ff7a00`, không còn `?orange=`); luật ở `rocket-race.js` khối `ms*`; Options "Missile" (0 Off · 1–10 · 11 = ∞, mặc định 2). Tiếng `sfx/m*.mp3`.
+⚠️ Sửa tên lửa về sau: làm ở myGame (bản rẽ mới) → thầy OK → chép `rr3d-missile.js` sang AWord (AWord GHI CHU ROCKET-RACE mục 34).
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 6c trên TOMKO ⇒ chọn sắc cam + OK thì ghép AWord.
+- ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
