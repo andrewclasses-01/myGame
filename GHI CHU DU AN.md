@@ -190,7 +190,27 @@ Thầy: "ok, dùng cam đậm, ghép vào AWord". AWord `templates/rocket-race/r
 (đội 2 `#ff7a00`, không còn `?orange=`); luật ở `rocket-race.js` khối `ms*`; Options "Missile" (0 Off · 1–10 · 11 = ∞, mặc định 2). Tiếng `sfx/m*.mp3`.
 ⚠️ Sửa tên lửa về sau: làm ở myGame (bản rẽ mới) → thầy OK → chép `rr3d-missile.js` sang AWord (AWord GHI CHU ROCKET-RACE mục 34).
 
+## Chặng 19 — 27/9/2026 · MẪU 6d "nạp tay + vết cháy + chuông báo động + MISS WAIT giữa màn"
+`mau-6d-nap-tay.html` + `game6d/` (rẽ từ game6c) + `core/launch-aerial-6d.js` + tiếng `tools/tao-am-thanh-6d.py`.
+- Đủ 3 câu liên tiếp ⇒ +1 quả NHỎ ở hàng dự phòng (giờ tối đa 3 quả nhỏ, xếp dọc); KHÔNG tự lên nòng, trên tàu chưa có gì.
+  CHẠM hàng quả nhỏ (vùng chạm riêng `kind "load"` → `cfg.onLoad`) ⇒ quả bay sang ô to + tay robot đưa quả lên thân tàu.
+  Chạm ô to khi chưa nạp mà còn quả nhỏ ⇒ cũng nạp (đỡ bấm hụt). Bắn xong KHÔNG tự nạp quả kế.
+- Chạm quả to ⇒ quả to nhún tới rồi LÙI (đuôi đi trước) ra khỏi MÉP NGOÀI màn trong `carry` 0,32 s, rồi tên lửa trên tàu mới rời bệ
+  (`launch` hẹn `liftoff`; `clearAll` tăng `gen` ⇒ lần phóng đang chờ bị huỷ).
+- Chuông BÁO ĐỘNG thay tiếng bíp `mwarn`: 3 kiểu `?alarm=a|b|c` (a klaxon tàu · b còi báo động đỏ · c chuông điện), mỗi kiểu 2 file
+  `malarm_*` (nhịp thường) + `malarmf_*` (1,5 s cuối). Bảng thử có nút ▶ nghe từng kiểu. ⬜ THẦY CHỌN 1 kiểu ⇒ AWord chỉ mang file kiểu đó.
+- Trúng ⇒ `scorch(r)`: mảng cháy = LÁT CẮT vỏ (LatheGeometry theo HULL_PTS, r × 1,018, φ = nóc ± 0,62–1,25 rad tránh khe cửa khoang)
+  dán texture muội đen canvas + emissiveMap than hồng; tối đa 6 mảng/tàu. Lửa + khói nhỏ phụt ở mọi mảng, tắt dần sau `burnSecs` 8 s không bị trúng
+  thêm; vết đen ở lại hết trận. Vật liệu dựng SẴN mỗi tàu (burnKit, trước warmBoom) ⇒ không giật khi trúng.
+- MISS WAIT: `game6d/rr3d-misswait.js` vẽ 3D trong lớp UI ngay DƯỚI thanh câu hỏi, chính giữa: viên thuốc kính tối + viền màu đội,
+  2 nửa thanh co dần vào huy hiệu tròn có số giây, ≤ 25 % ⇒ đỏ nhấp nháy, mũi tên ‹‹‹ chạy về cột đội còn trả lời. View chỉ vẽ:
+  `view.setMissWait({ side, frac, secs } | null)` mỗi khung. Bản thử tự giữ đồng hồ (`?mw=` giây, mặc định 8, chỉ Same words).
+  ⚠️ AWord: đồng hồ + thanh DOM là của trọng tài `core/fight.js` (KHÔNG sửa) ⇒ lúc ghép: CSS ẩn `.aw-fight-missbar` trong skin rr3d
+  (visibility, để transition vẫn chạy) + rocket-race.js đọc `.is-on` / bề rộng fill mỗi khung rồi gọi `view.setMissWait`.
+- Tự kiểm: nạp tay (reserve 3→2, has, rise 1) · bắn: quả to lùi khỏi màn, tên lửa trúng ⇒ 1 mảng cháy, lửa tắt đúng 8 s · tự chơi 25 s 0 lỗi Console.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy xem MẪU 6d + chọn kiểu chuông (a/b/c) ⇒ OK thì ghép vào AWord (Đợt mới).
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
