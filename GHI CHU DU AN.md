@@ -65,7 +65,16 @@ Bản dùng tiếp: **mẫu 4c** = `rocket-race/mau-4c-nha-xuong-nhay-toc-do.htm
 
 **Chưa làm / thầy chưa duyệt hẳn:** âm thanh · độ "thật" của công trình (khối 3D gọn) · nhấp nháy trên màn thật (máy soạn không thấy sau MSAA) · nhịp nhảy tốc độ.
 
+## Chặng 5 — 26/9/2026 · MẪU 4d "bản đồ như ảnh" (thầy gửi lại ảnh nhà xưởng SpaceX 39A: "bản đồ thiết kế lại để thực sự giống như trong hình ảnh này")
+Bản mới (4c giữ nguyên): `rocket-race/mau-4d-ban-do-nhu-anh.html` + `core/launch-aerial-d.js` + `assets/4d/*` (sinh bằng `tools/tao-dia-hinh-4d.py`, ~6 phút).
+- Bố cục CHUNG một chỗ: `assets/4d/layout.json` (nhà xưởng tâm/góc/kích thước, bãi xe, đường, dốc, gò bệ, đầm, đồng cỏ, rào, nắng) — Python vẽ mặt đất, JS dựng 3D từ cùng file ⇒ sửa bố cục thì sửa JSON rồi chạy lại tool.
+- Theo ảnh: máy quay trên cao phía TÂY NAM nhìn về bắc (`IDLE` pos −95,28,128 → −86,3,26; góc rộng `idleFov` 46°, thu về 38° khi bay tới bệ). Nhà xưởng 30×15×9 tường tôn trắng, mái 2 dốc rất thoải xanh xám (sóng từ diềm lên nóc), chữ ANDREW STUDIO nghiêng xanh đậm (Exo 2 italic 900) + logo tròn chỗ lá cờ, cửa lớn đầu hồi + tấm cửa nâng chéo, dãy nhà phụ thấp dọc chân. Bãi xe ~150 ô tô 3D (InstancedMesh thân + cabin kính). DỐC = nền đắp 3D cao dần (0,14 → mặt gò) 2 làn + dải cỏ. GÒ bệ cao `PY` 1,6 (mọi thứ của bệ trong nhóm `padG`; tàu/mây/lửa/đèn cộng PY). Rừng bụi Florida xanh thẫm, đầm xanh dài, mái vòm trắng, tháp nước, biển; trời xanh + 70 mây tích rải rác.
+- Tấm chi tiết 6144² phủ x[−150,40]×z[−50,140] (~32 điểm/đv) + hạt mịn theo toạ độ thế giới (`microGrain`, tắt dần theo `fwidth`). Khung bóng nắng ±100 quanh (−48,42) phủ cả nhà xưởng lẫn gò.
+- Chỉnh góc máy nhanh: `?cam=x,y,z&look=x,y,z&fov=46`.
+- Bẫy: lửa đánh lửa hắt lên mặt gò bê tông SÁNG ⇒ cháy trắng cả khung (đèn 700 → 260, mặt gò tối hơn). Python đọc heredoc bằng cp1252 ⇒ chạy `python -X utf8`; file JS là CRLF.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy xem mẫu 4d (bản đồ như ảnh) — so với ảnh, chỉnh tiếp bố cục/màu/góc máy.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
