@@ -83,8 +83,16 @@ Bản mới (4c giữ nguyên): `rocket-race/mau-4d-ban-do-nhu-anh.html` + `core
 6. NỐI GAME MỚI NHẤT: `tools/chep-game-aword.py` chép `rr3d-view.js` (import → importmap, xuất thêm `makeRocket`), `rr3d-sfx.js` + `sfx/`, font, và hàm `RR3D_CFG` của rocket-race.js vào `rocket-race/aword/` + `NGUON.json` (mã commit AWord, hiện ở bảng thử). Lần chép đầu: AWord `3964391` (Đợt 396+397). Game dựng với `introTitles: [], startAt: 0, startHidden: true` ⇒ pha "wait" ở góc đuổi, không mở màn/START thứ hai; hoà cảnh ⇒ `nextRound()` + `view.go()`; tiếng chỉ bật sau hoà cảnh. Luật chơi trong trang là BẢN THỬ gọn (L=5, đúng trước ăn câu, sai khựng, 3 đúng liền TURBO, về đích `view.win` → `resultView`). Tàu intro = `makeRocket` của bản AWord.
 ⚠️ AWord có Đợt Rocket Race mới ⇒ chạy lại `python -X utf8 tools/chep-game-aword.py`.
 
+## Chặng 7 — 26/9/2026 · MẪU 4f "bãi xe + bầu trời" (thầy: 4e "rất ổn rồi")
+`rocket-race/mau-4f-bai-xe-bau-troi.html` + `core/launch-aerial-f.js`.
+- BÃI XE: mặt nhựa là ẢNH RIÊNG 80 điểm/đv (canvas) phủ lên đất theo khung trục nhà xưởng (`lotG`): hạt đá, mảng vá, vết nứt, vạch ô, vết dầu, 3 ô ♿ xanh, 4 ô ⚡ sạc xanh lá, mũi tên chiều đi, chữ ANDREW STUDIO ở lối cuối, vạch dừng + vạch đi bộ ở 2 lối vào; bó vỉa 3D (chừa 2 lối vào), đảo cỏ đầu mỗi dãy + cây sồi nhỏ (`extraTrees` → khối CÂY trồng trước) + cột đèn tay vươn.
+- XE: 5 mẫu (`MODELS`: lambo · porsche · ferrari · suv G-class · sedan S-class, tỉ lệ 14/18/13/25/30 %), đơn vị mét × `SC` 0,3. Thân = ExtrudeGeometry dáng hông (spline nóc + vòm bánh `absarc`) có vát mép, thu hẹp cabin theo độ cao (`taper`) + vuốt mũi/đuôi; bậu cửa/cản dưới đen bằng màu đỉnh; kính = dáng cabin phóng 4 % quanh tâm + rộng hơn thân ⇒ nổi ra ngoài; tấm nóc cùng màu; đèn pha/hậu phát sáng gắn đúng mép thân (`edgeX`); lốp + mâm 5 chấu (ảnh canvas, cùm phanh đỏ); bóng tiếp đất; sơn MeshPhysical clearcoat. InstancedMesh theo mẫu × bộ phận. 70 % xe lùi vào ô (mũi ra lối đi).
+- TRỜI: dải màu 3 nấc (chân trời → giữa → đỉnh) + đĩa/quầng nắng. MÂY = 2 lớp shader trên mặt phẳng cao đi theo máy quay (tích ở 430, ti kéo dài ở 1150): fbm uốn miền, sáng tối theo hướng nắng, mép mỏng sáng/lõi xám, xa mờ vào chân trời, trôi theo gió; mờ dần khi bay vào vũ trụ (`clouds2`). Bỏ mây ảnh dán.
+- CHIM: 6 đàn (41 con; có hải âu trắng ven biển), thân + 2 cánh gãy khúc, đập cánh/lượn trong shader (`aPhase`), bay vòng + nghiêng vào vòng (`birds.update`).
+- Đo: vẫn vào game 6,6 s sau LIFTOFF; 0 lỗi.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem mẫu 4e trên TOMKO: cây, nhịp 6,6 s, chữ trên nền bệ, còn nhấp nháy không.
+- ⬜ Thầy xem mẫu 4f trên TOMKO: xe, bãi xe, mây, chim.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
