@@ -160,8 +160,23 @@ Thầy: game 3D chạy trên myActivity — tìm phương án đồng bộ 2 bê
 - ⬜ Thầy thử trên TOMKO (cảm ứng 2 đội, âm lượng 5 tiếng mới, sắc cam) ⇒ OK thì ghép AWord: rr3d-missile.js + sửa rr3d-view.js (các chỗ "mẫu 6") +
   luật trong rocket-race.js (thanh Options mới qua buildExtraOptions, khoá khi Sudden death) + sfx.
 
+## Chặng 16 — 26/9/2026 · MẪU 6b "tay robot + góc rộng" (thầy test mẫu 6 rồi chỉnh 5 ý)
+`mau-6b-tay-robot.html` + `game6b/` (rẽ từ game6) + `core/launch-aerial-6b.js`. Tiếng giữ như mẫu 6.
+- Bệ gắn "quá xấu" ⇒ CỬA KHOANG = lát cắt LatheGeometry theo ĐÚNG biên dạng vỏ (`HULL_PTS` phải khớp makeRocket), bản lề mép ngoài xoay quanh trục
+  dọc thân ⇒ đóng lại thân tàu gần như cũ. 2 CÁNH TAY ROBOT 2 đốt (IK, khuỷu gập về mũi) đưa quả lên gắn SÁT + SONG SONG thân (hở 0,13 thấy 2 kẹp);
+  gắn xong cửa ĐÓNG lại dưới bụng quả; bắn xong cửa mở, tay thu vào, cửa đóng. Quả chỉ hiện khi cửa đã mở (cánh đuôi quả thò ra ngoài vỏ).
+- Bắn ⇒ `G.wideCam` ⇒ `cfg.camera({ wide })`: góc RỘNG riêng cho tên lửa (vừa khít 2 tàu + đỉnh vòng, nhìn chéo từ trên cao phía sau-bên,
+  chuyển 1,1 s). ⛔ Dùng toàn cảnh cũ (`high`) thì tàu nhỏ xíu, nằm sau bàn đáp án bên trái — đã thử, bỏ. Về góc đuôi: câu trả lời KẾ TIẾP sau khi
+  tên lửa đánh xong (trúng/hụt) mới tắt wide, rồi luật camera cũ (chênh ≥ 3 nấc / 3 nấc cuối) tự xét.
+- Đường bay: VÒNG LÊN (cao 9 + khoảng cách × 0,18) rồi LAO THẲNG XUỐNG (điểm điều khiển cuối ngay trên tàu địch), thời gian 3,8 s. Bỏ dấu ngắm đỏ.
+- MỘT ô tên lửa không chữ (quả to phía trong + tối đa 2 quả nhỏ phía ngoài, chạm ô = bắn) · BOOST = thanh năng lượng CYAN dài theo số câu liên tiếp
+  (đầy = có BOOST, đập nhịp; né được thì đập nhanh). ⚠️ ACES làm nhạt màu sáng ⇒ cyan phải để cường độ thấp (0; 0,55; 0,78) mới ra cyan đậm.
+- Bàn thử: `window.__camOverride = a => ({pos, look, mode})` soi cận cảnh khoang/tay robot.
+- Tự kiểm: tay robot đưa ra/thu vào + cửa liền (ảnh chụp cận), đường bay vòng lên lao xuống ở góc rộng, trúng lùi đúng nấc, BOOST sớm giữ nút / trong 1,5 s né
+  + mất nút, góc rộng tắt đúng câu trả lời kế tiếp, 0 lỗi Console.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 6 (tên lửa + đội cam) trên TOMKO ⇒ chọn sắc cam + OK thì ghép AWord.
+- ⬜ Thầy thử MẪU 6b trên TOMKO ⇒ chọn sắc cam + OK thì ghép AWord.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.

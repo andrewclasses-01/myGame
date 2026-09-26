@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Rocket Race 3D — Mẫu 6b · Tên lửa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;0,900;1,900&family=Baloo+2:wght@600;700;800&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/page.css">
+<style>
+  /* khung game như AWord trên TOMKO: rộng hết màn, cao = min(1/2 bề rộng, màn − dải nút) */
+  :root { --bar: 80px; }
+  #frame { position: fixed; left: 0; top: 0; width: 100vw; height: min(50vw, calc(100vh - var(--bar))); overflow: hidden; background: #000; }
+  #stage, #launch { position: absolute; inset: 0; }
+  #launch { z-index: 2; }
+  #launch.is-gone { display: none; }                 /* mẫu 5: cắt tức thì (không mờ chồng 2 bộ tàu) */
+  #flash { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, #fff 0%, #eaf3ff 55%, #cfe2ff 100%); opacity: 0; }
+  #flash.on { opacity: .92; }
+  #flash.off { opacity: 0; transition: opacity .75s cubic-bezier(.2,.7,.3,1); }
+  #below { position: fixed; left: 0; right: 0; top: min(50vw, calc(100vh - var(--bar))); bottom: 0; background: linear-gradient(#070b16, #04060d); }
+  #hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: "Exo 2", sans-serif; }
+  #hud .title { font-weight: 900; font-size: clamp(34px, 4.6vw, 130px); letter-spacing: .08em; color: #ffe7b8;
+                text-shadow: 0 0 28px rgba(255,170,70,.55), 0 4px 18px rgba(0,0,0,.55); opacity: 0; transform: translateY(12px); transition: opacity 1.2s, transform 1.2s; }
+  #hud .title.on { opacity: 1; transform: none; }
+  #start { pointer-events: auto; margin-top: 2.4%; padding: .5em 1.8em; font: 900 clamp(16px, 1.5vw, 44px) "Exo 2", sans-serif; letter-spacing: .12em; color: #ffe39a; cursor: pointer;
+           background: linear-gradient(180deg, rgba(120,76,0,.75), rgba(60,34,0,.85)); border: 2px solid #ffcf4a; border-radius: 16px;
+           box-shadow: 0 0 26px rgba(255,190,60,.55), inset 0 1px 0 rgba(255,255,255,.25); opacity: 0; transition: opacity .8s, transform .12s; }
+  #start.on { opacity: 1; }
+  #start:active { transform: scale(.95); }
+  #count { position: absolute; font: 900 clamp(60px, 9vw, 260px) "Exo 2", sans-serif; color: #fff; text-shadow: 0 0 40px rgba(255,190,90,.8), 0 6px 20px rgba(0,0,0,.5); opacity: 0; }
+  #count.pop { animation: pop .9s ease-out forwards; }
+  @keyframes pop { 0% { opacity: 0; transform: scale(1.6); } 15% { opacity: 1; transform: scale(1); } 70% { opacity: 1; } 100% { opacity: 0; transform: scale(.92); } }
+  #hud.is-launch .title, #hud.is-launch #start { opacity: 0 !important; pointer-events: none; }
+  #hud.is-gone { display: none; }
+  /* bảng kết (bản thử — ở AWord là bảng kết quả của core) */
+  #over { position: absolute; left: 50%; bottom: 8%; transform: translateX(-50%); z-index: 4; display: none; gap: 14px; align-items: center; font: 800 clamp(14px, 1.3vw, 36px) "Exo 2", sans-serif; }
+  #over.on { display: flex; }
+  #over span { color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.6); letter-spacing: .06em; }
+  #over button { font: inherit; padding: .4em 1.2em; border-radius: 14px; border: 2px solid #8fd3ff; color: #e8f6ff; background: rgba(10,30,60,.75); cursor: pointer; }
+  #panel .t2 { background: #b8560f; }
+  #panel .src { font: 600 11px ui-monospace, monospace; color: #9fb4e0; line-height: 1.4; margin-top: 4px; word-break: break-word; }
+</style>
+<script>/* ?bar=90 đổi chiều cao dải nút AWord (px) */ { const b = new URLSearchParams(location.search).get("bar"); if (b) document.documentElement.style.setProperty("--bar", (+b) + "px"); }</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="frame">
+  <div id="stage"></div>
+  <div id="launch"></div>
+  <div id="hud">
+    <div class="title">ROCKET RACE</div>
+    <button id="start" type="button">▶&nbsp; START</button>
+    <div id="count"></div>
+  </div>
+  <div id="flash"></div>
+  <div id="over"><span id="overText"></span><button id="again" type="button">↻ Chơi lại</button></div>
+</div>
+<div id="below"></div>
+<div id="loading">LOADING 3D…</div>
+<div id="panel">
+  <button class="toggle">☰ BẢNG THỬ · <span class="fps">– fps</span></button>
+  <div class="body">
+    <h4>MẪU</h4>
+    <div class="links" style="margin-bottom:10px">
+      <a href="mau-4c-nha-xuong-nhay-toc-do.html">4c</a>
+      <a href="mau-4d-ban-do-nhu-anh.html">4d · bản đồ như ảnh</a>
+      <a href="mau-4e-noi-game-moi.html">4e · nối game mới</a>
+      <a href="mau-4f-bai-xe-bau-troi.html">4f · bãi xe + bầu trời</a>
+      <a href="mau-4g-logo-can-doi.html">4g · huy hiệu mới</a>
+      <a href="mau-4h-logo-cu-can-doi.html">4h · logo cũ cân đối</a>
+      <a href="mau-4i-am-thanh.html">4i · âm thanh intro</a>
+      <a href="mau-5-game-hoan-chinh.html">5 · game hoàn chỉnh</a>
+      <a href="mau-5b-lien-mach.html">5b · liền mạch</a>
+      <a href="mau-5c-muot.html">5c · mượt (tự giữ 60 khung)</a>
+      <a href="mau-6-ten-lua.html">6 · tên lửa + đội cam</a>
+      <a class="cur" href="mau-6b-tay-robot.html">6b · tay robot + góc rộng</a>
+    </div>
+    <h4>THỬ</h4>
+    <div class="row">
+      <button data-act="start">START</button><button data-act="again">Xem lại từ đầu</button>
+      <button data-act="auto">Tự chơi</button><button data-act="fs">Toàn màn hình</button>
+      <button data-act="skip">Bỏ intro: TẮT</button><button data-act="mute">🔊 Tiếng intro: BẬT</button>
+    </div>
+    <h4>TÊN LỬA — TRÚNG THÌ LÙI (thanh mới ở Options)</h4>
+    <div class="row" id="pushRow" style="grid-template-columns:repeat(4,1fr)"></div>
+    <h4>NỘI DUNG (Options: Fight content)</h4>
+    <div class="row"><button data-mode="same">Same words</button><button data-mode="different">Different</button></div>
+    <h4>THỬ NHANH TÊN LỬA</h4>
+    <div class="row">
+      <button class="t1" data-act="give0">+1 quả đội 1</button><button class="t2" data-act="give1">+1 quả đội 2</button>
+      <button class="t1" data-act="boost0">+BOOST đội 1</button><button class="t2" data-act="boost1">+BOOST đội 2</button>
+    </div>
+    <h4>SẮC CAM ĐỘI 2</h4>
+    <div class="row" id="orangeRow" style="grid-template-columns:repeat(3,1fr)"></div>
+    <h4>SỐ NẤC TỚI ĐÍCH</h4>
+    <div class="row" id="stepsRow" style="grid-template-columns:repeat(4,1fr)"></div>
+    <h4>ĐỘ NÉT (tự giữ 60 khung)</h4>
+    <div class="src" id="res">…</div>
+    <h4>BẢN GAME ĐANG NỐI</h4>
+    <div class="src" id="src">…</div>
+  </div>
+</div>
+<script type="module">
+import * as V from "./game6b/rr3d-view.js";
+import { RR3D_CFG } from "./game6b/rr3d-cfg.js";
+import { createRr3dSound } from "./game6b/rr3d-sfx.js";
+import { createLaunch } from "./core/launch-aerial-6b.js";
+import { createIntroSound } from "./core/intro-sound-5b.js";
+
+// ⭐ MẪU 6b (26/9/2026, thầy test mẫu 6 rồi chỉnh): cánh tay robot đưa quả ra gắn sát + song song thân tàu (không bệ),
+//   bắn ⇒ góc nhìn RỘNG, chỉ về góc đuôi sau THÊM một câu trả lời kể từ lúc tên lửa đánh xong (và 2 tàu gần nhau như luật cũ);
+//   tên lửa vòng LÊN rồi LAO THẲNG XUỐNG; bỏ dấu ngắm đỏ; MỘT ô tên lửa không chữ; BOOST = thanh năng lượng cyan.
+// ⭐ MẪU 6 (26/9/2026, thầy "ok build") — TÊN LỬA TẤN CÔNG giữa 2 tàu + đội 2 đổi VÀNG → CAM. Hình/intro/tiếng khác như 5c.
+//   · đúng 3 câu LIÊN TIẾP = +1 tên lửa (cả 2 ô tối đa 3 quả; đủ 3 thì chuỗi không tích nữa) — năng lượng đỏ hút vào tàu, bùng, "MISSILE +1"
+//   · ô DỰ PHÒNG (nhỏ) + ô LÊN NÒNG (to) dưới cột đáp án; ô lên nòng trống ⇒ tự nạp: quả nhỏ bay sang, nóc tàu mở khoang đẩy quả đỏ to lên
+//   · CHẠM ô lên nòng = bắn: bay vòng rộng ra, song song cạnh tàu địch rồi lao hơi ngang vào thân tàu (~3,4 s)
+//   · trúng ⇒ lùi N nấc (thanh mới ở Options: 0 = tắt tên lửa, 1–10, ∞ = về vạch xuất phát)
+//   · 1,5 s cuối: đội bị bắn trả lời ĐÚNG hoặc bấm BOOST ⇒ tàu vọt lên né (KHÔNG cộng nấc), tên lửa bay hụt, lao thêm rồi nổ
+//   · BOOST: đúng 5 câu liên tiếp, giữ tối đa 1 nút, dùng xong phải đủ 5 câu liên tiếp nữa; có ở cả Same words lẫn Different
+//   · khoá ô bắn khi đã phân thắng thua (quả đang bay nổ giữa đường) — Sudden death (AWord) cũng khoá
+//   · chỉ câu SAI mới làm đứt chuỗi (bị đội kia giành câu trước không tính là sai). TURBO trang trí giữ như cũ.
+// Luật ở đây là BẢN THỬ gọn; trên AWord luật nằm trong rocket-race.js + core/fight.js. Tham số: ?push=0..10|inf&mode=same|different&steps=&skip=1&orange=rrggbb
+const HULL = { color: "#a9b1bd", roughness: 0.48, clearcoat: 0.35, env: 0.55 };
+const QUESTIONS = [
+  ["Which planet is closest to the Sun?", "Mercury", ["Venus", "Mars", "Earth"]],
+  ["What do we call a shooting star?", "Meteor", ["Comet", "Planet"]],
+  ["The Sun is a …", "Star", ["Moon", "Galaxy", "Comet"]],
+  ["Who was the first person on the Moon?", "Armstrong", ["Gagarin", "Newton"]],
+  ["Which planet has beautiful rings?", "Saturn", ["Jupiter", "Neptune", "Mars"]],
+  ["A vehicle that travels in space is a …", "Rocket", ["Truck", "Boat"]],
+  ["Our galaxy is called the …", "Milky Way", ["Big Dipper", "Orion", "Andromeda"]],
+  ["The red planet is …", "Mars", ["Venus", "Pluto", "Mercury"]],
+  ["An astronaut wears a …", "Spacesuit", ["Raincoat", "Swimsuit", "Pyjamas"]],
+  ["The Moon goes around the …", "Earth", ["Sun", "Mars"]],
+  ["Water freezes into …", "Ice", ["Steam", "Sand"]],
+  ["The biggest planet is …", "Jupiter", ["Earth", "Mars", "Venus"]]
+];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const $ = s => document.querySelector(s);
+const QS = new URLSearchParams(location.search);
+const PUSH = QS.get("push") === "inf" ? Infinity : QS.has("push") ? Math.max(0, Math.min(10, +QS.get("push") || 0)) : 2;
+const MODE = QS.get("mode") === "different" ? "different" : "same";
+const L = Math.max(3, Math.min(20, +QS.get("steps") || 8));
+const SKIP = QS.get("skip") === "1";
+const fpsEl = $("#panel .fps"), hud = $("#hud"), countEl = $("#count"), startBtn = $("#start"), launchEl = $("#launch");
+fetch("game6b/NGUON.json").then(r => r.json()).then(j => { $("#src").textContent = "game6 ← " + j.base; }).catch(() => {});
+
+// ----- game dựng sẵn bên dưới, đứng ở góc đuổi — chờ intro hoà cảnh -----
+const sound = createRr3dSound();
+console.log("MYACT:3D:ON");
+addEventListener("pagehide", () => console.log("MYACT:3D:OFF"));
+const introSound = createIntroSound();
+let live = false, ambientWanted = null;
+let view, launch = null, M;
+try {
+  const BASE = RR3D_CFG(V);
+  view = await V.createView({ ...BASE, camera: a => window.__camOverride ? window.__camOverride(a) : BASE.camera(a),   /* bàn thử: soi cận cảnh */
+    container: $("#stage"), title: "ROCKET RACE", teams: V.DEFAULT_TEAMS,
+    introTitles: [], startAt: 0, startHidden: true, introCamera: null,
+    missiles: { window: 1.5, dur: 3.8 },
+    onTap: (side, k) => tap(side, k),
+    onFire: side => fireMissile(side),
+    onBoost: side => useBoost(side),
+    onMissileEnd: (to, res) => missileEnd(to, res),
+    onFps: f => { if (live) fpsEl.textContent = f + " fps"; },
+    sfx: (n, v) => { if (live) sound.play(n, v); },
+    loop: (n, on, v, f) => { if (!live) { if (n === "ambient") ambientWanted = on ? [n, on, v, f] : null; return; } sound.loop(n, on, v, f); },
+    swell: (n, a, b, u, d) => sound.swell && sound.swell(n, a, b, u, d) });
+  M = view.missile;
+  view.step(1);
+  if (!SKIP) {
+    const num = k => (QS.get(k) || "").split(",").map(Number);
+    const idle = QS.get("cam") ? { pos: num("cam"), look: num("look") } : undefined, idleFov = QS.get("fov") ? +QS.get("fov") : undefined;
+    launch = await createLaunch({ container: launchEl, idle, idleFov, hull: HULL, rocketScale: 1.1, fov: 38, onFps: f => { if (!live) fpsEl.textContent = f + " fps"; }, onHandoff: handoff, onTick: s => introSound.update(s) });
+  }
+} catch (e) { $("#loading").textContent = "Lỗi dựng cảnh 3D: " + e.message; console.error(e); throw e; }
+$("#loading").remove();
+window.__view = view; window.__launch = launch; window.__introSound = introSound;
+setInterval(() => { const r = (live ? view.res : launch && !launch.G.handed ? launch.res : view.res) || {}; $("#res").textContent = (live ? "cảnh đua" : "cảnh phóng") + " · tỉ lệ điểm ảnh " + r.pr + " / tối đa " + r.max + (r.drops ? " · đã hạ " + r.drops + " lần" : ""); }, 1000);
+
+// ----- luật chơi thử gọn -----
+const G = { p: [0, 0], correct: [-1, -1], picked: [false, false], locked: [true, true], over: false, order: [shuffle(QUESTIONS.map((_, i) => i)), shuffle(QUESTIONS.map((_, i) => i))], qi: [0, 0], timer: [0, 0],
+  turbo: [0, 0],                                    // chuỗi cho TURBO trang trí (như cũ)
+  ms: [0, 0], bs: [0, 0],                           // chuỗi tới quả tên lửa kế tiếp (3) / tới nút BOOST (5)
+  reserve: [0, 0], loaded: [false, false], boost: [false, false], loadT: [0, 0] };
+window.__g = G;
+view.setTrack(L); view.setLivesMax(0);
+const ON = PUSH > 0;
+const total = s => G.reserve[s] + (G.loaded[s] ? 1 : 0);
+function sync(s) {
+  M.setArsenal(s, { on: ON, reserve: G.reserve[s], loaded: G.loaded[s], pips: G.ms[s], pipsMax: 3, full: total(s) >= 3,
+    boost: G.boost[s], boostPips: G.bs[s], boostMax: 5, locked: G.over });
+}
+[0, 1].forEach(sync);
+function pickQuestion(side) {
+  if (G.qi[side] >= G.order[side].length) { G.order[side] = shuffle(G.order[side]); G.qi[side] = 0; }
+  return QUESTIONS[G.order[side][G.qi[side]++]];
+}
+let qText = ["", ""];
+function serve(side) {                               // một bàn nhận câu mới
+  const [q, right, wrong] = pickQuestion(side);
+  const opts = shuffle([right, ...wrong]); G.correct[side] = opts.indexOf(right);
+  view.setAnswers(side, opts); G.picked[side] = false; G.locked[side] = false;
+  return q;
+}
+function nextRound() {
+  if (G.over) return;
+  if (MODE === "same") {
+    const [q, right, wrong] = pickQuestion(0);
+    view.setQuestion(q, q);
+    [0, 1].forEach(side => { const opts = shuffle([right, ...wrong]); G.correct[side] = opts.indexOf(right); view.setAnswers(side, opts); G.picked[side] = false; G.locked[side] = false; });
+  } else [0, 1].forEach(nextFor);
+}
+function nextFor(side) {                             // Different: mỗi bàn đi riêng
+  if (G.over) return;
+  qText[side] = serve(side);
+  view.setQuestion(qText[0], qText[1]);
+}
+function dim(side, keep, state) {
+  const n = view.state.answers[side].length;
+  view.tileStates(side, Array.from({ length: n }, (_, i) => i === keep ? state : "dim"));
+}
+function tap(side, k) {
+  if (G.over || G.locked[side] || G.picked[side] || view.phase !== "play") return;
+  // 6b: đã đánh xong ⇒ câu trả lời NÀY đưa máy quay về góc đuôi (nếu 2 tàu gần — luật camera cũ tự xét)
+  if (M.wide && G.wideReady && M.flights.every(f => f.passed || f.dodged)) { M.setWide(false); G.wideReady = false; }
+  G.picked[side] = true; view.pick(side, k);
+  const other = 1 - side;
+  if (k === G.correct[side]) {
+    dim(side, k, "correct");
+    if (MODE === "same") { G.locked = [true, true]; dim(other, -1, "dim"); }
+    else G.locked[side] = true;
+    // né: trả lời ĐÚNG trong 1,5 s cuối trước khi tên lửa tới
+    if (M.incoming(side) <= M.windowSecs) M.dodge(side);
+    G.p[side]++; view.move(side, G.p[side], "up");
+    if (++G.turbo[side] >= 3) { G.turbo[side] = 0; view.turbo(side); }
+    streakUp(side);
+    if (G.p[side] >= L) return finish(side);
+    if (MODE === "same") schedule(-1, nextRound, 1500); else schedule(side, () => nextFor(side), 1300);
+  } else {
+    dim(side, k, "wrong");
+    view.stall(side);
+    G.turbo[side] = 0; G.ms[side] = 0; G.bs[side] = 0; sync(side);          // chỉ câu SAI mới làm đứt chuỗi
+    if (MODE === "same") { G.locked[side] = true; if (G.picked[other]) { G.locked = [true, true]; schedule(-1, nextRound, 1300); } }
+    else { G.locked[side] = true; schedule(side, () => nextFor(side), 1300); }
+  }
+}
+const timers = [];
+function schedule(side, fn, ms) { timers.push(setTimeout(fn, ms)); }
+function streakUp(s) {
+  // tên lửa: chỉ tích khi đang có ít hơn 3 quả
+  if (ON && total(s) < 3) {
+    if (++G.ms[s] >= 3) {
+      G.ms[s] = 0; G.reserve[s]++;
+      setTimeout(() => { if (!G.over) M.chargeFx(s); }, 450);               // sau nhịp TURBO một chút ⇒ không chồng hiệu ứng
+      if (!G.loaded[s]) setTimeout(() => load(s), 1500);
+    }
+  } else G.ms[s] = 0;
+  // BOOST: chỉ tích khi KHÔNG đang giữ nút
+  if (!G.boost[s]) { if (++G.bs[s] >= 5) { G.bs[s] = 0; G.boost[s] = true; } } else G.bs[s] = 0;
+  sync(s);
+}
+function load(s) {
+  if (G.over || G.loaded[s] || G.reserve[s] <= 0) return;
+  G.reserve[s]--; G.loaded[s] = true; sync(s);
+  M.loadFx(s);
+}
+function fireMissile(s) {
+  if (G.over || !ON || !G.loaded[s]) { M.refuse(s, "fire"); return; }
+  G.loaded[s] = false; sync(s);
+  M.launch(s, 1 - s); G.wideReady = false;
+  if (G.reserve[s] > 0) setTimeout(() => load(s), 900);
+}
+function useBoost(s) {
+  if (G.over || !G.boost[s] || !(M.incoming(s) <= M.windowSecs)) { M.refuse(s, "boost"); return; }
+  if (M.dodge(s)) { G.boost[s] = false; sync(s); }
+}
+function missileEnd(to, res) {
+  G.wideReady = true;                                // 6b: từ giờ, câu trả lời kế tiếp mới trả máy quay về góc đuôi
+  if (res !== "hit" || G.over) return;
+  const n = Math.min(G.p[to], PUSH === Infinity ? G.p[to] : PUSH);
+  if (n > 0) { G.p[to] -= n; view.move(to, G.p[to], "back", n); }
+}
+function finish(side) {
+  G.over = true; timers.forEach(clearTimeout); stopAuto();
+  M.clearAll(); [0, 1].forEach(sync);
+  const ms = view.win(side, { loserDown: false }) || 6000;
+  setTimeout(() => { view.resultView(); $("#overText").textContent = V.DEFAULT_TEAMS[side].name + " WINS!"; $("#over").classList.add("on"); }, ms + 300);
+}
+$("#again").onclick = () => location.reload();
+window.__t = { tap, fireMissile, useBoost, load };   // bàn thử (Console)
+
+// ----- intro -----
+if (!SKIP) {
+  setTimeout(() => hud.querySelector(".title").classList.add("on"), 900);
+  setTimeout(() => startBtn.classList.add("on"), 2400);
+} else { hud.classList.add("is-gone"); launchEl.classList.add("is-gone"); setTimeout(handoff, 300); }
+function pop(txt) { countEl.textContent = txt; countEl.classList.remove("pop"); void countEl.offsetWidth; countEl.classList.add("pop"); }
+function go() {
+  if (!launch || !launch.start()) return;
+  introSound.fx("startboom", 0.9);
+  hud.classList.add("is-launch");
+  const Lf = launch.T.lift;
+  [["3", Lf - 2.7], ["2", Lf - 1.8], ["1", Lf - 0.9]].forEach(([s, at]) => setTimeout(() => pop(s), Math.max(0, at) * 1000));   // AWord Đợt 406: bỏ chữ LIFTOFF
+  setTimeout(() => hud.classList.add("is-gone"), (Lf + 1) * 1000);
+}
+function handoff() {
+  live = true;
+  introSound.end();
+  nextRound();
+  view.resume(); view.go();
+  if (ambientWanted) sound.loop(...ambientWanted);
+  const fl = $("#flash"); fl.className = "on"; void fl.offsetWidth; fl.className = "off";
+  launchEl.classList.add("is-gone");
+  if (launch) setTimeout(() => launch.destroy(), 300);
+}
+startBtn.onclick = go;
+
+// ----- bảng thử -----
+let autoT = 0;
+function stopAuto() { clearInterval(autoT); autoT = 0; document.querySelector('[data-act="auto"]').classList.remove("is-on"); }
+function reloadWith(k, v) { const q = new URLSearchParams(location.search); if (v == null) q.delete(k); else q.set(k, v); location.search = q.toString(); }
+$("#panel .toggle").onclick = () => $("#panel").classList.toggle("is-open");
+const skipBtn = document.querySelector('[data-act="skip"]'); skipBtn.textContent = "Bỏ intro: " + (SKIP ? "BẬT" : "TẮT"); if (SKIP) skipBtn.classList.add("is-on");
+[["0 · tắt", "0"], ["1", "1"], ["2", "2"], ["3", "3"], ["5", "5"], ["10", "10"], ["∞ · về đầu", "inf"]].forEach(([t, v]) => {
+  const b = document.createElement("button"); b.textContent = t; if ((v === "inf" ? Infinity : +v) === PUSH) b.classList.add("is-on");
+  b.onclick = () => reloadWith("push", v); $("#pushRow").append(b);
+});
+document.querySelectorAll("[data-mode]").forEach(b => { if (b.dataset.mode === MODE) b.classList.add("is-on"); b.onclick = () => reloadWith("mode", b.dataset.mode); });
+const CUR_OR = (QS.get("orange") || "ff8c1a").toLowerCase();
+[["ff8c1a", "cam sáng"], ["ff7a00", "cam đậm"], ["ff9f2e", "hổ phách"]].forEach(([c, t]) => {
+  const b = document.createElement("button"); b.textContent = t; b.style.background = "#" + c; b.style.color = "#1a0d00"; if (c === CUR_OR) b.style.outline = "3px solid #fff";
+  b.onclick = () => reloadWith("orange", c); $("#orangeRow").append(b);
+});
+[5, 8, 10, 12].forEach(n => { const b = document.createElement("button"); b.textContent = n + " nấc"; if (n === L) b.classList.add("is-on"); b.onclick = () => reloadWith("steps", n); $("#stepsRow").append(b); });
+document.querySelectorAll("#panel [data-act]").forEach(b => b.onclick = () => {
+  const a = b.dataset.act;
+  if (a === "start") { if (SKIP) return; go(); }
+  else if (a === "again") location.reload();
+  else if (a === "skip") reloadWith("skip", SKIP ? null : "1");
+  else if (a === "mute") { introSound.setMuted(!introSound.muted); b.textContent = "🔊 Tiếng intro: " + (introSound.muted ? "TẮT" : "BẬT"); }
+  else if (a === "fs") { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.(); }
+  else if (a === "give0" || a === "give1") { const s = +a.slice(-1); if (!ON || total(s) >= 3 || G.over) return; G.reserve[s]++; sync(s); M.chargeFx(s); if (!G.loaded[s]) setTimeout(() => load(s), 1100); }
+  else if (a === "boost0" || a === "boost1") { const s = +a.slice(-1); G.boost[s] = true; G.bs[s] = 0; sync(s); }
+  else if (a === "auto") {
+    if (autoT) return stopAuto();
+    b.classList.add("is-on");
+    autoT = setInterval(() => {
+      [0, 1].forEach(s => {
+        if (G.loaded[s] && Math.random() < 0.15) fireMissile(s);
+        if (G.boost[s] && M.incoming(s) <= 1.2 && Math.random() < 0.5) useBoost(s);
+      });
+      const side = Math.random() < 0.5 ? 0 : 1, n = (view.state.answers[side] || []).length; if (!n) return;
+      tap(side, Math.random() < 0.7 ? G.correct[side] : Math.floor(Math.random() * n));
+    }, 800);
+  }
+});
+</script>
+</body>
+</html>
