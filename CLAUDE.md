@@ -36,4 +36,4 @@ tools/tao-dia-hinh.py         sinh ảnh địa hình (numpy + pillow + scipy), 
 - Hạt vệt khói phát theo khung hình ⇒ thành từng cục khi tàu nhanh ⇒ rải đều theo QUÃNG ĐƯỜNG (nội suy vị trí loa phụt giữa 2 khung).
 
 ## Roadmap
-- Mẫu 4 (intro phóng từ mặt đất) — chờ thầy xem + góp ý; duyệt xong mới đưa vào AWord (vendor `Water.js`, dựng cảnh phóng trước cảnh vũ trụ trong `rr3d-view.js`, hoặc cùng renderer).
+- ⏸ Intro "phóng từ mặt đất" TẠM CHỐT ở **mẫu 4c** (26/9/2026). Ghép vào AWord theo kế hoạch 7 bước ở `GHI CHU DU AN.md` Chặng 4 (tàu dùng `makeRocket` của AWord, vendor three, nhịp 3-2-1 do template giữ, âm thanh, TOMKO).

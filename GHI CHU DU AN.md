@@ -51,6 +51,21 @@ Rocket Race Fight 3D: mẫu 1 (ngang điện ảnh), 2 (đuổi theo), 3 (quỹ 
 
 **Đã kiểm (localhost 1600×900):** flycam (nhà xưởng tiền cảnh, 2 bệ ở xa bên phải, biển hiệu cổng) · góc chờ phóng gần · mây khói lúc rời bệ · đuổi đuôi có sao lốm đốm · nhảy tốc độ · hoà cảnh ⇒ `phase = "play"` · mẫu 4b vẫn chạy với `assets/4b/`.
 
+## Chặng 4 — 26/9/2026 · TẠM CHỐT intro mẫu 4c (thầy: "tạm chốt đến đây… để tôi tiếp tục build phần intro này và ghép vào game thật trên AWord sau")
+Bản dùng tiếp: **mẫu 4c** = `rocket-race/mau-4c-nha-xuong-nhay-toc-do.html` + `rocket-race/core/launch-aerial-c.js` + `rocket-race/assets/*` (sinh bằng `tools/tao-dia-hinh.py`). Mẫu 4 / 4b giữ để so sánh (4b đọc `assets/4b/`). Live: https://andrewclasses-01.github.io/myGame/rocket-race/mau-4c-nha-xuong-nhay-toc-do.html
+
+**Kế hoạch ghép vào AWord (Rocket race ▸ Fight 3D) — làm khi thầy nói "ghép":**
+1. Chép `launch-aerial-c.js` → `AWord/web/templates/rocket-race/rr3d-launch.js`; đổi `import "three"` / `three/addons/*` sang `./vendor/three/…` (như `rr3d-view.js`); ảnh `assets/*` → `templates/rocket-race/launch/` (≈ 5 MB — cân nhắc thu tấm toàn cảnh xuống 2048² cho máy yếu; TOMKO 4K giữ 4096²).
+2. `makeRocket` của AWord ở `rr3d-view.js` KHÁC bản myGame (bản AWord mới hơn: xác tàu dựng sẵn, `material.fog`…) ⇒ xuất `makeRocket`/`TEAMS` từ `rr3d-view.js` và cho intro dùng đúng bản đó (tàu hai cảnh phải giống hệt).
+3. Thay mở màn hiện tại (ANDREW CLASSES → ROCKET RACE → START + đếm 3-2-1 trong `rr3d-view.js`, `introTitles`, `countStep/go` do `rocket-race.js` giữ nhịp) bằng: cảnh phóng phủ lên canvas 3D trong `.aw-rr3d-canvas` (hai renderer, lớp trên mờ dần khi hoà cảnh — đúng cách mẫu làm). ⚠️ Nhịp đếm 3-2-1 của AWord do TEMPLATE giữ (khớp đồng hồ trận/trọng tài): nút START của intro phải gọi `play()` của fightScene (bấm hộ Play bàn 0) vào đúng lúc hoà cảnh, hoặc cho `countStep` chạy trong lúc tàu trên bệ — cần quyết khi ghép (đọc `rr3dScene` + `core/fight.js` `fightScene`).
+4. Màn game vào thẳng góc đuổi khi hoà cảnh — tương đương `cfg.hold` + `beginPlay()` của lõi myGame (AWord: view đã có pha `intro/start/count/play`; thêm pha "chờ intro").
+5. Âm thanh intro (chưa có): tiếng đếm (ting có sẵn), đánh lửa + gầm rền, gió khi bay, "vút" nhảy tốc độ — làm qua `rr3d-sfx.js` / `tools/rr3d-tao-am-thanh.py`.
+6. Dọn: `destroy()` phải huỷ cả renderer intro (rời trang giữa intro — lưới `watchRoiTrang` của core/fight.js đã gọi teardown ⇒ `sceneHandle.destroy()`).
+7. Kiểm: TOMKO 86" 4K (60 fps với 4.200 hạt mây sắp thứ tự + bóng 4096 — nếu tụt thì bóng 2048, hạt 2.500), nhấp nháy, iPad bật (intro vẫn chỉ trên màn chính), Start again / Apply không chạy lại intro dài (chỉ lần đầu? — hỏi thầy).
+
+**Chưa làm / thầy chưa duyệt hẳn:** âm thanh · độ "thật" của công trình (khối 3D gọn) · nhấp nháy trên màn thật (máy soạn không thấy sau MSAA) · nhịp nhảy tốc độ.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem MẪU 4c trên máy thật (nhấp nháy còn không? nhịp nhảy tốc độ?). Trước: thầy xem MẪU 4b trên máy thật / TOMKO rồi góp ý (độ "như thật" của mặt đất/mây, bố cục khu phóng, biển hiệu ANDREW STUDIO, nhịp máy quay). Mẫu 4 giữ để so sánh. Cũ: thầy xem mẫu 4 rồi góp ý (hình khu phóng, mây hơi, nhịp máy quay, độ dài intro ~16 s, âm thanh — mẫu CHƯA có tiếng).
-- ⬜ Duyệt xong mới đưa vào AWord (Rocket race Fight 3D): vendor `Water.js`, thay mở màn ANDREW CLASSES/ROCKET RACE/START hiện tại.
+- ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
+- ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
+- ⬜ Âm thanh intro.
