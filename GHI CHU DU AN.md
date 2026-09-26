@@ -209,8 +209,12 @@ Thầy: "ok, dùng cam đậm, ghép vào AWord". AWord `templates/rocket-race/r
   (visibility, để transition vẫn chạy) + rocket-race.js đọc `.is-on` / bề rộng fill mỗi khung rồi gọi `view.setMissWait`.
 - Tự kiểm: nạp tay (reserve 3→2, has, rise 1) · bắn: quả to lùi khỏi màn, tên lửa trúng ⇒ 1 mảng cháy, lửa tắt đúng 8 s · tự chơi 25 s 0 lỗi Console.
 
+## Chặng 20 — 27/9/2026 · ✅ ĐÃ GHÉP MẪU 6d VÀO AWORD (Đợt 409, `567cf99`)
+Thầy: "ok, dùng chuông b, ghép vào AWord". AWord `rr3d-missile.js` + `rr3d-misswait.js` = chép NGUYÊN game6d (chỉ đổi `alarm: "b"`), chỉ mang
+`malarm_b` + `malarmf_b`. MISS WAIT trên AWord: đọc thanh DOM của trọng tài (core/fight.js không đổi) — AWord GHI CHU ROCKET-RACE mục 35.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem MẪU 6d + chọn kiểu chuông (a/b/c) ⇒ OK thì ghép vào AWord (Đợt mới).
+- ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
