@@ -119,8 +119,16 @@ Thầy: "trả về góc nhìn camera của bản trước và logo của bản 
 - Game5: đội 2 `#ffc21a` VÀNG (tàu + ô) · ô sai không dấu ✗ (chỉ đỏ + rung) · `dodge.rocks:false` (không thêm đá vào cảnh, vẫn tính né ⇒ lượn chao) · `portalVanish`: tâm tàu thắng vượt mặt cổng ⇒ ẩn tàu + lửa, `portalFlash()` (quả cầu sáng nở, vòng sóng, đèn chớp 900, 120 tia, rung nhẹ, tiếng portal + boomlow). Đo: ván tự chơi tàu thắng biến mất ở p 5,82 (L=5), cảnh kết chạy tiếp; 0 lỗi.
 - ⬜ Khi thầy OK: mang các sửa của game5 sang AWord (rr3d-view.js, rocket-race.js RR3D_CFG, sfx/stall.mp3) + ghép intro vào Fight 3D (kế hoạch 7 bước Chặng 4).
 
+## Chặng 12 — 26/9/2026 · MẪU 5b "liền mạch"
+`mau-5b-lien-mach.html` + `core/launch-aerial-5b.js` + `core/intro-sound-5b.js` + `assets/sound-5b/` (tool `tools/tao-am-thanh-5b.py`) + game rẽ nhánh `game5b/` (chép từ game5 rồi sửa).
+- ⛔ Lỗi thầy bắt "tàu chuyển sang xoay NGANG rồi mới xoay thẳng": `rig.quaternion.slerp(hướng, dt*6)` mà mô hình dựng NẰM NGANG (+x) + game đóng băng chờ intro (`step(1)`) ⇒ lúc nối tàu còn ngang, mất ~0,5 s xoay. Sửa: khung đầu ĐẶT THẲNG (`r.qInit`). Đo: hướng tàu game (0,03; 0; −1) từ lúc tải = intro (0; 0; −1).
+- START: `startboom` = nổ đanh + bùng trầm + đập khí dải trung + luồng gầm phụt (lách tách) + vút đi, 2,4 s, −11 dB.
+- Kết trận nhanh: `finale.hitsAfter 1300, hitGap 320, burnMs 550` ⇒ tàu thua nổ 3,2 s sau khi về đích (trước ~6,6 s).
+- Máy quay kết trận: `startOrbit()` ngay khi về đích; góc/bán kính bắt đầu TỪ vị trí máy quay hiện tại, hoà 3 s (smoothstep) về vòng quay ĐỀU 0,2 rad/s quanh tàu thua → đám mảnh vỡ; `resultView()` giữ nguyên nhịp đang quay. ĐO vận tốc (lọc rung) mỗi 0,5 s: 3,7 15 25 28 25 16 6,7 5,7 6,0 … 7,2 — tăng giảm mượt, đều trước lúc nổ (3,18 s) và sau đó. (Bản đầu hoà 1,6 s từ góc toàn cảnh xa 85 đv ⇒ vụt 70 đv/s — đã bỏ.)
+- ⛔ Bẫy: ghi chú `//` chèn giữa dòng nhiều lệnh NUỐT mất `const w` ⇒ tick lỗi, cảnh đứng hình (đã ghi trong CLAUDE.md: giữa dòng dùng `/* */`).
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem + nghe MẪU 5 trên TOMKO.
+- ⬜ Thầy xem + nghe MẪU 5b trên TOMKO. OK ⇒ mang game5b sang AWord + ghép intro vào Fight 3D.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
