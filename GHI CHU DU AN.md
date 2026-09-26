@@ -112,8 +112,15 @@ Thầy: "trả về góc nhìn camera của bản trước và logo của bản 
 - Trình duyệt chặn tiếng tới cú chạm đầu ⇒ màn chờ có tiếng từ cú chạm/phím đầu (TOMKO/Electron thường mở sẵn). Nút bảng thử 🔊 bật/tắt tiếng intro.
 - ⛔ Claude KHÔNG nghe được — chỉ kiểm bằng số đo (độ to, dải tần, chỗ nối, mốc phát).
 
+## Chặng 11 — 26/9/2026 · MẪU 5 "game hoàn chỉnh" (thầy chọn dựng ở myGame trước, OK rồi mới ghép AWord)
+`mau-5-game-hoan-chinh.html` + `core/launch-aerial-5.js` + `core/intro-sound-5.js` + `assets/sound-5/` (tool `tools/tao-am-thanh-5.py`, gọi lại bộ tổng hợp của `tao-am-thanh-intro.py`) + GAME RẼ NHÁNH `rocket-race/game5/` (chép từ `aword/` rồi sửa — KHÔNG bị `chep-game-aword.py` ghi đè).
+- TÀU LIỀN MẠCH: tàu intro = makeRocket/DEFAULT_TEAMS của game5; game dựng với `introCamera: null` (⛔ bẫy: góc mở màn của RR3D_CFG làm máy quay game đứng TRƯỚC mũi tàu ⇒ 2 đội ĐẢO trái/phải lúc nối); cuối intro fov về 38°, lửa thu về cỡ lửa game; CẮT TỨC THÌ ở đỉnh chớp sáng (`#launch` display:none + lớp `#flash` trắng tan 0,75 s). ĐO lúc cắt (toạ độ màn hình −1…1): tàu xanh intro (−0,198; −0,269) = game (−0,199; −0,270); tàu vàng lệch 0,02 (lắc nhẹ của game); cùng cỡ 0,094.
+- Tiếng: `startboom` (bùm nhỏ khi bấm START, có thân dải trung cho loa TV) · `tuc` ×3 ở T.lift −2,7/−1,8/−0,9 · `warp` làm lại THẬT: tiếng vang ĐẢO NGƯỢC hút vào + luồng khí dồn → nổ áp suất trầm + xé gió + dư chấn (bỏ sin quét/lấp lánh) · game `sfx/stall.mp3` = động cơ nổ khục "giắt giắt" (thay tiếng khựng có kim loại nghe như chuông).
+- Game5: đội 2 `#ffc21a` VÀNG (tàu + ô) · ô sai không dấu ✗ (chỉ đỏ + rung) · `dodge.rocks:false` (không thêm đá vào cảnh, vẫn tính né ⇒ lượn chao) · `portalVanish`: tâm tàu thắng vượt mặt cổng ⇒ ẩn tàu + lửa, `portalFlash()` (quả cầu sáng nở, vòng sóng, đèn chớp 900, 120 tia, rung nhẹ, tiếng portal + boomlow). Đo: ván tự chơi tàu thắng biến mất ở p 5,82 (L=5), cảnh kết chạy tiếp; 0 lỗi.
+- ⬜ Khi thầy OK: mang các sửa của game5 sang AWord (rr3d-view.js, rocket-race.js RR3D_CFG, sfx/stall.mp3) + ghép intro vào Fight 3D (kế hoạch 7 bước Chặng 4).
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy NGHE mẫu 4i trên TOMKO (độ to gầm, cân bằng gió/máy/chim).
+- ⬜ Thầy xem + nghe MẪU 5 trên TOMKO.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
