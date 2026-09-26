@@ -141,7 +141,27 @@ Thầy: game 3D chạy trên myActivity — tìm phương án đồng bộ 2 bê
 - myActivity v2.23.0: cờ `force_high_performance_gpu` + `ignore-gpu-blocklist`; sao bảng điểm lấp lánh đổi opacity lớp ảnh sao nhoè (trước đổi `filter: drop-shadow` ⇒ vẽ lại mỗi khung); marker `MYACT:3D:ON/OFF` ⇒ `body.is-3d-live` dừng quầng sao.
 - ⬜ Thầy chạy mẫu 5c trong myActivity v2.23.0 trên TOMKO (mở ☰ BẢNG THỬ xem "tỉ lệ điểm ảnh … / tối đa …", có "đã hạ" không). OK ⇒ chép sang AWord: `core/auto-res.js` → `templates/rocket-race/rr3d-autores.js`, sửa `rr3d-launch.js` + `rr3d-view.js` như 5c, `rocket-race.js` rr3dScene phát `MYACT:3D:ON` lúc dựng / `OFF` lúc `destroy()`.
 
+## Chặng 15 — 26/9/2026 · MẪU 6 "tên lửa tấn công" + đội 2 CAM (thầy "ok build")
+`mau-6-ten-lua.html` + game rẽ nhánh `game6/` (từ game5c) + `game6/rr3d-missile.js` (MỚI, mô-đun riêng ⇒ ghép AWord gọn) + `core/launch-aerial-6.js`
+(= 5c, tàu intro lấy từ game6 cho đội 2 cam) + 5 tiếng `game6/sfx/m*.mp3` (tool `tools/tao-am-thanh-6.py`).
+- Luật thầy chốt (AskUserQuestion 3 lượt): đúng 3 câu LIÊN TIẾP = +1 tên lửa, cả 2 ô tối đa 3 quả (đủ 3 thì chuỗi không tích) · ô DỰ PHÒNG nhỏ + ô LÊN NÒNG to
+  dưới cột đáp án, lên nòng ⇒ nóc tàu MỞ KHOANG đẩy quả đỏ to lên · CHẠM ô lên nòng = bắn · bay vòng rộng, song song rồi lao hơi ngang vào thân tàu ·
+  trúng ⇒ lùi N nấc (Options mới: 0 = tắt, 1–10, ∞ = về vạch xuất phát) · 1,5 s cuối: trả lời ĐÚNG hoặc bấm BOOST ⇒ tàu vọt lên né (KHÔNG cộng nấc),
+  tên lửa bay hụt, lao thêm ~1 s rồi nổ · BOOST: 5 câu liên tiếp, giữ tối đa 1, có ở cả Same lẫn Different · khoá khi Sudden death / đã phân thắng thua.
+- Claude tự chọn (đã báo thầy): TURBO trang trí giữ nguyên (hiệu ứng nạp chạy sau TURBO 0,45 s) · chỉ câu SAI mới làm đứt chuỗi (bị đội kia giành câu trước không tính).
+- View (thụ động, luật ở trang/rocket-race.js): `view.missile` = setArsenal · chargeFx · loadFx · launch(from,to) · dodge(side) · incoming(side) · clearAll · refuse;
+  gọi ngược `cfg.onFire(side)` / `cfg.onBoost(side)` / `cfg.onMissileEnd(to, "hit"|"miss", from)`. `explosion(pos, sc)` thêm hệ số cỡ.
+- Bẫy/đo: ⛔ quả nằm dọc nóc tàu nhìn từ góc đuổi (sau lưng) chỉ thấy cái đuôi tròn ⇒ bệ nâng lên rồi NGÓC MŨI 22° + to 1,2× ⇒ thấy rõ cả thân đỏ ·
+  ô chứa phải ĐẶC (kính trong suốt thì vệt bụi tốc độ vẽ đè lên) · ô chữ dài KHÔNG mọc xuống dưới nữa (chỗ đó là ô tên lửa) ⇒ co chữ khi quá dài ·
+  vòng bay rộng theo khoảng cách 2 tàu (xa ⇒ rộng hơn, trên màn vẫn thấy "vòng ra") · mọi hẹn giờ hiệu ứng chạy theo nhịp cảnh (pause/step đúng).
+- Tự kiểm (tab ẩn, `view.step`): trúng lùi đúng 2 nấc / ∞ về 0 · trả lời đúng sớm hơn 1,5 s không né, trong 1,5 s né được (không mất nấc) · BOOST bấm lúc
+  không có tên lửa hoặc quá sớm ⇒ lắc, KHÔNG mất nút; trong 1,5 s ⇒ né + mất nút · sai ⇒ chuỗi về 0 · về đích ⇒ khoá ô, quả đang bay nổ · 0 lỗi Console.
+- Bảng thử: mức lùi, Same/Different, +1 quả / +BOOST từng đội, 3 sắc cam (`?orange=ff8c1a|ff7a00|ff9f2e`), số nấc, Bỏ intro (`?skip=1`).
+- ⬜ Thầy thử trên TOMKO (cảm ứng 2 đội, âm lượng 5 tiếng mới, sắc cam) ⇒ OK thì ghép AWord: rr3d-missile.js + sửa rr3d-view.js (các chỗ "mẫu 6") +
+  luật trong rocket-race.js (thanh Options mới qua buildExtraOptions, khoá khi Sudden death) + sfx.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy thử MẪU 6 (tên lửa + đội cam) trên TOMKO ⇒ chọn sắc cam + OK thì ghép AWord.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⬜ Thầy thử MẪU 5c trong myActivity v2.23.0 trên TOMKO ⇒ OK thì ghép 5c sang AWord.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
