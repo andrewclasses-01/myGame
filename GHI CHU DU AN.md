@@ -127,8 +127,14 @@ Thầy: "trả về góc nhìn camera của bản trước và logo của bản 
 - Máy quay kết trận: `startOrbit()` ngay khi về đích; góc/bán kính bắt đầu TỪ vị trí máy quay hiện tại, hoà 3 s (smoothstep) về vòng quay ĐỀU 0,2 rad/s quanh tàu thua → đám mảnh vỡ; `resultView()` giữ nguyên nhịp đang quay. ĐO vận tốc (lọc rung) mỗi 0,5 s: 3,7 15 25 28 25 16 6,7 5,7 6,0 … 7,2 — tăng giảm mượt, đều trước lúc nổ (3,18 s) và sau đó. (Bản đầu hoà 1,6 s từ góc toàn cảnh xa 85 đv ⇒ vụt 70 đv/s — đã bỏ.)
 - ⛔ Bẫy: ghi chú `//` chèn giữa dòng nhiều lệnh NUỐT mất `const w` ⇒ tick lỗi, cảnh đứng hình (đã ghi trong CLAUDE.md: giữa dòng dùng `/* */`).
 
+## Chặng 13 — 26/9/2026 · ✅ ĐÃ GHÉP MẪU 5b VÀO AWORD (Đợt 398, `040b509`, LIVE 10/10 mã băm)
+Thầy: "ok, ghép bản 5b vào AWord thay cho bản cũ" + chọn cảnh phóng chạy lại MỖI ván. AWord: `templates/rocket-race/rr3d-launch.js`
+(= core/launch-aerial-5b.js, import về ./vendor/three), `rr3d-intro-sound.js` (= intro-sound-5b.js + 2 kênh EFFECTS/BACKGROUND theo nút 🔊),
+`launch/` (= assets/4d), `sfx-intro/` (= assets/sound-5b), `rr3d-view.js` (= game5b), `sfx/stall.mp3`; `rocket-race.js` `rr3dLaunch()`
++ `skipCount` (vào thẳng GO). ⚠️ Từ nay sửa intro: làm ở myGame trước → thầy OK → chép sang AWord (xem AWord GHI CHU ROCKET-RACE mục 32).
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem + nghe MẪU 5b trên TOMKO. OK ⇒ mang game5b sang AWord + ghép intro vào Fight 3D.
+- ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
