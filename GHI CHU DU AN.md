@@ -91,8 +91,13 @@ Bản mới (4c giữ nguyên): `rocket-race/mau-4d-ban-do-nhu-anh.html` + `core
 - CHIM: 6 đàn (41 con; có hải âu trắng ven biển), thân + 2 cánh gãy khúc, đập cánh/lượn trong shader (`aPhase`), bay vòng + nghiêng vào vòng (`birds.update`).
 - Đo: vẫn vào game 6,6 s sau LIFTOFF; 0 lỗi.
 
+## Chặng 8 — 26/9/2026 · MẪU 4g "logo cân đối"
+`mau-4g-logo-can-doi.html` + `core/launch-aerial-g.js`. Thầy: logo + chữ nhà xưởng "chưa đẹp và cân đối"; chữ nền bệ đưa ra phía trước (thầy chọn GIỮ chữ ANDREW STUDIO).
+- `drawEmblem` (huy hiệu tròn mực xanh, viền trắng, tên lửa trắng mũi đỏ chếch 45° + lửa, quỹ đạo quấn trước/sau) + `drawLockup` (huy hiệu + ANDREW STUDIO nghiêng + gạch chân đỏ, tự thu cỡ theo maxW) — dùng chung cho tường nhà xưởng (giữa bề ngang, 31 % chiều cao — trên dãy nhà phụ) và nền bệ.
+- Nền bệ: rãnh thoát lửa chuyển ra SAU (bắc); cụm chữ ở z = +7,4 (trước 2 tàu, hướng máy quay), alpha 0,42.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem mẫu 4f trên TOMKO: xe, bãi xe, mây, chim.
+- ⬜ Thầy xem mẫu 4g trên TOMKO.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
