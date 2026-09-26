@@ -20,6 +20,8 @@ rocket-race/
   core/launch-aerial.js       (26/9) mẫu 4b: góc nhìn từ trên cao, mặt đất = ảnh địa hình sinh sẵn
   core/launch-aerial-c.js     (26/9) mẫu 4c: nhà xưởng ANDREW STUDIO tiền cảnh, bệ ở xa, sao + nhảy tốc độ
   core/launch-aerial-d.js     (26/9) mẫu 4d: bản đồ dựng lại THEO ẢNH SpaceX 39A; bố cục ở assets/4d/layout.json
+  core/launch-aerial-e.js     (26/9) mẫu 4e: cây thẻ lá, máy quay luôn trôi, nhịp gọn, nối game mới nhất
+  aword/                      BẢN CHÉP game mới nhất từ AWord (tools/chep-game-aword.py) — đừng sửa tay
   assets/                     ảnh địa hình mới nhất (tools/tao-dia-hinh.py sinh ra); assets/4b/ = bộ cũ của mẫu 4b
 tools/tao-dia-hinh.py         sinh ảnh địa hình (numpy + pillow + scipy), ~5 phút
 tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.json (python -X utf8), ~6 phút

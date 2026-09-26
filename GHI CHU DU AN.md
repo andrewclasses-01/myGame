@@ -73,8 +73,18 @@ Bản mới (4c giữ nguyên): `rocket-race/mau-4d-ban-do-nhu-anh.html` + `core
 - Chỉnh góc máy nhanh: `?cam=x,y,z&look=x,y,z&fov=46`.
 - Bẫy: lửa đánh lửa hắt lên mặt gò bê tông SÁNG ⇒ cháy trắng cả khung (đèn 700 → 260, mặt gò tối hơn). Python đọc heredoc bằng cp1252 ⇒ chạy `python -X utf8`; file JS là CRLF.
 
+## Chặng 6 — 26/9/2026 · MẪU 4e "nối game mới nhất" (6 ý thầy)
+`rocket-race/mau-4e-noi-game-moi.html` + `core/launch-aerial-e.js` (bản đồ/ảnh vẫn `assets/4d/`).
+1. CÂY: tán = thẻ lá (ảnh chùm lá vẽ canvas, `alphaTest` + `alphaToCoverage` trên render target MSAA), pháp tuyến hướng ra từ tâm tán (vá `normal_fragment_begin` bỏ lật mặt sau), trong tán tối hơn; 3 loại InstancedMesh: sồi 8000 · cọ lùn lá quạt 6000 · thông 900; bóng đổ cắt theo lá.
+2. Đếm 3-2-1: máy quay trôi VÒNG quanh bệ (`ORB`, 0,06 rad/s) + tiến vào 12 % + nhấp nhô — không lúc nào đứng yên.
+3. Sau 3-2-1: tàu tăng tốc nhanh hơn (4,5 → 11) ⇒ vượt máy quay ~2,7 s; vòng ra sau đuôi 1,7 s; nhảy tốc độ ở +2,4 s; hoà cảnh +3,9 s ⇒ ĐO: vào game 6,6 s sau LIFTOFF (trước ~10–11 s). Chốt an toàn: +3,2 s chưa vượt cũng chuyển.
+4. ANDREW STUDIO mờ (alpha 0,24, chữ nghiêng + logo) sơn trên mặt gò, dải phía bắc sau 2 bệ.
+5. Nhấp nháy xanh = ĐÁNH NHAU ĐỘ SÂU ở xa (nền ngoài rìa màu xanh sát dưới đất 0,06; lớp nước sát trên 0,09; near 0,5): near 1,5, nền ngoài −3, nước 0,25. (Bàn thử máy soạn không thấy nhấp nháy — ⬜ thầy xác nhận trên TOMKO.)
+6. NỐI GAME MỚI NHẤT: `tools/chep-game-aword.py` chép `rr3d-view.js` (import → importmap, xuất thêm `makeRocket`), `rr3d-sfx.js` + `sfx/`, font, và hàm `RR3D_CFG` của rocket-race.js vào `rocket-race/aword/` + `NGUON.json` (mã commit AWord, hiện ở bảng thử). Lần chép đầu: AWord `3964391` (Đợt 396+397). Game dựng với `introTitles: [], startAt: 0, startHidden: true` ⇒ pha "wait" ở góc đuổi, không mở màn/START thứ hai; hoà cảnh ⇒ `nextRound()` + `view.go()`; tiếng chỉ bật sau hoà cảnh. Luật chơi trong trang là BẢN THỬ gọn (L=5, đúng trước ăn câu, sai khựng, 3 đúng liền TURBO, về đích `view.win` → `resultView`). Tàu intro = `makeRocket` của bản AWord.
+⚠️ AWord có Đợt Rocket Race mới ⇒ chạy lại `python -X utf8 tools/chep-game-aword.py`.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy xem mẫu 4d (bản đồ như ảnh) — so với ảnh, chỉnh tiếp bố cục/màu/góc máy.
+- ⬜ Thầy xem mẫu 4e trên TOMKO: cây, nhịp 6,6 s, chữ trên nền bệ, còn nhấp nháy không.
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
