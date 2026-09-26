@@ -348,7 +348,7 @@ function makeSun(pos, scale = 220) {
 // =============================================================
 function lathe(points, segs = 64) { return new THREE.LatheGeometry(points.map(([r, y]) => new THREE.Vector2(r, y)), segs); }
 
-function makeRocket(team, idx, H = {}) {
+export function makeRocket(team, idx, H = {}) {
   const rig = new THREE.Group();        // vị trí + hướng bay
   const ship = new THREE.Group();       // nhấp nhô, lắc, xoay
   rig.add(ship);
@@ -1470,7 +1470,11 @@ export async function createRace(cfg) {
     // camera
     const lead = Math.max(rockets[0].vis, rockets[1].vis) / L, trail = Math.min(rockets[0].vis, rockets[1].vis) / L;
     const cp = cfg.camera({ t: G.t, lead, trail, phase: G.phase, rockets, L });
-    if (G.phase === "intro") {
+    if (G.phase === "intro" && cfg.hold) {
+      // Mẫu 4 (phóng từ mặt đất): màn game ĐỨNG CHỜ ở đúng góc đuổi, không mở màn, không START —
+      // intro phóng tàu chạy xong thì trang gọi beginPlay() ⇒ vào thẳng trận (không đếm 3-2-1 lần nữa)
+      camBase.pos.copy(cp.pos); camBase.look.copy(cp.look);
+    } else if (G.phase === "intro") {
       introT += dt;
       const k = easeInOut(Math.min(1, introT / (cfg.introSecs ?? 3.2)));
       const ip = cfg.introCamera ? cfg.introCamera(k, cp) : cp;
@@ -1603,6 +1607,14 @@ export async function createRace(cfg) {
     turbo(side) { const r = rockets[side]; r.turbo = 4.5; turboCue(r); },
     explode(side) { if (G.phase !== "play") return; G.lives[side] = 1; loseLife(side); },
     restart() { if (G.phase === "intro") return; restart(); },
+    // Mẫu 4: intro phóng từ mặt đất xong ⇒ vào thẳng trận (đếm 3-2-1 đã làm trên bệ phóng)
+    beginPlay() {
+      if (G.phase !== "intro") return;
+      G.phase = "play"; G.playStart = performance.now(); G.playEnd = 0;
+      startBtn.g.visible = false; if (questionPanel) questionPanel.g.visible = true;
+      consoles.forEach(c => c.tiles.forEach(t => (t.g.visible = true)));
+      nextRound();
+    },
     auto(on) { G.auto = on; G.autoT = 0.5; },
     step(n = 1, dt = 1 / 60) { manual = true; for (let i = 0; i < n; i++) tick(dt); },
     resume() { manual = false; clock.getDelta(); },

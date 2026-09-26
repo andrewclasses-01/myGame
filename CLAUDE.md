@@ -1,0 +1,31 @@
+# myGame — kho thiết kế game thử (CLAUDE.md)
+
+## Mục đích
+Nơi dựng **bản mẫu** game (Three.js/web thuần) để Teacher Andrew thử trên máy soạn, TOMKO 86" 4K, iPad… TRƯỚC khi đưa vào app chính (AWord `E:\LAP TRINH APP\AWord\web`, myActivity…). Công khai qua GitHub Pages: https://andrewclasses-01.github.io/myGame/ (repo `andrewclasses-01/myGame`, nhánh `main`). ⛔ Không đặt dữ liệu học sinh.
+
+## Chạy / thử
+- Máy soạn: cấu hình `mygame` trong `D:\OTHERS\CLAUDE\.claude\launch.json` (python http.server 8865, thư mục repo) → `http://localhost:8865/rocket-race/…`.
+- Không build: Three.js r170 lấy từ jsDelivr qua `importmap` trong từng trang mẫu.
+- Bàn thử trong trang: `window.__race` (lõi game) / `window.__launch` (mẫu 4) có `step(n)` (tự lái khung hình khi khung xem trước bị ẩn) + `resume()`.
+
+## Kiến trúc
+```
+index.html                    mục lục (mảng GAMES cuối file — game mới thêm lên ĐẦU)
+rocket-race/
+  index.html                  chọn mẫu (thẻ mới lên đầu lưới)
+  mau-*.html                  mỗi bản mẫu một file — KHÔNG ghi đè bản cũ
+  core/rr3d-core.js           lõi game Fight 3D (bản CŨ hơn AWord `templates/rocket-race/rr3d-view.js`)
+  core/shell.js, page.css     vỏ trang + BẢNG THỬ
+  core/launch-site.js         (26/9) cảnh bệ phóng ven biển + intro phóng — mẫu 4
+```
+- `rr3d-core.js`: `export makeRocket` (mẫu 4 dùng chung mô hình tàu) · `cfg.hold` + `beginPlay()` = màn game đứng chờ ở góc đuổi, không mở màn, gọi `beginPlay()` là vào thẳng câu hỏi.
+- `launch-site.js`: trời hoàng hôn TỰ VẼ (shader; `Sky` của three.js cháy trắng quanh mặt trời thấp), biển `Water` (normal map tự sinh), đảo = PlaneGeometry dìm dưới nước ngoài đường bờ, khung thép = `InstancedMesh` hộp đơn vị (`Struts`), hạt riêng (xoay góc, `rise`), sương khí quyển theo độ cao + cầu "không gian" đục dần.
+
+## Khám phá kỹ thuật
+- `Sky` (three/addons) ở độ cao mặt trời ~3° + ACES ⇒ một mảng trắng cháy tròn lớn — tự viết shader gradient dễ điều khiển hơn.
+- Máy quay đuổi tàu đang tăng tốc (~95 đv/s): làm mượt kiểu `lerp(dt*4)` tụt lại hàng chục đơn vị ⇒ bám CỨNG khi đã vào pha đuổi.
+- Nhìn mặt biển từ trên cao lộ vân lặp của normal map ⇒ sương dày dần theo độ cao; tàu đặt `material.fog = false` để không chìm sương.
+- Hạt vệt khói phát theo khung hình ⇒ thành từng cục khi tàu nhanh ⇒ rải đều theo QUÃNG ĐƯỜNG (nội suy vị trí loa phụt giữa 2 khung).
+
+## Roadmap
+- Mẫu 4 (intro phóng từ mặt đất) — chờ thầy xem + góp ý; duyệt xong mới đưa vào AWord (vendor `Water.js`, dựng cảnh phóng trước cảnh vũ trụ trong `rr3d-view.js`, hoặc cùng renderer).
