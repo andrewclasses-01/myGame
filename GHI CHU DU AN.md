@@ -213,7 +213,25 @@ Thầy: "ok, dùng cam đậm, ghép vào AWord". AWord `templates/rocket-race/r
 Thầy: "ok, dùng chuông b, ghép vào AWord". AWord `rr3d-missile.js` + `rr3d-misswait.js` = chép NGUYÊN game6d (chỉ đổi `alarm: "b"`), chỉ mang
 `malarm_b` + `malarmf_b`. MISS WAIT trên AWord: đọc thanh DOM của trọng tài (core/fight.js không đổi) — AWord GHI CHU ROCKET-RACE mục 35.
 
+## Chặng 21 — 27/9/2026 · MẪU 7 "khớp AWord mới nhất" — điểm xuất phát để cải tiến tiếp
+Thầy: "đọc template Rocket Race trong AWord và repo này, xem đồng bộ bản mới nhất chưa, chuẩn bị 1 bản để tiếp tục cải tiến".
+- Soát: `game6d/` = AWord Đợt 409 `567cf99` (chỉ khác ghi chú + đường import). NHƯNG AWord đã đi tiếp **Đợt 413 `eab8c6a`** (11 ý thầy: tự lên nòng,
+  BOOST vuông giương sẵn, bố cục cột, đầu cột chỉ tim, màu ô pale/reveal, `fightMissReveal`, Apply về cảnh phóng) + **Đợt 416 `37db5bd`**
+  (ô tích "Play until finish"). AWord đã sửa thẳng `rr3d-missile.js` + `rr3d-misswait.js` ⇒ myGame tụt 2 đợt.
+- Tool mới `tools/chep-aword-sang-game.py <thư mục mới>`: chép NGUYÊN bộ game từ AWord **origin/main** (git show — không đọc thư mục làm việc
+  AWord vì có thể tụt sau origin): view (đổi import three sang importmap) + missile + misswait + autores + sfx.js + `rr3d-cfg.js`
+  (RR3D_CFG + `export const RR3D_HULL`) + font + 25 mp3 + NGUON.json. Không ghi đè thư mục đã có.
+- `game7/` = chép từ AWord `d793bfa` (Đợt 416) — khớp tuyệt đối; `core/launch-aerial-7.js` (tàu intro từ game7);
+  `mau-7-khop-aword.html` = trang 6d + luật thử bám AWord: tự lên nòng (+1 s sau MISSILE +1, +1,1 s sau khi bắn), BOOST giương sẵn
+  (`G.armed`, `missile.armBoost`), `missiles {boostCm 5.2, gapCm 2}`, màu ô correct/pale · wrong/dim · reveal, hết MISS WAIT lộ ô đúng giữ 2,1 s.
+  Bỏ bảng chọn chuông + sắc cam (đã chốt b + `#ff7a00`). Bản thử vốn bốc lại câu cũ vô hạn = "Play until finish" bật.
+- Tự kiểm (khung ẩn ⇒ lái bằng `__view.step`): màu ô 3 ca đúng · Miss wait 8,03 s lộ ô ⇒ 10,14 s câu mới · 3 đúng liên tiếp ⇒ tự nạp ·
+  BOOST bấm khi còn 3,6 s ⇒ giương rồi né · tự chơi tới đích · có intro 0 lỗi Console.
+- ⚠️ Từ nay cải tiến Rocket Race làm trên `game7/` (rẽ `game7b/`… khi cần bản mới); ghép sang AWord: chép file game7 sang `templates/rocket-race/`
+  (đổi import three về `./vendor/three/...`) + mang luật thử trong trang sang `rocket-race.js`.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy thử MẪU 7 rồi nói ý cải tiến tiếp (làm trên game7 → bản mới).
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
