@@ -30,7 +30,8 @@ rocket-race/
   game5b/ + core/launch-aerial-5b.js + core/intro-sound-5b.js + assets/sound-5b   MẪU 5b (= bản đang chạy trên AWord Đợt 398)
   game5c/ + core/launch-aerial-5c.js + core/auto-res.js   MẪU 5c: tự giữ 60 khung, bóng theo nhu cầu, dịch sẵn shader
   game6/ (+ rr3d-missile.js) + core/launch-aerial-6.js     MẪU 6: TÊN LỬA tấn công giữa 2 tàu + đội 2 CAM; tiếng tools/tao-am-thanh-6.py
-  game7c/ + core/launch-aerial-7c.js                       MẪU 7c (mới nhất, 27/9): 2 tên lửa hút nhau va nổ giữa đường (nổ sát tàu vẫn tính trúng), cột vạch mỏng trắng, renderOrder nút BOOST, vầng sáng mũi tàu khi còn 1 câu
+  game7d/ + core/launch-aerial-7d.js                       MẪU 7d (mới nhất, 28/9): trúng lan tàu cùng nấc / cách 1 nấc (hitShip), sắp thắng ⇒ lửa đuôi dài 1,5 lần + xanh dương (view r.nearWin)
+  game7c/ + core/launch-aerial-7c.js                       MẪU 7c (27/9): 2 tên lửa hút nhau va nổ giữa đường (nổ sát tàu vẫn tính trúng), cột vạch mỏng trắng, renderOrder nút BOOST, vầng sáng mũi tàu khi còn 1 câu
   game7b/ + core/launch-aerial-7b.js                       MẪU 7b (27/9): 1 nút BOOST giữa cột (thanh 5 đoạn trong nút, +1 nấc thật, tự canh né 1,25 s), cột vạch năng lượng tên lửa, setFxLevel cho act voice
   game7/ + core/launch-aerial-7.js                         MẪU 7 (27/9): CHÉP NGUYÊN AWord origin/main d793bfa (Đợt 413+416) bằng tools/chep-aword-sang-game.py — gốc để cải tiến tiếp
   game6d/ + core/launch-aerial-6d.js                       MẪU 6d (= AWord Đợt 409): nạp tay, quả to lùi khỏi màn, chuông báo động (tools/tao-am-thanh-6d.py), vết cháy, MISS WAIT 3D (rr3d-misswait.js)

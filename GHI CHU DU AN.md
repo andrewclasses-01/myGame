@@ -267,8 +267,19 @@ Thầy: "đọc template Rocket Race trong AWord và repo này, xem đồng bộ
 - Tự kiểm: nút BOOST đầu trận 5 ô trống đều · cột vạch mỏng trắng · va chạm 2 ca như trên · vầng sáng bật đúng 9/10, tắt khi kết · tự chơi hết trận ·
   có intro 0 lỗi Console.
 
+## Chặng 24 — 28/9/2026 · MẪU 7d "trúng lan tàu kề + lửa xanh sắp thắng" (thầy test 7c rồi chỉnh 2 ý)
+`mau-7d-trung-lan.html` + `game7d/` (rẽ từ game7c) + `core/launch-aerial-7d.js`.
+- Bỏ vầng sáng mũi tàu 7c (thầy: quá chói). Còn 1 câu là thắng ⇒ `missile.setNearWin` đặt `r.nearWin`; VIEW (game7d/rr3d-view.js — lần đầu sửa view
+  trong nhánh 7) cho lửa đuôi DÀI 1,5 lần (`flameGroup` y × 1,5 + hạt `emitExhaust` bay nhanh × 1,5) + XANH DƯƠNG (uCol 0,25/0,8/4,2, đèn 0x4f8dff).
+- Trúng lan: `hitShip(to, from, pos)` — xét `inSplash` = |r.p hai tàu| ≤ 1 (nấc THẬT, view.move đặt r.p) TRƯỚC khi báo trúng; trong tầm ⇒ tàu kia cũng nổ nhỏ
+  + khựng + vết cháy + chữ "HIT TOO!" + `onEnd(other, "hit", from, "splash")` ⇒ trang lùi y hệt. Áp cho cả trúng thật lẫn "nổ sát tàu" khi 2 tên lửa va
+  (một vụ nổ chỉ tính một lần). Khung đỏ + BOOST nhấp nháy báo cả tàu KỀ (`threatFor`) để kịp chạy.
+- Đo: cùng nấc 4/4 ⇒ cả hai về 2/2, mỗi tàu +1 vết cháy · cách 1 nấc 3/4 ⇒ 1/2 · bên bắn trả lời SAI lùi 3 → 2 trước lúc nổ ⇒ thoát (chỉ tàu bị bắn lùi) ·
+  tàu bị bắn BOOST sớm 4 → 5 ⇒ vẫn trúng (bấm sớm) về 3, bên bắn ở 3 cách 2 nấc ⇒ thoát. ⚠️ Bên bắn BOOST 3 → 4 là tiến VÀO tầm nổ.
+- Bảng thử: "2 tàu CÙNG nấc + đội 1 bắn", "Cách 1 nấc + đội 1 bắn".
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 7c (TOMKO): va chạm tên lửa + ngưỡng "nổ sát tàu", cột vạch, vầng sáng sắp thắng; + các ý 7b (BOOST, canh né 1,25 s, mức act voice) ⇒ OK thì ghép AWord.
+- ⬜ Thầy thử MẪU 7d (TOMKO): trúng lan tàu kề, lửa xanh sắp thắng; + các ý 7b/7c (BOOST, canh né 1,25 s, act voice, va chạm tên lửa, cột vạch) ⇒ OK thì ghép AWord.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
