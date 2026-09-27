@@ -230,8 +230,27 @@ Thầy: "đọc template Rocket Race trong AWord và repo này, xem đồng bộ
 - ⚠️ Từ nay cải tiến Rocket Race làm trên `game7/` (rẽ `game7b/`… khi cần bản mới); ghép sang AWord: chép file game7 sang `templates/rocket-race/`
   (đổi import three về `./vendor/three/...`) + mang luật thử trong trang sang `rocket-race.js`.
 
+## Chặng 22 — 27/9/2026 · MẪU 7b "BOOST bấm tay + vạch năng lượng tên lửa + act voice" (thầy "ok build")
+`mau-7b-boost-tay.html` + `game7b/` (rẽ từ game7 = AWord Đợt 416) + `core/launch-aerial-7b.js`. Thầy chốt qua AskUserQuestion:
+- BOOST: MỘT nút to hơn (`boostCm` 5,2 → 6,5), CHÍNH GIỮA dưới cột đáp án, bỏ 5 vạch cạnh nút. Thanh 5 đoạn BÊN TRONG nút đầy dần TRÁI → PHẢI
+  (mỗi câu đúng liên tiếp 1 đoạn, SAI ⇒ về 0). Đủ 5 ⇒ bấm LÚC NÀO CŨNG ĐƯỢC: tàu tiến THẬT 1 nấc (`view.move up` + `missile.boostFx`), thanh về 0.
+  Giữ nguyên: BOOST đã đầy mà trả lời sai thì KHÔNG mất (chỉ thanh đang tích mới xịt).
+- Né: TỰ CANH — BOOST (hoặc trả lời đúng) trong **1,25 s cuối** (`missiles.window` 1,25) ⇒ né + GIỮ nấc vừa tiến. Bấm sớm ⇒ tiến 1 nấc
+  nhưng vẫn trúng (đo: bấm lúc còn 3,17 s ⇒ +1 rồi trúng −2 = −1; bấm lúc 0,97 s ⇒ né, +1). Bỏ "giương sẵn" Đợt 413 (`armBoost` không làm gì).
+- Cột VẠCH NĂNG LƯỢNG tên lửa (đỏ) ở dải ngoài cùng vùng tên lửa, sáng từ dưới lên; số vạch = `pipsMax` (dựng lại khi đổi, `buildMsPips`).
+  ⚠️ Đặt sát mép `s.w` thì bị màn cắt nửa (cột đáp án nghiêng `rotY` quanh mép ngoài) ⇒ đặt trong `areaW`, hàng quả nhỏ nhường `colW + colGap`.
+- Options (bản thử = nút bảng thử / tham số): `?streak=1..10` (mặc định 3) số câu liên tiếp = 1 tên lửa · `?max=0..3` (mặc định 3; 0 = không có
+  tên lửa nhưng BOOST vẫn có) · thanh Missile bỏ Off `?push=1..10|inf`.
+- Act VOICE `?voice=1`: `rr3d-sfx.js setFxLevel(k)` — bus Effect × k CỐ ĐỊNH cả trận (`?fxl=25|35|50`, mặc định 35 %) + `lockBg`. Bản thử đọc câu
+  hỏi bằng `speechSynthesis` để nghe độ rõ. ⬜ Thầy nghe TOMKO chốt mức.
+- Khi ghép AWord: `rrMissile` Options bỏ mức 0/Off; thêm 2 thanh (`rrMsStreak` 1–10, `rrMsMax` 0–3); mô-đun tên lửa phải dựng CẢ khi max = 0 (vì
+  BOOST nằm trong đó — hiện `missiles: st.ms ? … : false`); `st.voiceAct` ⇒ `sfx.setFxLevel(0,35)`; `msBoost` viết lại như `useBoost` trang 7b;
+  `MS_WINDOW` 1,25.
+- Tự kiểm: BOOST 3 đúng ⇒ 3/5, sai ⇒ 0, chưa đầy bấm bị từ chối, đầy bấm +1 · né sớm/đúng lúc như trên · streak 10 + max 1 · max 0 (BOOST vẫn +1)
+  · voice fxLevel 0,35 + nền khoá · tự chơi hết trận · có intro 0 lỗi Console.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 7 rồi nói ý cải tiến tiếp (làm trên game7 → bản mới).
+- ⬜ Thầy thử MẪU 7b (TOMKO): cỡ + chỗ nút BOOST, cột vạch tên lửa, canh né 1,25 s, mức tiếng act voice 25/35/50 % ⇒ OK thì ghép AWord.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
