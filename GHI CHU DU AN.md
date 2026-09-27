@@ -249,8 +249,26 @@ Thầy: "đọc template Rocket Race trong AWord và repo này, xem đồng bộ
 - Tự kiểm: BOOST 3 đúng ⇒ 3/5, sai ⇒ 0, chưa đầy bấm bị từ chối, đầy bấm +1 · né sớm/đúng lúc như trên · streak 10 + max 1 · max 0 (BOOST vẫn +1)
   · voice fxLevel 0,35 + nền khoá · tự chơi hết trận · có intro 0 lỗi Console.
 
+## Chặng 23 — 27/9/2026 · MẪU 7c "tên lửa va nhau + vầng sáng sắp thắng" (thầy test 7b rồi chỉnh 4 ý)
+`mau-7c-va-cham.html` + `game7c/` (rẽ từ game7b) + `core/launch-aerial-7c.js`.
+- 2 tên lửa NGƯỢC CHIỀU cùng đang bay (mỗi quả đã bay > 0,12 s, chưa né/qua) ⇒ HÚT nhau: `pairUp` ghép cặp, mỗi quả trượt dần về điểm giữa 2 quả
+  (`pull` 0 → 1 trong `CLASH_PULL` 1,1 s, smoothstep) ⇒ `clash()` khi cách < 0,9 đv / pull đủ / một quả hết hành trình: nổ to + burst.
+  Chỗ nổ cách tàu < `CLASH_NEAR` = 3,4 × rocketScale (≈ 3,7 đv) ⇒ tàu đó như bị trúng (`stall` + `scorch` + `onEnd "hit"`), không thì `onEnd "clash"`.
+  Đo (bàn thử `lastClash`): bắn gần cùng lúc ⇒ va sau ~1 s, cách tàu 6–7 ⇒ không ai lùi; quả sau phóng khi quả trước còn 2,6 / 1,7 s ⇒ cách 6,2 / 4,9
+  (không tính); còn 1,2 / 0,8 s ⇒ cách 3,3 / 2,4 ⇒ TÍNH TRÚNG (tàu nhận vết cháy).
+- Cột vạch năng lượng: mỏng hơn (`colW` pad × 0,55 → 0,24), xám/TRẮNG (không lẫn tên lửa đỏ), cách hàng quả nhỏ `colGap` pad × 0,55; quả dự phòng nhỏ hơn
+  (`miniS` spW × 0,95 → 0,72 ÷ 2,3).
+- ⛔ LỖI thầy bắt ("đầu trận BOOST đã có 3 vạch, bấm không tăng"): dữ liệu đúng (boostPips 0) nhưng các lớp nút cách nhau 0,002–0,007 đv + cột nghiêng
+  ⇒ trình vẽ xếp vật trong suốt THEO KHOẢNG CÁCH TỪNG VẬT ⇒ mặt nút (tối) đè lên ô ở phía trong, ô phía ngoài lộ ra sáng hơn = trông như "3 vạch".
+  Sửa: `renderOrder` cố định viền 20 → mặt 21 → ô trống 22 → ô sáng 23 → icon 24; ô trống tối hẳn. ⚠️ Bài học: lớp UI 3D chồng sát nhau PHẢI đặt renderOrder.
+- Còn ĐÚNG 1 câu nữa là về đích ⇒ vầng sáng vàng nhấp nháy trước mũi tàu (`missile.setNearWin`; mũi = hình hộp tàu chiếu lên hướng bay; phóng theo
+  khoảng cách camera ⇒ góc cao vẫn thấy). Trang bọc `view.move` ⇒ mọi lần đổi nấc đều xét; tắt khi phân thắng thua.
+- Bảng thử: "2 đội bắn CÙNG LÚC", "Bắn đuổi (sát tàu)", "Đội 1/2 còn 1 câu".
+- Tự kiểm: nút BOOST đầu trận 5 ô trống đều · cột vạch mỏng trắng · va chạm 2 ca như trên · vầng sáng bật đúng 9/10, tắt khi kết · tự chơi hết trận ·
+  có intro 0 lỗi Console.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 7b (TOMKO): cỡ + chỗ nút BOOST, cột vạch tên lửa, canh né 1,25 s, mức tiếng act voice 25/35/50 % ⇒ OK thì ghép AWord.
+- ⬜ Thầy thử MẪU 7c (TOMKO): va chạm tên lửa + ngưỡng "nổ sát tàu", cột vạch, vầng sáng sắp thắng; + các ý 7b (BOOST, canh né 1,25 s, mức act voice) ⇒ OK thì ghép AWord.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
