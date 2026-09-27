@@ -278,8 +278,13 @@ Thầy: "đọc template Rocket Race trong AWord và repo này, xem đồng bộ
   tàu bị bắn BOOST sớm 4 → 5 ⇒ vẫn trúng (bấm sớm) về 3, bên bắn ở 3 cách 2 nấc ⇒ thoát. ⚠️ Bên bắn BOOST 3 → 4 là tiến VÀO tầm nổ.
 - Bảng thử: "2 tàu CÙNG nấc + đội 1 bắn", "Cách 1 nấc + đội 1 bắn".
 
+## Chặng 25 — 28/9/2026 · ✅ ĐÃ GHÉP MẪU 7b + 7c + 7d VÀO AWORD (Đợt 417, `8482a48`, LIVE 4/4 mã băm)
+Thầy: "ok, ghép 7d vào AWord". AWord `rr3d-missile.js` + `rr3d-sfx.js` = chép NGUYÊN `game7d/`; view vá đúng các dòng nearWin (AWord tự xét trong `move()`);
+luật trong rocket-race.js (Options Missile streak / Missiles max, BOOST `board.boostStep`, act voice `setFxLevel`). AWord GHI CHU ROCKET-RACE mục 38.
+⚠️ Làm mẫu mới: `python -X utf8 tools/chep-aword-sang-game.py game8` (lấy lại nguyên bộ AWord) — đừng rẽ từ game7d cũ nếu AWord đã sửa thêm.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ Thầy thử MẪU 7d (TOMKO): trúng lan tàu kề, lửa xanh sắp thắng; + các ý 7b/7c (BOOST, canh né 1,25 s, act voice, va chạm tên lửa, cột vạch) ⇒ OK thì ghép AWord.
+- ⬜ Thầy bấm tay Đợt 417 trên AWord thật (TOMKO): BOOST +1 nấc, canh né 1,25 s, 2 thanh Options mới, va chạm, trúng lan, lửa xanh, act voice 35 %.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
 - ⬜ Thầy bấm tay + nghe Rocket race Fight 3D trên AWord thật (TOMKO).
