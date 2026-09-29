@@ -205,3 +205,12 @@ Thầy chốt (AskUserQuestion): Max cars giữ tên, thanh kéo 3–20 + nấc 
 - Thùng đúng thứ 2, 3… trên cùng toa: mỗi thùng +5 khi nằm yên; mất một thùng chỉ mở lại toa khi không còn thùng đúng nào khác.
 - Cỏ: thêm loại "fine", lá 1–3 px, toả hình quạt; vật liệu alphaToCoverage + làm sắc alpha theo mức mip (không nhoè thành tấm); cỏ cao sát ray thấp lại ×0,5; khe cát z −27…−33 không cỏ cao ⇒ đường cho cặp con vật đuổi nhau (mặt đất ở đó gần phẳng).
 - ⚠️ Thử 2 thùng thả cùng lúc sát nhau (cách < 2,15 đv = bề dài thùng) ⇒ chúng va nhau giữa trời: lỗi PHÉP THỬ, không phải lỗi game.
+
+## 16. Mẫu 1k (29/9/2026)
+Thầy (kèm ảnh cỏ lau): núi xa quá nhấp nhô ⇒ mềm lại để con vật leo hợp lý; cỏ trên núi giả ⇒ chi tiết, thật · cỏ tiền/hậu cảnh quá nhiều quá to ⇒ cỏ bông lau nhỏ, nhẹ, mềm, ít · con vật đuổi nhau xấu ⇒ làm lại giống thật, chạy RẤT XA.
+⇒ `mau-1k-bong-lau.html` (lõi `core/bp3d-1k.js` = 1j + cảnh mới; `west-world-1k.js` + `west-props-1k.js` + `animals-1k.js`; CSS 1j).
+- Đồi chữ (`ruggedHill` 1k): vòm + sóng đất tần số thấp (vai đồi, yên ngựa), bỏ nhiễu gờ sắc; mặt đất `farGrassKit().groundTex` (cát + sợi cỏ li ti lặp dày); `scatterFarGrass` rải 7.500 búi cỏ thẻ nhỏ + 260 bụi sa mạc theo nhiễu vạt (~nửa đồi trơ đất), 26 tảng sa thạch ở chỗ dốc.
+- Gò con vật (`makeMound` 1k): bỏ gờ bậc thang + nhiễu nhỏ, mũ 1,35; 3.000 búi cỏ + 90 bụi mỗi gò thay khối cầu xanh.
+- Cỏ khúc cảnh: bỏ tall/tuft ⇒ `reedTexture` (thân dày 6px thon dần, bông lông vũ 900 sợi rủ nghiêng); 2 bộ × 150 cây mọc thành khóm 3–7 cây; tiền cảnh bỏ 55%; sát ray ×0,55; fine 320 cây nhỏ; stub 1.700; bụi 46/30/22; bỏ khe cát khô (không còn cần).
+- Cặp đuổi (`createChase` 1k): `buildReal` — thân/cổ/đầu/đuôi/chân dựng bằng `loft` (ống trơn theo khoá [x,y,nửa ngang,nửa cao,hệ số bụng], đường nối vòng dưới bụng), màu lông đổ bóng ngược + vân lông; loài: ngựa (4 màu, bờm, chân đen), linh dương sừng nhánh (mông/bụng trắng, sừng), sư tử cái (đuôi chùm), sói (yên sẫm, đuôi xù). `gallop()`: pha chân chéo (ngựa/linh dương) hoặc xoay vòng (mèo/sói), đứng 36% chu kỳ, gập gối/khoeo lúc vung, thân nhún + chúi, lưng co duỗi (mèo/sói). Đường chạy z = -118, `groundHeight()` = bản JS của shader `groundH` (giả lập float32 bằng `Math.fround` — không giả lập thì lệch ~0,5–0,8). Bụi tung 0,07 s/lần.
+- Đo: không lỗi; ~113 fps khung nhỏ (1j 118).
