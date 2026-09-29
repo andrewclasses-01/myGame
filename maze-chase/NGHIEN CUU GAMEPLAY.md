@@ -370,3 +370,24 @@ lên từ dưới sàn, máy quay lùi về góc chơi, bắt đầu game ở đ
 - Làm nóng: lúc tải trang (máy quay còn ở góc game) `warmInGame + warmInGame2`, rồi 3 khung đầu mọi cảnh vật intro hiện dưới màn đen.
 - Kiểm (chạy thật): trung bình 6,2 ms/khung, KHÔNG khung khựng nào từ lúc bấm START tới câu hỏi đầu · bấm đúp bỏ qua ⇒ câu hỏi đầu,
   robot đứng sẵn · tự chơi 9/9 · 0 lỗi.
+
+## 21. MẪU 1q (29/9) — STAR LOOT: intro lỗ giun + cảnh báo ENEMY LOCATED + ba lô ANDREW TEAM
+Thầy: màn START chỉ cần tên STAR LOOT + nút START tinh tế · bỏ tia sáng toàn màn khi đổi không gian — tàu bay chầm chậm ⇒ cảnh báo đã tìm
+thấy đối tượng (ENEMY LOCATED · POSITION: tên act · TARGET: số từ vựng), hiện lâu để đọc ⇒ tàu lao lên, máy quay từ góc rộng chuyển ra ngay
+sau tàu, xem tàu phóng qua vài lỗ giun (mỗi lần chói loà, ra vùng không gian khác, vẫn đẹp lung linh) ⇒ tới nơi: góc rộng, đáy tàu mở, robot
+nhảy ra, đáy đóng, máy quay nhìn toàn cảnh robot bay xuống gầm maze ⇒ sát boong: robot trồi lên QUAY LƯNG (thấy ANDREW TEAM — đổi từ ANDREW
+CLASSES) rồi quay mặt lại, lùi rộng ra, vào game · góc quay chuyển mượt và CHẬM.
+- `mau-1q-star-loot-lo-giun.html` + `core/mc3d-1q.js/.css` + `mc3d-intro-1q.js` (MỚI); tiếng + tàu dùng lại `sound-1p`, `ship-1p`.
+- Tham số mới `createMazeChase({ act })` ⇒ dòng POSITION (trang mẫu: "LSA2-S3.T2.P1-2"; thiếu thì dùng title). TARGET = số câu (mỗi câu 1 từ đúng).
+- Màn START: ẩn kicker/sub/how bằng CSS (giữ phần tử vì lõi còn ghi chữ vào); chữ STAR LOOT to phát sáng "thở", nút START viền mảnh phát sáng.
+- Mốc (giây): cảnh báo 3,9 ⇒ tắt 9,6 · tàu lao 9,4 · máy quay ra sau lưng 10,2 ⇒ 13,6 · lỗ giun 14,6 / 17,9 / 21,2 · bụng mở 23,8 · nhảy 24,9 ·
+  bụng đóng 25,9 ⇒ 26,8 · xuống gầm 29,7 · trồi lên 30,8 · quay mặt 33,7 · lùi về góc chơi 35,2 · vào game 38,8.
+- Lỗ giun: ShaderMaterial đĩa xoáy (log-polar, 2 lớp sóng, viền sáng, lõi trắng) + quầng Sprite; mở ra (uOpen) 2,7 s trước mốc, đặt ĐÚNG chỗ tàu sẽ tới
+  (`shipZ(t)` giải tích); 0,7 s cuối sáng dần; mốc −0,1 s chớp trắng dài (`.cine-flash.long` 1,6 s); đổi trời + cảnh vật ở mốc +0,15 s (đang trắng).
+- Tốc độ: bụi sao nhỏ (Points 360 hạt quanh máy quay) — KHÔNG còn vệt sáng toàn màn (bỏ hẳn LineSegments 1p).
+- Tới nơi: máy quay sau lưng 0,9 s ⇒ lùi ra góc NGANG bên trạm (104,40,48 ⇒ 82,29,42) — đứng trước mặt thì tàu mẹ dài 94 đơn vị lướt sát máy quay.
+- Robot: `robot.rise(speed, camPos)` quay lưng về máy quay; `robot.turn(k)` quay dần (pl.heading); đồng đội quay ngược chiều.
+- ⚠ Khựng 70–80 ms lúc tới căn cứ (không có chương trình vẽ mới, không texture mới — trình duyệt chuẩn bị trạng thái vẽ lần đầu). Sửa: 3 khung
+  đầu lúc tải vẽ thử đúng cảnh tới nơi (trời enemy, tàu mẹ + hộ tống treo trên trạm, máy quay sau lưng) dưới màn đen ⇒ hết.
+- ⚠ Đo khung hình thật: đừng chạy lệnh khác cùng lúc (máy bận ⇒ khung 130 ms giả).
+- Kiểm: bước từng khung 0 ⇒ 38,8 s không khung nào >16 ms (máy) · chạy thật trung bình 6,1 ms/khung · bấm đúp bỏ qua ⇒ câu hỏi đầu, robot đứng sẵn.
