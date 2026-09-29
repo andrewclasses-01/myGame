@@ -44,6 +44,8 @@ balloon-pop/                  (29/9) Balloon Pop 3D — dựng lại Wordwall Ba
   core/bp3d.js                lõi CHUNG: cảnh sa mạc, tàu, khinh khí cầu, luật, HUD; mẫu chỉ khác `view` (VIEWS đầu file)
   core/bp3d-sound.js          tiếng tự tổng hợp Web Audio (KHÔNG chép mp3 Wordwall vào kho công khai)
   core/words-lsa2-s4-t4.js    55 cặp từ mẫu (act AWord dg9hyp)
+  mau-1b-dien-anh.html + core/bp3d-1b.js + core/west-world.js   (29/9) MẪU 1b điện ảnh — thầy CHỌN góc nhìn ngang; tàu TS=0.74, khinh khí cầu BS=0.84,
+                              cảnh viễn tây sinh bằng code (trời shader, núi bậc thềm, cột đá), hậu kỳ EffectComposer (MSAA 4 + bloom + GRADE_SHADER)
   Bàn thử: window.__bp — start() · step(n) · resume() · testDrop(từ, toa) · popWord(từ) · opt · S
 tools/chep-aword-sang-game.py chép nguyên bộ game Rocket Race 3D từ AWord origin/main ra thư mục game MỚI (python -X utf8 tools/chep-aword-sang-game.py game8)
 tools/tao-dia-hinh.py         sinh ảnh địa hình (numpy + pillow + scipy), ~5 phút

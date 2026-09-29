@@ -147,3 +147,8 @@ tốc độ tàu hai bên; hai em chạm cùng lúc có bị nuốt chạm khôn
   Points, Double score, Drop guide (vạch + vòng trắng chỉ chỗ thùng rơi — mặc định BẬT ở mẫu 2, TẮT ở mẫu 1).
 - Hết giờ: TIME'S UP / hết màn: GAME COMPLETE · Score · Show answers (từng toa: từ, định nghĩa, ✓/✗) · Start again.
 - ☰ Menu tạm dừng (đồng hồ + mọi thứ đứng) · loa · toàn màn hình.
+
+## 7. Mẫu 1b điện ảnh (29/9/2026) — thầy chọn góc NHÌN NGANG
+Thầy: "đồ hoạ quá xấu, cần chất lượng cao, chân thực, điện ảnh · tàu to quá, cần nhỏ lại · nền là dãy núi xa xa,
+sa mạc miền viễn tây, bầu trời đẹp lung linh". ⇒ `mau-1b-dien-anh.html` (lõi `core/bp3d-1b.js` + cảnh `core/west-world.js`);
+mẫu 1 và 2 giữ nguyên để so sánh. Luật chơi không đổi.
