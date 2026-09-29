@@ -40,3 +40,27 @@ bệ bị loại · địch chạm mất tim, văng về xuất phát, ân hạn
   (KHÔNG chép mp3 Wordwall vào kho công khai) · bàn thử `window.__mc` (step/resume/auto-play).
 - Luật chép từ bản 2D (để ghép AWord sau không lệch). Bộ câu mẫu = sample-maze-chase.js.
 - Chạy LOCAL (launch `mygame` cổng 8865) — push lên Pages công khai chỉ khi thầy cho.
+
+## 5. ✅ Đã dựng 3 mẫu (29/9, thầy "ok build") — CHỈ LOCAL
+- `mau-1-cheo-tren.html` (view `tilt`) · `mau-2-sau-lung.html` (view `chase`, có bản đồ nhỏ góc phải; lúc hiện câu +
+  3-2-1 máy quay ở toàn cảnh, vào chơi thì bay xuống sau lưng và xoay theo hướng đi) · `mau-3-tu-tren-xuong.html` (view `top`).
+- Lõi `core/mc3d.js` (luật + cảnh + HUD, mẫu chỉ khác `VIEWS`), `core/mc3d.css`, `core/mc3d-sound.js` (Web Audio tự tổng hợp),
+  `core/questions-sample.js` (8 câu mẫu AWord + câu "Break" của act Wordwall).
+- Cảnh: trạm vũ trụ nổi giữa trời tinh vân (shader), hành tinh sọc tím có quầng, mặt trăng có vành, cánh pin mặt trời 2 bên,
+  4 cột đèn đỏ nhấp nháy; sàn tấm kim loại có viền sáng; tường kim loại mép cam (như Wordwall), cột nối đầu xanh.
+  Tường MỌC LÊN từ chỗ người chơi mỗi câu, câu đúng thì SỤP xuống rồi dựng mê cung mới. Bệ đáp án = đế tròn + cột sáng + bảng chữ nổi.
+  Phi hành gia + robot địch (đỏ/xanh) dựng bằng khối. Hậu kỳ: MSAA 4 + gột NaN + bloom + chỉnh màu/vignette.
+- Nhịp 1 câu (như Wordwall): câu hỏi TO giữa màn → thu về dải trên → tường mọc + bệ bật lên + phi hành gia dịch chuyển xuống
+  + địch xuất hiện ở 4 góc → 3-2-1-GO (câu đầu; câu sau chỉ GO) → chơi. Người đứng yên tới lệnh đầu tiên.
+- Luật: chép bản 2D; 2 chỗ khác có chủ ý: (1) người 5 ô/giây (2D 6,25), địch giữ đúng tỉ lệ; (2) bệ không đặt trong vòng 2 ô
+  quanh góc địch xuất phát (đo: bệ đúng cạnh góc địch ⇒ bị "canh" mãi vì địch về góc sau mỗi lần bắt).
+- Điều khiển: mọi lệnh là hướng TRÊN MÀN; đổi sang hướng mê cung bằng cách chiếu 4 hướng quanh nhân vật lên màn (`screenToGrid`)
+  ⇒ đúng cho cả máy quay xoay. Quay đầu giữa hành lang đổi ngay; rẽ thì nhớ lệnh tới ngã rẽ gần nhất (kiểu Pac-Man).
+  Options trong màn START: Lives 1–10 · Difficulty 1–10 · D-pad Right/Left/Both/Off · Shuffle.
+- Bàn thử `window.__mc`: `start()` · `step(n)` (lái tay khi khung bị ẩn) · `resume()` · `press('u'|'d'|'l'|'r')` (hướng màn) ·
+  `autoplay = true` (tự đi tới bệ đúng, không né địch) · `state()` · `snap()` · `opt`.
+- Đã tự kiểm (bàn thử, launch `mygame-maze` cổng 8866, 0 lỗi console): cả 3 mẫu vào chơi · chạm phía trên nhân vật ⇒ đi lên,
+  vuốt trái ⇒ rẽ trái · tự chơi 9/9 câu ⇒ GAME COMPLETE + Show answers · Difficulty 10 + 2 tim ⇒ GAME OVER · Menu tạm dừng
+  đồng hồ đứng, Resume chạy tiếp · chạy thời gian thật.
+- ⬜ Thầy thử trên TOMKO (cảm ứng, cỡ chữ, tốc độ, âm thanh — Claude không nghe được) rồi chọn góc máy.
+- ⬜ Chưa làm: Fight 2 đội (chỉ D-pad) · Timer đếm ngược · Points off · giọng đọc câu hỏi · nhạc nền.

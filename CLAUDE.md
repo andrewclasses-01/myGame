@@ -33,7 +33,12 @@ rocket-race/
   game7d/ + core/launch-aerial-7d.js                       MẪU 7d (mới nhất, 28/9): trúng lan tàu cùng nấc / cách 1 nấc (hitShip), sắp thắng ⇒ lửa đuôi dài 1,5 lần + xanh dương (view r.nearWin)
   game7c/ + core/launch-aerial-7c.js                       MẪU 7c (27/9): 2 tên lửa hút nhau va nổ giữa đường (nổ sát tàu vẫn tính trúng), cột vạch mỏng trắng, renderOrder nút BOOST, vầng sáng mũi tàu khi còn 1 câu
   game7b/ + core/launch-aerial-7b.js                       MẪU 7b (27/9): 1 nút BOOST giữa cột (thanh 5 đoạn trong nút, +1 nấc thật, tự canh né 1,25 s), cột vạch năng lượng tên lửa, setFxLevel cho act voice
-  game7/ + core/launch-aerial-7.js                         MẪU 7 (27/9): CHÉP NGUYÊN AWord origin/main d793bfa (Đợt 413+416) bằng tools/chep-aword-sang-game.py — gốc để cải tiến tiếp
+  game7/ + core/launch-aerial-7.js                         MẪU 7 (27/9): CHÉP NGUYÊN AWord origin/main d793bfa (Đợt 413+416) bằng maze-chase/                   (29/9) Maze Chase 3D — dựng lại Wordwall Maze chase; hồ sơ: NGHIEN CUU GAMEPLAY.md
+  mau-1-cheo-tren.html · mau-2-sau-lung.html · mau-3-tu-tren-xuong.html   (view tilt / chase / top)
+  core/mc3d.js                lõi CHUNG (luật chép AWord maze-chase 2D + cảnh trạm vũ trụ + HUD); mẫu chỉ khác VIEWS
+  core/mc3d-sound.js          tiếng tự tổng hợp Web Audio · core/questions-sample.js bộ câu mẫu
+  Bàn thử: window.__mc — start() · step(n) · resume() · press(dir) · autoplay · state() · snap() · opt. Xem local: launch `mygame-maze` cổng 8866
+tools/chep-aword-sang-game.py — gốc để cải tiến tiếp
   game6d/ + core/launch-aerial-6d.js                       MẪU 6d (= AWord Đợt 409): nạp tay, quả to lùi khỏi màn, chuông báo động (tools/tao-am-thanh-6d.py), vết cháy, MISS WAIT 3D (rr3d-misswait.js)
   game6c/ + core/launch-aerial-6c.js                       MẪU 6c (= AWord Đợt 407): như 6b, bỏ khung ô tên lửa + BOOST, sai-bị-lùi đúng lúc cũng né
   game6b/ + core/launch-aerial-6b.js                       MẪU 6b: tay robot + cửa theo vỏ, góc rộng khi bắn, vòng lên lao xuống, ô không chữ, BOOST thanh cyan

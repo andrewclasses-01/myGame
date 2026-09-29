@@ -283,7 +283,12 @@ Thầy: "ok, ghép 7d vào AWord". AWord `rr3d-missile.js` + `rr3d-sfx.js` = ch�
 luật trong rocket-race.js (Options Missile streak / Missiles max, BOOST `board.boostStep`, act voice `setFxLevel`). AWord GHI CHU ROCKET-RACE mục 38.
 ⚠️ Làm mẫu mới: `python -X utf8 tools/chep-aword-sang-game.py game8` (lấy lại nguyên bộ AWord) — đừng rẽ từ game7d cũ nếu AWord đã sửa thêm.
 
+## Maze Chase 3D — 29/9/2026 · 3 MẪU GÓC MÁY (thầy "ok build")
+Game 3D thứ 3 của kho: dựng lại Wordwall Maze chase (act 116866716) trên trạm vũ trụ. Thầy chốt: làm cả 3 góc máy · trạm vũ trụ · 1 người trước ·
+điều khiển chạm/vuốt về phía nhân vật + D-pad sát mép (Fight chỉ D-pad). Chi tiết + đã kiểm: `maze-chase/NGHIEN CUU GAMEPLAY.md` mục 5.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy thử 3 mẫu Maze Chase 3D (local, `mygame-maze` cổng 8866) rồi chọn góc máy.
 - ⬜ Thầy bấm tay Đợt 417 trên AWord thật (TOMKO): BOOST +1 nấc, canh né 1,25 s, 2 thanh Options mới, va chạm, trúng lan, lửa xanh, act voice 35 %.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.
