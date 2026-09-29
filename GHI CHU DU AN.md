@@ -288,7 +288,7 @@ Game 3D thứ 3 của kho: dựng lại Wordwall Maze chase (act 116866716) trê
 điều khiển chạm/vuốt về phía nhân vật + D-pad sát mép (Fight chỉ D-pad). Chi tiết + đã kiểm: `maze-chase/NGHIEN CUU GAMEPLAY.md` mục 5.
 
 ## VIỆC ĐANG CHỜ
-- ✅ Maze Chase mẫu 1 ⇒ … ⇒ 1e ⇒ 1f ⇒ ⬜ thầy xem MẪU 1g (nút chỉ icon + nút hệ AWord, bỏ Full screen, đổi người chỉ số đếm, robot bớt chói, bom đúng tâm) `maze-chase/mau-1g-nut-icon.html`.
+- ✅ Maze Chase mẫu 1 ⇒ … ⇒ 1e ⇒ 1f ⇒ 1g ⇒ ⬜ thầy xem MẪU 1h (Tablet, ô %, bom 5 s phá tường, chào quân đội, đỏ khi bị đụng, ô sai nổ + hồi sinh tại chỗ, hào quang 3 s) `maze-chase/mau-1h-bom-pha-tuong.html`.
 - ⬜ Thầy bấm tay Đợt 417 trên AWord thật (TOMKO): BOOST +1 nấc, canh né 1,25 s, 2 thanh Options mới, va chạm, trúng lan, lửa xanh, act voice 35 %.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.
 - ⬜ Thầy bấm tay tên lửa trên AWord thật (TOMKO): chạm tên lửa/BOOST, 5 tiếng mới, 2 đội bắn cùng lúc, Same words + Sudden death.

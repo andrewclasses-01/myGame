@@ -173,3 +173,28 @@ text · bỏ nút full screen · thêm nút hệ AWord: mở thư mục, options
   `core/icons.js`. Bảng nổi: Options = chính bảng tuỳ chọn cũ (dời vào bảng, đóng thì trả về); Thư mục / Table = dữ liệu MẪU (khi ghép vào
   AWord sẽ nối thật); Mode = Single (đang chơi) + Fight (sắp có). Mở giữa ván ⇒ tạm dừng, đóng ⇒ chơi tiếp. Bỏ link Options ở màn đầu.
 - Kiểm: màn đổi người chỉ có số · 4 bảng mở/đóng đúng, Options trả về chỗ cũ · nút giữa đặt bom · tự chơi 9/9 · 0 lỗi.
+
+## 12. MẪU 1h (29/9) — Tablet · ô % · bom 5 s phá tường · chào quân đội · đỏ khi bị đụng · ô sai nổ tại chỗ
+Thầy: "không có nút table, đó là nút Tablet (nối iPad như Rocket Race, gán chức năng sau) — lần sau thấy yêu cầu lạ phải hỏi lại trước ·
+thêm ô % và ô đếm thời gian như Rocket Race · nổ cạnh tường phá vách xung quanh sát quả bom; trên bom có thanh thời gian 5 s, robot chạm
+trước thì nổ như cũ · đúng ô: quay mặt ra khán giả, giơ tay lên trán chào kiểu quân đội · ba lô khắc ANDREW CLASSES · bị đụng: không teo,
+giữ hình + đỏ · vào ô sai: nổ như ăn bom, robot nảy lên vỡ tung, 3-2-1, robot mới hiện đúng chỗ đó giữ hướng mặt, còn vệt đen, mất 1
+mạng, địch về xuất phát". Hỏi lại (AskUserQuestion) & thầy chốt: phá vách SÁT ô bom, giữ tường bao ngoài · bệ sai VỠ luôn · bị đụng ⇒ về
+chỗ xuất phát hết + robot mới có HÀO QUANG bảo vệ 3 s · Single: đồng hồ GIỮ góc trái nhưng thiết kế lại cùng kiểu với ô điểm; hàng nút
+KHÔNG cần đồng hồ (chỉ ô %).
+- `mau-1h-bom-pha-tuong.html` + `core/mc3d-1h.js/.css` + `core/mc3d-boom-1h.js` (sàn dùng `mc3d-floor-1f.js`).
+- Hàng nút: Menu · [✓ %] · Sound | Thư mục · Options · Tablet (icon máy tính bảng, bật/tắt viền vàng) · Mode. % = câu đã chơi / tổng.
+- Dải trên: đồng hồ (icon + số) và cụm bom | tim | điểm = cùng "viên" kính tối viền xanh như ô câu hỏi; cột `auto 1fr auto` ⇒ câu hỏi dài
+  co trong phần giữa, không đè 2 ô.
+- Bom: thanh giờ billboard trên đầu (4,4 × 0,62, xanh → vàng → đỏ, tích mỗi giây), hết 5 s tự nổ (`FUSE_S`). `breakWalls`: mở cờ vách giữa
+  ô bom và ô kề (chỉ khi ô kề có sàn ⇒ tường bao ngoài còn nguyên) → `layoutWalls` + vẽ lại → `boom.rubble` gạch vụn văng ra xa bom.
+  ⚠ thanh giờ: nền trong suốt + phần đầy đục ⇒ nền vẽ SAU phủ lên làm xỉn màu; phải cho cả hai cùng `transparent`.
+- Đúng ô: HOLD 0,9 → 1,7 s; đứng nghiêm, tay phải (arms[0] vì quay mặt ra máy quay) vai + KHUỶU mới (`SALUTE`) đưa lên mép mũ.
+- Ba lô: tấm khắc canvas "ANDREW / CLASSES" (rãnh tối + mép sáng) thay 3 gờ tối.
+- Bị đụng: `setRed` đổi màu mọi vật liệu của người sang đỏ (nhớ màu gốc), giữ tỉ lệ, khựng lắc; hết chờ ⇒ tia đưa đi, robot mới ở XUẤT PHÁT.
+- Ô sai / dính bom: nảy vọt lên 0,5 s rồi `boom.wreck(...,"astro")` = xác phi hành gia (mảnh mũ, kính vàng, thân, ba lô móp, 2 bình xanh,
+  tay, găng, ủng, bảng ngực có đèn, đai gãy, ốc, dây). Ô sai: bệ ẩn luôn + `boom.explode` (vệt cháy còn tới hết câu) + robot mới ở ĐÚNG ô đó,
+  giữ hướng. Dính bom: robot mới ở xuất phát. Hào quang 3 s (`SHIELD_S`) nhịp thở, 0,8 s cuối nháy.
+- Kiểm: phá 2 vách (104 → 102), ô bom mở cả 4 phía · bom tự nổ 5 s, người đứng sát mất mạng · đỏ giữ tỉ lệ 1,75 · robot mới ở xuất phát
+  có hào quang · ô sai ⇒ robot mới ở đúng ô (0,3) hướng trái, bệ biến mất · chào quân đội · % 11% sau câu 1, 100% cuối ván · tự chơi
+  9/9 ×2 · 0 lỗi · lần nổ đầu: 1 khung ~48 ms lúc hiện số đếm (DOM), không khựng lúc nổ.
