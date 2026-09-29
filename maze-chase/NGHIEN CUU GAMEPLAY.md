@@ -275,3 +275,25 @@ Thầy: "đổi mọi chỗ đếm 3s thành 5s; đổi phong cách số đếm 
   điểm dấu tích tròn xanh lá; dải tối mờ dần phía trên giữ chữ dễ đọc.
 - Kiểm (chạy thật): trung bình 7,3 ms/khung; tàu săn + nổ xác không khựng; khung ~150 ms lúc chuyển câu có sẵn từ 1j (màn câu hỏi to) ·
   tự chơi 9/9 · 0 lỗi.
+
+## 16. MẪU 1l (29/9) — hào quang 5 s · HUD mép dưới · màn kết thúc vũ trụ · đom đóm từ thân robot · rượt đuổi vòng vòng · xác rơi
+Thầy: "hào quang bảo vệ 5 s · đồng hồ, tim, bom, điểm về hàng dưới, hàng trên chỉ câu hỏi, bỏ dấu tích cạnh điểm · mọi tàu con nổ tan thành
+nhiều mảnh nhỏ, bốc khói, tối, rơi dần xuống trong lúc vẫn bốc khói · điểm/chữ khi kết thúc game theo phong cách vũ trụ · ô sai: đốm sáng nổ
+ra từ chính thân robot · tàu ANDREW CLASSES nghiêng ngả, lái theo hướng tàu con; laser nhỏ mảnh hơn; 2 tàu đuổi nhau vòng vòng trong màn
+một chút, không bay thẳng bắn nổ ngay · chữ ANDREW CLASSES bị che một ít". Hỏi lại & thầy chốt: "hàng dưới" = MÉP DƯỚI TRONG MÀN CHƠI.
+- `mau-1l-hud-duoi-ruot-duoi.html` + `core/mc3d-1l.js/.css` + `mc3d-ship-1l.js` + `mc3d-boom-1l.js` (hatch vẫn 1j).
+- `SHIELD_S` 3 ⇒ 5. `.mc-top` phủ cả màn: câu hỏi giữa trên, `.mc-bot` giữa dưới (đồng hồ · bom · tim · điểm số xanh lá, không icon);
+  2 dải tối mờ trên/dưới giữ chữ dễ đọc. `.mc-top{z-index:0}` để không đè màn kết thúc.
+- Màn kết thúc: thẻ kính tối có sao li ti + ngoặc góc vàng, tiêu đề giãn chữ có 2 vạch, điểm trong vòng HUD (vạch xoay, cung vàng = tỉ lệ
+  đúng, chạy lên khi hiện), đồng hồ, nút vát góc. ⚠ Bẫy cũ: `.mc-ans{display:grid}` đè `[hidden]` ⇒ danh sách đáp án luôn mở — đã sửa.
+- Đom đóm: 420 điểm lấy mẫu sẵn trên bề mặt các bộ phận robot (MeshSurfaceSampler, theo diện tích), lúc nổ đổi sang toạ độ thế giới đúng
+  tư thế; giữ nguyên hình 0,16–0,21 s sáng rực rồi bung từ tâm thân ra. Robot hất cao 2,2 (trước 1,3) cho khỏi lõi lửa che.
+- Rượt đuổi: 1 đường Catmull-Rom (centripetal) qua các điểm NDC: ngoài màn → cửa vào → 3–4 điểm lượn quanh giữa màn cùng chiều quay →
+  điểm nổ (dải trên/dưới, không bị trạm che) → 2 điểm ra (tính theo MÀN HÌNH — tính theo thế giới từng lao thẳng vào máy quay). Tàu con
+  chạy trước, tàu lớn bám đúng vệt, trễ 1,7 thân; nghiêng = atan(v²·độ cong có dấu / 15), tối đa 0,95 rad. Rượt 11–15 s, đạn trúng chỉ
+  toé lửa/khói, tới điểm cuối mới nổ. Chữ đổi mặt (cho xuôi) khi tàu quay đầu, đổi đúng lúc chữ đang chập tắt.
+- Laser bán kính 0,35 ⇒ 0,16, quầng 6 ⇒ 3,2. Chữ ANDREW CLASSES dời về phía mũi (tâm 0,02 ⇒ 0,13, dài 0,44) — trước đầu chữ sát thượng tầng.
+- Xác tàu con: ẩn toàn bộ bộ phận gốc; ~109 vụn nhỏ (70 tấm rách nhỏ, 8 vừa, 6 dải xoắn, ống, cục máy, mảnh tam giác), muội tối hơn; trọng
+  lực theo "xuống màn hình" (đổi sang toạ độ tàu con) + cản ⇒ rơi đều chậm; mọi mảnh bốc khói 6–8,5 s; tan sau 7,5–9 s. Hệ khói 1800 hạt.
+- Kiểm (chạy thật): trung bình 7,0 ms/khung; rượt đuổi + nổ + xác rơi không khựng (khung ~150 ms lúc chuyển câu có sẵn từ 1j) · tự chơi
+  9/9 · 0 lỗi.
