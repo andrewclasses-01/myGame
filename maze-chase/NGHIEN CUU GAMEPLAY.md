@@ -346,3 +346,27 @@ Cách Rocket Race (AWord rr3d-launch.js): màn chờ ⇒ START ⇒ cảnh điệ
   shimmer, siren, beep, thud, hiss, servo, clank, powerUp, heart, laser.
 - Làm nóng: 2 khung đầu dưới MÀN ĐEN — `warmInGame + warmInGame2` + khoang/đèn xoay/hạt hiện tạm ⇒ khung ~0,4 s nằm trong màn đen.
 - Kiểm (chạy thật): A trung bình 6,4 ms/khung, chỉ khựng dưới màn đen; B, C cũng vậy · bấm đúp bỏ qua ⇒ vào câu hỏi · tự chơi 9/9 · 0 lỗi.
+
+## 20. MẪU 1p (29/9) — STAR LOOT: đổi tên game + intro cốt truyện hạm đội ANDREW CLASSES (thầy chọn bản A rồi đổi cốt truyện)
+Thầy: robot thuộc hạm đội ANDREW CLASSES, ở tàu ANDREW CLASSES cùng đồng đội, tới căn cứ địch thu CHIẾN LỢI PHẨM (các từ đúng) · màn START
+là thiên hà bao la, nhiều hành tinh, màu lung linh (chưa chạy gì) · "ANDREW STUDIO PRESENTS" · đổi tên game (thầy chọn **STAR LOOT** trong
+4 gợi ý: WORD RAIDERS · GALAXY HEIST · STAR LOOT · WORD STRIKE FORCE) · hạm đội xuyên qua nhiều thiên hà, tìm trạm địch, thả robot (đơn 1,
+Fight 2) · robot NHẢY khỏi tàu, bay bằng phản lực ở hộp sau lưng, lượn, bay vào phía dưới mê cung · góc quay sát boong, robot được đẩy
+lên từ dưới sàn, máy quay lùi về góc chơi, bắt đầu game ở đó · mọi cảnh nối mượt từ lúc bấm START tới lúc chơi.
+- `mau-1p-star-loot-intro.html` + `core/mc3d-1p.js/.css` + `mc3d-intro-1p.js` (MỚI) + `mc3d-sound-1p.js` (+warp, +jet) + `mc3d-ship-1p.js` (+`cine.power`, `cine.sc`).
+- Màn chờ = khung đầu intro, đứng yên: hạm đội (tàu mẹ ×2 + 3 tàu hộ tống = bản sao `fleet.group.clone(true)`) đậu, lửa nhỏ, máy quay trôi
+  chậm; trạm khuất sau lưng máy quay (nhìn về +z). Map câu 1 dựng SẴN ở màn chờ ⇒ lúc tới căn cứ không khựng.
+- Bầu trời: SKY_SHADER thêm uniform uB0/uB1/uN1/uN2/uBand (mặc định = trời game); 4 bộ màu home · teal · ember · enemy. Cảnh vật: thiên hà xoắn
+  (canvas 14.000 chấm theo tay xoắn) đi theo máy quay (vô cực) + hành tinh dải màu có vành/khí quyển, lỗ đen có đĩa bồi tụ (đứng yên ⇒ thị sai).
+- Nhảy siêu tốc: 520 nét sáng quanh máy quay (LineSegments), dài + nhanh dần 0,9 s trước mốc, chớp trắng che chỗ đổi thiên hà (3,3 · 6,0 · 8,4 s).
+- Tới căn cứ: tàu thoát siêu tốc lướt qua đầu máy quay, hãm dần, treo trên trạm; chữ TARGET LOCATED · ENEMY BASE · LOOT: WORDS DETECTED.
+- Robot: cửa khoang dưới bụng tàu (2 lá trượt + lòng sáng); 12,2 s robot nhảy ra — đường Catmull-Rom (dựng LÚC NHẢY theo vị trí tàu thật):
+  lượn ra ngoài ⇒ sát mép boong trước ⇒ luồn xuống dưới sàn. Dáng bay nằm rạp (body.rotation.x 1,05), lửa 2 miệng ba lô (hạt) theo trục
+  "xuống" của thân. Máy quay bám sau lưng rồi ở lại trên boong, lướt tới ô xuất phát. `robotFree` ⇒ lõi không đè dáng. ⚠ lookAt lúc bay để lại
+  góc x/z trên robot ⇒ lúc trồi lên quay lưng — phải `rotation.set(0, heading, 0)`.
+- 15,2 s nắp mở, `appearPlayer` đẩy robot lên (mặt hướng máy quay); 16,5 s lùi về góc chơi, chữ STAR LOOT đập vào; 18,7 s `startGame({fromIntro})`:
+  câu 1 dùng ĐÚNG map đã dựng (`firstMapOverride`, không `useMap` lại), không ẩn robot, `buildMaze` bỏ `appearPlayer`.
+- Fight (game chưa có): `?robots=2` ⇒ đồng đội (makeAstronaut thứ 2) bay song song, trồi lên ô bên cạnh; vào game thì chìm xuống nắp.
+- Làm nóng: lúc tải trang (máy quay còn ở góc game) `warmInGame + warmInGame2`, rồi 3 khung đầu mọi cảnh vật intro hiện dưới màn đen.
+- Kiểm (chạy thật): trung bình 6,2 ms/khung, KHÔNG khung khựng nào từ lúc bấm START tới câu hỏi đầu · bấm đúp bỏ qua ⇒ câu hỏi đầu,
+  robot đứng sẵn · tự chơi 9/9 · 0 lỗi.
