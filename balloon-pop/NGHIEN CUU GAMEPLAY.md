@@ -263,3 +263,10 @@ Thầy: bỏ chữ ANDREW STUDIO ở màn chờ, chỉ tên game TRAIN RUSH + ST
 - Intro: `lead` 2,8 s mở đầu = khung màn chờ lúc bấm (`ctx.idle` p/l/fov), máy quay tiến 9 + chúc nhẹ, fov → 33; sepia 0→1 trong 2,8 s (`grade.sepia`), vệt xước phim hiện dần; dải đen khép 2,2 s; rồi mới cắt sang bóng xương rồng (các cảnh cũ dời +2,8 s, `H(t)` tính theo giờ riêng). Bỏ chữ tên game + tiếng dồn; ANDREW STUDIO / PRESENTS giữa màn (nền tối mờ phía sau cho dễ đọc) + tiếng trầm nhẹ.
 - `HILL_STYLES`: 1 `hillMesa` (bậc thềm 6,2 + vách đá, dải màu vân đá, bụi trên mặt bậc, đá lở chân vách) · 2 `hillChaparral` (sống + khe rãnh, 1.500 bụi thẻ + 1.400 tán tròn xanh ô-liu theo khe) · 3 `hillDune` (cồn cát đỏ, kết cấu gợn cát, 700 bụi cỏ sa mạc) · 4 `hillBoulder` (11 cụm đá tảng lớn + 16 saguaro trên sườn). Mọi kiểu giữ `hillH` cho con vật húc chữ.
 - Đo: không lỗi cả 5 kiểu; intro 15,8 s; khung nối lệch 0. ⬜ Thầy chọn đồi.
+
+## 24. Mẫu 1s (29/9/2026) — đồi chữ kiểu Atacama
+Thầy chưa ưng 5 kiểu 1r, gửi ảnh Valle de la Luna (Atacama): "sử dụng loại núi này và làm vài bản". ⇒ `mau-1s-nui-atacama.html?nui=0..3` (`bp3d-1s.js` → `west-world-1s.js` → `west-props-1s.js` + `animals-1s.js`).
+- `ruggedHill` 1s: vòm nền 31 (đỡ chân chữ) + hợp các SỐNG ĐAO (mặt cắt `(1−|dz|−dx²·0,9)^sharp`, sống uốn nhẹ) ×0,75; RÃNH XÓI = 2 lớp nhiễu gờ tần số cao theo x / thấp theo z (rãnh chạy xuôi sườn), sâu theo độ dốc vĩ mô, tắt quanh chân chữ; lưới 320×180.
+- Màu: cát → đỏ → cam theo độ cao; đáy rãnh (dưới mức vĩ mô) sẫm, gờ sáng; MUỐI TRẮNG theo nhiễu ở lòng trũng + đáy rãnh + nửa dưới sườn, bớt 85 % quanh chữ; NẮNG XIÊN VẼ SẴN từ trái-trước (mặt đồi quay lưng mặt trời thật ⇒ nếu không sẽ tối phẳng) + tự sáng 0,22; kết cấu hạt sạn; đá vụn chân sườn; không cây.
+- 4 bản `OPTS`: 0 sống đao đỏ (H 34, 3 sống) · 1 cụm đồi xói mòn (7 sống thấp + 9 gò) · 2 sống đao + muối trắng (muối 0,95) · 3 đỉnh nhọn hùng vĩ (H 46, sắc 1,6, rãnh 1,25).
+- ⚠️ Bẫy: vá file bằng Python `.replace("\n", nl)` biến chuỗi `\n` trong mã JS thành xuống dòng thật ⇒ SyntaxError, cả trang đen. Đo: không lỗi cả 4 bản. ⬜ Thầy chọn.
