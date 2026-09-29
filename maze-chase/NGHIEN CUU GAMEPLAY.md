@@ -437,3 +437,21 @@ robot phải chạm bom mới nổ · tường màu trung tính, vừa phải ·
   `THREE.SRGBColorSpace` — mặc định three tính theo linear nên màu ra trắng bệch).
 - Tàu rượt: góc quay mỗi khúc 1,0–1,45 rad (cũ 1,5–2,3), bán kính 0,62–1,22 NDC (>1 = ra ngoài khung), rượt 13–17 s.
 - Kiểm: chạy thật cả intro 0 khung khựng · bấm đúp đúng cảnh · tự chơi hết ván.
+
+## 24. MẪU 1t (29/9) — STAR LOOT: lửa bùng khi tăng tốc, chân robot không lún, tên thiên hà, map gọn + bệ đáp án vừa sức
+Thầy: tăng tốc phải có lửa bùng nổ ở đuôi tàu · robot xuất hiện gần thấy chân lún xuống sàn (sai vật lý) — phải cảm nhận sàn kim loại cứng ·
+trên NOT FOUND / ENEMY LOCATED thêm tên một thiên hà thật · giảm khoảng trống ở các map; tới một điểm không khó quá, không dễ quá.
+- `mau-1t-star-loot-lua-bung.html` + `core/mc3d-1t.js/.css` + `mc3d-intro-1t.js` + `mc3d-maps-1t.js` (ship/hatch 1s, sound 1p).
+- Lửa bùng: `exhaust(n, k)` phụt hạt lửa cam đỏ từ 3 cụm động cơ ĐUÔI (thân tàu x = −0,5), vận tốc = ngược ra sau + 0,78 × vận tốc tàu
+  (không thì hạt vụt qua sau lưng máy quay, không thấy). Nổ máy: 40 hạt + 1,6 s phụt nhẹ; vọt trước lỗ giun: 60 hạt + phụt liên tục; lửa đuôi
+  `cine.power` +2,6. Vọt sớm hơn (1,5 s, 150 đv) và trắng loá chỉ bắt đầu 0,8 s trước lỗ giun ⇒ kịp thấy lửa. ⚠ màu hạt quá sáng (3,2/2,4/1,5) +
+  bloom = trắng loá, không ra lửa ⇒ dùng (2,4/1,0/0,25) ⇒ (0,9/0,15/0,02).
+- Chân: ngón chân + gai đế trước đây thò 0,06 dưới đáy ủng ⇒ nâng vào trong đáy. Nắp ô xuất phát (lá cửa đóng) cao 0,12 ⇒ `padBump(x,z)` nâng robot
+  đúng bằng nắp khi đứng trên nắp, ra mép thì hạ dần về sàn; đồng đội cũng vậy.
+- Tên thiên hà (danh lục Messier): vùng 2 = M51 WHIRLPOOL GALAXY · vùng 3 = M104 SOMBRERO GALAXY · đích = M31 ANDROMEDA GALAXY — dòng nhỏ màu
+  bạc phía trên, chỉ dòng NOT FOUND / ENEMY LOCATED nhấp nháy.
+- Map: hình trạm khoét ít (chỉ góc/khe nhỏ, bỏ lỗ lớn: ring 3×5 ⇒ 1×3, plus bỏ 4 góc to…), arena đặt vách 60% (cũ 42%), rooms 2 phòng 2×2;
+  sân xuất phát 3×3 (cũ 3×5), chữ sàn gọn trong 3 ô.
+- Bệ đáp án: khoảng cách = số bước ĐI THẬT (BFS), trong dải 35–80% quãng xa nhất (tối thiểu 5 bước); thiếu chỗ thì nới 25–90% rồi bỏ dải.
+- Kiểm: bước từng khung có `gl.finish()` cả intro trung bình 4,4 ms, không khung nào > 22 ms · tự chơi 9/9 (còn 4 mạng) · 0 lỗi.
+  ⚠ Khung xem thử có lúc bị trình duyệt hãm còn 1,3 khung/giây (cửa sổ bị che) ⇒ đo bằng chế độ bước + gl.finish thay vì chạy thật.
