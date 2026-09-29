@@ -152,3 +152,7 @@ tốc độ tàu hai bên; hai em chạm cùng lúc có bị nuốt chạm khôn
 Thầy: "đồ hoạ quá xấu, cần chất lượng cao, chân thực, điện ảnh · tàu to quá, cần nhỏ lại · nền là dãy núi xa xa,
 sa mạc miền viễn tây, bầu trời đẹp lung linh". ⇒ `mau-1b-dien-anh.html` (lõi `core/bp3d-1b.js` + cảnh `core/west-world.js`);
 mẫu 1 và 2 giữ nguyên để so sánh. Luật chơi không đổi.
+
+## 8. Mẫu 1c (29/9/2026)
+Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi tiết với bụi cỏ, xương rồng như thật · cỏ + thỉnh thoảng xương rồng tiền cảnh · logo ANDREW STUDIO trên đầu tàu · đầu tàu tới 75% màn thì máy quay lia theo, cảnh chuyển động như thật, thùng rơi có vật lý (quán tính, va chạm, văng ở tốc độ cao).
+⇒ `mau-1c-lia-theo-tau.html` (lõi `core/bp3d-1c.js` + cảnh `core/west-world-1c.js`). Tàu dài hơn màn: máy quay ưu tiên giữ toa CHƯA đầy ngoài cùng bên trái ở ~25% màn.

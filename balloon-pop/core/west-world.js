@@ -190,7 +190,7 @@ export function createWestWorld(scene, renderer) {
     const cA = new THREE.Color(0xb3542e), cB = new THREE.Color(0xd07a48), cC = new THREE.Color(0x8e3f24), cTop = new THREE.Color(0xc98a5a), c = new THREE.Color();
     for (let k = 0; k < p.count; k++) {
       let vx = p.getX(k), vy = p.getY(k), vz = p.getZ(k);
-      const t = (vy + h / 2) / h, a = Math.atan2(vz, vx), rr = Math.hypot(vx, vz);
+      const t = Math.max(0, Math.min(1, (vy + h / 2) / h)), a = Math.atan2(vz, vx), rr = Math.hypot(vx, vz);
       if (rr > 0.001) {
         let f = 1 + N(Math.cos(a) * 2 + i * 3, Math.sin(a) * 2 + t * 3) * 0.22 + N(a * 6, t * 9 + i) * 0.05;
         f += (Math.floor(t * 7) / 7 - t) * 0.06;                                  // gờ đá ngang
