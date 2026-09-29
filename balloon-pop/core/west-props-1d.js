@@ -24,6 +24,13 @@ export function makeNoise(seed) {
     return x1 + v * (x2 - x1);
   };
 }
+// pháp tuyến bằng 0 (tam giác suy biến: chữ 3D, cực mặt cầu bị ép dẹt) ⇒ GPU normalize(0) = NaN ⇒ bloom loang ĐEN CẢ MÀN.
+// Thay mọi pháp tuyến hỏng bằng (0,1,0).
+export function fixNormals(geo) {
+  const n = geo.attributes.normal; if (!n) return geo;
+  for (let i = 0; i < n.count; i++) { const x = n.getX(i), y = n.getY(i), z = n.getZ(i), l = x * x + y * y + z * z; if (!(l > 1e-8)) n.setXYZ(i, 0, 1, 0); }
+  n.needsUpdate = true; return geo;
+}
 const N3 = makeNoise(71);
 const n3 = (x, y, z) => N3(x + z * 0.71, y - z * 0.43) * 0.6 + N3(y * 1.3 + 5, z * 1.3 - x * 0.5) * 0.4;
 function canvasTexture(w, h, draw, repeat = false) {
@@ -161,7 +168,7 @@ export function makeCactusKit() {
       x *= w * (1 + N3(y * 3, x * 3) * 0.06); z *= 0.1 * (1 - Math.abs(y) * 0.4 + 0.25); y *= 0.66;
       p.setXYZ(i, x, y + 0.64, z);
     }
-    g.computeVertexNormals(); return g;
+    g.computeVertexNormals(); return fixNormals(g);
   })();
   function opuntia(x, z, s, r) {
     const g = new THREE.Group();
@@ -227,7 +234,7 @@ export function createHillSigns(scene, soilMat) {
     for (const ch of chars) {
       if (ch === " ") { cx += LETTER_H * 0.55; continue; }
       let geo;
-      if (font && font !== "fail") { geo = new TextGeometry(ch, { font, size: LETTER_H, depth: 0.5, curveSegments: 6, bevelEnabled: false }); geo.computeBoundingBox(); }
+      if (font && font !== "fail") { geo = fixNormals(new TextGeometry(ch, { font, size: LETTER_H, depth: 0.5, curveSegments: 6, bevelEnabled: false })); geo.computeBoundingBox(); }
       else { geo = new THREE.BoxGeometry(LETTER_H * 0.7, LETTER_H, 0.5); geo.translate(LETTER_H * 0.35, LETTER_H / 2, 0); geo.computeBoundingBox(); }
       const bb = geo.boundingBox, lw = (bb.max.x - bb.min.x) * 0.82;
       const m = new THREE.Mesh(geo, letterMat); m.scale.x = 0.82; m.castShadow = true; m.receiveShadow = true;

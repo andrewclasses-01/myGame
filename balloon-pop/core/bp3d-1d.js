@@ -88,10 +88,19 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
   const SKY = Math.max(HALF, halfAt(V.lanes[2] + 1.5));
 
   const world = createWestWorld(scene, renderer);
+  // quét 1 lượt: sửa mọi pháp tuyến bằng 0 còn sót trong cảnh
+  { const seen = new Set(); scene.traverse(o => { const g = o.geometry; if (!g || seen.has(g) || !g.attributes.normal) return; seen.add(g); const n = g.attributes.normal; for (let i = 0; i < n.count; i++) { const l = n.getX(i) ** 2 + n.getY(i) ** 2 + n.getZ(i) ** 2; if (!(l > 1e-8)) { n.setXYZ(i, 0, 1, 0); n.needsUpdate = true; } } }); }
 
   // hậu kỳ điện ảnh: MSAA 4 mẫu (tránh lấp loá), bloom nhẹ cho mặt trời/đèn, chỉnh màu + vignette + hạt phim
   composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 }));
   composer.addPass(new RenderPass(scene, camera));
+  // chốt an toàn: điểm ảnh NaN/Inf (từ bất kỳ vật liệu nào) bị xoá TRƯỚC bloom — không bao giờ loang thành màn đen nháy
+  composer.addPass(new ShaderPass({
+    uniforms: { tDiffuse: { value: null } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
+    fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv;
+      void main(){ vec4 c = texture2D(tDiffuse, vUv); if (any(isnan(c)) || any(isinf(c))) c = vec4(0., 0., 0., 1.); gl_FragColor = min(c, vec4(64.)); }`,
+  }));
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.2, 0.32, 1.1);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
