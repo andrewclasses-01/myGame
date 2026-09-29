@@ -326,3 +326,23 @@ các bức tường thật hơn một chút, đôi khi có chỗ bụi bẩn cho
 - Tường: `grime()` chèn shader vào vật liệu chuẩn (tường 1 · cột 0,9 · nắp 0,45), theo toạ độ thế giới: mảng bẩn loang thỉnh thoảng,
   đọng chân tường, vệt chảy, bụi mặt ngang, đường ghép ngang (0,92) + dọc (mỗi 2), hạt sần; chỗ bẩn nhám hơn.
 - Kiểm (chạy thật): trung bình 7,0 ms/khung, chỉ khựng lúc câu hỏi to như cũ · tự chơi 9/9 · 0 lỗi.
+
+## 19. MẪU 1o (29/9) — INTRO ĐIỆN ẢNH, 3 bản để chọn (A hạm đội đến · B thả robot · C báo động đỏ)
+Thầy: "cần một đoạn intro thật đẹp, ngầu, điện ảnh giống như cách làm intro của Rocket race. Hãy làm cho tôi vài bản để tôi chọn."
+Cách Rocket Race (AWord rr3d-launch.js): màn chờ ⇒ START ⇒ cảnh điện ảnh ⇒ hoà thẳng vào game ở đúng góc máy; chạm đúp để bỏ qua.
+- 3 trang `mau-1o-a-intro-ham-doi-den.html` · `mau-1o-b-intro-tha-robot.html` · `mau-1o-c-intro-bao-dong-do.html` (tham số `intro`, hoặc
+  `?intro=a|b|c`) + `core/mc3d-1o.js/.css` + `mc3d-intro-1o.js` (MỚI) + `mc3d-sound-1o.js` (tiếng intro) + `mc3d-ship-1o.js` (chế độ `cine`).
+- Intro chạy NGAY TRONG cảnh game (phase "cine"): cùng trạm, tàu, robot, nắp boong, bom nổ… ⇒ kết thúc đúng góc `overview` của game rồi
+  `startGame()` (câu hỏi đầu). Chỉ nút START ở màn chờ chạy intro; "Start again" không. Bấm/chạm ĐÚP ⇒ `intro.skip()`.
+- Máy quay: `cineCam {pos, look, fov, roll}` (updateCamera ưu tiên, có rung `shake`). Tàu: `fleet.cine.begin(scale)/set/aim/fire/end`
+  (A phóng to ×3,2 = dài 150, B ×2,2); lửa/lưỡi lửa/khói/chữ/súng dùng chung `hunterFx`.
+- Tường: `walls.flat/rise/sink` + `front(ox, oz, dist)` (mặt sóng — tường trong bán kính dist đã dựng, 5 đơn vị kế tiếp đang bật lên).
+- A: 0–3,6 s tàu lướt qua đầu máy quay; 3,6–7,2 lướt dọc thân; 7,2–11,4 lao xuống lướt sát mê cung (tường dựng từ ô xuất phát); 11,4 tên
+  game đập vào. B: khoang đổ bộ (4 cánh vỏ bản lề đáy, chóp nón, loa hãm đỏ rực); rơi 3,8→6,6 s, nổ `boom.explode` + sóng bụi + dựng tường;
+  vỏ bung, robot (`robot.set`) đứng dậy, chào; địch trồi qua nắp; cuối cảnh robot + khoang chìm xuống boong. C: `dim(0,06)` (chỉ đổi cường độ
+  đèn có sẵn + `scene.environmentIntensity`), 8 đèn xoay đỏ (vật tự sáng + lưỡi sáng cộng màu), `pLight` có sẵn đổi đỏ đi theo máy quay;
+  máy quay bay theo hành lang BFS từ góc xa tới ô xuất phát (nghiêng theo khúc cua, kẹp ±0,32), vọt lên, đèn bật lại chập chờn.
+- Tiếng tự tổng hợp (kênh riêng `ibus`, bỏ qua là tắt sạch): braam, rumble, whoosh (lia trái↔phải), engine (tụt giọng), impact, riser,
+  shimmer, siren, beep, thud, hiss, servo, clank, powerUp, heart, laser.
+- Làm nóng: 2 khung đầu dưới MÀN ĐEN — `warmInGame + warmInGame2` + khoang/đèn xoay/hạt hiện tạm ⇒ khung ~0,4 s nằm trong màn đen.
+- Kiểm (chạy thật): A trung bình 6,4 ms/khung, chỉ khựng dưới màn đen; B, C cũng vậy · bấm đúp bỏ qua ⇒ vào câu hỏi · tự chơi 9/9 · 0 lỗi.
