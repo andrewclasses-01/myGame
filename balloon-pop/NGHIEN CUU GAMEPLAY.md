@@ -195,3 +195,13 @@ Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi ti�
 - Làm cũ: 3 kết cấu canvas dùng chung (bẩn màu / nhám / bump), `weather(train)` + `weather(plane)`; clearcoat ≈ 0, kim loại bớt bóng, đồng thau xỉn. Saguaro: ống 40×80 đỉnh, phình/thắt + cong + u sần theo pháp tuyến + gốc gỗ + sẹo + mắt gai, `mergeVertices` để pháp tuyến mượt; khúc cảnh quay vòng thì mọc cây mới. ≈ 77 fps (1h 104).
 - Con vật húc chữ: 25–55 s/lần, bò/voi/ngựa/lạc đà/sư tử phóng to 2,2–2,8 lần, từ sau đỉnh đồi chữ lao xuống, chữ đổ về phía trước theo mô-men trọng lực + nảy + bụi; chữ nằm đổ tới khi bảng được thay.
 - Options: Timer None / Count up / Count down (+ ô giờ) · MAX CARS · BALLOON SPEED · TRAIN SPEED · POINTS OFF 0–100 (thang AWord) · Shuffle questions · Show answers at end · Bonus extra time/points/x2 · Drop guide · Apply ⇒ về màn bắt đầu.
+
+## 15. Mẫu 1j (29/9/2026)
+Thầy chốt (AskUserQuestion): Max cars giữ tên, thanh kéo 3–20 + nấc cuối ∞ · Points off thanh LUÔN đỏ, 0–10 · Count down hết từ trước giờ ⇒ kết thúc, hiện điểm + thời gian · Menu thêm End game (xem đáp án) · bảng kết quả theo phong cách game.
+⇒ `mau-1j-het-tu.html` (lõi `core/bp3d-1j.js` + `.css`; cảnh `west-world-1j.js` + `west-props-1j.js` + `animals-1j.js`; toa 1i; làm cũ 1i).
+- Mỗi từ (khoá duy nhất) chơi 1 lần; `beginLevel` không còn từ ⇒ `endGame("done")`. `endGame(why)`: time / done / ended; `S.elapsed` đếm cả intro+play+clear.
+- Tốc độ 1–10: blimpV = 0,6 + 0,25·s (mặc định 4 ⇒ 1,6), cruiseV = (1,0 + 0,35·s)·… (4 ⇒ 2,4). Khinh khí cầu đi theo máy quay (b.x −= (bv − camV)·dt) ⇒ tốc độ TRÊN MÀN không đổi.
+- Thùng rơi vx = camV − bv − 2,2 (văng chéo). Chạm nóc toa: đà ngang còn lại kẹp ±1,3, quay kẹp ±2,6 (thùng nghiêng rơi từ 7 đv chạm bằng góc từng văng ngang 6–7 đv/s ⇒ trượt khỏi toa). Đo vận tốc thật: 11/12 và 12/12 nằm yên.
+- Thùng đúng thứ 2, 3… trên cùng toa: mỗi thùng +5 khi nằm yên; mất một thùng chỉ mở lại toa khi không còn thùng đúng nào khác.
+- Cỏ: thêm loại "fine", lá 1–3 px, toả hình quạt; vật liệu alphaToCoverage + làm sắc alpha theo mức mip (không nhoè thành tấm); cỏ cao sát ray thấp lại ×0,5; khe cát z −27…−33 không cỏ cao ⇒ đường cho cặp con vật đuổi nhau (mặt đất ở đó gần phẳng).
+- ⚠️ Thử 2 thùng thả cùng lúc sát nhau (cách < 2,15 đv = bề dài thùng) ⇒ chúng va nhau giữa trời: lỗi PHÉP THỬ, không phải lỗi game.
