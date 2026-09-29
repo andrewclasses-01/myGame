@@ -1,0 +1,104 @@
+# BALLOON POP 3D — hồ sơ nghiên cứu gameplay (29/9/2026)
+
+Mục tiêu: dựng lại **Balloon pop** của Wordwall thành game **3D** trong kho myGame (cạnh Rocket Race),
+thử trên TOMKO/iPad rồi mới ghép vào AWord. Template 2D cũ trong AWord (`templates/balloon-pop/`) thầy
+**KHÔNG phát triển tiếp** — chỉ dùng làm tài liệu tham khảo (dữ liệu, âm thanh, Options).
+
+Nguồn đã soi:
+- Wordwall https://wordwall.net/resource/116864480 (theme Wild West) — chơi thật 2 ván trong trình duyệt,
+  đọc tuỳ chọn + danh sách hình/âm thanh game tải về.
+- AWord act `dg9hyp` "A_29/9.07:11_LSA2-S4.T4.P1-2-3-4-5 / WORDS/BALLOON" — đọc dữ liệu + tuỳ chọn (không vào chơi,
+  để khỏi sinh điểm giả).
+- Mã `E:\LAP TRINH APP\AWord\web\templates\balloon-pop\balloon-pop.js` + `GHI CHU BALLOON-POP.md`.
+
+---
+
+## 1. Game gốc Wordwall chơi thế nào (quan sát thật)
+
+**Một câu:** khinh khí cầu (zeppelin bạc) chở TỪ trôi ngang trên trời; dưới đất đoàn tàu chở các toa mang
+ĐỊNH NGHĨA; bấm nổ khinh khí cầu ⇒ thùng hàng mang từ **rơi thẳng xuống** ⇒ phải canh để thùng rơi **trúng
+đúng toa** có định nghĩa khớp.
+
+### Diễn biến một ván
+1. Màn bắt đầu: tên act + nút START + câu "Pop the balloons to drop each keyword onto its matching definition."
+2. Biển gỗ **"Level 1"** trượt vào giữa màn; đoàn tàu chạy vào từ bên trái (đầu máy mang số level trên nóc).
+3. **Số toa = số level**: Level 1 = 1 toa, Level 2 = 2 toa, Level 3 = 3 toa … Mỗi toa một định nghĩa (chữ trắng
+   trên bảng màu). Đầu máy đổi màu mỗi level (đỏ → xanh dương → xanh lá).
+4. Khinh khí cầu trôi **phải → trái**, ở ~3 độ cao khác nhau, **được phép chồng lên nhau** (chữ bên trên đè
+   chữ bên dưới). Từ trên khinh khí cầu = từ đúng của các toa đang có + **từ nhiễu** (lấy từ mục khác, ví dụ
+   THROW của level trước xuất hiện lại ở level 3). Ở level 1 thấy chỉ 2 loại từ: đúng + 1 nhiễu, lặp nhiều lần.
+5. Bấm khinh khí cầu: chữ **"POP"** hồng nổ ra, khinh khí cầu biến mất, **thùng gỗ mang từ rơi thẳng đứng**
+   (có trọng lực, không bay về toa).
+   - Rơi trúng **toa đúng** ⇒ thùng nằm lại trên nóc toa, **+5 điểm**, ✓.
+   - Rơi trúng **toa sai / toa đã có thùng** ⇒ **✗ đỏ**, thùng rơi mất, **không trừ điểm**.
+   - Rơi xuống đất (không có toa bên dưới) ⇒ mất, không gì cả.
+   - Tàu **chạy chậm** qua màn trong lúc chơi (có lúc dừng) ⇒ kỹ năng chính là **canh thời điểm**.
+6. Đủ thùng trên mọi toa ⇒ trời xoá sạch khinh khí cầu, **đồng hồ dừng**, tàu chở thùng chạy ra phải;
+   **máy bay kéo băng rôn "Score 95"** bay ngang (tổng kết); cộng **điểm thưởng qua màn** (lớn: 5 → 57 sau level 1,
+   có vẻ theo thời gian còn lại) và **cộng thêm giờ**; sang level kế.
+7. **Bóng thưởng** (bóng tròn vàng, lẫn giữa các khinh khí cầu): `$` = cộng điểm, đồng hồ cát = cộng giờ,
+   ×2 = nhân đôi điểm. Bấm là ăn ngay, không cần rơi trúng toa.
+8. Hết giờ ⇒ bảng **TIME'S UP**: Score · "You're 1st on the leaderboard" · Leaderboard · **Show answers** ·
+   Start again · Play a different template. Hoàn thành hết level trước khi hết giờ ⇒ màn thắng.
+9. **Show answers**: lưới tất cả cặp — thùng (từ) đặt trên toa (định nghĩa).
+
+### Giao diện trong ván
+- Trái trên: đồng hồ đếm ngược **một đồng hồ cho cả ván** (1:00). Giữa trên: thanh tiến độ. Phải trên: ✓ điểm.
+- Trái dưới: nút ☰ menu; phải dưới: loa + toàn màn hình.
+
+### Tuỳ chọn của act (API `getoptions`)
+`{"timer":60,"lives":0,"speed":1,"levels":10,"extratime":true,"points":true,"doublescore":true,"review":true}`
+⇒ 60 giây, tốc độ 1 (chậm nhất), 10 level, bật cả 3 loại bóng thưởng, cho xem đáp án.
+
+### Bộ hình/âm thanh game tải (chỉ để hiểu cấu trúc cảnh — KHÔNG chép ảnh)
+Cảnh: nền trời, núi (2 lớp), mặt đất, xương rồng ×3, khói, đường ray. Tàu: đầu máy ×3 màu, bánh xe, toa ×3,
+**hành khách ×3**, toa than. Trời: khinh khí cầu (blimp), thùng dưới blimp (blimpcrate), mảnh nổ (blimppop),
+chữ POW, bóng thưởng points/time/double, biển gỗ + băng rôn, máy bay + khói máy bay. Phản hồi: ✓ ✗ (có sprite động).
+Âm thanh (theme western): planeflyby, trainbell, trainchug, traintime (sắp hết giờ), traintoot, ting1/ting2,
+reveal, gamesuccessful/unsuccessful, leaderboards, restart, timesup.
+→ 27 file mp3 đã tải sẵn từ đợt làm 2D: `D:\APP AND DATA\AWord-data\Source\Sound effect\BALOON POP\`.
+
+---
+
+## 2. Bản AWord 2D cũ — vì sao "chạy không đúng ý"
+
+### Khác luật so với Wordwall (lỗi thiết kế)
+| Điểm | Wordwall | AWord 2D cũ |
+|---|---|---|
+| Số định nghĩa cùng lúc | Level N = **N toa** cùng lúc | Luôn **1** định nghĩa |
+| Cách thùng rơi | **Rơi thẳng**, phải canh trúng toa | **Bay tự động về toa** — bấm đúng là ăn, không cần canh |
+| Tàu | Chạy chậm qua màn, rời đi khi đủ | Đứng yên, chỉ "giật" nhẹ khi qua level |
+| Sai | ✗, không trừ điểm | Thùng vỡ (có option trừ điểm) |
+| Điểm | +5/đúng + thưởng qua màn theo giờ + bóng thưởng | +1/đúng |
+| Tổng kết màn | Máy bay kéo băng "Score N" | Không có |
+| Đồng hồ | Dừng khi chuyển màn, cộng giờ khi qua màn | Chạy liên tục |
+
+### Lỗi cụ thể của act `dg9hyp` (55 cặp từ)
+- Act **không lưu** `bpLevels` / `bpTimerSeconds` / `bpSpeed` ⇒ lấy mặc định: **chơi cả 55 level trong 60 giây**
+  (không thể xong — ván nào cũng "Time's up").
+- Options lại có `timer:"countUp"` + `timerTotalSeconds:120` của engine ⇒ **hai đồng hồ cùng hiện**
+  (một đếm lên, một đếm ngược 60 s) — đúng lỗi "POLISH #2" ghi từ 8/2026 mà chưa sửa.
+- `contentMode:"voice"` nhưng không mục nào có file giọng ⇒ chế độ giọng không có tác dụng.
+- Khinh khí cầu dồn 3 làn sát nhau (10/22/34 % chiều cao) ⇒ chồng chữ, khó đọc trên TOMKO.
+- Định nghĩa dài (vd "To make someone feel sad because a result was worse than they hoped") — bản cũ co chữ
+  trong 1 toa; nếu làm nhiều toa như Wordwall thì **chữ trên toa sẽ rất nhỏ** ⇒ phải tính cỡ toa/khung hình.
+
+---
+
+## 3. Dữ liệu dùng lại được
+- Mô hình dữ liệu giữ nguyên: `content.items = [{ keyword, definition, voice?, hideText? }]` (min 5 / max 100) —
+  để act cũ mở được ngay trong game mới (đổi template không phải soạn lại).
+- Options nên có: thời gian ván, tốc độ, số level, 3 loại bóng thưởng, show answers (+ trừ điểm khi sai: tuỳ thầy).
+- Bài học kỹ thuật từ bản 2D + Rocket Race: một vòng lặp rAF theo delta (Menu pause không mất giờ — `onPause`),
+  bấm bằng `press()` (chạm là nổ ngay), mọi `setTimeout` có cờ `dead`, chữ người dùng phải escape.
+
+---
+
+## 4. Những câu hỏi thầy cần chốt trước khi thiết kế 3D
+1. **Luật thả thùng**: giữ đúng Wordwall (rơi thẳng, phải canh trúng toa — khó, vui) hay "bấm đúng là ăn"
+   (dễ, như bản cũ) hay có tuỳ chọn cả hai?
+2. **Số toa mỗi level**: tăng dần 1→2→3… như Wordwall? Tối đa mấy toa (định nghĩa dài ⇒ đề xuất tối đa 3)?
+3. **Góc máy 3D**: nhìn ngang kiểu Wordwall nhưng có chiều sâu (tàu chạy trên ray, khinh khí cầu trôi ở nhiều
+   lớp xa–gần) hay góc máy chéo từ trên xuống?
+4. **Chế độ**: một người/cả lớp chơi trên TOMKO trước, hay cần ngay chế độ **Fight 2 đội** (2 đoàn tàu) như Rocket Race?
+5. **Khung cảnh**: giữ Wild West (sa mạc, xương rồng, tàu hơi nước) hay đổi chủ đề?
