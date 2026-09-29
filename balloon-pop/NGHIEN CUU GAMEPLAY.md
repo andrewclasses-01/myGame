@@ -160,3 +160,7 @@ Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi ti�
 ## 9. Mẫu 1d (29/9/2026)
 14 ý thầy: tàu nhanh chậm tự nhiên · bỏ ✓/✗ (chỉ +điểm, −điểm khi Points off) · bỏ vật văng ra khi thùng rơi (khoang lái) · từ quay vòng tới hết giờ (Levels → Max cars) · xương rồng tai thỏ + saguaro làm lại, saguaro xa cao hơn · chữ Hollywood ANDREW CLASSES / NO HOMEWORK - NO FUN lần lượt trên đồi xa · toa khách có bóng người sau rèm (nói chuyện, giật mình, ngước nhìn trần) · thùng đúng trượt dừng hẳn mới tính, quá mép thì rơi · máy bay bay ngược chiều · ANDREW STUDIO chỉ ở đầu máy, toa than hoa văn · cỏ + đá chi tiết · lạc đà chạy ra xem tàu · đàn chim + đại bàng rượt.
 ⇒ `mau-1d-song-dong.html` (lõi `core/bp3d-1d.js`, cảnh `core/west-world-1d.js` + `core/west-props-1d.js`, toa khách `core/coach-1d.js`).
+
+## 10. Mẫu 1e (29/9/2026)
+9 ý thầy: va chạm khi đúng chỉ 1/10 · toa trống tối đa ở giữa màn, toa sau giữ ngoài mép ⇒ xen 2 toa phụ giữa các toa đáp án + máy quay giữ toa trống đầu ở giữa · chữ nền nhỏ lại, cột chống chỉ nửa dưới và khuất sau chữ · con vật chi tiết hơn, chỉ trên đồi xa · đàn chim liền mạch · bỏ ✓ ở điểm · người trong toa chi tiết (ngón tay) · thêm nhiều toa có người · toa than: thùng + than văng, trừ điểm (max(2, Points off)).
+⇒ `mau-1e-toa-phu.html` (lõi `core/bp3d-1e.js`, cảnh `core/west-world-1e.js` + `core/west-props-1e.js` + `core/animals-1e.js`, toa `core/coach-1e.js`).
