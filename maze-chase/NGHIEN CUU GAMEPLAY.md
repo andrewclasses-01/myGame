@@ -114,3 +114,33 @@ các ô rất rối mắt · (4) mỗi màn một map khác nhau, cần nhiều 
   thêm 1 đèn xiên thấp (`graze`) để gân/rãnh nổi. Vẽ lại mỗi câu ≈ 130 ms.
 - Kiểm: 0 lỗi console · tự chơi (Difficulty 1, 10 tim) 3 lượt đều 9/9 · soi gần thấy rõ đinh tán, gân, sọc cảnh báo.
 - ⬜ Thầy xem trên TOMKO: sàn có quá rối so với chữ đáp án không; tường giờ trông "trơn" hơn sàn — nếu cần thì làm chi tiết tường tương tự.
+
+## 9. MẪU 1e (29/9) — đổi người, chữ ANDREW STUDIO, bom, nút ra ngoài màn
+Thầy: "sau khi chết 1 mạng phải delay để người khác kịp chạy lên thay (mỗi HS chơi 1 mạng, kể cả chưa tìm được từ vẫn đổi) và robot
+về vị trí xuất phát · trên sàn có chỗ trung tâm nổi bật chữ ANDREW STUDIO theo phong cách chữ khắc trên boong · thêm cơ chế đặt bom
+bằng nút giữa D-pad · các nút chức năng đưa ra ngoài màn hình như Rocket Race". Chốt qua AskUserQuestion (2 lượt):
+bom = VẬT CẢN, robot đuổi tới sát thì NỔ; robot trong tầm vỡ tung thành nhiều mảnh cháy đen bốc khói nằm lại gần chỗ nổ, KHÔNG xuất hiện
+lại ở câu đó (câu sau có lại); người đứng sát cũng mất mạng; "vụ nổ siêu chân thực, khói lửa như thật" · Options Bombs 0–10 mỗi HS +
+Bomb gift: cứ K câu đúng tặng 1 · đổi người = đếm 3 giây.
+- `mau-1e-bom-doi-nguoi.html` + `core/mc3d-1e.js` + `core/mc3d-1e.css` + `core/mc3d-floor-1e.js` (sàn 1d + chữ khắc) + `core/mc3d-boom.js` (nổ + xác + mô hình bom).
+- ĐỔI NGƯỜI: mọi lần mất mạng (robot bắt · ô sai · dính bom) ⇒ `startSwap(0,9 s)`: màn NEXT PLAYER + "Player k of N" đếm 3-2-1, robot BAY
+  vòng về góc (1,1 s), người dịch chuyển về giữa ở giây cuối, HS mới nhận lại `Bombs` quả; xong ân hạn 1,2 s. Ô sai: bật lùi vẫn diễn rồi đổi.
+  Robot đã nổ vẫn mất ở câu đó; bom đã đặt vẫn nằm trên sàn qua lượt đổi người (xoá khi sang câu).
+- SÂN XUẤT PHÁT: mở hết vách trong khối tới 5×3 quanh ô xuất phát; hàng ngay dưới (gần máy quay) khắc ANDREW STUDIO 2 dòng (ANDREW to +
+  STUDIO dãn rộng, gạch vàng 2 bên) trên tấm khắc có ke góc vàng — chữ chìm (bản đồ độ cao) + sơn trắng + hắt sáng nhẹ. Không đặt bệ trong
+  sân và ở hàng ngay dưới chữ (bảng hologram treo cao sẽ đè lên chữ trên màn — đã gặp với "Mercury").
+- BOM: nút giữa D-pad Ring (bom + số còn lại; xám khi hết) · Space/B · số bom cũng hiện ở dải trên. Đặt ở ô đang đứng (không trên bệ);
+  người rời ô rồi không quay lại được (bom chặn cả người lẫn robot). Robot định bước vào ô bom ⇒ `detonate`: tầm hạ robot 1,6 ô, tầm làm
+  người mất mạng 1,25 ô; bom khác trong tầm nổ lan (trễ 0,12 s).
+- VỤ NỔ (`mc3d-boom.js`): đèn chớp có sẵn từ đầu (thêm đèn giữa trận ⇒ dịch lại shader ⇒ khựng) · lõi chớp cộng sáng 0,2 s · 30 mảng lửa
+  PHỦ (không cộng sáng) màu vàng cam→đỏ sẫm→nâu, kết cấu cuộn có lỗ · 40 mảng khói đen dày cuộn lên tan 3–5 s + bụi quét sàn · 120 tàn lửa
+  rơi nảy · sóng xung kích sát sàn · vết cháy xém nằm lại. XÁC: 16 mảnh (vỏ màu robot + thép tối) văng gần (1,4–4 đv/s), rơi–nảy–dừng, đỏ than
+  → đen trong ~1 s, bốc khói từng làn + cột khói chính tới hết câu.
+  ⚠️ Bẫy đã gặp: lửa CỘNG SÁNG nhiều lớp ⇒ trắng kem như mây (đổi sang phủ); lần nổ ĐẦU khựng 0,28–0,41 s do dịch shader ⇒ dựng sẵn lúc tải
+  trang (`renderer.compile` với 1 vụ nổ + xác + bom giả rồi xoá) ⇒ đo lại trang mới: 0 khung > 30 ms.
+- NÚT RA NGOÀI: khung game = cửa sổ − thanh 80 px; thanh dưới có MENU · SOUND · FULL SCREEN kiểu kính tối viền xanh của Rocket Race 3D.
+- Kiểm bằng máy (0 lỗi console): nút giữa D-pad đặt bom (2→1) · bom chặn người · robot đuổi tới bom ⇒ nổ, robot mất, bom kề nổ lan ·
+  người đứng sát lúc nổ ⇒ 5→4 mạng + NEXT PLAYER "Player 2 of 5" + nhận lại 2 bom + chơi tiếp từ giữa · tặng bom K=1 ⇒ 2→3 · ô sai ⇒ đổi người ·
+  tự chơi hết ván 9/9 (máy tự chơi không né địch nên có ván thua — 10/11 mạng mất do bị bắt).
+- Bàn thử thêm: `__mc.bomb()` · `dropBomb(r,c)` · `detonateAt(r,c)` · `bombs()` · `bombsLeft()` · `enemyNext()`.
+- ⬜ Thầy thử trên TOMKO: tiếng nổ (Claude không nghe được — đang dùng tiếng "hit" tổng hợp), độ dài 3 giây đổi người, cỡ chữ ANDREW STUDIO.
