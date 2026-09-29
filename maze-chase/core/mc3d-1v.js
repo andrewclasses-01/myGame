@@ -108,7 +108,7 @@ import { createDeckPainter } from "./mc3d-floor-1f.js";
 import { createBoomFX, makeBomb } from "./mc3d-boom-1m.js";
 import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
 import { createHatches, createPortal, createUnderdeck, UNDER } from "./mc3d-hatch-1s.js";
-import { createFleet } from "./mc3d-ship-1s.js";
+import { createFleet } from "./mc3d-ship-1v.js";
 
 const FONT = '"Baloo 2", system-ui, sans-serif';
 const ASPECT = 16 / 10.5;                        // đúng khung act đơn của AWord
@@ -452,7 +452,7 @@ const BEAM_SHADER = {
   uniforms: { uColor: { value: new THREE.Color(0x38bdf8) }, uOpacity: { value: 1 }, uTime: { value: 0 } },
   vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
   fragmentShader: `varying vec2 vUv; uniform vec3 uColor; uniform float uOpacity; uniform float uTime;
-    void main(){ float a = pow(1.0 - vUv.y, 1.7) * (0.6 + 0.4 * sin(vUv.y * 22.0 - uTime * 5.0)) * uOpacity; gl_FragColor = vec4(uColor * a, a); }`,
+    void main(){ float a = pow(clamp(1.0 - vUv.y, 0.0, 1.0), 1.7) * (0.6 + 0.4 * sin(vUv.y * 22.0 - uTime * 5.0)) * uOpacity;   // 1v: LỖI TOMKO — MSAA ngoại suy vUv.y > 1 ở mép ⇒ pow(số âm) = NaN ⇒ bloom loang thành khối đen gl_FragColor = vec4(uColor * a, a); }`,
 };
 const GRADE_SHADER = {
   uniforms: { tDiffuse: { value: null }, uVig: { value: 0.18 } },
@@ -468,7 +468,7 @@ const NAN_SHADER = {   // bẫy myGame: 1 điểm ảnh NaN bị bloom loang th�
   uniforms: { tDiffuse: { value: null } },
   vertexShader: GRADE_SHADER.vertexShader,
   fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv; void main(){ vec4 c = texture2D(tDiffuse, vUv);
-    if (!(c.r == c.r) || !(c.g == c.g) || !(c.b == c.b) || c.r > 1e4 || c.g > 1e4 || c.b > 1e4) c = vec4(0.0, 0.0, 0.0, 1.0); gl_FragColor = c; }`,
+    if (any(isnan(c)) || any(isinf(c)) || !(c.r == c.r) || !(c.g == c.g) || !(c.b == c.b) || c.r > 1e4 || c.g > 1e4 || c.b > 1e4) c = vec4(0.0, 0.0, 0.0, 1.0); gl_FragColor = c; }   // 1v: D3D (ANGLE) có thể bỏ phép c==c ⇒ thêm isnan/isinf`,
 };
 
 // ------------------------------------------------------------------ nhân vật
@@ -1057,6 +1057,7 @@ export async function createMazeChase({ mount, view = "tilt", questions, title =
   let overview = null;
   function relayout() {                                     // 1v: đổi cửa sổ / đổi chế độ ⇒ tính lại khung + góc máy toàn cảnh
     mount.classList.toggle("is-fightgame", fight); stage.classList.toggle("is-fight", fight);
+    clockEl.classList.toggle("led", fight); clockEl._v = null;   // 1v: đồng hồ LED cần lớp .led mới sáng đúng thanh (không thì hiện "8:88")
     fit(); overview = fixedPose(V.kind === "chase" ? V.overview : V.dir, V.kind === "chase" ? 32 : V.fov);
     camera.fov = V.fov; camera.updateProjectionMatrix();
   }
