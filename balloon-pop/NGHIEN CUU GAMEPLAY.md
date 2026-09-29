@@ -178,3 +178,11 @@ Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi ti�
 - Thùng đúng KHÔNG còn gắn chặt vào toa (vẫn là vật động để bị húc). Tính điểm khi nằm yên 0,3 s và đang CHẠM khối toa đúng (đọc danh sách tiếp xúc của cannon mỗi bước) hoặc tâm nằm trên toa đúng. Rơi xuống đất (y < 2,2) hoặc rời toa > 0,6 s ⇒ trừ lại, toa mở lại, máy quay quay về toa đó (bỏ luật “máy quay không lùi”).
 - Khinh khí cầu = vật động học 4 quả cầu, nhóm va chạm riêng: chỉ va thùng ĐÃ nằm trên tàu (thùng đang rơi xuyên qua, không bị gạt lệch).
 - Rèm toa khách = MeshPhysicalMaterial transmission 1, roughness 0,48 ⇒ bóng mờ thật; tốn thêm 1 lượt vẽ (≈ 104 fps, trước 123).
+
+## 13. Mẫu 1h (29/9/2026)
+3 ý thầy: vào game máy quay chuyển tới toa đầu quá đột ngột · đồng hồ trái + thanh thời gian phải, thiết kế theo theme · hàng nút ra ngoài như Rocket Race, bỏ fullscreen.
+⇒ `mau-1h-hang-nut.html` (lõi `core/bp3d-1h.js`, HUD `core/bp3d-1h.css`, font Rye; toa `coach-1g.js`, cảnh 1f).
+- Vào ga: vận tốc giảm ĐỀU từ V0 về đúng `cruiseV()` trong 3,4 s, toa đáp án đầu dừng đúng tâm; máy quay đứng yên suốt lúc vào ga.
+- Máy quay = lò xo giảm chấn tới hạn (K 2,2) có bám vận tốc tàu. Lại luật 1e: toa chờ còn bên trái ⇒ máy quay ĐỨNG CHỜ; chỉ lia NGƯỢC khi một toa trước bị mở lại (1g bỏ luật này nên máy quay lùi 15 đv mỗi lần thả đúng — đã sửa).
+- Thanh trên giờ là THANH THỜI GIAN (giờ còn lại / giờ nhiều nhất từng có), ≤ 10 s chuyển đỏ; tiến độ toa không còn hiện ở đây.
+- Hàng nút 80 px ngoài màn chơi: Menu · Sound | Switch activity · Options · Leaderboard · Mode (icon chép từ AWord core/icons.js qua Maze Chase 1g); 3 bảng Switch/Leaderboard/Mode là dữ liệu mẫu; mở bảng giữa ván thì tạm dừng.
