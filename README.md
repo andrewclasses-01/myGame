@@ -12,6 +12,7 @@ myGame/
     index.html        chọn mẫu
     mau-*.html        từng bản mẫu (mau-2b-duoi-theo-tomko.html = bản thầy chọn 26/9/2026)
     core/             lõi 3D dùng chung của các mẫu
+  balloon-pop/        Balloon Pop 3D (Three.js) — 2 mẫu góc máy, lõi chung core/bp3d.js
 ```
 
 ## Quy ước

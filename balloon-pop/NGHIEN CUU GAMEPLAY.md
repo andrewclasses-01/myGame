@@ -135,3 +135,15 @@ tốc độ tàu hai bên; hai em chạm cùng lúc có bị nuốt chạm khôn
    lớp xa–gần) hay góc máy chéo từ trên xuống?
 4. **Chế độ**: một người/cả lớp chơi trên TOMKO trước, hay cần ngay chế độ **Fight 2 đội** (2 đoàn tàu) như Rocket Race?
 5. **Khung cảnh**: giữ Wild West (sa mạc, xương rồng, tàu hơi nước) hay đổi chủ đề?
+
+## 6. Hai mẫu đã dựng (29/9/2026, chạy local)
+`index.html` chọn mẫu · `mau-1-nhin-ngang.html` · `mau-2-cheo-tren.html` — cùng lõi `core/bp3d.js`, chỉ khác góc máy.
+- Luật: màn N = N toa (tối đa 10 màn); thùng rơi thẳng theo trọng lực, chạm nóc toa mới xét; đúng +5 (×2 khi có
+  bóng ×2), sai ✗ không trừ; thùng rơi xuống đất thì mất. Đủ toa ⇒ khinh khí cầu bay lên, tàu tăng tốc chạy đi,
+  máy bay kéo băng "Score N", cộng điểm = số giây còn lại + thêm 5 giây, sang màn sau.
+- Toa rộng cố định 6,2 đơn vị (chữ không nhỏ đi khi nhiều toa); tàu dài hơn màn thì chạy vòng lại từ trái.
+- Bóng thưởng: +10s (xanh), $ +10 điểm (vàng), ×2 cho 3 thùng đúng tiếp (tím).
+- Options (màn bắt đầu): Timer (mặc định 2:00), Levels 1–10, Balloon speed 1–5, Train speed 1–5, Extra time,
+  Points, Double score, Drop guide (vạch + vòng trắng chỉ chỗ thùng rơi — mặc định BẬT ở mẫu 2, TẮT ở mẫu 1).
+- Hết giờ: TIME'S UP / hết màn: GAME COMPLETE · Score · Show answers (từng toa: từ, định nghĩa, ✓/✗) · Start again.
+- ☰ Menu tạm dừng (đồng hồ + mọi thứ đứng) · loa · toàn màn hình.

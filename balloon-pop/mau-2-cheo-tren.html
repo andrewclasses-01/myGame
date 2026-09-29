@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balloon Pop 3D — Mẫu 2 · High angle</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/bp3d.css">
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<div id="game"></div>
+<script type="module">
+import { createBalloonPop } from "./core/bp3d.js";
+import { WORDS, WORDS_TITLE } from "./core/words-lsa2-s4-t4.js";
+createBalloonPop({ mount: document.getElementById("game"), view: "top", words: WORDS, wordsTitle: WORDS_TITLE });
+</script>
+</body>
+</html>
