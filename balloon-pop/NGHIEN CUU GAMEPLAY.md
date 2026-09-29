@@ -156,3 +156,7 @@ mẫu 1 và 2 giữ nguyên để so sánh. Luật chơi không đổi.
 ## 8. Mẫu 1c (29/9/2026)
 Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi tiết với bụi cỏ, xương rồng như thật · cỏ + thỉnh thoảng xương rồng tiền cảnh · logo ANDREW STUDIO trên đầu tàu · đầu tàu tới 75% màn thì máy quay lia theo, cảnh chuyển động như thật, thùng rơi có vật lý (quán tính, va chạm, văng ở tốc độ cao).
 ⇒ `mau-1c-lia-theo-tau.html` (lõi `core/bp3d-1c.js` + cảnh `core/west-world-1c.js`). Tàu dài hơn màn: máy quay ưu tiên giữ toa CHƯA đầy ngoài cùng bên trái ở ~25% màn.
+
+## 9. Mẫu 1d (29/9/2026)
+14 ý thầy: tàu nhanh chậm tự nhiên · bỏ ✓/✗ (chỉ +điểm, −điểm khi Points off) · bỏ vật văng ra khi thùng rơi (khoang lái) · từ quay vòng tới hết giờ (Levels → Max cars) · xương rồng tai thỏ + saguaro làm lại, saguaro xa cao hơn · chữ Hollywood ANDREW CLASSES / NO HOMEWORK - NO FUN lần lượt trên đồi xa · toa khách có bóng người sau rèm (nói chuyện, giật mình, ngước nhìn trần) · thùng đúng trượt dừng hẳn mới tính, quá mép thì rơi · máy bay bay ngược chiều · ANDREW STUDIO chỉ ở đầu máy, toa than hoa văn · cỏ + đá chi tiết · lạc đà chạy ra xem tàu · đàn chim + đại bàng rượt.
+⇒ `mau-1d-song-dong.html` (lõi `core/bp3d-1d.js`, cảnh `core/west-world-1d.js` + `core/west-props-1d.js`, toa khách `core/coach-1d.js`).
