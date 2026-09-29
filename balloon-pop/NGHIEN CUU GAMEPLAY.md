@@ -283,3 +283,10 @@ Thầy: chọn biến thể 3 nhưng thấp 1/2, sẫm hơn · ANDREW CLASSES lu
 - Bảng chữ: bảng chính = ANDREW CLASSES (bên TRÁI), NO HOMEWORK bên phải cách 95 (trước 34, bên trái). Intro: `aheadAt(C+10)` dựng sẵn ANDREW CLASSES chỗ ván sẽ bắt đầu (lúc có `ahead` thì update không tự dựng/xoá); hết intro `commitAhead()` bỏ 2 bảng màn chờ, nhận bảng dựng sẵn làm bảng chính, idx = 1. Màn chờ: máy quay y 58, z 92, nhìn y 16, fov 40.
 - `near-mounds-1u.js`: 1 gò xói mòn = lưới 140² sống đao ngắn + rãnh 2 lớp, nắng xiên vẽ sẵn, muối chân gò (rộng 3,2–8, cao 1–2,8, 7/khúc) · 2 mỏm sa thạch = trụ 72×28 phân 4–6 lớp, lớp mềm khoét lõm, lớp trên thụt vào, khe tối · 3 đống đá tảng = 4–7 tảng + 40 sỏi ghép 1 hình · 4 trộn 1+2. Rải z 12…−48, tránh |z| < 3,2, sát ray ×0,6. Kiểu 0 giữ gờ đá hộp cũ.
 - Đo: không lỗi; ~161 fps khung nhỏ. ⬜ Thầy chọn mô đất.
+
+## 27. Mẫu 1v (29/9/2026) — đống đá gần ray nhỏ 1/2, ít 1/2, thiết kế lại
+Thầy: chọn loại 3 (đống đá tảng + sỏi) nhưng giảm size 1/2, ít hơn 1/2, thiết kế lại. ⇒ `mau-1v-dong-da.html?da=0..3` (`bp3d-1v.js` → `west-world-1v.js` → MỚI `near-mounds-1v.js`; props/animals giữ 1u).
+- Mọi kiểu: bề ngang 0,45–1,1 (1u: 0,9–2,2), 14 đống/khúc (1u: 28). Kiểu mới để trống `h` ⇒ world-1v lấy cao = ngang × 0,85–1,15 (đá không méo).
+- `blob()`: cầu chia mịn gộp đỉnh + nhiễu 4 tầng + khe nứt (nhiễu gờ mũ 10) + mặt khớp phẳng (ép theo vài mặt phẳng ngẫu nhiên), đáy phẳng y = 0. Vật liệu: hạt đá mịn + lấm tấm vẽ trong shader (nhiễu 3D theo toạ độ vật) ⇒ chi tiết nhỏ hơn mật độ đỉnh.
+- 1 đá tròn phong hoá: 1 tảng + 2–3 tảng tựa, vệt sơn sa mạc sẫm chảy từ đỉnh, chân bám cát, lỗ rỗ, gò cát bám chân (đĩa phồng mép răng cưa, gợn gió) + sỏi · 2 đá phiến: 4–6 phiến mỏng (Box KHÔNG gộp đỉnh ⇒ cạnh sắc) mép sứt răng cưa, vân lớp ở mép, vết nứt + địa y mặt trên, 1–2 phiến vỡ dựng nghiêng + vụn dẹt · 3 nứt đôi: tảng lớn ép 2 nửa lên mặt nứt, tách 0,14–0,24 + ngả ra, mặt nứt màu tươi, mảnh vỡ 2 đầu khe + sỏi.
+- Đo: không lỗi. ⬜ Thầy chọn thiết kế.
