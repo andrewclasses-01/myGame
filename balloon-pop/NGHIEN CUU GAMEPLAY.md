@@ -270,3 +270,8 @@ Thầy chưa ưng 5 kiểu 1r, gửi ảnh Valle de la Luna (Atacama): "sử d�
 - Màu: cát → đỏ → cam theo độ cao; đáy rãnh (dưới mức vĩ mô) sẫm, gờ sáng; MUỐI TRẮNG theo nhiễu ở lòng trũng + đáy rãnh + nửa dưới sườn, bớt 85 % quanh chữ; NẮNG XIÊN VẼ SẴN từ trái-trước (mặt đồi quay lưng mặt trời thật ⇒ nếu không sẽ tối phẳng) + tự sáng 0,22; kết cấu hạt sạn; đá vụn chân sườn; không cây.
 - 4 bản `OPTS`: 0 sống đao đỏ (H 34, 3 sống) · 1 cụm đồi xói mòn (7 sống thấp + 9 gò) · 2 sống đao + muối trắng (muối 0,95) · 3 đỉnh nhọn hùng vĩ (H 46, sắc 1,6, rãnh 1,25).
 - ⚠️ Bẫy: vá file bằng Python `.replace("\n", nl)` biến chuỗi `\n` trong mã JS thành xuống dòng thật ⇒ SyntaxError, cả trang đen. Đo: không lỗi cả 4 bản. ⬜ Thầy chọn.
+
+## 25. Mẫu 1t (29/9/2026) — biến thể chi tiết của đồi Atacama bản 3
+Thầy: chọn bản 3 (Đỉnh nhọn hùng vĩ), thêm vài biến thể chi tiết hơn. ⇒ `mau-1t-nui-chi-tiet.html?nui=0..4` (`bp3d-1t.js` → `west-world-1t.js` → `west-props-1t.js` + `animals-1t.js`).
+- `OPTS` thêm: `res` lưới (320×180 → 460×260) · `fine` lớp rãnh thứ 3 (gờ nhiễu x·2,4 / z·0,34) · `strata` vệt tầng đá ngang (sin theo độ cao + nhiễu) · `serr` răng cưa trên sống (nhiễu gờ, chỉ vùng cao m 38–58) · `talus` nón đá vụn nhạt màu chân sườn + thêm đá vụn · `bump` vân sạn nổi (bumpMap).
+- 5 bản: 0 gốc · 1 rãnh 3 lớp + vân nổi · 2 + tầng đá · 3 6 sống, răng cưa + nón đá vụn · 4 muối 0,7 + tầng đá + răng cưa nhẹ. Đo: không lỗi, ~165 fps khung nhỏ. ⬜ Thầy chọn.
