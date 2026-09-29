@@ -300,3 +300,11 @@ Thầy: chọn đá kiểu 1 · khi chơi chữ bị che ⇒ đưa chữ lên ca
 - Chữ đổ (`knock`) nằm 5–8 s rồi tự dựng lại (`rising`, lưu `rx0`).
 - `sign-chase-1w.js`: cặp [chạy trốn, đuổi] ×1,6 trên gờ; 'vòng' = chạy làn trước (lz 14,4) → vòng ra sau chữ (lz 10) → vòng lại → chạy khỏi gờ; 'húc' (45 %) = con chạy trốn ngoặt vào một chữ giữa dãy ⇒ knock + bụi + loạng choạng, con đuổi né. Chỉ xuất hiện khi bảng chữ cách máy quay < 75. Bỏ con húc từ sau đồi (charger) vì vách đứng.
 - Đo: không lỗi; thử húc ⇒ chữ đổ (rx 1,40) rồi dựng lại sau ~8 s. ⬜ Thầy chọn chỗ đặt chữ.
+
+## 29. Mẫu 1x (29/9/2026) — ANDREW CLASSES trên đụn cát cao
+Thầy: trả đồi Atacama như bản trước; không để ANDREW CLASSES trên đồi đó nữa mà ở phần đụn cát cao phía sau (ảnh: gò cát lớn trung cảnh sau xương rồng).
+⇒ `mau-1x-chu-dun-cat.html?nh=0..1` (`bp3d-1x.js` → `west-world-1x.js` → `west-props-1x.js` + `animals-1x.js` + `sign-chase-1x.js` + MỚI `dune-1x.js`).
+- `dune-1x.js`: đụn cát là phần của mặt đất — `duneApply()` cộng vào groundH (GLSL, uniform `uDune[3]`) và groundHeight (JS, cùng công thức). Đụn ở z −105, cao 21, đỉnh phẳng |lz| < 6, sườn trước σ 20 / sau σ 32, hai đầu thoải 70 (mép lượn sin). Lưới đất 5 × 5,8 ⇒ hàng đỉnh −100 / −105,8 / −111,5 đều ở 21.
+- Bảng chữ trên đụn: không dựng đồi riêng; nhóm ở z −117 (chữ z −105), chữ y 21; hillH = groundHeight. `syncDunes()` sau mỗi showBoth/aheadAt/commitAhead/dropExtra/update: ô đụn theo bảng đang sống (cur/extra/ahead).
+- Đồi Atacama = 1u/1v (HS 0,5, chữ y 9). ?nh=0: NO HOMEWORK ở đồi Atacama; ?nh=1: cả NO HOMEWORK trên đụn cát. Chữ đổ tự dựng lại + cặp thú quanh chữ giữ từ 1w. JS groundHeight thêm dải phẳng 1u còn thiếu.
+- Đo: không lỗi; thú chạy trên đỉnh đụn y 21. ⬜ Thầy xem + chọn nh.
