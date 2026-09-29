@@ -225,3 +225,32 @@ MỌI lần xuất hiện (đầu câu, đổi người, hồi sinh ô sai) · �
   tàu (thu 0,02) đặt DƯỚI SÀN rồi `composer.render()` thật; nổ/xác địch/gạch/bom vẽ khung ẩn. Dọn bằng clear nhưng vật liệu mảnh `keep`.
 - Kiểm (chạy thật theo nhịp màn hình): trung bình 6,2 ms/khung; chỉ 1 khung ~0,25 s lúc làm nóng (màn câu hỏi to) + 1 khung 49 ms lúc vỡ ·
   tàu, nắp, nổ không khựng · ô sai hồi sinh đúng ô qua nắp · đổi người: địch về (0,0)/(6,14) · tự chơi 9/9 ×2 · 0 lỗi.
+
+## 14. MẪU 1j (29/9) — đom đóm · vệt cháy nhiều kiểu · nắp tròn + hầm máy · tàu săn tàu con · sao lấp lánh
+Thầy: "robot tan nhiều mảnh quá, bừa bộn ⇒ với robot mình: đốm sáng như đom đóm nổ bung rồi bay lên biến mất; vệt đen + khói vẫn còn, mỗi vụ
+một kiểu vệt đen, khói cháy một lát rồi ít dần rồi tắt · nắp boong hình tròn, dưới boong không đen hẳn mà thấy máy móc, robot xa xa mờ mờ
+· tàu ANDREW CLASSES nhỏ còn 2/3, xuất hiện chéo từ cạnh đáy (nửa trái/phải), bay chéo lên rượt tàu con, bắn đạn 2 bên, tàu con nổ ở chỗ
+nhìn thấy sau nhiều phát; chữ ở giữa tàu, 1 chữ ngửa lên; bắn xong bay thẳng; lát sau quay lại săn tàu khác hình dạng khác · lửa đẹp,
+thật, chi tiết · tàu chi tiết hơn (đang như lego), tàu con cũng chi tiết · sao nhỏ hơn, nhiều tầng, lấp lánh". Hỏi lại & thầy chốt: tàu
+45–60 s/lượt · lượt sau vào hướng khác (dưới lên / trên xuống / đôi khi ngang), không trùng chỗ vào lượt ngay trước · khói tắt: MỌI vụ nổ.
+- `mau-1j-dom-dom-tau-san.html` + `core/mc3d-1j.js/.css` + `mc3d-boom-1j.js` + `mc3d-hatch-1j.js` (mới) + `mc3d-ship-1j.js` (mới).
+- Đom đóm (`boom.fireflies`): 240 đốm (xanh lá vàng / vàng chanh / hổ phách / bạc hà), bung ra khắp thân robot → chậm lại → chao lượn bay
+  lên, lập loè, tắt dần sau 2,4–4,8 s. Robot vẫn bị hất lên 0,12 s rồi mới tan.
+- Vệt cháy: 6 mẫu (loang + tia · sao nổ tia dài · vành cháy lõi nhạt · bắn toé lệch + giọt · nứt than · vệt muội dài) + cỡ 7–11,5, méo, xoay.
+  Mỗi vụ nổ kèm `smolder` (khói âm ỉ 5–7 s, thưa + mỏng dần rồi tắt). Xác địch / gạch: tuổi thọ khói 8 / 6 s.
+- Nắp tròn (`createHatches`): vành sọc + gờ thép + 6 đèn + 8 lá kiểu ống kính (thu vào vành + xoắn). LÒNG NẮP = "ảnh phụ" (`createPortal`):
+  vẽ lớp 5 (hầm + robot đang nâng) bằng CHÍNH máy quay vào render target, đĩa lấy điểm ảnh theo toạ độ màn hình ⇒ phối cảnh thật. Giếng
+  chỉ dày 1,3 (bằng sàn) + bệ nâng dạng KHUNG (vành + 6 nan + trục) để nhìn xuyên. Hầm (`createUnderdeck`, lớp 5, đèn riêng): sàn lưới, cột,
+  dầm, 240 khối máy (2/3 dồn dưới trạm, cao 3–13), màn hình/khe đèn, bồn, ống, băng chuyền, quạt, 140 đèn nháy, 10 robot tuần tra, sương mờ.
+  ⚠ Cột sáng xanh phủ lên lỗ từng che mất hầm (tưởng lỗi ảnh phụ) ⇒ để rất mờ 0,06; bệ đặc từng che kín ⇒ đổi thành khung.
+- Hạm đội (`createFleet`): tàu lớn dài 47 (2/3), vỏ 2048px nhiều cỡ tấm + bump, 3 tầng hông, 3200 khối + 260 trụ chi tiết cỡ lệch (cùng tông vỏ
+  — sáng hơn vỏ là trông như lego), 12 tháp pháo nòng đôi 2 bên (nơi bắn), thượng tầng vát cạnh + cửa sổ, 2 vòm cầu đa diện, 7 loa phụt tiện
+  (lathe). Lửa shader: lõi xanh trắng + vòng sốc + viền cam nhiễu cuộn + quầng. Tàu con 3 kiểu: tiêm kích cánh X · tàu hàng đĩa có càng ·
+  tàu chặn cầu + cánh lục giác — lạng lách, có lửa. Laser đỏ 2 bên luân phiên, ngắm đón đầu, ~25% trượt; nổ khi đủ 5–7 phát VÀ đang ở
+  vùng nhìn thấy (ngoài vùng trạm che); mảnh tàu con văng + lửa + khói. 6 cửa vào (BL/BR/TL/TR/L/R), không trùng lượt trước; kiểu tàu con
+  không trùng lượt trước. Chữ: 1 dòng giữa sống lưng (bản xoay 180° khi mũi hướng trái màn), dải boong dưới chữ để trống.
+- Sao: 4 tầng Points shader (5200 li ti → 46 sáng), cỡ 0,7–3,3 px, lấp lánh nhịp riêng + thỉnh thoảng loé.
+- ⛔ BẪY khựng 0,4–0,6 s: robot mang 1 PointLight (tắt) ⇒ robot ẩn/hiện làm SỐ ĐÈN đổi ⇒ shader MỌI vật dịch lại. Dời đèn ra khỏi robot.
+  Làm nóng trong trận tách 2 khung (0,3 s + 1,0 s) lúc câu hỏi to.
+- Kiểm (chạy thật): trung bình 8,4 ms/khung; chỉ 1 khung ~0,45 s lúc câu hỏi to đầu ván · đom đóm/nắp/đổi người/tàu săn không khựng ·
+  tự chơi 9/9 ×2 · 0 lỗi.
