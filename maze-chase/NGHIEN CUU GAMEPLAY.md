@@ -455,3 +455,4 @@ trên NOT FOUND / ENEMY LOCATED thêm tên một thiên hà thật · giảm kho
 - Bệ đáp án: khoảng cách = số bước ĐI THẬT (BFS), trong dải 35–80% quãng xa nhất (tối thiểu 5 bước); thiếu chỗ thì nới 25–90% rồi bỏ dải.
 - Kiểm: bước từng khung có `gl.finish()` cả intro trung bình 4,4 ms, không khung nào > 22 ms · tự chơi 9/9 (còn 4 mạng) · 0 lỗi.
   ⚠ Khung xem thử có lúc bị trình duyệt hãm còn 1,3 khung/giây (cửa sổ bị che) ⇒ đo bằng chế độ bước + gl.finish thay vì chạy thật.
+- ✅ 29/9 thầy CHỐT mẫu 1t — chưa đưa vào AWord (thầy sẽ cải tiến tiếp).
