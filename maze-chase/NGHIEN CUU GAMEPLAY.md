@@ -254,3 +254,24 @@ thật, chi tiết · tàu chi tiết hơn (đang như lego), tàu con cũng chi
   Làm nóng trong trận tách 2 khung (0,3 s + 1,0 s) lúc câu hỏi to.
 - Kiểm (chạy thật): trung bình 8,4 ms/khung; chỉ 1 khung ~0,45 s lúc câu hỏi to đầu ván · đom đóm/nắp/đổi người/tàu săn không khựng ·
   tự chơi 9/9 ×2 · 0 lỗi.
+
+## 15. MẪU 1k (29/9) — đếm 5 s · đếm kiểu HUD · lửa đuôi nhấp nhô · xác tàu con kiểu Rocket Race · cụm trên không ô chứa
+Thầy: "đổi mọi chỗ đếm 3s thành 5s; đổi phong cách số đếm và chữ GO cho đồng bộ với style · lửa đuôi tàu cháy nhấp nhô chân thực hơn,
+đang cứng và giả · tàu nhỏ bị bắn hạ nổ ra nhiều mảnh xác hơn, như tàu nổ trong Rocket Race · design lại đồng hồ, ô câu hỏi, bom, tim,
+điểm cho đồng bộ phong cách, không cần ô chứa".
+- `mau-1k-dem-5s-hud.html` + `core/mc3d-1k.js/.css` + `core/mc3d-ship-1k.js` (boom/hatch vẫn dùng bản 1j).
+- Đếm: đầu ván 5-4-3-2-1-GO! (mỗi số 1 s, trước là 0,8 s); đổi người `SWAP_S` 3 ⇒ 5 rồi GO!. Một khối `.mc-count` dùng chung (`showCount`):
+  vòng vạch 60 nấc xoay + rãnh + cung vàng chạy hết trong 1 s + 4 ngoặc xoay ngược; số chữ Baloo gradient trắng → xanh; GO! vàng, vòng bung
+  1,75× rồi tan. Hào quang bảo vệ vẫn 3 s (không phải số đếm).
+- Lửa: nón uốn trong vertex shader (phình/thắt chạy dọc + đuôi lắc cùng nhịp mọi lớp), vân fbm uốn miền, đuôi tách lưỡi lửa; dài/sáng đổi
+  bằng tổng sóng lệch nhịp (bỏ `Math.random()` mỗi khung — nguyên nhân "cứng, giả"); 3 lớp (lõi · thân · quầng) + hạt lưỡi lửa liếm (75/s).
+  ⚠ Lần đầu quá trắng (cộng sáng + bloom) ⇒ hạ lõi, thân xanh tím → cam, dài 9 ⇒ 12 lần bán kính loa.
+- Xác tàu con (`makeWreckKit`, cách của Rocket Race `rr3d-view.js`): ~60 mảnh dựng sẵn, gắn ẩn trong tàu con — tấm vỏ rách (mép răng cưa,
+  thủng, cong/quăn/móp theo nhiễu 3D, loang muội vertexColors), 12 tấm lớn thay vỏ chính (vỏ chính ẩn khi nổ), dải xoắn, ống gãy, cục máy,
+  mảnh vụn; vật liệu cháy sạm (ửng đỏ rồi nguội); ~25% mảnh cháy kéo lửa, mảnh lớn kéo khói; 40 tàn lửa văng; 6,5 s sau thu nhỏ tan.
+  Hệ hạt Points (1 lượt vẽ/hệ) cho lửa + khói. Xác vẫn trôi tiếp khi tàu lớn đã bay khỏi màn.
+  ⚠ Khói hạt ShaderMaterial KHÔNG qua chuyển màu sRGB ⇒ 0,24 ra màn thành xám sáng như sỏi trắng ⇒ dùng 0,085.
+- Cụm trên: bỏ ô kính; đồng hồ/số xanh neon, câu hỏi chữ trắng viền tối + gạch chân xanh–vàng–xanh, bom vàng, tim SVG hồng (mất = viền),
+  điểm dấu tích tròn xanh lá; dải tối mờ dần phía trên giữ chữ dễ đọc.
+- Kiểm (chạy thật): trung bình 7,3 ms/khung; tàu săn + nổ xác không khựng; khung ~150 ms lúc chuyển câu có sẵn từ 1j (màn câu hỏi to) ·
+  tự chơi 9/9 · 0 lỗi.
