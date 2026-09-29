@@ -391,3 +391,27 @@ CLASSES) rồi quay mặt lại, lùi rộng ra, vào game · góc quay chuyển
   đầu lúc tải vẽ thử đúng cảnh tới nơi (trời enemy, tàu mẹ + hộ tống treo trên trạm, máy quay sau lưng) dưới màn đen ⇒ hết.
 - ⚠ Đo khung hình thật: đừng chạy lệnh khác cùng lúc (máy bận ⇒ khung 130 ms giả).
 - Kiểm: bước từng khung 0 ⇒ 38,8 s không khung nào >16 ms (máy) · chạy thật trung bình 6,1 ms/khung · bấm đúp bỏ qua ⇒ câu hỏi đầu, robot đứng sẵn.
+
+## 22. MẪU 1r (29/9) — STAR LOOT: màn chờ có tàu bay vào, lỗ giun mượt, robot chui vào gầm trạm, câu hỏi hiện lúc máy quay lùi
+Thầy: mở game chưa có tàu, tàu từ từ bay từ góc màn vào chỗ đậu, chậm dần, máy quay vẫn tiến lên · bấm START vẫn động, chậm rồi mới tăng tốc
+và đổi góc · lỗ giun chỉ to hơn tàu một chút, viền mờ do ánh sáng mạnh (không viền tròn rõ) · chui vào sáng chói dần, ra tối dần, mượt · bớt
+giật lúc qua lỗ giun · tới đích: ENEMY LOCATED xanh lá nhấp nháy ở góc · sàn maze dày gấp 3 · tàu thả robot ở XA căn cứ · đơn thả 1 robot:
+bay xuống sát maze, dừng một nhịp nhìn ngắm, hạ xuống gầm, từ từ chui vào · bỏ chữ STAR LOOT lúc lùi máy quay · robot quay mặt ⇒ máy quay
+lùi thì câu hỏi đầu hiện luôn (thời gian lùi tính vào thời gian đọc) · bỏ chữ double tap to skip; bấm đúp ⇒ tới cảnh tàu vừa xuyên tới vũ trụ
+đích và thả robot · ngón tay, ngón chân robot chi tiết hơn.
+- `mau-1r-star-loot-chui-gam.html` + `core/mc3d-1r.js/.css` + `mc3d-intro-1r.js` (MỚI); sound/ship 1p.
+- "Thời gian bay" c chạy liền từ màn chờ sang intro: tàu = chỗ đậu + trôi `70(1−e^(−c/30))` + đoạn bay vào `ARR0·(1−c/8,5)³` (hộ tống trễ
+  0,7/1,2/1,7 s); máy quay = chỗ cũ + cùng độ trôi + tiến thêm. START lưu c0 = menuT ⇒ không giật.
+- Lỗ giun: lòng bán kính 64 (tàu rộng ~56), mép `smoothstep` + quầng loang, KHÔNG vòng viền; hộ tống KHÉP sát đuôi (đội hình `tuck`) để lọt.
+  Trắng loá = lớp `.cine-white` đặt độ mờ TỪNG KHUNG: tăng 1,3 s (smoothstep bình phương) ⇒ giữ 0,25 s ⇒ giảm 1,9 s; đổi vùng lúc trắng hẳn;
+  bỏ rung máy quay; các lỗ giun cách 4,2 s (15,6 / 19,8 / 24,0).
+- Tàu mẹ treo ở z 135 (xa trạm), góc rộng lùi xa (150,50,150) để thấy cả tàu lẫn trạm.
+- Robot: `jetPose` (yaw lọc mượt, dáng nằm rạp ⇒ đứng dần) · F1 lượn 5,2 s chậm dần tới điểm lơ lửng trước mép trạm · F2 dừng 2,2 s ngó trái
+  phải (máy quay sau vai) · F3 hạ xuống gầm 2,8 s (máy quay xuống dưới mặt trạm nhìn lên) · F4 chui lên CỬA GẦM 2,4 s (lòng tối + viền đèn +
+  2 lá trượt mở/đóng; phần robot lọt vào bị mặt đáy sàn che ⇒ trông như chui vào thật) ⇒ máy quay vòng ra mép lên boong ⇒ trồi lên quay lưng.
+- Sàn dày: `DECK_T = 3.6` (đáy + viền mép), giàn/pin mặt trời hạ theo. `ctx.deckBottom`, `ctx.teammate.cell()`.
+- Trao cho game ở BACKOUT: intro gọi startGame (câu hỏi to hiện) rồi `tailing` — lõi vẫn gọi `intro.update` để lái máy quay tới hết đoạn lùi;
+  câu 1 giữ hướng robot (nhìn ra máy quay). Start again / END GAME lúc đang lùi ⇒ `intro.abort()` (kiểm cả `tailing`).
+- Bấm đúp ⇒ T = lỗ giun cuối + 0,15 s (đang trắng, mờ dần ra vũ trụ đích), các mốc trước đó đánh dấu xong không chạy.
+- Tay: mu bàn tay + cổ găng + 4 ngón 2 đốt hơi co + ngón cái chìa ra trước. Ủng: 3 ngón bo tròn ở mũi + khớp ngón + đế gai + gót.
+- Kiểm: intro ~51 s chạy thật trung bình 6,1 ms/khung, 1 khung 127 ms ngẫu nhiên (chạy lại không có) · bấm đúp đúng cảnh · tự chơi hết ván.
