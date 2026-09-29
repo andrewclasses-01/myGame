@@ -275,3 +275,11 @@ Thầy chưa ưng 5 kiểu 1r, gửi ảnh Valle de la Luna (Atacama): "sử d�
 Thầy: chọn bản 3 (Đỉnh nhọn hùng vĩ), thêm vài biến thể chi tiết hơn. ⇒ `mau-1t-nui-chi-tiet.html?nui=0..4` (`bp3d-1t.js` → `west-world-1t.js` → `west-props-1t.js` + `animals-1t.js`).
 - `OPTS` thêm: `res` lưới (320×180 → 460×260) · `fine` lớp rãnh thứ 3 (gờ nhiễu x·2,4 / z·0,34) · `strata` vệt tầng đá ngang (sin theo độ cao + nhiễu) · `serr` răng cưa trên sống (nhiễu gờ, chỉ vùng cao m 38–58) · `talus` nón đá vụn nhạt màu chân sườn + thêm đá vụn · `bump` vân sạn nổi (bumpMap).
 - 5 bản: 0 gốc · 1 rãnh 3 lớp + vân nổi · 2 + tầng đá · 3 6 sống, răng cưa + nón đá vụn · 4 muối 0,7 + tầng đá + răng cưa nhẹ. Đo: không lỗi, ~165 fps khung nhỏ. ⬜ Thầy chọn.
+
+## 26. Mẫu 1u (29/9/2026) — đồi thấp 1/2, thứ tự bảng chữ, mô đất gần ray
+Thầy: chọn biến thể 3 nhưng thấp 1/2, sẫm hơn · ANDREW CLASSES luôn xuất hiện trước · 2 bảng ở 2 dãy núi khác nhau, cách xa hơn · tăng chi tiết mô đất nhỏ gần đường tàu, vài phiên bản.
+⇒ `mau-1u-mo-dat.html?mo=0..4` (`bp3d-1u.js` → `west-world-1u.js` → `west-props-1u.js` + `animals-1u.js` + MỚI `near-mounds-1u.js`).
+- Đồi: NUI cố định 3; `HS = 0,5` nhân phần cao (giữ −4 đáy); màu tô theo thang cao cũ, ×0,84; chữ `LETTER_Y` 17 → 9, cột chống dài 1,4×LETTER_H xuống tận đất. Mặt đất: dải z −135…−300 giảm 90 % gò lớn (`groundH` world-1u) ⇒ đồi thấp không bị che.
+- Bảng chữ: bảng chính = ANDREW CLASSES (bên TRÁI), NO HOMEWORK bên phải cách 95 (trước 34, bên trái). Intro: `aheadAt(C+10)` dựng sẵn ANDREW CLASSES chỗ ván sẽ bắt đầu (lúc có `ahead` thì update không tự dựng/xoá); hết intro `commitAhead()` bỏ 2 bảng màn chờ, nhận bảng dựng sẵn làm bảng chính, idx = 1. Màn chờ: máy quay y 58, z 92, nhìn y 16, fov 40.
+- `near-mounds-1u.js`: 1 gò xói mòn = lưới 140² sống đao ngắn + rãnh 2 lớp, nắng xiên vẽ sẵn, muối chân gò (rộng 3,2–8, cao 1–2,8, 7/khúc) · 2 mỏm sa thạch = trụ 72×28 phân 4–6 lớp, lớp mềm khoét lõm, lớp trên thụt vào, khe tối · 3 đống đá tảng = 4–7 tảng + 40 sỏi ghép 1 hình · 4 trộn 1+2. Rải z 12…−48, tránh |z| < 3,2, sát ray ×0,6. Kiểu 0 giữ gờ đá hộp cũ.
+- Đo: không lỗi; ~161 fps khung nhỏ. ⬜ Thầy chọn mô đất.
