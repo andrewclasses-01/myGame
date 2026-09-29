@@ -37,6 +37,7 @@ rocket-race/
   mau-1-cheo-tren.html · mau-2-sau-lung.html · mau-3-tu-tren-xuong.html   (view tilt / chase / top)
   core/mc3d.js                lõi CHUNG (luật chép AWord maze-chase 2D + cảnh trạm vũ trụ + HUD); mẫu chỉ khác VIEWS
   mau-1b-cheo-tren-ro.html + core/mc3d-1b.js   (29/9) MẪU 1b — thầy chọn mẫu 1; màu gọn, nhân vật chi tiết, chậm (3 ô/s), sáng hơn; __mc.cam()/where() soi gần
+  mau-1c-nhieu-map.html + core/mc3d-1c.js + core/mc3d-1c.css + core/mc3d-maps.js (10 map)   (29/9) MẪU 1c; chon-dpad.html so sánh 5 D-pad
   core/mc3d-sound.js          tiếng tự tổng hợp Web Audio · core/questions-sample.js bộ câu mẫu
   Bàn thử: window.__mc — start() · step(n) · resume() · press(dir) · autoplay · state() · snap() · opt. Xem local: launch `mygame-maze` cổng 8866
 tools/chep-aword-sang-game.py — gốc để cải tiến tiếp

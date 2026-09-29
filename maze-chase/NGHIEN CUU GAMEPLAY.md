@@ -79,3 +79,27 @@ Thầy: "màu sắc lẫn lộn, khó nhìn · robot và kẻ địch hơi xấu
   2 tay kẹp đung đưa, vây sau, khe tản nhiệt, động cơ dưới có vòng sáng + lửa phập phồng) — to 1,6.
 - Bàn thử thêm: `__mc.cam([x,y,z],[x,y,z])` soi gần (gọi `__mc.cam()` trả lại) · `__mc.where()` toạ độ người/địch.
 - Đã tự kiểm: tự chơi 9/9 ⇒ GAME COMPLETE, 0 lỗi console. ⬜ thầy xem trên TOMKO.
+
+## 7. MẪU 1c (29/9) — 4 ý thầy sau 1b
+Thầy: "(1) thiết kế để tôi chọn mẫu D-pad · (2) khi tới đích robot và chữ bị lẫn vào nhau, không chân thực · (3) sàn chia ngăn thành
+các ô rất rối mắt · (4) mỗi màn một map khác nhau, cần nhiều map, tránh học sinh quen và thuộc lòng 1 map".
+- `mau-1c-nhieu-map.html` + lõi `core/mc3d-1c.js` + `core/mc3d-1c.css` + KHO MAP `core/mc3d-maps.js`; trang so sánh `chon-dpad.html`.
+- (1) 5 kiểu D-pad: A Glass (bản 1b) · B Ring (đĩa tròn 4 múi, cắt bằng clip-path — chạm theo múi) · C Keys (phím mũi tên chữ T ngược,
+  nổi/lún) · D Console (dấu cộng đen trên đế tròn) · E Stick (cần gạt: kéo núm, đổi hướng khi lệch > 25% bán kính). Chọn ở Options
+  "D-pad style" hoặc `?dpad=glass|ring|keys|console|stick`; vị trí vẫn Right/Left/Both/Off.
+- (2) Bảng HOLOGRAM: bệ phẳng sát sàn (người đứng lên được) + máy chiếu + chùm sáng loe lên + bảng chữ có ĐÁY ở độ cao 5,0
+  (đầu phi hành gia ≈ 4,2), luôn quay mặt về máy quay, có kiểm độ sâu. Đúng ⇒ bảng nảy phồng xanh ✓ + người quay mặt ra giơ 2 tay nhảy
+  (bật thấp 0,3 để không chạm bảng) + tia sáng đưa người đi rồi mê cung sụp. Sai ⇒ bảng đỏ ✗ rung, người BỊ BẬT LÙI 1 ô (nhảy lùi) rồi
+  đứng yên chờ lệnh; bệ tan sau 0,7 s. ⚠️ Đã thử lật bảng 360° ⇒ giữa chừng chữ bị NGƯỢC ⇒ đổi thành nảy phồng.
+- (3) Sàn LIỀN theo hình map, không kẻ ô: màu theo map + vân kim loại mờ + tối dần sát mép; ô không có sàn trong suốt (thấy vũ trụ),
+  mép sàn có vách dày (vách mép = mọi cạnh giữa ô có sàn và ô trống). Bỏ khối đế chữ nhật, viền sáng, 4 cột đèn, khối máy dưới đáy.
+- (4) 10 MAP = hình trạm × kiểu mê cung × bảng màu: Classic Deck (full/dfs/blue) · Cross Station (cross/prim/teal) · Ring Module
+  (vòng quanh lỗ giữa/dfs/indigo) · H-Bridge (h/rooms/emerald) · Hex Core (bát giác/prim/steel) · Twin Docks (2 đảo, 2 cầu/dfs/teal) ·
+  U-Bay (u/arena/blue) · Zigzag Wing (s/dfs/emerald) · Four Labs (4 phòng nối cửa/rooms/indigo) · Open Arena (dấu cộng/arena/steel).
+  Kiểu mê cung: dfs hành lang dài · prim nhiều nhánh ngắn · rooms có 3 phòng rộng · arena sân mở vách rải rác (đóng ~42% cạnh, giữ liền,
+  không tạo ngõ cụt). Mỗi ván xáo bộ 10 map, không lặp map liền nhau; đường đi trong map vẫn ngẫu nhiên. Tên map hiện trên màn câu hỏi.
+  Xuất phát = ô có sàn gần tâm nhất; địch = ô có sàn gần 4 góc nhất.
+- Kiểm bằng máy: mỗi map sinh 200 lần ⇒ 0 lỗi liền mạch, 0 ngõ cụt (Hex lúc đầu có 2 ngõ cụt do đầu nhọn 1 ô ⇒ đổi thành bát giác) ·
+  tự chơi 9/9 ⇒ 9 câu 9 map khác nhau, GAME COMPLETE · bệ sai ⇒ bật lùi đúng · 5 D-pad đều nhận lệnh · 0 lỗi console.
+- Bàn thử thêm: `__mc.useMap(i)` xem map i ở màn chờ · `__mc.map()` tên map đang chơi · `__mc.autoTo(r, c)` tự đi tới ô.
+- ⬜ Thầy chọn D-pad + xem 10 map trên TOMKO.
