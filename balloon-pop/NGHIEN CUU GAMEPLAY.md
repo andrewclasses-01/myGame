@@ -248,3 +248,10 @@ Thầy: intro thật đẹp, ngầu, điện ảnh như Rocket Race, vài bản 
 - `cine-1p.js`: `seq()` chuỗi cảnh (hoà `mix` giây hoặc cắt) + `poseAt()` đoạn trôi về góc chơi (vòng lên 1,2) · nghiêng máy (roll) · rung khi chữ đập · Web Audio riêng: gió, dồn lên (riser), bùm trầm, vút, chim ưng kêu + còi tàu của game; tắt tiếng theo nút loa · lớp `.bp-cine`: dải đen 11,5 %, ANDREW CLASSES presents (Exo 2 + Rye), BALLOON POP (Rye vàng đồng, đập + bụi), chạm = `skip()` nhảy tới đoạn trôi về.
 - 4 bản: 1 Cần cẩu (lướt đồi chữ → sà sát ray tàu ào qua → bay song song đầu máy → vút lên) 13 s · 2 Bám tàu (cận bánh + thanh truyền → ống khói → lùi dọc toa → cần cẩu) 12 s · 3 Đại bàng (đường cong Catmull qua gò/xương rồng, nghiêng cánh ≤ 0,3 rad, cắt ngang trước mũi tàu) 12 s · 4 Phim cao bồi (sepia `grade.sepia` + vệt xước, bóng saguaro ngược nắng → tàu lao thẳng ống kính tele 24° → tàu vụt qua → toàn cảnh, màu về) 13 s.
 - Đo: không lỗi; bỏ qua ở t 1 s ⇒ nhảy 10,3 s rồi vào ván bình thường. ⬜ Thầy chọn bản.
+
+## 22. Mẫu 1q (29/9/2026) — TRAIN RUSH
+Thầy: dùng intro Phim cao bồi · ANDREW STUDIO PRESENTS · tên game TRAIN RUSH · màn chờ: quay rất cao toàn cảnh miền Tây (núi, trời, chim săn đuổi, các đoạn ANDREW CLASSES / NO HOMEWORK - NO FUN), cao đủ để không thấy đường ray, chỉ nút START + ANDREW STUDIO thiết kế đẹp tinh tế; bấm START mới vào intro.
+⇒ `mau-1q-train-rush.html` (`bp3d-1q.js` + `bp3d-1q.css`, `cine-1q.js` INTRO_ID = 4, `west-world-1q.js` → `west-props-1q.js` + `animals-1q.js`).
+- Màn chờ (`state attract`): máy quay (x giữa 2 bảng ±14, y 56, z 72) nhìn (…, 25, −300), fov 38, trôi chậm; không thả khinh khí cầu; ẩn HUD trên. `signs.showBoth()` dựng bảng chữ thứ hai bên trái bảng chính (cách 34), `dropExtra()` lúc intro xong. Đàn chim ra sau 2–4 s.
+- Lớp START mới `.bp-idle`: huy hiệu vòng vàng + ngôi sao, chữ ANDREW STUDIO (Exo 2 nghiêng, giãn chữ, ánh kim chạy) giữa 2 vạch mảnh; nút START viên thuốc kính mờ viền vàng đồng, thở sáng. ⚠️ `display:block` đè `[hidden]` ⇒ thêm `.bp-idle[hidden]{display:none}`.
+- Đo: không lỗi; khung nối lệch 0; hết intro bảng thứ hai được dọn, HUD hiện lại, fov 36.
