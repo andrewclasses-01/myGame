@@ -222,3 +222,11 @@ Thầy (kèm 2 ảnh): cây cỏ nhỏ trên gò/đồi xa không đẹp, quá d
 - Bụi tiền cảnh: `shrubTexture(sage|rabbit|green)` cành thưa lá nhỏ (bỏ vòm lá tròn), 30/20/14 bụi, cỡ 0,5–1,2.
 - `animals-1l.js`: bỏ hẳn bộ con vật khối cầu cũ; `REAL` 12 loài (ngựa, linh dương, sư tử cái/đực bờm, sói, sói đồng cỏ, bò đốm/nâu có sừng + bầu vú + yếm, lợn mõm đĩa đuôi xoăn, voi vòi 8 đốt + tai quạt + ngà, lạc đà bướu) + `buildRoo`, `buildHen`. `animateReal(A, dt, mode, speed, lookYaw)`: chọn dáng theo tỉ lệ tốc độ (<0,2 đi 4 nhịp · <0,5 nước kiệu · còn lại phi chéo/xoay vòng; voi chỉ đi), tần số = tốc độ / sải; đứng: chân về tư thế nghỉ, thở, ngoái cổ về tàu, cúi đầu, vẫy đuôi; voi phe phẩy tai + vòi đung đưa; gà mổ thóc; kangaroo nhảy 2 chân. Dùng chung cho gò (`createFarAnimals`), húc chữ (`createSignCharger`, bò/voi/ngựa/lạc đà/sư tử phóng ×1,9–2,1) và cặp đuổi. Xuất `buildReal/animateReal/REAL` cho bàn thử.
 - Đo: không lỗi; ~163 fps khung nhỏ.
+
+## 18. Mẫu 1m (29/9/2026) — duyệt mặt đất
+Thầy: mọi thứ ổn, chỉ mặt đất và cỏ chưa ổn ⇒ thiết kế nhiều bản để duyệt chọn rồi đưa vào game.
+⇒ `mau-1m-mat-dat.html?nen=0..5` (bảng chọn bên trái; `bp3d-1m.js` = 1l + `west-world-1m.js`; props/animals dùng 1l).
+- `GROUND_STYLES` (west-world-1m): soil {base, amp, specks, ripples, cracks, gravel, strokes+sCol} · tA/tB (2 màu trộn vạt lớn trong shader) · nrm (độ gồ normal map) · veg {reed, fine, stub, bush[3], peb, rock, flowers} · gt (nhuộm cỏ thấp).
+- `soilTexture(S)`: nhiễu giá trị LẶP LIỀN MẠCH (`tileNoise` chu kỳ 8/32/128) + gợn cát (chu kỳ khớp 1024) + mạng nứt đa giác (lưới điểm lệch có chu kỳ, vẽ 9 bản lệch cùng dãy ngẫu nhiên) + sỏi có bóng/điểm sáng + sợi cỏ; vật gần mép vẽ lặp sang mép đối diện (`offs`).
+- Kiểu: 0 hiện tại · 1 cát đỏ gợn sóng (ít cây) · 2 đồng cỏ khô vàng (lau 230, cỏ 900/3200, hoa 70) · 3 đất nứt nẻ · 4 sỏi đá (sỏi 900, đá 18, bụi nhiều) · 5 thảo nguyên xanh (cỏ nhuộm xanh, hoa 280).
+- Đo: không lỗi; ~165 fps khung nhỏ. ⬜ Thầy chọn kiểu ⇒ đưa vào bản sau (có thể trộn: đất kiểu này + cỏ kiểu kia).
