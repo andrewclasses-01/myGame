@@ -517,7 +517,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
   // Thùng gỗ CỨNG: không méo, chỉ nảy/lắc. Một toa chứa được nhiều thùng: rơi lệch thì chúi về trước/sau, rơi lên thùng khác
   // thì chồng lên, nghiêng, đổ… đúng theo va chạm thật. Chạm nóc toa lần đầu: trượt + lắc RẤT nhẹ (tàu không bị ảnh hưởng —
   // đoàn tàu là vật "động học", không nhận lực). Thùng đúng nằm yên hẳn trên toa của nó mới cộng điểm, rồi gắn chặt vào toa
-  // (thùng khác rơi lên vẫn va vào nó). Thùng sai nằm lại trên toa (nhãn ửng đỏ, trừ Points off). Trúng đầu máy / toa khách:
+  // (thùng khác rơi lên vẫn va vào nó). Thùng SAI chạm toa thì văng khỏi toa như Wordwall (nhãn ửng đỏ, trừ Points off). Trúng đầu máy / toa khách:
   // văng xuống đất; trúng toa than: văng + than bắn + trừ điểm.
   const PH = new CANNON.World({ gravity: new CANNON.Vec3(0, -GRAV, 0) });
   PH.broadphase = new CANNON.NaiveBroadphase();
@@ -619,7 +619,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
     }
     if (!c.judged && car && S.state === "play") {
       c.judged = true;
-      if (car.key !== c.key) wrongCrate(c);
+      if (car.key !== c.key) { wrongCrate(c); kick(c, 1); }   // thầy chốt 29/9: thùng SAI văng khỏi toa như Wordwall
     }
   }
   function kick(c, strength) {
