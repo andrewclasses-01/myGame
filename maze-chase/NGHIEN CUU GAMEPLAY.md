@@ -64,3 +64,18 @@ bệ bị loại · địch chạm mất tim, văng về xuất phát, ân hạn
   đồng hồ đứng, Resume chạy tiếp · chạy thời gian thật.
 - ⬜ Thầy thử trên TOMKO (cảm ứng, cỡ chữ, tốc độ, âm thanh — Claude không nghe được) rồi chọn góc máy.
 - ⬜ Chưa làm: Fight 2 đội (chỉ D-pad) · Timer đếm ngược · Points off · giọng đọc câu hỏi · nhạc nền.
+
+## 6. Thầy CHỌN MẪU 1 (chéo từ trên cao) → MẪU 1b (29/9)
+Thầy: "màu sắc lẫn lộn, khó nhìn · robot và kẻ địch hơi xấu, cần chi tiết hơn · tốc độ quá nhanh, giảm khá nhiều · tổng thể hơi tối".
+- `mau-1b-cheo-tren-ro.html` + lõi RIÊNG `core/mc3d-1b.js` (chép mc3d.js; mẫu 1/2/3 không đổi).
+- Màu: MỘT họ màu cho mê cung — sàn xám-xanh vừa, tường xanh dương đậm, mặt trên tường xanh sáng (bỏ viền cam + cột xanh ngọc);
+  bệ đáp án VÀNG (vòng + viền bảng chữ); địch đỏ / tím; người trắng. Bỏ đèn xanh theo người (làm loá).
+- Sáng: đèn trời 0,75 (mẫu 1: 0,6), mặt trời 2,6 (2,4), bloom nhẹ (0,32, ngưỡng 0,95), vignette 0,18.
+  ⚠️ Đã thử sáng hơn nữa (sàn nhạt + mặt trên tường xanh nhạt) ⇒ tường và sàn cùng trắng, KHÔNG phân biệt được — sáng phải đi kèm tương phản.
+- Tốc độ: người 3 ô/giây (mẫu 1: 5), địch theo tỉ lệ cũ (Difficulty 6 ≈ 1,5 ô/giây). Nhịp bước chân chậm theo.
+- Nhân vật dựng lại: phi hành gia (kính mũ vàng phản chiếu, đèn 2 bên mũ, ăng-ten, cổ áo, bảng điều khiển ngực có màn + 3 nút,
+  phù hiệu, thắt lưng khoá vàng, tay 3 khúc + găng, đệm gối xanh, ủng viền xanh, ba lô có tấm + khe + 2 bình khí xanh + 2 ống phụt) — to 1,75;
+  robot địch (vỏ 2 nửa + khe sáng, vương miện 6 cạnh, vòng thép, mặt nạ tối + mắt ngang phát sáng + đồng tử, ăng-ten nhấp nháy,
+  2 tay kẹp đung đưa, vây sau, khe tản nhiệt, động cơ dưới có vòng sáng + lửa phập phồng) — to 1,6.
+- Bàn thử thêm: `__mc.cam([x,y,z],[x,y,z])` soi gần (gọi `__mc.cam()` trả lại) · `__mc.where()` toạ độ người/địch.
+- Đã tự kiểm: tự chơi 9/9 ⇒ GAME COMPLETE, 0 lỗi console. ⬜ thầy xem trên TOMKO.
