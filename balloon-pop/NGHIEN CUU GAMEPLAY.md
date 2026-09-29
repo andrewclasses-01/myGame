@@ -290,3 +290,13 @@ Thầy: chọn loại 3 (đống đá tảng + sỏi) nhưng giảm size 1/2, í
 - `blob()`: cầu chia mịn gộp đỉnh + nhiễu 4 tầng + khe nứt (nhiễu gờ mũ 10) + mặt khớp phẳng (ép theo vài mặt phẳng ngẫu nhiên), đáy phẳng y = 0. Vật liệu: hạt đá mịn + lấm tấm vẽ trong shader (nhiễu 3D theo toạ độ vật) ⇒ chi tiết nhỏ hơn mật độ đỉnh.
 - 1 đá tròn phong hoá: 1 tảng + 2–3 tảng tựa, vệt sơn sa mạc sẫm chảy từ đỉnh, chân bám cát, lỗ rỗ, gò cát bám chân (đĩa phồng mép răng cưa, gợn gió) + sỏi · 2 đá phiến: 4–6 phiến mỏng (Box KHÔNG gộp đỉnh ⇒ cạnh sắc) mép sứt răng cưa, vân lớp ở mép, vết nứt + địa y mặt trên, 1–2 phiến vỡ dựng nghiêng + vụn dẹt · 3 nứt đôi: tảng lớn ép 2 nửa lên mặt nứt, tách 0,14–0,24 + ngả ra, mặt nứt màu tươi, mảnh vỡ 2 đầu khe + sỏi.
 - Đo: không lỗi. ⬜ Thầy chọn thiết kế.
+
+## 28. Mẫu 1w (29/9/2026) — chữ trên gờ giữa vách núi, thú đuổi nhau quanh chữ
+Thầy: chọn đá kiểu 1 · khi chơi chữ bị che ⇒ đưa chữ lên cao, gắn giữa vách, núi cao thêm; hoặc đặt ở núi bàn như ảnh · thú đuổi nhau đôi khi chạy quanh chữ, đôi khi va làm chữ đổ.
+⇒ `mau-1w-chu-vach-nui.html?chu=0..2` (`bp3d-1w.js` → `west-world-1w.js` → `west-props-1w.js` + `animals-1w.js` + MỚI `sign-chase-1w.js`; đá gần ray near-mounds-1v mặc định kiểu 1).
+- Chân chữ `SIGN_LY` 26 (0,1) / 25 (2) (1u: 9) — ở góc quay chơi cao hơn nóc tàu + gò trung cảnh.
+- 0 đồi Atacama: HS 0,5 → 0,75; `massifF` = vách sau dựng đứng (cao LY+15) + GỜ phẳng lz 9…15,5 ở LY + vách trước đổ xuống; `blendM`: gờ + vách trước theo khối vách (sống núi tự nhiên không đè chữ), phía sau lấy max; mask rãnh xói chỉ trên gờ.
+- 1/2 `mesaHill`: ghép `block()` (chữ nhật bo góc, mép răng cưa + rãnh xói dọc theo nhiễu, vách dốc 3,1, nón đá vụn) · 1 = khối cao LY+12 phía sau + khối gờ LY phía trước · 2 = một khối đỉnh LY, chữ sát mép. Màu tầng đá ngang 7 màu, vân lớp mỏng, vệt sơn sa mạc dọc vách, tầng mũ sẫm ở mép, nón đá vụn nhạt; đá tảng dưới chân vách.
+- Chữ đổ (`knock`) nằm 5–8 s rồi tự dựng lại (`rising`, lưu `rx0`).
+- `sign-chase-1w.js`: cặp [chạy trốn, đuổi] ×1,6 trên gờ; 'vòng' = chạy làn trước (lz 14,4) → vòng ra sau chữ (lz 10) → vòng lại → chạy khỏi gờ; 'húc' (45 %) = con chạy trốn ngoặt vào một chữ giữa dãy ⇒ knock + bụi + loạng choạng, con đuổi né. Chỉ xuất hiện khi bảng chữ cách máy quay < 75. Bỏ con húc từ sau đồi (charger) vì vách đứng.
+- Đo: không lỗi; thử húc ⇒ chữ đổ (rx 1,40) rồi dựng lại sau ~8 s. ⬜ Thầy chọn chỗ đặt chữ.
