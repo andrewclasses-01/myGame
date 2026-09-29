@@ -171,3 +171,10 @@ Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi ti�
 - Cả đoàn tàu = 1 vật động học ghép nhiều khối (mỗi khối biết thuộc toa nào); bước vật lý 1/120 s, đặt tàu ở vị trí ĐẦU khung rồi cho chạy đúng quãng của khung ⇒ thùng và toa không lệch pha.
 - Thùng đúng nằm yên hẳn 0,3 s trên toa của nó ⇒ +điểm và gắn chặt thành một khối của tàu (thùng khác vẫn va vào). Thùng SAI chạm toa ⇒ văng khỏi toa như Wordwall (nhãn ửng đỏ, trừ Points off) — thầy chốt 29/9. Thùng trùng từ đúng rơi vào toa đã có thì vẫn nằm lại (chồng/nghiêng).
 - Bẫy: sự kiện `collide` của cannon-es dùng lại MỘT đối tượng ⇒ phải chép `body/shape/vận tốc va chạm` ngay trong hàm nghe, không giữ đối tượng sự kiện.
+
+## 12. Mẫu 1g (29/9/2026)
+6 ý thầy: cổ người liền đầu–thân + bóng mờ nhoè · thùng đúng chạm toa rung lắc, xê dịch thêm · thùng tì một phần vào toa đúng vẫn tính điểm · rơi vào toa khách nằm lại trên nóc (không tính điểm) · chồng thùng cao bị khinh khí cầu húc đổ, thùng đúng đã tính điểm rơi xuống đất thì trừ lại điểm toa đó · bỏ ô điểm (đồng hồ sang chỗ đó), điểm chỉ bay lên + hiện trên băng máy bay.
+⇒ `mau-1g-huc-do.html` (lõi `core/bp3d-1g.js`, toa `core/coach-1g.js`, HUD `core/bp3d-1g.css`; cảnh dùng lại bản 1f).
+- Thùng đúng KHÔNG còn gắn chặt vào toa (vẫn là vật động để bị húc). Tính điểm khi nằm yên 0,3 s và đang CHẠM khối toa đúng (đọc danh sách tiếp xúc của cannon mỗi bước) hoặc tâm nằm trên toa đúng. Rơi xuống đất (y < 2,2) hoặc rời toa > 0,6 s ⇒ trừ lại, toa mở lại, máy quay quay về toa đó (bỏ luật “máy quay không lùi”).
+- Khinh khí cầu = vật động học 4 quả cầu, nhóm va chạm riêng: chỉ va thùng ĐÃ nằm trên tàu (thùng đang rơi xuyên qua, không bị gạt lệch).
+- Rèm toa khách = MeshPhysicalMaterial transmission 1, roughness 0,48 ⇒ bóng mờ thật; tốn thêm 1 lượt vẽ (≈ 104 fps, trước 123).
