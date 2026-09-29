@@ -161,3 +161,15 @@ mảnh vỡ thật của robot sau vụ nổ · D-pad đang bị che mờ ở m�
   nảy rồi đổ nằm xuống (quay dần về tư thế gần phẳng). Cháy: vỏ → gần đen (còn phảng phất màu), thép → xám khói, đèn tắt dần; vỏ/động cơ/mặt nạ bốc khói.
 - Kiểm: 4 múi + tâm bắt đúng hướng theo toạ độ thật · bấm múi trái ⇒ người đi trái · nút giữa đặt bom, không có số · tự chơi 9/9 · 0 lỗi ·
   lần nổ đầu trên trang mới: 2 khung ~30–36 ms (tạo 26 mảnh), không còn khựng lớn.
+
+## 11. MẪU 1g (29/9) — nút chỉ icon · nút hệ AWord · robot bớt chói · bom đúng tâm
+Thầy: "bỏ chữ NEXT PLAYER, chỉ đếm · icon bom ở chính giữa nút · giảm độ sáng robot mình cho đỡ chói, nhìn rõ hơn · các nút chỉ icon, không
+text · bỏ nút full screen · thêm nút hệ AWord: mở thư mục, options, table, mode ở hàng nút".
+- `mau-1g-nut-icon.html` + `core/mc3d-1g.js/.css` (sàn + nổ dùng lại `mc3d-floor-1f.js`, `mc3d-boom-1f.js`).
+- Icon bom lệch trái vì nút giữa là flex chỉ căn DỌC (`align-items`) mà thiếu `justify-content` ⇒ icon dính mép trái 11 px. Sửa luật
+  `.mc-dpad[data-style] .hub { justify-content:center }` + vẽ lại icon: thân tròn đúng tâm (12,12) khung 24. Đo: lệch 0 px.
+- Robot mình: bộ đồ 0xf1f3f7 → 0x8290a6 (nhám 0.8, envMap 0.15), vải 0x5f6b82, đèn mũ 2.4 → 0.9, màn ngực 1.6 → 0.9, đèn ăng-ten 3 → 1.4.
+- Hàng nút: Menu · Sound | Thư mục (icon actSwitch) · Options · Table (icon cúp = bảng xếp hạng) · Mode (icon Single) — icon chép từ AWord
+  `core/icons.js`. Bảng nổi: Options = chính bảng tuỳ chọn cũ (dời vào bảng, đóng thì trả về); Thư mục / Table = dữ liệu MẪU (khi ghép vào
+  AWord sẽ nối thật); Mode = Single (đang chơi) + Fight (sắp có). Mở giữa ván ⇒ tạm dừng, đóng ⇒ chơi tiếp. Bỏ link Options ở màn đầu.
+- Kiểm: màn đổi người chỉ có số · 4 bảng mở/đóng đúng, Options trả về chỗ cũ · nút giữa đặt bom · tự chơi 9/9 · 0 lỗi.
