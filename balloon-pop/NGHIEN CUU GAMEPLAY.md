@@ -94,7 +94,40 @@ reveal, gamesuccessful/unsuccessful, leaderboards, restart, timesup.
 
 ---
 
-## 4. Những câu hỏi thầy cần chốt trước khi thiết kế 3D
+## 4b. THẦY ĐÃ CHỐT (29/9/2026)
+1. Thả thùng **giống Wordwall**: rơi thẳng, phải canh trúng toa.
+2. Số toa **tăng dần như Wordwall** (màn N = N toa).
+3. Góc máy: **làm mẫu CẢ 2 loại** (nhìn ngang có chiều sâu + chéo từ trên xuống). Mẫu làm và chạy **ở máy này
+   (local)**, chưa đưa lên mạng; thầy thử ngay trên máy.
+4. Làm trước chế độ **cả lớp chơi 1 màn hình**. Fight sau, nhưng **phải nghiên cứu ngay** cách để 2 đội cùng chơi,
+   **2 tàu ở 2 bên** (mục 5).
+
+## 5. Nghiên cứu chế độ FIGHT — 2 tàu 2 bên
+
+Khung FIGHT thật của AWord (đã đo 25/9): dải điểm 69 px ở trên + **2 bàn 620×408 đặt cạnh nhau** (trái / phải,
+cách 16 px), mỗi bàn có thanh nút riêng. Trên TOMKO hai em đứng hai bên màn hình ⇒ chia **trái / phải** là tự nhiên
+(giống Rocket Race).
+
+**Đề xuất bố cục:** mỗi bàn là một cảnh 3D riêng (một đoàn tàu + bầu trời riêng); vẽ chung một WebGL, chia 2 khung
+nhìn (như Rocket Race). Bầu trời **không dùng chung**: nếu dùng chung, hai em sẽ tranh bấm cùng một quả, và thùng
+có thể rơi nhầm sang tàu đội kia ⇒ rối, dễ cãi nhau.
+
+**Vấn đề lớn: số toa tăng dần trong bàn hẹp 620 px.** Màn 5 có 5 toa thì mỗi toa chỉ còn ~120 px, định nghĩa dài
+không đọc nổi. **Cách giải (dùng cho CẢ chế độ 1 màn hình):** toa có **bề rộng cố định, đủ to để đọc**; đoàn tàu
+**dài hơn màn hình và chạy liên tục** — các toa lần lượt đi qua dưới khinh khí cầu rồi vòng lại. Như vậy màn cao chỉ
+làm tàu dài hơn, không làm chữ nhỏ đi, và việc "canh lúc thả" càng có ý nghĩa.
+
+**Công bằng giữa 2 đội:**
+- Hai đội cùng bộ định nghĩa, cùng thứ tự màn; khinh khí cầu sinh theo cùng một hạt giống ngẫu nhiên ⇒ hai bên
+  gặp cùng loại thử thách. Mỗi đội tự lên màn theo tốc độ của mình.
+- Bấm hai bên cùng lúc: mỗi bàn xử lý chạm riêng theo từng ngón (`pointerId`) — Rocket Race đã làm được trên TOMKO.
+- Thắng: hết giờ, đội nhiều điểm hơn thắng (hoặc đội qua hết màn trước). Có thể thêm "cướp": bóng thưởng đặc biệt
+  làm tàu đội kia chạy nhanh hơn vài giây — để thầy quyết sau.
+
+**Điểm cần thử trên TOMKO khi làm Fight:** chữ trên khinh khí cầu và toa có đọc được ở bàn 620×408 không;
+tốc độ tàu hai bên; hai em chạm cùng lúc có bị nuốt chạm không.
+
+## 4. Những câu hỏi thầy cần chốt trước khi thiết kế 3D (đã trả lời — xem 4b)
 1. **Luật thả thùng**: giữ đúng Wordwall (rơi thẳng, phải canh trúng toa — khó, vui) hay "bấm đúng là ăn"
    (dễ, như bản cũ) hay có tuỳ chọn cả hai?
 2. **Số toa mỗi level**: tăng dần 1→2→3… như Wordwall? Tối đa mấy toa (định nghĩa dài ⇒ đề xuất tối đa 3)?
