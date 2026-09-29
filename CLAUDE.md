@@ -43,6 +43,7 @@ rocket-race/
   mau-1f-xac-robot.html + core/mc3d-1f.js/.css + core/mc3d-floor-1f.js + core/mc3d-boom-1f.js   (29/9) MẪU 1f — D-pad Ring SVG, xác robot = bộ phận thật
   mau-1g-nut-icon.html + core/mc3d-1g.js/.css (dùng floor-1f + boom-1f)   (29/9) MẪU 1g — nút chỉ icon + nút hệ AWord, robot bớt chói
   mau-1h-bom-pha-tuong.html + core/mc3d-1h.js/.css + core/mc3d-boom-1h.js   (29/9) MẪU 1h — Tablet, ô %, bom 5 s phá tường, chào, đỏ, ô sai nổ tại chỗ
+  mau-1i-nap-boong-tau-vu-tru.html + core/mc3d-1i.js/.css + mc3d-boom-1i.js + mc3d-hatch-1i.js + mc3d-ship-1i.js   (29/9) MẪU 1i — nắp boong, tàu vũ trụ
   core/mc3d-sound.js          tiếng tự tổng hợp Web Audio · core/questions-sample.js bộ câu mẫu
   Bàn thử: window.__mc — start() · step(n) · resume() · press(dir) · autoplay · state() · snap() · opt. Xem local: launch `mygame-maze` cổng 8866
 tools/chep-aword-sang-game.py — gốc để cải tiến tiếp

@@ -198,3 +198,30 @@ KHÔNG cần đồng hồ (chỉ ô %).
 - Kiểm: phá 2 vách (104 → 102), ô bom mở cả 4 phía · bom tự nổ 5 s, người đứng sát mất mạng · đỏ giữ tỉ lệ 1,75 · robot mới ở xuất phát
   có hào quang · ô sai ⇒ robot mới ở đúng ô (0,3) hướng trái, bệ biến mất · chào quân đội · % 11% sau câu 1, 100% cuối ván · tự chơi
   9/9 ×2 · 0 lỗi · lần nổ đầu: 1 khung ~48 ms lúc hiện số đếm (DOM), không khựng lúc nổ.
+
+## 13. MẪU 1i (29/9) — nắp boong · vỡ từ hình robot · địch nổ khi đúng · sao xoay · tàu vũ trụ
+Thầy: "ô sai: nổ trước rồi robot bị văng lên và vỡ tung từ chính hình dạng robot ngay lúc văng; mảnh nhỏ, thật, chi tiết · robot địch về vị
+trí xuất phát = sàn boong mở, robot hạ xuống, nắp đóng; ở chỗ xuất phát boong mở, robot được đưa lên rồi đóng · chỗ xuất phát của mình vòng
+nét đứt xoay, mình cũng lên từ dưới boong · đúng ô: mình đứng chào chờ chuyển màn (tường vẫn ẩn), địch nổ tung + xác cháy tại chỗ · sao
+xoay rất chậm, tinh vân xoay chậm lệch với sao (3D) · thỉnh thoảng tàu vũ trụ xa xa bay qua chầm chậm, đẹp, lửa khói đẩy, cực chi tiết,
+kiểu Star Wars (ảnh Star Destroyer), slogan ANDREW CLASSES sáng đèn, thỉnh thoảng chập chờn". Hỏi lại & thầy chốt: nắp boong dùng cho
+MỌI lần xuất hiện (đầu câu, đổi người, hồi sinh ô sai) · đúng ô: chào xong HẠ XUỐNG qua nắp boong · tàu ~45–60 s/lần.
+- `mau-1i-nap-boong-tau-vu-tru.html` + `core/mc3d-1i.js/.css` + `mc3d-boom-1i.js` + `mc3d-hatch-1i.js` (mới) + `mc3d-ship-1i.js` (mới).
+- Nắp boong (`createHatches`): khung sọc cảnh báo + 4 đèn góc nháy cam + lòng giếng (canvas: thành giếng thu nhỏ dần, bệ nâng viền xanh) +
+  2 cánh bản lề mép ngoài lật SẬP xuống (phần dưới sàn bị sàn che) + cột sáng xanh. `run(x,z,{mode:"rise"|"sink",depth,speed,onLift,
+  onHidden,onDone})`. Robot "dưới boong" = y âm, sàn đục che. Nắp dùng xong cất KHO dùng lại (tạo mới mỗi lần = khựng 72 ms).
+- Đổi người: địch — nắp mở dưới chân, hạ xuống (giữ toạ độ cũ `e.hold`), chìm hẳn ⇒ nắp ở góc xuất phát đưa lên; robot đỏ cũng hạ xuống rồi
+  robot mới lên. Đầu câu: mình lên ở 0,1 s, địch lên ở 0,8 s (khoá di chuyển tới khi lên hẳn).
+- Vỡ từ hình robot (`boom.shatter`): cắt tam giác của TỪNG mesh robot theo lưới ~0,34 (ranh giới xô lệch ⇒ mép vỡ lởm chởm), đặt đúng tư thế
+  robot lúc đó, văng xa tâm nổ + hất lên; +22 vụn (ốc, dây, mạt). Mốc: 0–0,1 s nổ bùng trước · 0,1–0,22 s bị hất lên · rồi vỡ. ~270 mảnh.
+  ⚡ Cắt SẴN (hệ toạ độ riêng từng mesh) + BỘ MẢNH dựng sẵn dùng lại + chỉ ≤6 mảnh to bốc khói, mảnh vụn không đổ bóng.
+- Đúng ô: địch nổ (explode 0,6 + wreck) lệch nhau 0,16 s, xác cháy tại chỗ; mình chào tới lúc hạ; bệ đúng tan khi nắp mở; sang câu 1,75 s.
+- Trời: sao xoay quanh trục nhìn của máy quay 0,012 rad/s; tinh vân (shader, `uRot`) 0,0075 rad/s ngược chiều, trục lệch 12°.
+- Tàu (`createShip`): thân nêm + đai hông tối + ~2000 khối chi tiết (instanced) + thượng tầng 4 bậc + cổ tháp + đài chỉ huy + 2 vòm cầu +
+  cửa sổ sáng (instanced) + 3 động cơ lớn/4 nhỏ (lõi xanh trắng + 2 nón lửa + vệt khói). Slogan phát sáng 2 bên sườn boong (bản xoay 180° khi
+  bay sang trái để chữ không lộn ngược), chập "rẹt rẹt" 0,25–0,6 s mỗi 2,5–6 s. Dài 70, cách máy quay 340, dải trời ngay trên mép trạm, 24 s/lượt.
+- ⛔ BẪY khựng lần đầu: làm nóng lúc tải trang (renderer.compile) KHÔNG khớp trạng thái trận ⇒ lần đầu nổ/vỡ/nắp/tàu vẫn dịch shader. Vẽ vào
+  render target riêng cũng không khớp cho mảnh vỡ/nắp/robot. Cách được: `warmInGame()` lúc câu hỏi to đầu ván — robot + mảnh vỡ + nắp + bệ +
+  tàu (thu 0,02) đặt DƯỚI SÀN rồi `composer.render()` thật; nổ/xác địch/gạch/bom vẽ khung ẩn. Dọn bằng clear nhưng vật liệu mảnh `keep`.
+- Kiểm (chạy thật theo nhịp màn hình): trung bình 6,2 ms/khung; chỉ 1 khung ~0,25 s lúc làm nóng (màn câu hỏi to) + 1 khung 49 ms lúc vỡ ·
+  tàu, nắp, nổ không khựng · ô sai hồi sinh đúng ô qua nắp · đổi người: địch về (0,0)/(6,14) · tự chơi 9/9 ×2 · 0 lỗi.
