@@ -313,3 +313,16 @@ Hỏi lại & thầy chốt: câu MỚI ⇒ câu hỏi to thêm 3 s rồi đếm
   canh giờ tới điểm nổ, trúng mới nổ (dự phòng quá 0,6 s). Thử 6 lượt: nổ ở y 0,60–0,63, trên mê cung, dưới câu hỏi.
 - ⛔ BẪY: `node --check file.js` KHÔNG bắt lỗi cú pháp của module (chú thích nuốt mất nửa dòng lệnh vẫn "OK") ⇒ chép sang `.mjs` rồi mới check.
 - Kiểm: tự chơi 9/9 · END GAME + Show answers · ô sai không nảy · 0 lỗi.
+
+## 18. MẪU 1n (29/9) — vòng đếm bung 4 phía · súng hông tàu ANDREW · tường bụi bẩn
+Thầy: "khi đếm đến 1 thì vòng đếm bung tan ra 4 phía · tàu andrew trang bị thêm các khẩu súng bên hông để bắn cho nó chuẩn và hợp lý ·
+các bức tường thật hơn một chút, đôi khi có chỗ bụi bẩn cho chân thực".
+- `mau-1n-sung-hong-tuong-ban.html` + `core/mc3d-1n.js/.css` + `mc3d-ship-1n.js` (boom 1m, hatch 1j).
+- Vòng đếm: SVG thêm 4 nhóm cung `.cd-shard` (trên/phải/dưới/trái: vạch + cung vàng + ngoặc), bình thường ẩn. Số 1 hiện 0,5 s thì
+  `.is-burst`: vòng nguyên tắt, 4 mảnh bay 120 đơn vị ra 4 phía + xoay ±28° + tan (0,5 s), số 1 phóng to tan.
+- Súng hông: 5 khẩu/bên ở bậc hông (x −0,33…0,19): đế tròn, tháp hộp + vòm, 2 nòng dài 0,05 có ống loe, mốc `tip`. `aimGuns` mỗi khung:
+  toạ độ mục tiêu trong thân tàu ⇒ góc xoay ngang (kẹp chỉ quay ra phía ngoài mạn của mình) + góc ngẩng, xoay mượt; `fireFrom` chọn khẩu
+  ở mạn có tàu con, gần theo chiều dọc, đang rảnh ⇒ đạn từ đầu nòng, giật nòng. Kiểm: các khẩu mạn có tàu con chĩa đúng vào nó (tích vô hướng 1,00).
+- Tường: `grime()` chèn shader vào vật liệu chuẩn (tường 1 · cột 0,9 · nắp 0,45), theo toạ độ thế giới: mảng bẩn loang thỉnh thoảng,
+  đọng chân tường, vệt chảy, bụi mặt ngang, đường ghép ngang (0,92) + dọc (mỗi 2), hạt sần; chỗ bẩn nhám hơn.
+- Kiểm (chạy thật): trung bình 7,0 ms/khung, chỉ khựng lúc câu hỏi to như cũ · tự chơi 9/9 · 0 lỗi.

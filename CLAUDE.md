@@ -48,6 +48,7 @@ rocket-race/
   mau-1k-dem-5s-hud.html + core/mc3d-1k.js/.css + mc3d-ship-1k.js (boom/hatch 1j)   (29/9) MẪU 1k — đếm 5 s kiểu HUD, lửa nhấp nhô, xác tàu con, HUD nổi
   mau-1l-hud-duoi-ruot-duoi.html + core/mc3d-1l.js/.css + mc3d-ship-1l.js + mc3d-boom-1l.js (hatch 1j)   (29/9) MẪU 1l — HUD mép dưới, kết thúc vũ trụ, rượt đuổi, xác rơi
   mau-1m-thanh-tien-do.html + core/mc3d-1m.js/.css + mc3d-ship-1m.js + mc3d-boom-1m.js (hatch 1j)   (29/9) MẪU 1m — đếm 3-2-1, END GAME, thanh tiến độ, Show answers to
+  mau-1n-sung-hong-tuong-ban.html + core/mc3d-1n.js/.css + mc3d-ship-1n.js (boom 1m, hatch 1j)   (29/9) MẪU 1n — vòng đếm bung, súng hông, tường bụi bẩn
   core/mc3d-sound.js          tiếng tự tổng hợp Web Audio · core/questions-sample.js bộ câu mẫu
   Bàn thử: window.__mc — start() · step(n) · resume() · press(dir) · autoplay · state() · snap() · opt. Xem local: launch `mygame-maze` cổng 8866
 tools/chep-aword-sang-game.py — gốc để cải tiến tiếp
