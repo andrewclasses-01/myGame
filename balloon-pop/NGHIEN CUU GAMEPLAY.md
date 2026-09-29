@@ -237,3 +237,7 @@ Thầy (kèm ảnh đất đỏ + bụi cỏ khô lác đác): tạm chọn "ki�
 - `bunchGeometry`: bụi dựng bằng hình thật — N lá dải 4 đốt toả từ gốc chụm (bán kính 0,07), lá giữa đứng, lá ngoài ngả + ngọn rủ (droop) ⇒ dáng đài phun; rộng thon dần; màu gốc sẫm → rơm → ngọn nhạt, 25% lá lệch màu; cọng trổ bông. Pháp tuyến ngả ra ngoài; tự sáng nhẹ (ngược nắng); gió đung đưa theo y² trong shader. 3 dáng gần + 1 giữa (½ lá, z −8…−32) + 1 xa (z < −32); gần + giữa đổ bóng.
 - `GRASS_STYLES`: 0 như ảnh (900 bụi/khúc, 130 lá) · 1 thưa to (420, 170 lá) · 2 dày thấp (1600, 90 lá) · 3 kèm bụi ngải xám (700 + 34 ngải + 10 thỏ) · 4 ánh bạc có bông (850, 40% bông).
 - Bỏ lau / cỏ thẻ / bụi thẻ / hoa ở khúc cảnh; giữ xương rồng, đá, sỏi, gờ đá. Đo: không lỗi, ~165 fps khung nhỏ. ⬜ Thầy chọn.
+
+## 20. Mẫu 1o (29/9/2026) — bản chính
+Thầy chốt: đất cát đỏ (GROUND_STYLES[1]) + bụi cỏ mẫu 0 (GRASS_STYLES[0]), đưa vào game.
+⇒ `mau-1o-dat-do.html` (`bp3d-1o.js` + `west-world-1o.js`: NEN = 1, GR2 = mẫu 0 cố định, không đọc tham số URL; bunchgrass-1n, props/animals 1l). Đo: không lỗi, ~145 fps khung nhỏ.
