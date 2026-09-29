@@ -53,6 +53,7 @@ rocket-race/
   mau-1p-star-loot-intro.html + core/mc3d-1p.js/.css + mc3d-intro-1p.js + mc3d-sound-1p.js + mc3d-ship-1p.js   (29/9) MẪU 1p — STAR LOOT: tên mới + intro cốt truyện hạm đội (?robots=2 = Fight)
   mau-1q-star-loot-lo-giun.html + core/mc3d-1q.js/.css + mc3d-intro-1q.js (sound/ship 1p)   (29/9) MẪU 1q — START tối giản, cảnh báo ENEMY LOCATED, 3 lỗ giun, ba lô ANDREW TEAM (tham số act)
   mau-1r-star-loot-chui-gam.html + core/mc3d-1r.js/.css + mc3d-intro-1r.js (sound/ship 1p)   (29/9) MẪU 1r — tàu bay vào màn chờ, lỗ giun mượt, robot chui vào gầm, sàn dày x3, câu hỏi hiện lúc lùi máy quay
+  mau-1s-star-loot-o-xuat-phat.html + core/mc3d-1s.js/.css + mc3d-intro-1s.js + mc3d-ship-1s.js + mc3d-hatch-1s.js (sound 1p)   (29/9) MẪU 1s — ô xuất phát cố định, NOT FOUND, bom chạm mới nổ, tường trung tính
   core/mc3d-sound.js          tiếng tự tổng hợp Web Audio · core/questions-sample.js bộ câu mẫu
   Bàn thử: window.__mc — start() · step(n) · resume() · press(dir) · autoplay · state() · snap() · opt. Xem local: launch `mygame-maze` cổng 8866
 tools/chep-aword-sang-game.py — gốc để cải tiến tiếp

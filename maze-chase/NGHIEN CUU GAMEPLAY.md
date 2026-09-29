@@ -415,3 +415,25 @@ lùi thì câu hỏi đầu hiện luôn (thời gian lùi tính vào thời gia
 - Bấm đúp ⇒ T = lỗ giun cuối + 0,15 s (đang trắng, mờ dần ra vũ trụ đích), các mốc trước đó đánh dấu xong không chạy.
 - Tay: mu bàn tay + cổ găng + 4 ngón 2 đốt hơi co + ngón cái chìa ra trước. Ủng: 3 ngón bo tròn ở mũi + khớp ngón + đế gai + gót.
 - Kiểm: intro ~51 s chạy thật trung bình 6,1 ms/khung, 1 khung 127 ms ngẫu nhiên (chạy lại không có) · bấm đúp đúng cảnh · tự chơi hết ván.
+
+## 23. MẪU 1s (29/9) — STAR LOOT: ô xuất phát cố định, tàu không chúi/ngóc, NOT FOUND, robot vào gầm nhanh, bom chạm mới nổ, tường trung tính
+Thầy: chỗ robot xuất phát có ô tròn luôn ở đó (xuất hiện xong đóng nắp vẫn còn) · vùng sai nháy NOT FOUND đỏ ở góc · không cho tàu cúi/ngước
+(xấu), chỉ lắc lư ngang hợp lý; bấm START lúc nào thì tàu đi tiếp từ đó · sát lỗ ánh sáng tàu đột ngột tăng tốc · robot ra khỏi tàu mẹ vòng
+ngay xuống dưới maze, bay thẳng vào chỗ chui lên, nhanh, không dừng ngắm · 2 tàu đuổi nhau bớt quành, có thể ra ngoài khung rồi vòng lại ·
+robot phải chạm bom mới nổ · tường màu trung tính, vừa phải · bấm START là hiện thông tin định vị và tàu đi dần luôn.
+- `mau-1s-star-loot-o-xuat-phat.html` + `core/mc3d-1s.js/.css` + `mc3d-intro-1s.js` + `mc3d-ship-1s.js` + `mc3d-hatch-1s.js` (sound 1p).
+- Ô xuất phát: `hatches.fixtures([[x,z],…])` dựng nắp ĐÓNG cố định (đèn viền sáng mờ) ở ô xuất phát (+ ô đồng đội nếu Fight) mỗi lần `useMap`;
+  nắp động `run()` trùng chỗ thì ô cố định tạm ẩn, xong hiện lại. Vòng vàng nét đứt cũ ẩn. ⚠ `ROBOTS` khai báo SAU lần `useMap` đầu ⇒ đọc thẳng URL.
+- Tàu: hướng bay = đạo hàm đường đi NHƯNG `y = 0` (luôn nằm ngang) + lệch hướng 0,03 rad chòng chành + nghiêng cánh `sway` nhỏ; bỏ đoạn ngóc lên.
+  Bay vào màn chờ thấp hơn (ARR0 y −60 ⇒ −18).
+- Mốc: định vị 0,4 s · tàu đi 0,5 s · ANDREW STUDIO PRESENTS 6,1 s · máy quay ra sau lưng 4,2 ⇒ 7,8 · lỗ giun 10,6 / 14,8 / 19,0 · nhảy 22,6 ·
+  vào gầm 26,0 ⇒ 27,6 · trồi lên 29,5 · câu hỏi 33,9 · hết 37,7 s.
+- Vọt trước lỗ giun: 0,9 s cuối tàu tiến thêm 120·u³; máy quay KHÔNG vọt theo (trừ lại độ vọt) ⇒ thấy tàu lao vượt lên; lửa + tốc độ tăng.
+- NOT FOUND: sau lỗ giun 1 và 2 (+1,0 s) chữ đỏ nháy ở góc (cùng chỗ ENEMY LOCATED), tắt 1,4 s trước lỗ giun kế.
+- Robot: một đường cong từ bụng tàu ⇒ vòng xuống dưới ⇒ luồn dưới mép trạm ⇒ thẳng tới dưới cửa gầm (3,4 s) ⇒ chui lên 1,6 s. Máy quay bám sau
+  lưng robot (lọc mượt nhưng nhanh) rồi chuyển xuống dưới gầm nhìn lên cửa.
+- Bom: bỏ "địch định bước vào ô bom ⇒ nổ từ xa"; nay địch đi vào ô bom, tâm cách tâm bom < 0,3 ô (1,2 đv) mới nổ. Đo: nổ khi địch cách 1,27 đv.
+- Tường: giữ sắc của bảng màu nhưng bão hoà ≤ 0,16, độ sáng tường 0,30–0,38 / nắp 0,38–0,46 / cột 0,24–0,30 (⚠ HSL phải tính theo
+  `THREE.SRGBColorSpace` — mặc định three tính theo linear nên màu ra trắng bệch).
+- Tàu rượt: góc quay mỗi khúc 1,0–1,45 rad (cũ 1,5–2,3), bán kính 0,62–1,22 NDC (>1 = ra ngoài khung), rượt 13–17 s.
+- Kiểm: chạy thật cả intro 0 khung khựng · bấm đúp đúng cảnh · tự chơi hết ván.
