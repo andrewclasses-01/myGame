@@ -144,3 +144,20 @@ Bomb gift: cứ K câu đúng tặng 1 · đổi người = đếm 3 giây.
   tự chơi hết ván 9/9 (máy tự chơi không né địch nên có ván thua — 10/11 mạng mất do bị bắt).
 - Bàn thử thêm: `__mc.bomb()` · `dropBomb(r,c)` · `detonateAt(r,c)` · `bombs()` · `bombsLeft()` · `enemyNext()`.
 - ⬜ Thầy thử trên TOMKO: tiếng nổ (Claude không nghe được — đang dùng tiếng "hit" tổng hợp), độ dài 3 giây đổi người, cỡ chữ ANDREW STUDIO.
+
+## 10. MẪU 1f (29/9) — nút bom chỉ icon · ANDREW STUDIO khắc chìm · xác robot thật · D-pad nét
+Thầy: "nút giữa chỉ dùng icon quả bom ở chính giữa, không số; icon đơn giản, cân đối, hiện đại · ANDREW STUDIO nhỏ hơn, tối hơn (đang nổi bật
+quá, chỉ cần như khắc trên sàn, không cần sáng), đặt chỗ ít bị che, nhìn được cả dòng ANDREW và STUDIO · mảnh vỡ robot đơn điệu, cần giống
+mảnh vỡ thật của robot sau vụ nổ · D-pad đang bị che mờ ở mỗi nửa phím, hiển thị rõ nét hết".
+- `mau-1f-xac-robot.html` + `core/mc3d-1f.js/.css` + `core/mc3d-floor-1f.js` + `core/mc3d-boom-1f.js`.
+- D-pad Ring = SVG (`ringSVG()`): 4 múi vành khăn tách khe 8°, nền đặc tối + viền xanh + mũi tên tam giác; bấm = múi sáng xanh. Bỏ kính mờ
+  (backdrop-filter) + 2 vạch chéo đè lên phím của bản CSS cũ. Chạm theo đúng hình múi (SVG bắt chạm theo hình). Nút giữa: chỉ icon bom
+  (thân tròn + chóp + ngòi + tia lửa + vệt bóng) trên nền cam đậm viền vàng; hết bom ⇒ mờ xám. Số bom vẫn ở dải trên.
+- ANDREW STUDIO: cỡ ~½ bản 1e, chỉ rãnh tối + sơn mòn xám rất mờ + khung khắc mảnh; bỏ phát sáng, bỏ ke góc + gạch vàng. Mở vách NGAY TRƯỚC
+  dòng chữ (phía máy quay) + nối các ô hàng dưới ⇒ tường không còn che dòng STUDIO.
+- Xác robot (`robotParts`): 7 mảng vỏ màu (mảnh mặt cầu, đỉnh xô lệch ⇒ mép rách, 2 mặt) + 2 vỏ đáy tối + 2 đoạn vòng đèn gãy (le lói rồi tắt)
+  + mặt nạ còn khe mắt + 2 tay kẹp đứt (vai–khuỷu–2 càng) + ăng-ten cong có đèn đầu + cụm động cơ (thân + loa phụt) + nửa vương miện 6 cạnh
+  + 6 ốc lục giác + 3 dây điện đứt (đỏ/vàng/đen) + mảnh bảng mạch xanh có chip + đèn. Mảnh nhẹ văng xa hơn, mảng vỏ nằm gần; chạm sàn thì
+  nảy rồi đổ nằm xuống (quay dần về tư thế gần phẳng). Cháy: vỏ → gần đen (còn phảng phất màu), thép → xám khói, đèn tắt dần; vỏ/động cơ/mặt nạ bốc khói.
+- Kiểm: 4 múi + tâm bắt đúng hướng theo toạ độ thật · bấm múi trái ⇒ người đi trái · nút giữa đặt bom, không có số · tự chơi 9/9 · 0 lỗi ·
+  lần nổ đầu trên trang mới: 2 khung ~30–36 ms (tạo 26 mảnh), không còn khựng lớn.
