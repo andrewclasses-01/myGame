@@ -255,3 +255,11 @@ Thầy: dùng intro Phim cao bồi · ANDREW STUDIO PRESENTS · tên game TRAIN 
 - Màn chờ (`state attract`): máy quay (x giữa 2 bảng ±14, y 56, z 72) nhìn (…, 25, −300), fov 38, trôi chậm; không thả khinh khí cầu; ẩn HUD trên. `signs.showBoth()` dựng bảng chữ thứ hai bên trái bảng chính (cách 34), `dropExtra()` lúc intro xong. Đàn chim ra sau 2–4 s.
 - Lớp START mới `.bp-idle`: huy hiệu vòng vàng + ngôi sao, chữ ANDREW STUDIO (Exo 2 nghiêng, giãn chữ, ánh kim chạy) giữa 2 vạch mảnh; nút START viên thuốc kính mờ viền vàng đồng, thở sáng. ⚠️ `display:block` đè `[hidden]` ⇒ thêm `.bp-idle[hidden]{display:none}`.
 - Đo: không lỗi; khung nối lệch 0; hết intro bảng thứ hai được dọn, HUD hiện lại, fov 36.
+
+## 23. Mẫu 1r (29/9/2026) — màn chờ TRAIN RUSH + duyệt đồi chữ
+Thầy: bỏ chữ ANDREW STUDIO ở màn chờ, chỉ tên game TRAIN RUSH + START tinh tế đúng phong cách game · bấm START chỉ hiện ANDREW STUDIO/PRESENTS (không hiện lại tên game) · cảnh bắt đầu ngay từ hình nền màn chờ, dải trên dưới khép, chuyển màu dần rồi mới chuyển cảnh · thiết kế lại đồi chữ để duyệt trước ("duyệt thêm nút" ⇒ hiểu là duyệt thêm MẪU).
+⇒ `mau-1r-doi-chu.html?nui=0..4` (`bp3d-1r.js` + `bp3d-1r.css`, `cine-1r.js`, `west-world-1r.js` → `west-props-1r.js` + `animals-1r.js`).
+- Màn chờ: `.bp-logo` TRAIN RUSH (Rye vàng đồng + vạch ★) · `.bp-start-west` tấm gỗ sẫm vân ngang, viền đồng thau 3 lớp, 2 đinh tán, chữ Rye khắc, thở sáng · bấm ⇒ bản sao lớp màn chờ mờ dần 1 s (`is-leaving`).
+- Intro: `lead` 2,8 s mở đầu = khung màn chờ lúc bấm (`ctx.idle` p/l/fov), máy quay tiến 9 + chúc nhẹ, fov → 33; sepia 0→1 trong 2,8 s (`grade.sepia`), vệt xước phim hiện dần; dải đen khép 2,2 s; rồi mới cắt sang bóng xương rồng (các cảnh cũ dời +2,8 s, `H(t)` tính theo giờ riêng). Bỏ chữ tên game + tiếng dồn; ANDREW STUDIO / PRESENTS giữa màn (nền tối mờ phía sau cho dễ đọc) + tiếng trầm nhẹ.
+- `HILL_STYLES`: 1 `hillMesa` (bậc thềm 6,2 + vách đá, dải màu vân đá, bụi trên mặt bậc, đá lở chân vách) · 2 `hillChaparral` (sống + khe rãnh, 1.500 bụi thẻ + 1.400 tán tròn xanh ô-liu theo khe) · 3 `hillDune` (cồn cát đỏ, kết cấu gợn cát, 700 bụi cỏ sa mạc) · 4 `hillBoulder` (11 cụm đá tảng lớn + 16 saguaro trên sườn). Mọi kiểu giữ `hillH` cho con vật húc chữ.
+- Đo: không lỗi cả 5 kiểu; intro 15,8 s; khung nối lệch 0. ⬜ Thầy chọn đồi.
