@@ -230,3 +230,10 @@ Thầy: mọi thứ ổn, chỉ mặt đất và cỏ chưa ổn ⇒ thiết k�
 - `soilTexture(S)`: nhiễu giá trị LẶP LIỀN MẠCH (`tileNoise` chu kỳ 8/32/128) + gợn cát (chu kỳ khớp 1024) + mạng nứt đa giác (lưới điểm lệch có chu kỳ, vẽ 9 bản lệch cùng dãy ngẫu nhiên) + sỏi có bóng/điểm sáng + sợi cỏ; vật gần mép vẽ lặp sang mép đối diện (`offs`).
 - Kiểu: 0 hiện tại · 1 cát đỏ gợn sóng (ít cây) · 2 đồng cỏ khô vàng (lau 230, cỏ 900/3200, hoa 70) · 3 đất nứt nẻ · 4 sỏi đá (sỏi 900, đá 18, bụi nhiều) · 5 thảo nguyên xanh (cỏ nhuộm xanh, hoa 280).
 - Đo: không lỗi; ~165 fps khung nhỏ. ⬜ Thầy chọn kiểu ⇒ đưa vào bản sau (có thể trộn: đất kiểu này + cỏ kiểu kia).
+
+## 19. Mẫu 1n (29/9/2026) — duyệt bụi cỏ
+Thầy (kèm ảnh đất đỏ + bụi cỏ khô lác đác): tạm chọn "kiểu 2 - cát đỏ gợn sóng" (tên khớp kiểu 1 của 1m ⇒ làm cả 2 đất cho chắc, mặc định cát đỏ) · thay toàn bộ cây cỏ mặt đất (trừ xương rồng) bằng bụi cỏ trong ảnh · làm thêm nhiều mẫu.
+⇒ `mau-1n-bui-co.html?dat=1|2&co=0..4` (`bp3d-1n.js`, `west-world-1n.js`, mới `bunchgrass-1n.js`).
+- `bunchGeometry`: bụi dựng bằng hình thật — N lá dải 4 đốt toả từ gốc chụm (bán kính 0,07), lá giữa đứng, lá ngoài ngả + ngọn rủ (droop) ⇒ dáng đài phun; rộng thon dần; màu gốc sẫm → rơm → ngọn nhạt, 25% lá lệch màu; cọng trổ bông. Pháp tuyến ngả ra ngoài; tự sáng nhẹ (ngược nắng); gió đung đưa theo y² trong shader. 3 dáng gần + 1 giữa (½ lá, z −8…−32) + 1 xa (z < −32); gần + giữa đổ bóng.
+- `GRASS_STYLES`: 0 như ảnh (900 bụi/khúc, 130 lá) · 1 thưa to (420, 170 lá) · 2 dày thấp (1600, 90 lá) · 3 kèm bụi ngải xám (700 + 34 ngải + 10 thỏ) · 4 ánh bạc có bông (850, 40% bông).
+- Bỏ lau / cỏ thẻ / bụi thẻ / hoa ở khúc cảnh; giữ xương rồng, đá, sỏi, gờ đá. Đo: không lỗi, ~165 fps khung nhỏ. ⬜ Thầy chọn.
