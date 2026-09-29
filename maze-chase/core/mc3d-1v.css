@@ -617,3 +617,5 @@ html, body { margin: 0; height: 100%; background: #07060f; overflow: hidden; fon
 .mc-stage.is-fight .mc-clock > svg:first-child:not(.ld):not(.lc) { display: none; }
 .mc-stage.is-fight .mc-clock b { display: inline-flex; align-items: center; gap: .45cqw; font-size: 0; }
 .mc-stage.is-fight .mc-clock svg.ld { width: 2.3cqw; height: 4.1cqw; } .mc-stage.is-fight .mc-clock svg.lc { width: .8cqw; height: 4.1cqw; }
+/* 1v: điểm cuối ván ở Fight — chữ đặc (chữ cắt gradient từng mất hẳn trên myActivity khi cảnh phía sau nhấp nháy) */
+.mc-stage.is-fight .es-n { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #e0f2fe; text-shadow: 0 0 1.2cqw rgba(56,189,248,.8); filter: none; }

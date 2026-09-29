@@ -105,7 +105,7 @@ import { createMcSound } from "./mc3d-sound-1p.js";
 import { createIntro } from "./mc3d-intro-1v.js";
 import { MAPS, genMap, makeDeck } from "./mc3d-maps-1t.js";
 import { createDeckPainter } from "./mc3d-floor-1f.js";
-import { createBoomFX, makeBomb } from "./mc3d-boom-1m.js";
+import { createBoomFX, makeBomb } from "./mc3d-boom-1v.js";
 import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
 import { createHatches, createPortal, createUnderdeck, UNDER } from "./mc3d-hatch-1s.js";
 import { createFleet } from "./mc3d-ship-1v.js";
@@ -459,7 +459,7 @@ const GRADE_SHADER = {
   vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
   fragmentShader: `uniform sampler2D tDiffuse; uniform float uVig; varying vec2 vUv;
     void main(){ vec4 c = texture2D(tDiffuse, vUv); vec3 col = c.rgb;
-      if (!(col.r == col.r) || !(col.g == col.g) || !(col.b == col.b)) col = vec3(0.0);
+      if (!(col.r == col.r) || !(col.g == col.g) || !(col.b == col.b) || (floatBitsToUint(col.r) & 0x7f800000u) == 0x7f800000u || (floatBitsToUint(col.g) & 0x7f800000u) == 0x7f800000u || (floatBitsToUint(col.b) & 0x7f800000u) == 0x7f800000u) col = vec3(0.0);
       float l = dot(col, vec3(0.299, 0.587, 0.114)); col = mix(vec3(l), col, 1.08);
       vec2 q = vUv - 0.5; col *= 1.0 - uVig * dot(q, q) * 2.2;
       gl_FragColor = vec4(max(col, vec3(0.0)), c.a); }`,
@@ -467,7 +467,12 @@ const GRADE_SHADER = {
 const NAN_SHADER = {   // bẫy myGame: 1 điểm ảnh NaN bị bloom loang thành mảng đen ⇒ gột trước bloom
   uniforms: { tDiffuse: { value: null } },
   vertexShader: GRADE_SHADER.vertexShader,
-  fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv; void main(){ vec4 c = texture2D(tDiffuse, vUv);
+  // 1v: kiểm NaN/Inf theo BIT (số mũ toàn 1) — trình dịch D3D (ANGLE) không bỏ được như c==c / isnan
+  fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv;
+    bool badf(float x){ return (floatBitsToUint(x) & 0x7f800000u) == 0x7f800000u; }
+    void main(){ vec4 c = texture2D(tDiffuse, vUv);
+    if (badf(c.r) || badf(c.g) || badf(c.b) || badf(c.a)) c = vec4(0.0, 0.0, 0.0, 1.0);
+    c = clamp(c, vec4(0.0), vec4(64.0));
     if (any(isnan(c)) || any(isinf(c)) || !(c.r == c.r) || !(c.g == c.g) || !(c.b == c.b) || c.r > 1e4 || c.g > 1e4 || c.b > 1e4) c = vec4(0.0, 0.0, 0.0, 1.0); gl_FragColor = c; }   // 1v: D3D (ANGLE) có thể bỏ phép c==c ⇒ thêm isnan/isinf`,
 };
 
@@ -2064,7 +2069,7 @@ export async function createMazeChase({ mount, view = "tilt", questions, title =
     bomb: (t = 0) => placeBomb(teams[t]), teams, setFight(v) { setFightMode(!!v); },
     detonateAt(r, c) { const b = bombAt(r, c); if (b) detonate(b); },
     dropBomb(r, c) { if (bombAt(r, c)) return; spawnBomb(r, c); },
-    astro, ship, hatches, boom, renderer, scene, portal, underdeck, camera, launchShip: () => ship.launch(), pct: () => pctNow + "%", walls: () => walls.length, cell: (r, c) => grid[r] && grid[r][c] && { on: grid[r][c].on, u: grid[r][c].u, d: grid[r][c].d, l: grid[r][c].l, r: grid[r][c].r },
+    astro, ship, hatches, boom, renderer, composer, bloom, scene, portal, underdeck, camera, launchShip: () => ship.launch(), pct: () => pctNow + "%", walls: () => walls.length, cell: (r, c) => grid[r] && grid[r][c] && { on: grid[r][c].on, u: grid[r][c].u, d: grid[r][c].d, l: grid[r][c].l, r: grid[r][c].r },
     enemyNext: () => ens.map(e => ({ at: [e.r, e.c], open: DK.filter(k => open(e, k)).map(k => [e.r + DIRS[k].dr, e.c + DIRS[k].dc]) })), bombs: () => bombs.filter(b => !b.gone).map(b => [b.r, b.c]), bombsLeft: () => bombsLeft,
     autoTo(r, c) { autoTo = [r, c]; },
     cam(p, l) { camOverride = p ? { pos: new THREE.Vector3(...p), look: new THREE.Vector3(...l) } : null; },
