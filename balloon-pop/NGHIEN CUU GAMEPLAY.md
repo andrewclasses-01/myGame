@@ -164,3 +164,10 @@ Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi ti�
 ## 10. Mẫu 1e (29/9/2026)
 9 ý thầy: va chạm khi đúng chỉ 1/10 · toa trống tối đa ở giữa màn, toa sau giữ ngoài mép ⇒ xen 2 toa phụ giữa các toa đáp án + máy quay giữ toa trống đầu ở giữa · chữ nền nhỏ lại, cột chống chỉ nửa dưới và khuất sau chữ · con vật chi tiết hơn, chỉ trên đồi xa · đàn chim liền mạch · bỏ ✓ ở điểm · người trong toa chi tiết (ngón tay) · thêm nhiều toa có người · toa than: thùng + than văng, trừ điểm (max(2, Points off)).
 ⇒ `mau-1e-toa-phu.html` (lõi `core/bp3d-1e.js`, cảnh `core/west-world-1e.js` + `core/west-props-1e.js` + `core/animals-1e.js`, toa `core/coach-1e.js`).
+
+## 11. Mẫu 1f (29/9/2026) — vật lý vật rắn thật
+7 ý thầy: khinh khí cầu bay vào từ ngoài màn (không hiện giữa màn) · thùng đúng chạm toa chỉ trượt + lắc rất nhẹ, không ảnh hưởng tốc độ tàu · người trong toa luôn thành cặp đối diện nói chuyện, mỗi người hoảng một kiểu, thêm phụ nữ + trẻ em · máy bay đẹp hơn, chỗ nối dây–băng thật, băng phần phật · thêm sư tử, lợn, gà, bò, voi; gò đồi chi tiết thật, không che chữ; con vật chạy từ sau gò lên đỉnh, ngắm, lắc lư rồi quay đầu chạy khuất · thùng gỗ cứng không méo · một toa chứa nhiều thùng, rơi trước/sau/chồng/nghiêng theo vật lý thật.
+⇒ `mau-1f-vat-ly.html` (lõi `core/bp3d-1f.js` dùng **cannon-es 0.20** qua jsDelivr; cảnh `core/west-world-1f.js` + `core/west-props-1f.js` + `core/animals-1f.js`; toa `core/coach-1f.js`).
+- Cả đoàn tàu = 1 vật động học ghép nhiều khối (mỗi khối biết thuộc toa nào); bước vật lý 1/120 s, đặt tàu ở vị trí ĐẦU khung rồi cho chạy đúng quãng của khung ⇒ thùng và toa không lệch pha.
+- Thùng đúng nằm yên hẳn 0,3 s trên toa của nó ⇒ +điểm và gắn chặt thành một khối của tàu (thùng khác vẫn va vào). Thùng sai NẰM LẠI trên toa (nhãn ửng đỏ, trừ Points off) — khác Wordwall (thùng sai văng đi); chờ thầy chốt.
+- Bẫy: sự kiện `collide` của cannon-es dùng lại MỘT đối tượng ⇒ phải chép `body/shape/vận tốc va chạm` ngay trong hàm nghe, không giữ đối tượng sự kiện.
