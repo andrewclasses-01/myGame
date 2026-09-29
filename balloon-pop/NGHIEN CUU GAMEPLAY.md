@@ -312,3 +312,6 @@ Thầy: trả đồi Atacama như bản trước; không để ANDREW CLASSES tr
 ## 30. Mẫu 1y (29/9/2026) — hai bảng chữ trên đụn cát thấp
 Thầy: chọn kiểu 1 (NO HOMEWORK cũng trên đụn cát), đụn cát thấp như bản trước.
 ⇒ `mau-1y-dun-thap.html?cao=0..2` (`bp3d-1y` → `west-world-1y` → `west-props-1y` (NH cố định 1) + `animals-1y` + `sign-chase-1y` + `dune-1y`). DUNE_H = 10 / 13 / 16 (1x: 21); gò cát tự nhiên ở dải z −60…−140 cao 0–22 (đo groundHeight). Ở cao 10, chữ vẫn nằm trên nóc tàu ở góc quay chơi. ⬜ Thầy chọn độ cao.
+
+## 31. Mẫu 1z (29/9/2026) — đụn cát cao 10, chữ 70 %
+Thầy: chọn mức 0, giảm size 2 đoạn chữ còn 70 %. ⇒ `mau-1z-chu-70.html` (bỏ bảng chọn; `bp3d-1z` → `west-world-1z` → `west-props-1z` + `dune-1z` (CAO cố định 0) + `animals-1z` + `sign-chase-1z`). LETTER_H 6 → 4,2 (khoảng chữ, cột chống, bề ngang bảng, bề ngang đụn cùng co theo); ANDREW CLASSES rộng 52,6.
