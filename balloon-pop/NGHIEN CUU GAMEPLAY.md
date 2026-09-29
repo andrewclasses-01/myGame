@@ -308,3 +308,7 @@ Thầy: trả đồi Atacama như bản trước; không để ANDREW CLASSES tr
 - Bảng chữ trên đụn: không dựng đồi riêng; nhóm ở z −117 (chữ z −105), chữ y 21; hillH = groundHeight. `syncDunes()` sau mỗi showBoth/aheadAt/commitAhead/dropExtra/update: ô đụn theo bảng đang sống (cur/extra/ahead).
 - Đồi Atacama = 1u/1v (HS 0,5, chữ y 9). ?nh=0: NO HOMEWORK ở đồi Atacama; ?nh=1: cả NO HOMEWORK trên đụn cát. Chữ đổ tự dựng lại + cặp thú quanh chữ giữ từ 1w. JS groundHeight thêm dải phẳng 1u còn thiếu.
 - Đo: không lỗi; thú chạy trên đỉnh đụn y 21. ⬜ Thầy xem + chọn nh.
+
+## 30. Mẫu 1y (29/9/2026) — hai bảng chữ trên đụn cát thấp
+Thầy: chọn kiểu 1 (NO HOMEWORK cũng trên đụn cát), đụn cát thấp như bản trước.
+⇒ `mau-1y-dun-thap.html?cao=0..2` (`bp3d-1y` → `west-world-1y` → `west-props-1y` (NH cố định 1) + `animals-1y` + `sign-chase-1y` + `dune-1y`). DUNE_H = 10 / 13 / 16 (1x: 21); gò cát tự nhiên ở dải z −60…−140 cao 0–22 (đo groundHeight). Ở cao 10, chữ vẫn nằm trên nóc tàu ở góc quay chơi. ⬜ Thầy chọn độ cao.

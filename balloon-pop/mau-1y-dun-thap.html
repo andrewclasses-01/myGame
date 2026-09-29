@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balloon Pop 3D — Mẫu 1y</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Exo+2:ital,wght@1,800;1,900&family=Rye&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/bp3d.css">
+<link rel="stylesheet" href="core/bp3d-1j.css">
+<link rel="stylesheet" href="core/bp3d-1p.css">
+<link rel="stylesheet" href="core/bp3d-1q.css">
+<link rel="stylesheet" href="core/bp3d-1r.css">
+<style>
+  #nenPick { position: fixed; left: 10px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 5px;
+    background: rgba(28, 18, 10, .82); border: 2px solid #c89a4a; border-radius: 12px; padding: 10px; font: 700 13px "Baloo 2", sans-serif; color: #f6e6c4; }
+  #nenPick b { font-family: Rye, serif; font-weight: 400; font-size: 14px; color: #ffd98a; text-align: center; }
+  #nenPick a { display: block; padding: 4px 10px; border-radius: 8px; color: #f6e6c4; text-decoration: none; background: rgba(255, 255, 255, .06); border: 1px solid rgba(200, 154, 74, .35); }
+  #nenPick a.on { background: #c89a4a; color: #2a1a0c; border-color: #ffd98a; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/", "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js" } }
+</script>
+</head>
+<body>
+<div id="game"></div>
+<div id="nenPick"><b>Độ cao đụn cát</b></div>
+<script type="module">
+import { createBalloonPop } from "./core/bp3d-1y.js";
+import { CAO_STYLES as HILL_STYLES, CAO as NUI } from "./core/dune-1y.js";
+const pick = document.getElementById("nenPick");
+HILL_STYLES.forEach((s, i) => { const a = document.createElement("a"); a.href = "?cao=" + i; a.textContent = i + " · " + s; if (i === NUI) a.className = "on"; pick.appendChild(a); });
+import { WORDS, WORDS_TITLE } from "./core/words-lsa2-s4-t4.js";
+createBalloonPop({ mount: document.getElementById("game"), view: "side", words: WORDS, wordsTitle: WORDS_TITLE });
+</script>
+</body>
+</html>
