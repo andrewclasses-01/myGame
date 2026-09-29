@@ -103,3 +103,14 @@ các ô rất rối mắt · (4) mỗi màn một map khác nhau, cần nhiều 
   tự chơi 9/9 ⇒ 9 câu 9 map khác nhau, GAME COMPLETE · bệ sai ⇒ bật lùi đúng · 5 D-pad đều nhận lệnh · 0 lỗi console.
 - Bàn thử thêm: `__mc.useMap(i)` xem map i ở màn chờ · `__mc.map()` tên map đang chơi · `__mc.autoTo(r, c)` tự đi tới ô.
 - ⬜ Thầy chọn D-pad + xem 10 map trên TOMKO.
+
+## 8. MẪU 1d (29/9) — thầy chọn D-pad B · Ring + "làm sàn đẹp và chi tiết hơn, sàn hiện tại trông giả quá"
+- `mau-1d-san-that.html` + lõi `core/mc3d-1d.js` (chép 1c; D-pad mặc định `ring`) + SÀN `core/mc3d-floor.js` (dùng chung css 1c).
+- Sàn PBR 4 lớp vẽ bằng canvas 160 px/ô (2400×1120): màu (+ trong suốt ô không sàn) · pháp tuyến (Sobel từ bản đồ độ cao) · độ nhám · phát sáng.
+  Nội dung: tấm thép lát so le theo hàng ô (rộng 1 / 1,5 / 2 ô, hàng lẻ lệch 0,75 ô) có rãnh ghép + mép vát + 4 đinh tán; 55% thép sơn
+  (đường ô mảnh, tấm vá bắt vít), ~30% thép GÂN KIM CƯƠNG (bóng hơn), ~15% LƯỚI thông gió (khe tối có đèn xanh hắt dưới); bẩn loang
+  (nhiễu 4 lớp, nhân tối) + 420 vết xước + chữ in khu vực (DECK 3, B-07…); bóng tối sát chân tường theo mê cung của câu; mép giáp khoảng
+  trống = sọc vàng-đen + đèn đường băng; vòng vàng nét đứt ở ô xuất phát. Vật liệu metalness 0,5, normalScale 1,3, emissive 1,6;
+  thêm 1 đèn xiên thấp (`graze`) để gân/rãnh nổi. Vẽ lại mỗi câu ≈ 130 ms.
+- Kiểm: 0 lỗi console · tự chơi (Difficulty 1, 10 tim) 3 lượt đều 9/9 · soi gần thấy rõ đinh tán, gân, sọc cảnh báo.
+- ⬜ Thầy xem trên TOMKO: sàn có quá rối so với chữ đáp án không; tường giờ trông "trơn" hơn sàn — nếu cần thì làm chi tiết tường tương tự.
