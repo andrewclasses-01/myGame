@@ -186,3 +186,12 @@ Thầy (kèm ảnh sa mạc thật): cần đường ray · mặt đất chi ti�
 - Máy quay = lò xo giảm chấn tới hạn (K 2,2) có bám vận tốc tàu. Lại luật 1e: toa chờ còn bên trái ⇒ máy quay ĐỨNG CHỜ; chỉ lia NGƯỢC khi một toa trước bị mở lại (1g bỏ luật này nên máy quay lùi 15 đv mỗi lần thả đúng — đã sửa).
 - Thanh trên giờ là THANH THỜI GIAN (giờ còn lại / giờ nhiều nhất từng có), ≤ 10 s chuyển đỏ; tiến độ toa không còn hiện ở đây.
 - Hàng nút 80 px ngoài màn chơi: Menu · Sound | Switch activity · Options · Leaderboard · Mode (icon chép từ AWord core/icons.js qua Maze Chase 1g); 3 bảng Switch/Leaderboard/Mode là dữ liệu mẫu; mở bảng giữa ván thì tạm dừng.
+
+## 14. Mẫu 1i (29/9/2026)
+5 ý thầy: thùng đúng nảy + xê dịch thật hơn · tàu/máy bay bớt nhựa (bẩn, bụi, gồ ghề, xước) + saguaro sần sùi mỗi cây một khác · người hoảng lâu hơn + chạy lung tung khi thùng rơi liên tiếp · con vật húc đổ chữ Hollywood · Options theo kiểu AWord.
+⇒ `mau-1i-cu-bui.html` (lõi `core/bp3d-1i.js` + `core/bp3d-1i.css`, làm cũ `core/grime-1i.js`, toa `core/coach-1i.js`, cảnh `core/west-world-1i.js` + `core/west-props-1i.js` + `core/animals-1i.js`).
+- Thùng: rơi ra hơi nghiêng dọc toa, gỗ nảy (restitution 0,3); SẮP chạm nóc thì hãm dần đà ngang ngược chiều tàu (quán tính khinh khí cầu −1,5 vs tàu +2,6 ⇒ trước đây lật văng); nằm trên toa thì giữ ở giữa bề ngang (nóc hẹp, dễ bập bênh). Đo vận tốc thả THẬT: 11/12 lần nảy 0,05–0,5, trượt ≤ 0,4 rồi nằm yên.
+- ⚠️ Các phép thử trước 1i dùng vx = vận tốc tàu (không có đà ngược) ⇒ không lộ lỗi lật văng. Thử vật lý phải dùng đúng vận tốc thả trong game.
+- Làm cũ: 3 kết cấu canvas dùng chung (bẩn màu / nhám / bump), `weather(train)` + `weather(plane)`; clearcoat ≈ 0, kim loại bớt bóng, đồng thau xỉn. Saguaro: ống 40×80 đỉnh, phình/thắt + cong + u sần theo pháp tuyến + gốc gỗ + sẹo + mắt gai, `mergeVertices` để pháp tuyến mượt; khúc cảnh quay vòng thì mọc cây mới. ≈ 77 fps (1h 104).
+- Con vật húc chữ: 25–55 s/lần, bò/voi/ngựa/lạc đà/sư tử phóng to 2,2–2,8 lần, từ sau đỉnh đồi chữ lao xuống, chữ đổ về phía trước theo mô-men trọng lực + nảy + bụi; chữ nằm đổ tới khi bảng được thay.
+- Options: Timer None / Count up / Count down (+ ô giờ) · MAX CARS · BALLOON SPEED · TRAIN SPEED · POINTS OFF 0–100 (thang AWord) · Shuffle questions · Show answers at end · Bonus extra time/points/x2 · Drop guide · Apply ⇒ về màn bắt đầu.
