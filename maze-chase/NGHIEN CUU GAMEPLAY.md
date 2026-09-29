@@ -297,3 +297,19 @@ một chút, không bay thẳng bắn nổ ngay · chữ ANDREW CLASSES bị che
   lực theo "xuống màn hình" (đổi sang toạ độ tàu con) + cản ⇒ rơi đều chậm; mọi mảnh bốc khói 6–8,5 s; tan sau 7,5–9 s. Hệ khói 1800 hạt.
 - Kiểm (chạy thật): trung bình 7,0 ms/khung; rượt đuổi + nổ + xác rơi không khựng (khung ~150 ms lúc chuyển câu có sẵn từ 1j) · tự chơi
   9/9 · 0 lỗi.
+
+## 17. MẪU 1m (29/9) — đếm 3-2-1 không GO · câu hỏi thêm 3 s · END GAME · Show answers to · thanh tiến độ · tàu con nổ chỗ thấy
+Thầy: "đếm 5-4-3-2-1 là vào game luôn, bỏ hẳn GO · game over bỏ vòng xoay, 2/9 cùng hàng · menu bỏ Back to start screen, thêm END GAME
+dòng cuối · thêm 3 s hiện câu hỏi trước khi đếm · tàu con luôn bị bắn và nổ ở chỗ nhìn thấy · ô sai robot không nảy, vụ nổ làm nó bung
+đốm sáng tại chỗ · Show answers to tối đa, hiện câu sai + đáp án đúng · bỏ ô %, thêm thanh mảnh ở hàng nút dài bằng khung game chạy theo %".
+Hỏi lại & thầy chốt: câu MỚI ⇒ câu hỏi to thêm 3 s rồi đếm 3-2-1; vẫn câu đó ⇒ chỉ đếm 3-2-1; bỏ 5-4 và GO cho mọi dạng.
+- `mau-1m-thanh-tien-do.html` + `core/mc3d-1m.js/.css` + `mc3d-ship-1m.js` + `mc3d-boom-1m.js`.
+- Đếm: `["3","2","1"]` cho MỌI câu, hết số (3 s) là chơi (tiếng go vẫn kêu); đổi người `SWAP_S` 5 ⇒ 3, không GO. Câu hỏi to 2,2/1,7 ⇒ 5,2/4,7 s.
+- END GAME (menu tạm dừng): xoá việc hẹn giờ, `endGame("over")`; câu chưa tới ghi "not played". Show answers: khung 94cqw × 94cqh,
+  mỗi câu = đáp án sai đã chọn (gạch đỏ) + ✓ đáp án đúng.
+- Thanh tiến độ `.mc-prog` giữa khung game và hàng nút, `fit()` đặt rộng = khung game; 6 px + lề 6 + hàng nút 68 = 80 (BAR_H).
+- Ô sai: không hất; 0,04 s sau nổ là tan đốm sáng (giữ hình 0,07 s).
+- Tàu con: điểm nổ ngoài hình chiếu hộp mê cung (`blockRect` chiếu 8 góc), y ≤ 0,62 (dưới câu hỏi), tránh 2 góc dưới; phát KẾT LIỄU bắn
+  canh giờ tới điểm nổ, trúng mới nổ (dự phòng quá 0,6 s). Thử 6 lượt: nổ ở y 0,60–0,63, trên mê cung, dưới câu hỏi.
+- ⛔ BẪY: `node --check file.js` KHÔNG bắt lỗi cú pháp của module (chú thích nuốt mất nửa dòng lệnh vẫn "OK") ⇒ chép sang `.mjs` rồi mới check.
+- Kiểm: tự chơi 9/9 · END GAME + Show answers · ô sai không nảy · 0 lỗi.
