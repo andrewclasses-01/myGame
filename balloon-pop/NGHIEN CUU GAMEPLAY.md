@@ -241,3 +241,10 @@ Thầy (kèm ảnh đất đỏ + bụi cỏ khô lác đác): tạm chọn "ki�
 ## 20. Mẫu 1o (29/9/2026) — bản chính
 Thầy chốt: đất cát đỏ (GROUND_STYLES[1]) + bụi cỏ mẫu 0 (GRASS_STYLES[0]), đưa vào game.
 ⇒ `mau-1o-dat-do.html` (`bp3d-1o.js` + `west-world-1o.js`: NEN = 1, GR2 = mẫu 0 cố định, không đọc tham số URL; bunchgrass-1n, props/animals 1l). Đo: không lỗi, ~145 fps khung nhỏ.
+
+## 21. Mẫu 1p (29/9/2026) — duyệt intro điện ảnh
+Thầy: intro thật đẹp, ngầu, điện ảnh như Rocket Race, vài bản để chọn. ⇒ `mau-1p-intro.html?intro=1..4` (`bp3d-1p.js` = 1o + `cine-1p.js` + `bp3d-1p.css`).
+- Cách nối liền (như Rocket Race 5b): START ⇒ `beginLevel(0)` như cũ rồi `startCine()`: tàu chạy ĐỀU đúng `introV0` suốt cảnh và tới đúng `introFrom` lúc cảnh kết; tâm màn chơi dời lên trước `shift = (camX cũ − 50 + V0·Tc) − introFrom`; trạng thái mới `cine` (không tính giờ, không thả khinh khí cầu, không chạy `updateCamera`); `world.update` nhận tâm = vị trí máy quay (chỉ tăng) để khúc cảnh quay vòng theo. Hết cảnh ⇒ `endCine()` về `intro` (tàu hãm vào ga), máy quay trôi 2,2–2,4 s về ĐÚNG góc chơi kể cả độ trôi nhẹ (`sway`) ⇒ đo khung nối lệch 0.
+- `cine-1p.js`: `seq()` chuỗi cảnh (hoà `mix` giây hoặc cắt) + `poseAt()` đoạn trôi về góc chơi (vòng lên 1,2) · nghiêng máy (roll) · rung khi chữ đập · Web Audio riêng: gió, dồn lên (riser), bùm trầm, vút, chim ưng kêu + còi tàu của game; tắt tiếng theo nút loa · lớp `.bp-cine`: dải đen 11,5 %, ANDREW CLASSES presents (Exo 2 + Rye), BALLOON POP (Rye vàng đồng, đập + bụi), chạm = `skip()` nhảy tới đoạn trôi về.
+- 4 bản: 1 Cần cẩu (lướt đồi chữ → sà sát ray tàu ào qua → bay song song đầu máy → vút lên) 13 s · 2 Bám tàu (cận bánh + thanh truyền → ống khói → lùi dọc toa → cần cẩu) 12 s · 3 Đại bàng (đường cong Catmull qua gò/xương rồng, nghiêng cánh ≤ 0,3 rad, cắt ngang trước mũi tàu) 12 s · 4 Phim cao bồi (sepia `grade.sepia` + vệt xước, bóng saguaro ngược nắng → tàu lao thẳng ống kính tele 24° → tàu vụt qua → toàn cảnh, màu về) 13 s.
+- Đo: không lỗi; bỏ qua ở t 1 s ⇒ nhảy 10,3 s rồi vào ván bình thường. ⬜ Thầy chọn bản.
