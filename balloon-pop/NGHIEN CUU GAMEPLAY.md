@@ -344,3 +344,16 @@ Tiếng: kiểu 1/2 mỗi bàn phát tiếng riêng (2 tàu cùng kêu). Khinh k
 - **Tàu 2 đội khác màu** (`trainColors`): TEAM 1 đầu máy + toa than đỏ (3 sắc độ đổi theo màn), ván toa hàng đỏ, **viền bảng định nghĩa đỏ**; TEAM 2 tương tự màu xanh. (Chỉ đổi màu đầu máy thì chưa đủ: bảng định nghĩa che gần hết thân toa ⇒ phải đổi cả viền bảng.)
 - **Bàn TRÁI soi gương** (`mirror`): lật cả khung hình bằng CSS `scaleX(-1)` ⇒ tàu chạy phải→trái, khinh khí cầu bay trái→phải — mỗi đội thấy khinh khí cầu bay vào từ MÉP NGOÀI phía mình đứng. Chữ vẫn đọc xuôi: texture chữ (bảng toa, khinh khí cầu, thùng, điểm bay, băng máy bay, bảng tên đầu máy) lật sẵn `repeat.x = −1`; chữ 3D ANDREW CLASSES trên đồi lật `letters.scale.x = −1`; chạm đổi dấu `ndc.x`. Không lật hình học ⇒ không bị lỗi mặt khuất.
 - **2 đội khác từ** (`setOrder`): trang trộn 2 thứ tự riêng, vị trí nào trùng thì đổi chỗ ⇒ cùng màn, cùng số toa không bao giờ cùng từ (thử 3.000 ván: 0 lần trùng). 2 đội vẫn chơi cùng BỘ từ, chỉ khác thứ tự. Toa khách/toa than vẫn giống nhau (cùng hạt giống) cho công bằng.
+
+## 36. Mẫu 1ae (30/9/2026) — INTRO ĐIỆN ẢNH cho Fight
+Thầy: "làm intro điện ảnh cho chế độ Fight, thể hiện 2 tàu, 2 team thi đua với nhau". ⇒ `mau-1ae-fight-intro.html` (= 1ad + intro),
+lõi `core/bp3d-1ae.js` (`fightIntro({ colors, onDone })`, `skipIntro()`), đạo diễn `core/fight-cine-1ae.js`, chữ `core/fight-cine-1ae.css`.
+- Bấm START / Start again ⇒ bàn PHẢI tạm phủ cả vùng chơi (bàn trái ẩn), quay trong cảnh của bàn đó; dựng thêm **ray thứ hai** chỉ trong intro
+  (z −5,2, nền đắp cao 0,28 để vùi bụi cỏ mọc sẵn) và **2 tàu trình diễn** màu đội (đầu máy số 1 / 2, toa bảng "TEAM 1"/"TEAM 2", toa khách, toa than).
+  2 tàu chạy 15 đv/s, nhích lên/tụt lại quanh nhau (sin lệch pha) ⇒ vượt nhau liên tục.
+- Kịch bản 11 s, cùng phong cách intro bản đơn 1ab (mở từ khung màn chờ, ngả nâu, cắt cảnh lia vụt + tiếng vút):
+  0 lao xuống từ màn chờ, ANDREW STUDIO / PRESENTS · 1,4 góc chéo phía trước thấy 2 đầu máy đua cạnh nhau · 3,2 cận đầu máy ĐỎ + thẻ TEAM 1 trượt từ trái ·
+  4,9 cận đầu máy XANH + thẻ TEAM 2 trượt từ phải, màu về dần · 6,6 đối đầu: máy quay lùi trước mũi 2 tàu, TEAM 1 · VS · TEAM 2 đập xuống ·
+  8,4 cần cẩu lên sau lưng 2 tàu, TRAIN RUSH + dải FIGHT nửa đỏ nửa xanh · 10,4 sập tối ⇒ trang tách 2 bàn dưới màn đen ⇒ đếm 3-2-1.
+- Chạm màn hình (hoặc nút Menu) trong intro = bỏ qua tới lúc sập tối.
+- Bài học: cảnh nhìn NGANG 2 tàu song song thì tàu ray gần che mất tàu ray xa ⇒ cảnh chung 2 tàu phải nhìn chéo phía trước / đối đầu.

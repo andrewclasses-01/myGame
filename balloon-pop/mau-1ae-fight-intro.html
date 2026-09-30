@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Rush — Fight (1ae)</title>
+<!-- TRAIN RUSH mẫu 1ae (30/9/2026): như 1ad + INTRO ĐIỆN ẢNH khi bấm START / Start again (~11 s, chạm để bỏ qua):
+     bàn phải tạm phủ cả màn, quay 2 tàu đỏ/xanh đua song song (core/fight-cine-1ae.js) → sập tối → tách 2 bàn → đếm 3-2-1. -->
+<!-- TRAIN RUSH mẫu 1ad (30/9/2026): thầy chọn FIGHT kiểu 1 — hai bàn trái–phải (từ 1ac) + 3 ý:
+     • tàu 2 đội khác màu: TEAM 1 đỏ (đầu máy + toa hàng đỏ), TEAM 2 xanh
+     • bàn TRÁI soi gương: tàu chạy phải→trái, khinh khí cầu bay trái→phải (mỗi đội thấy khinh khí cầu bay vào từ mép ngoài phía mình)
+     • 2 đội khác thứ tự từ; cùng vị trí toa (màn N, toa K) không bao giờ trùng từ
+     ?t=giây (mặc định 120). Lõi: core/bp3d-1ad.js. -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Exo+2:ital,wght@1,800;1,900&family=Rye&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/bp3d.css">
+<link rel="stylesheet" href="core/bp3d-1j.css">
+<link rel="stylesheet" href="core/bp3d-1p.css">
+<link rel="stylesheet" href="core/bp3d-1q.css">
+<link rel="stylesheet" href="core/bp3d-1r.css">
+<link rel="stylesheet" href="core/bp3d-1ab.css">
+<link rel="stylesheet" href="core/fight-cine-1ae.css">
+<style>
+  :root { --red: #e2402f; --blue: #2f7fe2; --wood: #3a2414; --brass: #c89a4a; --paper: #f6e6c4; --hud: 64px; --bar: 80px; }
+  html, body { background: #120c07; }
+  #fight { position: fixed; inset: 0; display: flex; flex-direction: column; background: #120c07; color: var(--paper); font-family: "Baloo 2", system-ui, sans-serif; user-select: none; -webkit-user-select: none; }
+
+  /* ---- dải điểm trên cùng */
+  .fb-hud { height: var(--hud); flex: 0 0 var(--hud); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px; padding: 0 14px;
+    background: linear-gradient(#4a2e18, #2c1a0d); border-bottom: 3px solid var(--brass); }
+  .fb-team { display: flex; align-items: center; gap: 14px; height: 48px; padding: 0 18px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, .25); }
+  .fb-team.t0 { background: linear-gradient(90deg, #8f1f14, #c73526); }
+  .fb-team.t1 { background: linear-gradient(270deg, #143f8f, #2769c7); flex-direction: row-reverse; }
+  .fb-team span { font: 800 20px "Baloo 2"; letter-spacing: .06em; opacity: .92; }
+  .fb-team b { font: 400 34px Rye, serif; min-width: 70px; text-align: center; }
+  .fb-team.t0 b { margin-left: auto; } .fb-team.t1 b { margin-right: auto; }
+  .fb-team.is-lead { box-shadow: 0 0 0 3px #ffd98a, 0 0 18px rgba(255, 217, 138, .6); }
+  .fb-clock { font: 400 34px Rye, serif; min-width: 120px; text-align: center; padding: 2px 18px; border-radius: 10px; background: #1c1008; border: 2px solid var(--brass); color: #ffd98a; }
+  .fb-clock.is-warn { color: #ff7b6b; border-color: #ff7b6b; }
+
+  /* ---- vùng chơi */
+  .fb-area { position: relative; flex: 1 1 auto; min-height: 0; display: grid; gap: 6px; background: #120c07; }
+  .fb-area.k1 { grid-template-columns: 1fr 1fr; }
+  .fb-area.k2 { grid-template-rows: 1fr 1fr; }
+  .fb-area.k3 { grid-template-columns: 1fr; }
+  .fb-board { position: relative; overflow: hidden; min-width: 0; min-height: 0; }
+  .fb-board .bp-stage { position: absolute; left: 0; top: 0; }
+  .is-embed .bp-top, .is-embed .bp-outbar { display: none !important; }
+  .fb-board::after { content: ""; position: absolute; inset: 0; pointer-events: none; border: 4px solid var(--c); border-radius: 2px; opacity: .9; }
+  .fb-board.t0 { --c: var(--red); } .fb-board.t1 { --c: var(--blue); }
+  .fb-board.k3::after { display: none; }
+  .fb-tag { position: absolute; z-index: 6; pointer-events: none; font: 800 18px "Baloo 2"; letter-spacing: .08em; padding: 2px 14px; border-radius: 0 0 10px 10px; background: var(--c); color: #fff; top: 0; left: 50%; transform: translateX(-50%); }
+  /* kiểu 3: vạch chia đôi + 2 mép màu đội */
+  .fb-split { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+  .fb-split i { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 3px dashed rgba(255, 245, 225, .55); filter: drop-shadow(0 0 3px rgba(0, 0, 0, .6)); }
+  .fb-split .l, .fb-split .r { position: absolute; top: 0; bottom: 0; width: 7%; }
+  .fb-split .l { left: 0; background: linear-gradient(90deg, rgba(226, 64, 47, .45), transparent); }
+  .fb-split .r { right: 0; background: linear-gradient(270deg, rgba(47, 127, 226, .45), transparent); }
+  .fb-split em { position: absolute; bottom: 12px; font: 800 20px "Baloo 2"; font-style: normal; letter-spacing: .08em; padding: 3px 16px; border-radius: 10px; color: #fff; }
+  .fb-split em.l2 { left: 14px; background: var(--red); } .fb-split em.r2 { right: 14px; background: var(--blue); }
+
+  /* ---- màn chờ / đếm ngược / kết quả / tạm dừng: phủ lên vùng chơi */
+  .fb-ov { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(20, 10, 4, .35), rgba(20, 10, 4, .78)); }
+  .fb-ov[hidden] { display: none; }
+  .fb-card { text-align: center; padding: 26px 46px 30px; border-radius: 18px; background: linear-gradient(#f3e2bf, #e2c996); color: #3a1f0e; border: 4px solid #7a4a22; box-shadow: 0 18px 50px rgba(0, 0, 0, .55), inset 0 0 0 3px #f8edd6; min-width: 420px; }
+  .fb-title { font: 400 64px Rye, serif; line-height: 1; color: #6b2a12; }
+  .fb-sub { font: 400 30px Rye, serif; color: #a0381f; margin: 4px 0 14px; letter-spacing: .12em; }
+  .fb-desc { font: 700 18px "Baloo 2"; max-width: 520px; margin: 0 auto 18px; color: #5a3a1e; }
+  .fb-btn { font: 400 30px Rye, serif; color: #fff4dc; padding: 8px 40px; border-radius: 12px; cursor: pointer; border: 3px solid #ffd98a; background: linear-gradient(#b8541f, #7d2f10); box-shadow: 0 6px 0 #4a1c08; margin: 6px; }
+  .fb-btn.sm { font-size: 22px; padding: 6px 26px; }
+  .fb-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #4a1c08; }
+  .fb-count { font: 400 180px Rye, serif; color: #ffd98a; text-shadow: 0 8px 0 #4a1c08, 0 0 40px rgba(0, 0, 0, .8); }
+  .fb-res-row { display: flex; gap: 22px; justify-content: center; margin: 10px 0 18px; }
+  .fb-res-t { padding: 10px 26px; border-radius: 14px; color: #fff; min-width: 150px; }
+  .fb-res-t.t0 { background: linear-gradient(#c73526, #8f1f14); } .fb-res-t.t1 { background: linear-gradient(#2769c7, #143f8f); }
+  .fb-res-t span { display: block; font: 800 18px "Baloo 2"; letter-spacing: .08em; }
+  .fb-res-t b { font: 400 54px Rye, serif; }
+  .fb-res-t.is-win { box-shadow: 0 0 0 4px #ffd98a, 0 0 26px rgba(255, 200, 80, .8); }
+  .fb-loading { font: 400 34px Rye, serif; color: #ffd98a; }
+  /* 1ae: lúc intro — bàn phải phủ cả vùng chơi, ẩn bàn trái + viền/nhãn đội */
+  .fb-area.is-cine { grid-template-columns: 1fr; }
+  .fb-area.is-cine .fb-board.t0 { display: none; }
+  .fb-area.is-cine .fb-board::after, .fb-area.is-cine .fb-tag { display: none; }
+  .fb-black { position: absolute; inset: 0; z-index: 30; background: #000; opacity: 0; pointer-events: none; transition: opacity .5s; }
+  .fb-black.is-on { opacity: 1; transition: none; }
+
+  /* ---- hàng nút dưới */
+  .fb-bar { height: var(--bar); flex: 0 0 var(--bar); display: flex; align-items: center; gap: 10px; padding: 0 14px; background: linear-gradient(#2c1a0d, #1c1008); border-top: 3px solid var(--brass); }
+  .fb-tool { width: 58px; height: 58px; border-radius: 14px; display: grid; place-items: center; cursor: pointer; background: #4a2e18; border: 2px solid var(--brass); color: var(--paper); }
+  .fb-tool svg { width: 30px; height: 30px; }
+  .fb-tool.is-off { opacity: .5; }
+  .fb-kieu { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .fb-kieu small { font: 700 15px "Baloo 2"; color: #cdb58a; margin-right: 4px; }
+  .fb-kieu a { font: 700 17px "Baloo 2"; text-decoration: none; color: var(--paper); padding: 8px 16px; border-radius: 12px; background: #4a2e18; border: 2px solid rgba(200, 154, 74, .5); white-space: nowrap; }
+  .fb-kieu a.on { background: var(--brass); color: #2a1a0c; border-color: #ffd98a; }
+  @media (max-width: 1100px) { .fb-kieu a span { display: none; } }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/", "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js" } }
+</script>
+</head>
+<body>
+<div id="fight">
+  <div class="fb-hud">
+    <div class="fb-team t0"><span>TEAM 1</span><b class="fb-s0">0</b></div>
+    <div class="fb-clock">2:00</div>
+    <div class="fb-team t1"><span>TEAM 2</span><b class="fb-s1">0</b></div>
+  </div>
+  <div class="fb-area">
+    <div class="fb-ov fb-ov-load"><div class="fb-loading">Loading…</div></div>
+    <div class="fb-ov fb-ov-start" hidden><div class="fb-card">
+      <div class="fb-title">TRAIN RUSH</div><div class="fb-sub">FIGHT</div>
+      <p class="fb-desc"></p>
+      <button class="fb-btn fb-go">START</button>
+    </div></div>
+    <div class="fb-black"></div>
+    <div class="fb-ov fb-ov-count" hidden><div class="fb-count">3</div></div>
+    <div class="fb-ov fb-ov-pause" hidden><div class="fb-card">
+      <div class="fb-title" style="font-size:48px">PAUSED</div>
+      <div style="margin-top:14px"><button class="fb-btn fb-resume">Resume</button></div>
+      <button class="fb-btn sm fb-again">Start again</button><button class="fb-btn sm fb-stop">End game</button>
+    </div></div>
+    <div class="fb-ov fb-ov-end" hidden><div class="fb-card">
+      <div class="fb-title fb-end-t" style="font-size:52px">TEAM 1 WINS!</div>
+      <div class="fb-sub fb-end-why" style="font-size:22px">TIME'S UP</div>
+      <div class="fb-res-row">
+        <div class="fb-res-t t0"><span>TEAM 1</span><b class="fb-r0">0</b></div>
+        <div class="fb-res-t t1"><span>TEAM 2</span><b class="fb-r1">0</b></div>
+      </div>
+      <button class="fb-btn fb-again">Start again</button>
+    </div></div>
+  </div>
+  <div class="fb-bar">
+    <button class="fb-tool fb-menu" title="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <button class="fb-tool fb-sound" title="Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></button>
+    <div class="fb-kieu"><small>TRAIN RUSH · Fight (mẫu 1ae)</small></div>
+  </div>
+</div>
+<script type="module">
+import { createBalloonPop } from "./core/bp3d-1ae.js";
+import { WORDS, WORDS_TITLE } from "./core/words-lsa2-s4-t4.js";
+
+const q = new URLSearchParams(location.search);
+const KIEU = 1;   // 1ad: thầy chọn kiểu 1 (hai bàn trái–phải)
+const TIME = Math.max(20, Math.min(900, +q.get("t") || 120));
+const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+const area = $(".fb-area");
+area.classList.add("k" + KIEU);
+$(".fb-desc").textContent = {
+  1: "Each team has its own train and its own sky. Most points when time runs out wins.",
+  2: "Each team has its own train and its own sky — one on top, one below. Most points wins.",
+  3: "One train, one sky. TEAM 1 taps on the LEFT half, TEAM 2 on the RIGHT half. The first correct crate on a car wins that car.",
+}[KIEU];
+
+// ------------------------------------------------------------ dựng bàn chơi
+// 1ad: tàu 2 đội khác màu — đầu máy + toa than theo màn (3 sắc độ của màu đội), ván toa hàng + viền bảng định nghĩa màu đội
+const COLORS = [
+  { engine: [0x8f1d14, 0xa3281a, 0x7a1810], box: ["#9c3424", "#7c2618"], frame: "#b0281a" },
+  { engine: [0x1d3f7a, 0x1f4f8f, 0x183466], box: ["#35608f", "#264a73"], frame: "#1f5fb8" },
+];
+// 1ad: thứ tự từ riêng mỗi đội; vị trí k (toa thứ k tính từ đầu ván) của 2 đội không bao giờ trùng từ
+const keyOf = w => String(w.keyword).trim().toUpperCase().replace(/\s+/g, " ");
+const shuf = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function makeOrders() {
+  const seen = new Set(), uniq = WORDS.filter(w => { const k = keyOf(w); if (seen.has(k)) return false; seen.add(k); return true; });
+  const A = shuf(uniq.slice()), B = shuf(uniq.slice()), n = A.length;
+  for (let i = 0; i < n; i++) {
+    if (keyOf(A[i]) !== keyOf(B[i])) continue;
+    // đổi với vị trí j sao cho sau khi đổi cả i lẫn j đều khác từ của đội kia
+    const cand = [...Array(n).keys()].filter(j => j !== i && keyOf(B[j]) !== keyOf(A[i]) && keyOf(B[i]) !== keyOf(A[j]));
+    if (cand.length) { const j = cand[Math.floor(Math.random() * cand.length)]; [B[i], B[j]] = [B[j], B[i]]; }
+  }
+  return [A, B];
+}
+const seed = (Date.now() % 100000) + 1;   // 2 bàn cùng hạt giống ⇒ cùng thứ tự từ, cùng toa khách/toa than
+const G = { boards: [], scores: [0, 0], ended: false, running: false, paused: false, timeLeft: TIME, muted: false };
+const hud = (team) => d => { if (KIEU === 3) { G.scores = [d.teams[0], d.teams[1]]; } else G.scores[team] = d.score; };
+const endFrom = (team) => why => { if (why === "done" && G.running) finish(KIEU === 3 ? "ALL WORDS DONE!" : `TEAM ${team + 1} FINISHED ALL WORDS!`); };
+
+function mkBoard(team, share) {
+  const el = document.createElement("div");
+  el.className = "fb-board " + (share ? "k3" : "t" + team);
+  area.prepend(el);
+  return el;
+}
+async function build() {
+  const common = { view: "side", words: WORDS, wordsTitle: WORDS_TITLE, embed: true, seed, options: { timerMode: "none" } };
+  if (KIEU === 3) {
+    const el = mkBoard(0, true);
+    const h = await createBalloonPop({ ...common, mount: el, share: true, onEvent: (k, d) => k === "hud" ? hud(0)(d) : k === "end" && endFrom(0)(d) });
+    const sp = document.createElement("div"); sp.className = "fb-split";
+    sp.innerHTML = `<div class="l"></div><div class="r"></div><i></i><em class="l2">TEAM 1</em><em class="r2">TEAM 2</em>`;
+    el.append(sp);
+    G.boards = [h];
+  } else {
+    // thêm bàn đội 2 trước (prepend) để đội 1 nằm trái / trên
+    const el1 = mkBoard(1, false), el0 = mkBoard(0, false);
+    const h0 = await createBalloonPop({ ...common, mount: el0, mirror: true, trainColors: COLORS[0], onEvent: (k, d) => k === "hud" ? hud(0)(d) : k === "end" && endFrom(0)(d) });
+    const h1 = await createBalloonPop({ ...common, mount: el1, trainColors: COLORS[1], onEvent: (k, d) => k === "hud" ? hud(1)(d) : k === "end" && endFrom(1)(d) });
+    G.boards = [h0, h1];
+    // khung vừa có đủ 2 bàn ⇒ đo lại kích thước từng bàn
+    G.boards.forEach(b => b.fit());
+    // nhãn đội gắn SAU khi dựng bàn (lõi ghi đè nội dung ô chứa)
+    for (const [el, t] of [[el0, 0], [el1, 1]]) { const tag = document.createElement("div"); tag.className = "fb-tag"; tag.textContent = "TEAM " + (t + 1); el.append(tag); }
+  }
+  $(".fb-ov-load").hidden = true;
+  $(".fb-ov-start").hidden = false;
+  window.__fight = { G, KIEU, boards: G.boards, start, finish, countdown };
+}
+
+// ------------------------------------------------------------ nhịp trận
+// 1ae: START / Start again ⇒ intro điện ảnh (bàn phải phủ cả màn) ⇒ sập tối ⇒ tách 2 bàn ⇒ đếm 3-2-1
+function start() {
+  ["start", "end", "pause"].forEach(k => $(".fb-ov-" + k).hidden = true);
+  G.ended = false; G.running = false; G.paused = false; G.timeLeft = TIME; G.scores = [0, 0];
+  G.intro = true;
+  area.classList.add("is-cine");
+  G.boards[1].fit();
+  G.boards[1].fightIntro({ colors: COLORS, onDone: () => {
+    const blk = $(".fb-black");
+    blk.classList.add("is-on");                 // intro đã sập tối ⇒ giữ màn đen trong lúc tách bàn
+    area.classList.remove("is-cine");
+    G.boards.forEach(b => b.fit());
+    G.intro = false;
+    setTimeout(() => { blk.classList.remove("is-on"); countdown(); }, 80);
+  } });
+}
+function countdown() {
+  const ov = $(".fb-ov-count"), num = $(".fb-count");
+  ov.hidden = false;
+  let n = 3; num.textContent = n;
+  const tick = () => {
+    n--;
+    if (n > 0) { num.textContent = n; setTimeout(tick, 700); return; }
+    num.textContent = "GO!";
+    const orders = makeOrders();
+    G.orders = orders;
+    G.boards.forEach((b, i) => { b.setOrder(orders[i]); b.start(); });
+    G.running = true; last = 0;
+    setTimeout(() => { ov.hidden = true; }, 550);
+  };
+  setTimeout(tick, 700);
+}
+function finish(why) {
+  if (G.ended) return;
+  G.ended = true; G.running = false;
+  G.boards.forEach(b => b.end("time"));
+  const [a, b] = G.scores;
+  $(".fb-end-t").textContent = a === b ? "DRAW!" : `TEAM ${a > b ? 1 : 2} WINS!`;
+  $(".fb-end-why").textContent = why;
+  $(".fb-r0").textContent = a; $(".fb-r1").textContent = b;
+  $(".fb-res-t.t0").classList.toggle("is-win", a > b); $(".fb-res-t.t1").classList.toggle("is-win", b > a);
+  setTimeout(() => { $(".fb-ov-end").hidden = false; }, 900);
+}
+function setPaused(p) {
+  G.paused = p; G.boards.forEach(b => b.setPaused(p)); $(".fb-ov-pause").hidden = !p; last = 0;
+}
+
+// đồng hồ chung + dải điểm
+let last = 0;
+function loop(ts) {
+  requestAnimationFrame(loop);
+  const dt = last ? Math.min(0.1, (ts - last) / 1000) : 0; last = ts;
+  if (G.running && !G.paused) {
+    G.timeLeft -= dt;
+    if (G.timeLeft <= 0) { G.timeLeft = 0; finish("TIME'S UP"); }
+  }
+  const t = Math.max(0, Math.ceil(G.timeLeft));
+  const clk = $(".fb-clock");
+  clk.textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+  clk.classList.toggle("is-warn", G.running && t <= 10);
+  $(".fb-s0").textContent = G.scores[0]; $(".fb-s1").textContent = G.scores[1];
+  $(".fb-team.t0").classList.toggle("is-lead", G.scores[0] > G.scores[1]);
+  $(".fb-team.t1").classList.toggle("is-lead", G.scores[1] > G.scores[0]);
+}
+requestAnimationFrame(loop);
+
+$(".fb-go").addEventListener("click", start);
+$$(".fb-again").forEach(b => b.addEventListener("click", () => { setPaused(false); start(); }));
+$(".fb-resume").addEventListener("click", () => setPaused(false));
+$(".fb-stop").addEventListener("click", () => { setPaused(false); finish("GAME OVER"); });
+$(".fb-menu").addEventListener("click", () => { if (G.intro) return G.boards[1].skipIntro(); if (G.running) setPaused(!G.paused); });
+$(".fb-sound").addEventListener("click", () => {
+  G.muted = !G.muted; $(".fb-sound").classList.toggle("is-off", G.muted);
+  document.querySelectorAll(".fb-board .bp-sound").forEach(b => b.click());
+});
+build();
+</script>
+</body>
+</html>
