@@ -357,3 +357,22 @@ lõi `core/bp3d-1ae.js` (`fightIntro({ colors, onDone })`, `skipIntro()`), đạ
   8,4 cần cẩu lên sau lưng 2 tàu, TRAIN RUSH + dải FIGHT nửa đỏ nửa xanh · 10,4 sập tối ⇒ trang tách 2 bàn dưới màn đen ⇒ đếm 3-2-1.
 - Chạm màn hình (hoặc nút Menu) trong intro = bỏ qua tới lúc sập tối.
 - Bài học: cảnh nhìn NGANG 2 tàu song song thì tàu ray gần che mất tàu ray xa ⇒ cảnh chung 2 tàu phải nhìn chéo phía trước / đối đầu.
+
+## 37. Mẫu 1af (30/9/2026) — 10 ý thầy sau khi thử 1ae trên myActivity
+`mau-1af-fight.html`, lõi `core/bp3d-1af.js`, intro `core/fight-cine-1af.js`, cảnh `core/west-world-1af.js`, con vật `core/animals-1af.js`.
+1. Intro: tàu trình diễn dùng TOA GỖ khắc hoa văn vàng 2 bên (`makeCart(null, …)`), bỏ toa bảng trắng TEAM 1/2.
+2. Khinh khí cầu: `blimpV × 1,1 × (1 + 0,06·màn)` — nhanh hơn 10 % cùng tốc độ tàu, càng lên màn càng chênh (tàu chỉ +4 %/toa).
+3. Toa củi khắc **LV.n** giữa hoa văn (`ornamentTexture(label)`, font Rye, rãnh tối + mặt vàng); bàn soi gương đọc xuôi.
+4. KHUNG MÁY QUAY `frameRel(cur)` (tương đối mũi đầu máy): toa chờ ưu tiên giữa màn · đầu máy thấy trọn (mũi cách mép ≥ 0,35) miễn toa chờ còn trọn ·
+   mép trái không vượt đuôi tàu (tàu ngắn ⇒ đuôi sát mép, không để đất trống). Tàu vào ga dừng đúng khung này (`introTo = camX − frameRel`).
+   Đo ở cỡ TOMKO (HALF 9,7): vào màn toa chờ lệch 1,5, mũi 8,7 (cách mép 1). ⚠ Bàn quá hẹp (xem thử ~640 px) thì toa chờ ưu tiên hơn đầu máy.
+5. LỖI thú chìm đất: gò (Y0 −3,2) nằm DƯỚI các đồi xa ⇒ theo cách cũ 100 % lúc chạy ra con vật bị vùi (sâu nhất 13 m). Nay độ cao = max(gò, mặt đất)
+   (cả con húc chữ). Đo 7.000+ mẫu: 0 lần dưới đất.
+6. Đuổi nhau (`createChase` viết lại): con đuổi chậm hơn 0,3 m/s ⇒ khoảng cách CHỈ GIÃN; khoảng hở mõm↔đuôi ≥ 2,5 m (+1–3 lúc đầu); các con đi đúng vết nhau;
+   con đuổi lệch 1,3 về phía máy quay. Sinh/xoá chỉ khi NGOÀI khung hình thật (`world.setCamera`) — trước xoá theo S.camX nên màn chờ/intro/bàn hẹp thấy biến mất giữa màn.
+7. Cặp đang phi 4 chân ĐỨNG DẬY chạy 2 chân (~50 % cặp thường, sau 3–7 s): `A.rear` 0→1, thân xoay quanh hông sau, chân sau bù góc, chân trước thành tay (nhịp `BIPED`).
+8. CHÓ đuổi VOI (`REAL.dog`: dáng sói nhỏ, đuôi vểnh, 3 bộ lông). 9. ĐẠI BÀNG chạy bộ (`buildEagleRun`: đầu trắng, mỏ vàng khoằm, mày cau, vỗ cánh khi chạy)
+   đuổi 2–3 con thú to (voi/bò/lạc đà/ngựa). Bàn thử: `world.chase.trigger(camX, "pair"|"rear"|"dog"|"eagle")`.
+10. Cỏ: DẢI CHUYỂN z −104 → −190, mật độ (1−u)^1,6 rồi lác đác 10 bụi xa hơn.
+- Intro: dọn đá/cỏ trên dải ray thứ hai (`world.setClearBand([-9.5, -2])` lúc intro) — đống đá cạnh ray từng mọc giữa 2 ray che cảnh đối đầu.
+  ⚠ Bẫy: `settle()` chạy ngay lúc dựng khúc cảnh ⇒ biến dải dọn phải là `var` + `function` (let/const lỗi TDZ, trang kẹt "Loading…").
