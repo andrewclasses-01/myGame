@@ -376,3 +376,19 @@ lõi `core/bp3d-1ae.js` (`fightIntro({ colors, onDone })`, `skipIntro()`), đạ
 10. Cỏ: DẢI CHUYỂN z −104 → −190, mật độ (1−u)^1,6 rồi lác đác 10 bụi xa hơn.
 - Intro: dọn đá/cỏ trên dải ray thứ hai (`world.setClearBand([-9.5, -2])` lúc intro) — đống đá cạnh ray từng mọc giữa 2 ray che cảnh đối đầu.
   ⚠ Bẫy: `settle()` chạy ngay lúc dựng khúc cảnh ⇒ biến dải dọn phải là `var` + `function` (let/const lỗi TDZ, trang kẹt "Loading…").
+
+## 38. Mẫu 1ag (30/9/2026) — bớt con vật mặt đất, luôn nhìn rõ; chữ không tự dựng trước mắt
+`mau-1ag-fight.html`; lõi `bp3d-1ag` → cảnh `west-world-1ag` → `west-props-1ag` (bảng chữ) + `animals-1ag` + `sign-chase-1ag`.
+- Thầy: "quá nhiều con vật trên mặt đất". Trước đó 3 hệ chạy độc lập (cặp dải xa · cặp quanh chữ · đàn ra xem 1–5 con). Nay ĐIỀU PHỐI trong
+  `west-world-1ag.update`: một lúc chỉ **1 cặp đuổi nhau** (dải xa HOẶC quanh chữ; bảng chữ ở trước mặt thì nhường suất cho cặp quanh chữ) +
+  **≤ 2 con ra xem tàu**. Đại bàng chạy bộ nay chỉ đuổi 1 con thú to. Trên trời giữ nguyên. (Con húc chữ từ sau đồi đã tắt từ 1w.)
+- Con ra xem gặp cặp đuổi nhau (< 16 m) ⇒ HOẢNG, né sang ngang + lùi xa 2,6 s rồi bỏ đi.
+- NHÌN RÕ: `seen(cam, x, z)` = trong khung hình + đường ngắm tới thân (cao 1,1 m) không bị mặt đất (đồi, đụn cát chữ) chắn + vượt qua NÓC ĐOÀN TÀU
+  (coi như tường cao 3,75 ở z≈0 — con vật đứng gần z −40 bị chính đoàn tàu che; phải xa ~z −70 trên đất phẳng, gần hơn nếu đất cao).
+  · Con ra xem: chỗ đứng = GẦN NHẤT còn thấy rõ, chọn trên khung hình DỜI TRƯỚC 9 s theo tốc độ máy quay lia (tới nơi vẫn ở giữa khung);
+    xuất phát từ chỗ XA NHẤT còn thấy (z tới −105) ⇒ chạy từ xa về gần. Đo: lúc đứng xem 99 % trong khung hình.
+  · Cặp đuổi nhau: đường chéo từ xa (z −150…−120) về đầu gần = gần nhất còn thấy; mỗi 0,2 s nếu chỗ sắp tới bị che thì lượn sang chỗ
+    không bị che gần làn nhất (`nearestClear`). Đo 10 phút mô phỏng: con vật trong khung bị che 0,6–2,2 % thời gian (thoáng qua lúc chuyển làn).
+- Cặp quanh chữ chỉ còn kiểu "húc" (chạy trước dãy chữ) — bỏ kiểu "vòng" ra SAU chữ (bị khuất).
+- Chữ: thầy chê cảnh chữ tự bật dựng lại ⇒ chữ bị húc NẰM YÊN; `signs.restoreHidden(isVisible)` dựng lại tức thì khi bảng chữ KHUẤT khỏi
+  khung hình (frustum ∩ hộp bao chữ) ⇒ quay lại thì chữ đứng sẵn, lại bị húc lần mới. Đo 10 phút: 9 lần húc, 0 lần dựng lại trong khung.
