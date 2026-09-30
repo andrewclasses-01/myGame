@@ -67,6 +67,7 @@ balloon-pop/                  (29/9) Balloon Pop 3D — dựng lại Wordwall Ba
   index.html                  chọn mẫu · mau-1-nhin-ngang.html (view "side") · mau-2-cheo-tren.html (view "top")
   core/bp3d.js                lõi CHUNG: cảnh sa mạc, tàu, khinh khí cầu, luật, HUD; mẫu chỉ khác `view` (VIEWS đầu file)
   core/bp3d-sound.js          tiếng tự tổng hợp Web Audio (KHÔNG chép mp3 Wordwall vào kho công khai)
+  core/sound-1ah.js           (30/9) TIẾNG THU THẬT từ mẫu 1ah: Freesound CC0 + nhạc Pixabay (Sonican); assets/sound-1ah + NGUON.md; tools/tao-am-thanh-1ah.py; nghe thử: nghe-am-thanh-1ah.html
   core/words-lsa2-s4-t4.js    55 cặp từ mẫu (act AWord dg9hyp)
   mau-1b-dien-anh.html + core/bp3d-1b.js + core/west-world.js   (29/9) MẪU 1b điện ảnh — thầy CHỌN góc nhìn ngang; tàu TS=0.74, khinh khí cầu BS=0.84,
                               cảnh viễn tây sinh bằng code (trời shader, núi bậc thềm, cột đá), hậu kỳ EffectComposer (MSAA 4 + bloom + GRADE_SHADER)

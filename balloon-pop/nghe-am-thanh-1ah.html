@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nghe thử âm thanh 1ah</title>
+<!-- 1ah (30/9/2026): bảng nghe thử TỪNG tiếng của TRAIN RUSH 1ah — thầy nghe rồi báo số thứ tự tiếng muốn đổi.
+     Tiếng thật: Freesound CC0 · nhạc: Pixabay (Sonican). Nguồn từng file: assets/sound-1ah/NGUON.md -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #1c130c; --card: #2a1d12; --line: #4a3522; --ink: #f6e6c4; --dim: #c8ad84; --brass: #d8a64e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 system-ui, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { font: 400 40px Rye, serif; color: var(--brass); margin: 0 0 4px; }
+  p.lead { color: var(--dim); margin: 0 0 20px; }
+  h2 { font: 400 22px Rye, serif; color: var(--brass); margin: 28px 0 10px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+  .it { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .it b { color: var(--brass); margin-right: 6px; }
+  .it small { display: block; color: var(--dim); margin: 2px 0 6px; }
+  audio { width: 100%; height: 34px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Nghe thử âm thanh 1ah</h1>
+  <p class="lead">Mọi tiếng trong TRAIN RUSH 1ah đều là tiếng thu thật (Freesound, CC0). Nhạc giao hưởng lấy từ Pixabay, tác giả Sonican. Tiếng nào thầy muốn đổi thì báo em số thứ tự.</p>
+  <div id="list"></div>
+</main>
+<script>
+const G = [
+  ["Nhạc nền", [
+    ["music-menu", "Màn START (lặp)"], ["music-intro", "Phim mở màn → đếm ngược"], ["music-play", "Trong trận (lặp, phát nhỏ dưới hiệu ứng)"],
+    ["music-final", "30 giây cuối (lặp, dồn dập)"], ["music-win", "Kết thúc — đội thắng"]]],
+  ["Đoàn tàu", [
+    ["train-loop", "Tàu hơi nước chạy (lặp, nhanh chậm theo tốc độ tàu)"], ["whistle-1", "Còi tàu 1"], ["whistle-2", "Còi tàu 2"],
+    ["hiss-1", "Xì hơi khi tàu dừng 1"], ["hiss-2", "Xì hơi khi tàu dừng 2"], ["bell", "Chuông tàu — lên cấp"], ["brake", "Phanh rít — hết giờ"]]],
+  ["Trong trận", [
+    ["pop-1", "Bắn nổ khinh khí cầu 1"], ["pop-2", "Bắn nổ khinh khí cầu 2"], ["pop-3", "Bắn nổ khinh khí cầu 3"],
+    ["crate-1", "Thùng gỗ rơi xuống toa 1"], ["crate-2", "Thùng gỗ rơi 2"], ["crate-3", "Thùng gỗ rơi 3"], ["crate-4", "Thùng gỗ rơi 4"],
+    ["ding", "Chuông đồng — ĐÚNG"], ["cash", "Máy tính tiền quán rượu — ĐÚNG / thưởng"], ["coins-1", "Tiền xu — thưởng 1"], ["coins-2", "Tiền xu — thưởng 2"],
+    ["smash-1", "Thùng vỡ — SAI 1"], ["smash-2", "Thùng vỡ — SAI 2"], ["coal", "Than bắn tung — rơi vào toa than"], ["tick", "Đồng hồ tích tắc — 10 giây cuối"],
+    ["plane", "Máy bay cánh kép kéo băng rôn"], ["cheer", "Đám đông reo hò — thắng"], ["yeehaw", "Tiếng hò Yee-haw — thắng"]]],
+  ["Điện ảnh (intro, đếm ngược)", [
+    ["boom-1", "Cú đập điện ảnh có kèn đồng"], ["boom-2", "Cú đập lớn"], ["boom-3", "Cú đập trầm"],
+    ["whoosh-1", "Vút cắt cảnh nhanh"], ["whoosh-2", "Vút ngắn"], ["whoosh-3", "Vút dài"], ["riser", "Dồn lên trước cú đập"],
+    ["timpani", "Trống định âm — đếm 3, 2, 1"], ["whip", "Roi quất — GO!"]]],
+  ["Thiên nhiên", [
+    ["wind-loop", "Gió sa mạc Atacama thổi qua xương rồng (lặp)"], ["hawk-1", "Chim ưng kêu 1"], ["hawk-2", "Chim ưng kêu 2"], ["hawk-3", "Chim ưng kêu 3"]]],
+  ["Con vật", [
+    ["neigh-1", "Ngựa hí 1"], ["neigh-2", "Ngựa hí 2"], ["snort", "Ngựa / linh dương khịt mũi"], ["moo-1", "Bò rống 1"], ["moo-2", "Bò rống 2"],
+    ["pig", "Lợn ụt ịt"], ["elephant-1", "Voi rống 1"], ["elephant-2", "Voi rống 2"], ["roar-1", "Sư tử gầm 1"], ["roar-2", "Sư tử gầm 2"],
+    ["camel", "Lạc đà kêu"], ["hen", "Gà hoảng"], ["howl", "Sói / chó sói đồng cỏ tru"], ["bark-1", "Chó sủa 1"], ["bark-2", "Chó sủa 2"],
+    ["hooves-loop", "Vó ngựa phi (lặp)"], ["herd-loop", "Đàn thú phi (lặp — bò, voi)"], ["knock-1", "Chữ gỗ bị húc gãy 1"], ["knock-2", "Chữ gỗ bị húc gãy 2"]]],
+];
+let n = 0;
+document.getElementById("list").innerHTML = G.map(([h, items]) => `<h2>${h}</h2><div class="grid">${items.map(([f, d]) =>
+  `<div class="it"><b>${++n}.</b>${d}<small>${f}.ogg</small><audio controls preload="none" src="assets/sound-1ah/${f}.ogg"></audio></div>`).join("")}</div>`).join("");
+// chỉ một tiếng phát một lúc
+document.addEventListener("play", e => document.querySelectorAll("audio").forEach(a => { if (a !== e.target) a.pause(); }), true);
+</script>
+</body>
+</html>

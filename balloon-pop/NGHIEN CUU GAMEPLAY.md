@@ -392,3 +392,23 @@ lõi `core/bp3d-1ae.js` (`fightIntro({ colors, onDone })`, `skipIntro()`), đạ
 - Cặp quanh chữ chỉ còn kiểu "húc" (chạy trước dãy chữ) — bỏ kiểu "vòng" ra SAU chữ (bị khuất).
 - Chữ: thầy chê cảnh chữ tự bật dựng lại ⇒ chữ bị húc NẰM YÊN; `signs.restoreHidden(isVisible)` dựng lại tức thì khi bảng chữ KHUẤT khỏi
   khung hình (frustum ∩ hộp bao chữ) ⇒ quay lại thì chữ đứng sẵn, lại bị húc lần mới. Đo 10 phút: 9 lần húc, 0 lần dựng lại trong khung.
+
+## 39. Mẫu 1ah (30/9/2026) — ÂM THANH THẬT, chuẩn điện ảnh
+`mau-1ah-fight.html` + `nghe-am-thanh-1ah.html` (bảng nghe thử 62 tiếng); bộ máy `core/sound-1ah.js`; tiếng ở `assets/sound-1ah/` (7,8 MB, .ogg)
+sinh bằng `tools/tao-am-thanh-1ah.py` (nguồn gốc cất ở %LOCALAPPDATA%\myGame-nguon-am-thanh, KHÔNG vào kho); bảng nguồn `assets/sound-1ah/NGUON.md`.
+- Thầy: "âm thanh hiện tại toàn là hoạt hình… thay toàn bộ… âm thanh thật, xịn, chuẩn điện ảnh… không gian miền Tây hoang dã, hùng tráng".
+  Thầy chọn: kho miễn phí bản quyền · Fight: tiếng 2 đội chung ở giữa · nhạc suốt trận, nhỏ dưới hiệu ứng.
+- Hiệu ứng: Freesound, CHỈ giấy phép CC0 (kiểm từng trang). Nhạc: Pixabay (Pixabay License, dùng trong game miễn phí), tác giả Sonican —
+  tránh các bài gắn nhãn "AI Generated". Cùng một tác giả ⇒ nhạc liền mạch: menu = Adventurous Loop · intro = Duel Adventure (bản đầy đủ) ·
+  trong trận = Duel Adventure Loop (cùng chủ đề với intro) · 30 s cuối = Glorious Victory Loop · thắng = đoạn kết Adventure Soundtrack.
+- MỘT bộ máy chung cả trang (1 AudioContext): Fight 2 bàn ⇒ nhạc, gió, tiếng tàu chỉ 1 bản; tàu lặp theo đoàn NHANH NHẤT.
+  Nhạc phát bằng thẻ <audio> (vừa tải vừa phát, không bung cả bài vào RAM). Hiệu ứng ngắn nạp sẵn (57 file).
+- Tàu: bản thu "Constant Steam Train" (craigsmith) cắt vòng lặp đúng 16 nhịp (0,72 s = 4 nhát xình) ⇒ đổi tốc độ phát theo tốc độ tàu,
+  cùng nhịp phả khói cũ (v + 0,6)/0,9 nhát/s; tàu dừng hẳn ⇒ xì hơi. Gió: thu thật ở sa mạc Atacama (felix.blume), vòng lặp 32 s.
+- Khoảng cách: vật ở xa nhỏ theo (ref/d)^1,3, đục dần (lọc cao theo e^(−d/170)), vang hẻm núi nhiều hơn, trễ theo tốc độ âm (tối đa 0,25 s để
+  không lệch hình). Con vật: kêu khi tới chỗ đứng xem / khi hoảng / khi cặp đuổi lọt khung (con đuổi gầm trước, con bị đuổi kêu sau 1,4 s);
+  tiếng chân lặp (vó ngựa / đàn thú) theo khoảng cách + tốc độ, tối đa 3 cùng lúc. Chữ bị húc: gỗ gãy ngay + 0,75 s sau chữ nặng đập cát.
+- Trang Fight: đếm 3-2-1 = trống định âm (cao dần), GO = roi quất + cú đập + còi; 10 s cuối đồng hồ bỏ túi; hết giờ = phanh rít + xì hơi
+  rồi nhạc thắng + reo hò + "Yee-haw" + còi; tạm dừng = im hẳn, chơi tiếp đúng chỗ; nút loa tắt cả trang.
+- Đo mức (AnalyserNode trên đường ra): nhạc trận ≈ −25 dB RMS dưới hiệu ứng đúng/sai ≈ −20…−23; gió −33; ngựa hí ở 60 m −30.
+  Em KHÔNG nghe được ⇒ chỉ chọn theo mô tả + đo; thầy nghe ở `nghe-am-thanh-1ah.html`, báo số tiếng muốn đổi.
