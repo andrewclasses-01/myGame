@@ -338,3 +338,9 @@ Khung trang giống Fight AWord: dải điểm 64 px trên (TEAM 1 đỏ · đ�
 
 Ghi chú: kiểu 1/2 chạy 2 cảnh 3D cùng lúc (2 lần GPU) — cần thử trên TOMKO xem có mượt không. Kiểu 2: chữ nhỏ hơn bản đơn khoảng 1/3 dù đã phóng máy quay.
 Tiếng: kiểu 1/2 mỗi bàn phát tiếng riêng (2 tàu cùng kêu). Khinh khí cầu của 2 bàn giống nhau lúc đầu, về sau lệch theo tốc độ từng đội.
+
+## 35. Mẫu 1ad (30/9/2026) — THẦY CHỌN FIGHT KIỂU 1 (hai bàn trái–phải) + 3 ý
+`mau-1ad-fight-trai-phai.html` (bỏ nút chọn kiểu; `?t=` giây), lõi `core/bp3d-1ad.js` = 1ac + 3 tuỳ chọn:
+- **Tàu 2 đội khác màu** (`trainColors`): TEAM 1 đầu máy + toa than đỏ (3 sắc độ đổi theo màn), ván toa hàng đỏ, **viền bảng định nghĩa đỏ**; TEAM 2 tương tự màu xanh. (Chỉ đổi màu đầu máy thì chưa đủ: bảng định nghĩa che gần hết thân toa ⇒ phải đổi cả viền bảng.)
+- **Bàn TRÁI soi gương** (`mirror`): lật cả khung hình bằng CSS `scaleX(-1)` ⇒ tàu chạy phải→trái, khinh khí cầu bay trái→phải — mỗi đội thấy khinh khí cầu bay vào từ MÉP NGOÀI phía mình đứng. Chữ vẫn đọc xuôi: texture chữ (bảng toa, khinh khí cầu, thùng, điểm bay, băng máy bay, bảng tên đầu máy) lật sẵn `repeat.x = −1`; chữ 3D ANDREW CLASSES trên đồi lật `letters.scale.x = −1`; chạm đổi dấu `ndc.x`. Không lật hình học ⇒ không bị lỗi mặt khuất.
+- **2 đội khác từ** (`setOrder`): trang trộn 2 thứ tự riêng, vị trí nào trùng thì đổi chỗ ⇒ cùng màn, cùng số toa không bao giờ cùng từ (thử 3.000 ván: 0 lần trùng). 2 đội vẫn chơi cùng BỘ từ, chỉ khác thứ tự. Toa khách/toa than vẫn giống nhau (cùng hạt giống) cho công bằng.
