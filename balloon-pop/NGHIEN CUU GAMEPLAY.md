@@ -315,3 +315,26 @@ Thầy: chọn kiểu 1 (NO HOMEWORK cũng trên đụn cát), đụn cát thấ
 
 ## 31. Mẫu 1z (29/9/2026) — đụn cát cao 10, chữ 70 %
 Thầy: chọn mức 0, giảm size 2 đoạn chữ còn 70 %. ⇒ `mau-1z-chu-70.html` (bỏ bảng chọn; `bp3d-1z` → `west-world-1z` → `west-props-1z` + `dune-1z` (CAO cố định 0) + `animals-1z` + `sign-chase-1z`). LETTER_H 6 → 4,2 (khoảng chữ, cột chống, bề ngang bảng, bề ngang đụn cùng co theo); ANDREW CLASSES rộng 52,6.
+
+## 32. Mẫu 1aa (30/9/2026) — sửa intro
+`mau-1aa-sua-intro.html`: 2 bảng chữ hết đè nhau trong intro (đổi bảng màn chờ → ANDREW CLASSES đúng lúc cắt cảnh, `swapAhead`); cỏ, cây, đá phủ đều mọi góc máy intro/màn chờ (8 khúc cảnh quay vòng quanh chỗ máy quay nhìn).
+
+## 33. Mẫu 1ab (30/9/2026) — THẦY CHỐT làm BẢN ĐƠN (1 màn hình)
+`mau-1ab-dai-bang.html`: đại bàng + chim dựng lại như thật, intro 10,2 s có lia vụt, xương rồng tiền cảnh nhỏ lại, tốc độ nấc 1–10 chia đều (nấc 10 gấp đôi). Thầy chốt đây là bản chơi 1 màn hình (commit `002ffc8`).
+
+## 34. Mẫu 1ac (30/9/2026) — 3 KIỂU FIGHT THỬ
+Thầy: "chưa tưởng tượng được chế độ fight làm như nào — tạo vài kiểu fight thử để xem 2 bên cùng lúc thế nào ok nhất".
+⇒ `mau-1ac-fight.html?kieu=1..3` (nút chọn kiểu ở hàng nút dưới; `&t=` số giây, mặc định 120). Lõi `core/bp3d-1ac.js` = 1ab + 3 tuỳ chọn:
+`embed` (bàn nằm trong trang Fight: khung = ô chứa, ẩn hàng nút/đồng hồ/màn chờ riêng, bỏ intro, trang bấm START/tạm dừng/kết thúc),
+`seed` (2 bàn cùng hạt giống ⇒ cùng thứ tự từ, cùng toa khách/toa than mỗi màn), `share` (một tàu cho 2 đội).
+Khung trang giống Fight AWord: dải điểm 64 px trên (TEAM 1 đỏ · đồng hồ chung · TEAM 2 xanh, đội dẫn điểm viền vàng) + vùng chơi + hàng nút 80 px dưới.
+Đếm 3-2-1-GO, hết giờ ⇒ bảng kết quả "TEAM x WINS!" / "DRAW!". Đội nào hết từ trước thì trận cũng kết thúc.
+
+| Kiểu | Bố cục | Luật |
+|---|---|---|
+| 1 · Hai bàn trái–phải | 2 bàn cạnh nhau (mỗi bàn gần vuông), viền màu đội | mỗi đội 1 tàu + 1 bầu trời riêng, thi điểm |
+| 2 · Hai tầng trên–dưới | 2 bàn dẹt xếp chồng; máy quay tiến gần 28 % cho khỏi nhỏ | như kiểu 1 |
+| 3 · Chung một tàu | 1 cảnh rộng, vạch đứt chia đôi, mép trái đỏ / phải xanh | chạm nửa TRÁI = đội 1, nửa PHẢI = đội 2; thùng có viền màu đội; thùng đúng ĐẦU TIÊN chiếm toa (cờ + dải màu đội), thùng đúng đến sau không điểm; khinh khí cầu bay xen kẽ phải→trái / trái→phải; toa đang chờ luôn ở giữa màn nên mỗi đội thả được vào nửa toa phía mình |
+
+Ghi chú: kiểu 1/2 chạy 2 cảnh 3D cùng lúc (2 lần GPU) — cần thử trên TOMKO xem có mượt không. Kiểu 2: chữ nhỏ hơn bản đơn khoảng 1/3 dù đã phóng máy quay.
+Tiếng: kiểu 1/2 mỗi bàn phát tiếng riêng (2 tàu cùng kêu). Khinh khí cầu của 2 bàn giống nhau lúc đầu, về sau lệch theo tốc độ từng đội.
