@@ -1,4 +1,4 @@
-# Nguồn âm thanh STAR LOOT (mẫu 2i)
+# Nguồn âm thanh STAR LOOT (mẫu 2i + 2j)
 
 Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.com/service/license-summary/): dùng miễn phí trong sản phẩm (kể cả thương mại), không bắt buộc ghi tên; không được bán/phân phối lại file âm thanh đứng riêng lẻ.
 Đã xử lý: cắt lặng đầu/cuối, cân âm lượng (loudnorm), nén mp3.
@@ -40,3 +40,20 @@ Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.
 | `trung_don.mp3` | Electric Shock by CreatorsHome | https://pixabay.com/sound-effects/film-special-effects-electric-shock-334777/ |
 | `tuong_dung.mp3` | Heavy Mechancial Door Open by freesound_community | https://pixabay.com/sound-effects/film-special-effects-heavy-mechancial-door-open-6934/ |
 | `xi_hoi.mp3` | Steam Hissing by DRAGON-STUDIO | https://pixabay.com/sound-effects/film-special-effects-steam-hissing-386157/ |
+| `ban_laser.mp3` | Sci-Fi Blaster Shot by Universfield | https://pixabay.com/sound-effects/film-special-effects-sci-fi-blaster-shot-229313/ |
+| `buoc_kl.mp3` | Footsteps on Metal Floor by freesound_community | https://pixabay.com/sound-effects/household-footsteps-on-metal-floor-45788/ |
+| `chot_nha.mp3` | Metallic latch release by freesound_community | https://pixabay.com/sound-effects/film-special-effects-metallic-latch-release-43678/ |
+| `chuong_dung.mp3` | ding by freesound_community | https://pixabay.com/sound-effects/film-special-effects-ding-101492/ |
+| `coi_hu.mp3` | Wail and Yelp by freesound_community (cắt 1 vòng hú, nhanh ×4,27 giữ cao độ = 1,875 s) | https://pixabay.com/sound-effects/city-wail-and-yelp-74703/ |
+| `cong_tac.mp3` | Light Switch by DRAGON-STUDIO | https://pixabay.com/sound-effects/household-light-switch-382712/ |
+| `go_phim.mp3` | Keyboard Typing Sound Effect by DRAGON-STUDIO | https://pixabay.com/sound-effects/film-special-effects-keyboard-typing-sound-effect-335503/ |
+| `khoa_dem.mp3` | Locked Door (1) by Yodguard | https://pixabay.com/sound-effects/film-special-effects-locked-door-1-540169/ |
+| `kim_loai_sai.mp3` | Metal Hit 95 by floraphonic | https://pixabay.com/sound-effects/film-special-effects-metal-hit-95-200424/ |
+| `nhac_vutru.mp3` | hans zimmer inspired space ambience - part03 by RibhavAgrawal | https://pixabay.com/music/ambient-hans-zimmer-inspired-space-ambience-part03-no-copyright-495109/ |
+| `no_lo.mp3` | Space Explosion with reverb by freesound_community | https://pixabay.com/sound-effects/film-special-effects-space-explosion-with-reverb-101449/ |
+| `no_lo_b.mp3` | Sci-Fi Explosion 09 by DavidDumaisAudio | https://pixabay.com/sound-effects/film-special-effects-sci-fi-explosion-09-190268/ |
+| `no_robot.mp3` | Explosion by freesound_community | https://pixabay.com/sound-effects/film-special-effects-explosion-42132/ |
+| `no_robot_b.mp3` | Medium Explosion by freesound_community | https://pixabay.com/sound-effects/film-special-effects-medium-explosion-40472/ |
+| `no_xa.mp3` | Distant Explosion by freesound_community | https://pixabay.com/sound-effects/film-special-effects-distant-explosion-90743/ |
+| `vut_gio.mp3` | Whoosh Cinematic by DRAGON-STUDIO | https://pixabay.com/sound-effects/film-special-effects-whoosh-cinematic-376875/ |
+| `xa_khi.mp3` | Gas Release by freesound_community | https://pixabay.com/sound-effects/household-gas-release-42596/ |
