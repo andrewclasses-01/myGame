@@ -1,4 +1,4 @@
-# Nguồn âm thanh STAR LOOT (mẫu 2i + 2j)
+# Nguồn âm thanh STAR LOOT (mẫu 2i + 2j + 2k)
 
 Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.com/service/license-summary/): dùng miễn phí trong sản phẩm (kể cả thương mại), không bắt buộc ghi tên; không được bán/phân phối lại file âm thanh đứng riêng lẻ.
 Đã xử lý: cắt lặng đầu/cuối, cân âm lượng (loudnorm), nén mp3.
@@ -57,3 +57,8 @@ Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.
 | `no_xa.mp3` | Distant Explosion by freesound_community | https://pixabay.com/sound-effects/film-special-effects-distant-explosion-90743/ |
 | `vut_gio.mp3` | Whoosh Cinematic by DRAGON-STUDIO | https://pixabay.com/sound-effects/film-special-effects-whoosh-cinematic-376875/ |
 | `xa_khi.mp3` | Gas Release by freesound_community | https://pixabay.com/sound-effects/household-gas-release-42596/ |
+| `cong_hut.mp3` | Deep low-end reverse whoosh #8 by Sdanezis | https://pixabay.com/sound-effects/film-special-effects-deep-low-end-reverse-whoosh-8-592505/ |
+| `cong_mo.mp3` | Deep low-end reverse whoosh #3 by Sdanezis | https://pixabay.com/sound-effects/film-special-effects-deep-low-end-reverse-whoosh-3-592502/ |
+| `nhac_choi2.mp3` | Sci-Fi Inspiring by The_Mountain | https://pixabay.com/music/pulses-sci-fi-inspiring-158082/ |
+| `nhac_choi2_b.mp3` | Space Cinematic Epic by Rockot | https://pixabay.com/music/main-title-space-cinematic-epic-233130/ |
+| `nhac_thua2.mp3` | Game Over Classic by Audley_Fergine | https://pixabay.com/sound-effects/musical-game-over-classic-206486/ |
