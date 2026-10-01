@@ -1,4 +1,4 @@
-# Nguồn âm thanh STAR LOOT (mẫu 2i + 2j + 2k)
+# Nguồn âm thanh STAR LOOT (mẫu 2i → 2l)
 
 Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.com/service/license-summary/): dùng miễn phí trong sản phẩm (kể cả thương mại), không bắt buộc ghi tên; không được bán/phân phối lại file âm thanh đứng riêng lẻ.
 Đã xử lý: cắt lặng đầu/cuối, cân âm lượng (loudnorm), nén mp3.
@@ -62,3 +62,5 @@ Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.
 | `nhac_choi2.mp3` | Sci-Fi Inspiring by The_Mountain | https://pixabay.com/music/pulses-sci-fi-inspiring-158082/ |
 | `nhac_choi2_b.mp3` | Space Cinematic Epic by Rockot | https://pixabay.com/music/main-title-space-cinematic-epic-233130/ |
 | `nhac_thua2.mp3` | Game Over Classic by Audley_Fergine | https://pixabay.com/sound-effects/musical-game-over-classic-206486/ |
+| `khong_thay.mp3` | Tense string hit sound effect by PWLPL | https://pixabay.com/sound-effects/film-special-effects-tense-string-hit-sound-effect-521049/ |
+| `tim_thay.mp3` | Horn Stabs Entrance by freesound_community | https://pixabay.com/sound-effects/musical-horn-stabs-entrance-14741/ |
