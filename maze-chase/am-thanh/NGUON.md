@@ -1,4 +1,4 @@
-# Nguồn âm thanh STAR LOOT (mẫu 2i → 2l)
+# Nguồn âm thanh STAR LOOT (mẫu 2i → 2m)
 
 Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.com/service/license-summary/): dùng miễn phí trong sản phẩm (kể cả thương mại), không bắt buộc ghi tên; không được bán/phân phối lại file âm thanh đứng riêng lẻ.
 Đã xử lý: cắt lặng đầu/cuối, cân âm lượng (loudnorm), nén mp3.
@@ -64,3 +64,10 @@ Tất cả lấy từ **Pixabay** — [Pixabay Content License](https://pixabay.
 | `nhac_thua2.mp3` | Game Over Classic by Audley_Fergine | https://pixabay.com/sound-effects/musical-game-over-classic-206486/ |
 | `khong_thay.mp3` | Tense string hit sound effect by PWLPL | https://pixabay.com/sound-effects/film-special-effects-tense-string-hit-sound-effect-521049/ |
 | `tim_thay.mp3` | Horn Stabs Entrance by freesound_community | https://pixabay.com/sound-effects/musical-horn-stabs-entrance-14741/ |
+| `khoa_muc_tieu.mp3` | Target Locked. by freesound_community | https://pixabay.com/sound-effects/film-special-effects-target-locked-106704/ |
+| `nhac_vt2.mp3` | Interstellar Adventure - Space Theme Soundtrack by JoelFazhari | https://pixabay.com/music/main-title-interstellar-adventure-space-theme-soundtrack-4494/ |
+| `quet.mp3` | 04 - Alarms & Beeps - Scanning For Hostiles A by Snoops_Audio | https://pixabay.com/sound-effects/film-special-effects-04-alarms-amp-beeps-scanning-for-hostiles-a-343790/ |
+| `sonar.mp3` | Sonar Ping by freesound_community | https://pixabay.com/sound-effects/film-special-effects-sonar-ping-95840/ |
+| `thang2.mp3` | Path To Glory (Epic Heroic Cinematic Trailer Short 2) by AudioAtlant | https://pixabay.com/sound-effects/musical-path-to-glory-epic-heroic-cinematic-trailer-short-2-608265/ |
+| `thua3.mp3` | Last Hero (Epic Emotional Heroic Cinematic Trailer 30sec) by AudioAtlant | https://pixabay.com/sound-effects/musical-last-hero-epic-emotional-heroic-cinematic-trailer-30sec-605212/ |
+| `tu_choi.mp3` | Error Alert by Universfield | https://pixabay.com/sound-effects/film-special-effects-error-alert-132113/ |
