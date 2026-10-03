@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Rush — 1aj (Single + Fight)</title>
+<!-- TRAIN RUSH mẫu 1aj (03/10/2026): như 1ai nhưng đổi chế độ KHÔNG nạp lại trang — Fight thành mô-đun core/fight-1aj.js (createTrainRushFight),
+     lõi bp3d-1aj có destroy(). Đây là bản AWord dùng cho Balloon pop ▸ Mode ▸ Fight (Đợt 449). Luật, hình, tiếng y hệt 1ai. -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Exo+2:ital,wght@1,800;1,900&family=Rye&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/bp3d.css">
+<link rel="stylesheet" href="core/bp3d-1j.css">
+<link rel="stylesheet" href="core/bp3d-1p.css">
+<link rel="stylesheet" href="core/bp3d-1q.css">
+<link rel="stylesheet" href="core/bp3d-1r.css">
+<link rel="stylesheet" href="core/bp3d-1ab.css">
+<link rel="stylesheet" href="core/fight-cine-1ae.css">
+<link rel="stylesheet" href="core/fight-1aj.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #120c07; overflow: hidden; }
+  #game { position: fixed; inset: 0; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/", "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js" } }
+</script>
+</head>
+<body>
+<div id="game"></div>
+<div id="fight" hidden></div>
+<script type="module">
+import { createBalloonPop } from "./core/bp3d-1aj.js";
+import { createTrainRushFight } from "./core/fight-1aj.js";
+import { WORDS, WORDS_TITLE } from "./core/words-lsa2-s4-t4.js";
+const q = new URLSearchParams(location.search);
+const TIME = Math.max(20, Math.min(900, +q.get("t") || 120));
+const game = document.getElementById("game"), fightEl = document.getElementById("fight");
+let cur = null;
+async function single() {
+  if (cur) cur.destroy();
+  fightEl.hidden = true; game.hidden = false;
+  cur = await createBalloonPop({ mount: game, view: "side", words: WORDS, wordsTitle: WORDS_TITLE,
+    onEvent: (k, d) => { if (k === "mode" && d === "fight") fight(); } });
+}
+async function fight() {
+  if (cur) cur.destroy();
+  game.hidden = true; fightEl.hidden = false;
+  cur = await createTrainRushFight({ mount: fightEl, words: WORDS, wordsTitle: WORDS_TITLE, time: TIME, onSingle: single });
+}
+window.__mode = { single, fight, get cur() { return cur; } };
+q.get("mode") === "fight" ? fight() : single();
+</script>
+</body>
+</html>

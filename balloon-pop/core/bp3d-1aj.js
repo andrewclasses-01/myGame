@@ -1,3 +1,4 @@
+// TRAIN RUSH — lõi MẪU 1aj (03/10/2026): như 1ai + destroy() (dỡ sạch bàn chơi — AWord đổi chế độ / rời act không nạp lại trang).
 // TRAIN RUSH — lõi MẪU 1ai (03/10/2026): thầy "ghép 1ab + 1ah thành 1 bản tốt nhất" — y hệt 1ah, chỉ mở nút Mode ▸ Fight (trước: "coming soon")
 //   ⇒ onEvent("mode", "fight"); trang mau-1ai-train-rush.html lo chuyển chế độ. Chạy đơn = 1ab + mọi cải tiến 1ac→1ah (cảnh 1ag, âm thanh thật 1ah).
 // TRAIN RUSH — lõi MẪU 1ag (30/9/2026): như 1af, cảnh west-world-1ag (ít con vật mặt đất, có điều phối; chữ đổ không tự dựng trước mắt).
@@ -178,6 +179,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
   fit();
   window.addEventListener("resize", fit);
   document.addEventListener("fullscreenchange", fit);
+  let dead = false;   // 1aj: destroy() ⇒ thôi vẽ, gỡ listener (AWord dỡ bàn khi đổi chế độ / rời act)
 
   const world = createWestWorld(scene, renderer);
   world.setSound(sfx);   // 1ah: tiếng con vật, chữ đổ
@@ -1478,6 +1480,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
 
   let last = 0, raf = 0, manual = false;
   function frame(ts) {
+    if (dead) return;   // 1aj
     raf = requestAnimationFrame(frame);
     if (manual) return;
     const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
@@ -1498,7 +1501,8 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
   press(".bp-resume", () => { S.paused = false; ovPause.hidden = true; last = 0; });
   press(".bp-endgame", () => { ovPause.hidden = true; S.paused = false; last = 0; endGame("ended"); });
   press(".bp-sound", () => { sfx.setMuted(!sfx.muted); mount.querySelector(".bp-sound").classList.toggle("is-off", sfx.muted); });
-  if (!embed) document.addEventListener("keydown", e => { if (e.key === "Escape" && S.state === "play") mount.querySelector(".bp-menu").click(); });
+  const onEsc = e => { if (e.key === "Escape" && S.state === "play") mount.querySelector(".bp-menu").click(); };   // 1aj: có tên ⇒ destroy() gỡ được
+  if (!embed) document.addEventListener("keydown", onEsc);
   // 1h: bảng nổi cho 4 nút hệ AWord — mở giữa ván thì tạm dừng, đóng thì chơi tiếp
   const ovPanel = $(".bp-ov-panel"), pnT = $(".bp-pn-t"), pnB = $(".bp-pn-b"), optsEl = $(".bp-opts"), optsHome = optsEl.parentNode;
   let panelPaused = false;
@@ -1652,9 +1656,22 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
   if (!embed) { sfx.amb(true); sfx.music("menu"); }   // 1ah: màn START — gió sa mạc + nhạc chờ (phát sau lần chạm đầu)
 
   // bàn thử cho máy (khi khung xem trước bị ẩn rAF đứng)
-  window.__bp = {
+  const api = window.__bp = {
     sfx, S, opt, get HALF() { return HALF; }, get SKY() { return SKY; }, camera, PH, world, cine, get cineOn() { return cine.active; }, get trainBody() { return trainBody; }, dropCrate, cartWorldX, spawnBlimp,
     start: startGame,
+    // 1aj: dỡ hẳn bàn chơi — vòng vẽ dừng, listener gỡ, tiếng của bàn tắt, card đồ hoạ trả lại (dispose + forceContextLoss). Gọi lại vô hại.
+    destroy() {
+      if (dead) return; dead = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", fit); document.removeEventListener("fullscreenchange", fit); document.removeEventListener("keydown", onEsc);
+      try { sfx.train(0); if (!embed) { sfx.music(null, 0.3); sfx.amb(false); } } catch (e) { /* bỏ qua */ }
+      try { if (cine.active) cine.finish(); } catch (e) { /* bỏ qua */ }
+      try { composer.dispose && composer.dispose(); } catch (e) { /* bỏ qua */ }
+      try { renderer.dispose(); renderer.forceContextLoss(); } catch (e) { /* bỏ qua */ }
+      mount.innerHTML = ""; mount.classList.remove("is-embed");
+      if (window.__bp === api) delete window.__bp;
+    },
+    get dead() { return dead; },
     // 1ae: intro điện ảnh Fight — 2 tàu màu 2 đội đua nhau; xong thì bàn về màn chờ và gọi onDone
     fightIntro({ colors, onDone }) {
       if (FC.active) return;
@@ -1687,7 +1704,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
     },
     popWord(word) { const b = S.blimps.find(x => x.word && norm(x.word) === norm(word)); if (b) popBlimp(b); return !!b; },
   };
-  return window.__bp;
+  return api;
 }
 
 // ====================================================================== kết cấu vẽ bằng canvas
