@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Train Rush — 1aj (Single + Fight)</title>
+<title>Train Rush — 1ak (Single + Fight)</title>
+<!-- TRAIN RUSH mẫu 1ak (03/10/2026): như 1aj + chỗ nối AWord cho Single (host). Chạy riêng y hệt 1aj. -->
 <!-- TRAIN RUSH mẫu 1aj (03/10/2026): như 1ai nhưng đổi chế độ KHÔNG nạp lại trang — Fight thành mô-đun core/fight-1aj.js (createTrainRushFight),
      lõi bp3d-1aj có destroy(). Đây là bản AWord dùng cho Balloon pop ▸ Mode ▸ Fight (Đợt 449). Luật, hình, tiếng y hệt 1ai. -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Exo+2:ital,wght@1,800;1,900&family=Rye&display=swap" rel="stylesheet">
@@ -14,7 +15,8 @@
 <link rel="stylesheet" href="core/bp3d-1r.css">
 <link rel="stylesheet" href="core/bp3d-1ab.css">
 <link rel="stylesheet" href="core/fight-cine-1ae.css">
-<link rel="stylesheet" href="core/fight-1aj.css">
+<link rel="stylesheet" href="core/fight-1ak.css">
+<link rel="stylesheet" href="core/bp3d-1ak.css">
 <style>
   html, body { margin: 0; height: 100%; background: #120c07; overflow: hidden; }
   #game { position: fixed; inset: 0; }
@@ -27,8 +29,8 @@
 <div id="game"></div>
 <div id="fight" hidden></div>
 <script type="module">
-import { createBalloonPop } from "./core/bp3d-1aj.js";
-import { createTrainRushFight } from "./core/fight-1aj.js";
+import { createBalloonPop } from "./core/bp3d-1ak.js";
+import { createTrainRushFight } from "./core/fight-1ak.js";
 import { WORDS, WORDS_TITLE } from "./core/words-lsa2-s4-t4.js";
 const q = new URLSearchParams(location.search);
 const TIME = Math.max(20, Math.min(900, +q.get("t") || 120));
