@@ -1,6 +1,0 @@
-/* Balloon Pop 1g: bỏ ô điểm trên thanh trên cùng; đồng hồ sang phải (chỗ ô điểm cũ), ×2 hiện cạnh đồng hồ */
-.bp-score { display: none !important; }
-.bp-clock { text-align: right; min-width: 10cqw; }
-.bp-clock.is-x2 { color: #e0b3ff; }
-.bp-clock.is-x2::after { content: " ×2"; font-size: .7em; }
-.bp-clock-plus { left: auto; right: 3cqw; }

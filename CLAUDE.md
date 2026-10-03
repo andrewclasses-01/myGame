@@ -9,6 +9,8 @@ Nơi dựng **bản mẫu** game (Three.js/web thuần) để Teacher Andrew th�
 - Bàn thử trong trang: `window.__race` (lõi game) / `window.__launch` (mẫu 4) có `step(n)` (tự lái khung hình khi khung xem trước bị ẩn) + `resume()`.
 
 ## Kiến trúc
+> ⭐ **03/10/2026 — DỌN BẢN CŨ (thầy):** `maze-chase/` (STAR LOOT) chỉ còn **mẫu 2n** + đúng các file lõi nó import + 46 file tiếng trong `LIB` của `mc3d-audio-2n.js`; `balloon-pop/` (TRAIN RUSH) chỉ còn **mẫu 1ai** (Single + Fight một trang) + file nó dùng + `assets/sound-1ah`. Trang công cụ (chọn âm thanh, chọn D-pad, nghe âm thanh) đã bỏ. Mọi bản cũ vẫn lấy lại được từ lịch sử git. Danh sách file bên dưới là LỊCH SỬ — nhiều file đã không còn. Rocket Race giữ nguyên.
+
 ```
 index.html                    mục lục (mảng GAMES cuối file — game mới thêm lên ĐẦU)
 rocket-race/
