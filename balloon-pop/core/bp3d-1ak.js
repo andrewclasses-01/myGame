@@ -1526,7 +1526,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
   function openPanel(kind) {
     if (!ovPanel.hidden) closePanel();
     if ((S.state === "play" || S.state === "intro" || S.state === "clear") && !S.paused) { S.paused = true; panelPaused = true; }
-    pnB.innerHTML = ""; ovPanel.dataset.kind = kind;
+    pnB.innerHTML = ""; pnB.onclick = null; ovPanel.dataset.kind = kind;   // 1ak: bảng Options gắn onclick lên pnB — bảng khác dùng lại pnB thì phải gỡ (trước: bấm Fight ⇒ paint() của Options ⇒ lỗi)
     ovPanel.querySelector(".bp-pn").classList.toggle("is-aw", kind === "options");
     if (kind === "options") { pnT.textContent = ""; buildAwOptions(pnB); }
     else if (kind === "folder" && host && host.listActs) {   // 1ak: AWord — act THẬT cùng thư mục
@@ -1612,7 +1612,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
       if (b.classList.contains("aw-o-tpl")) { if (awHost && awHost.templates) { closePanel(); openPanel("tpl"); } return; }   // 1ak: AWord — đổi template
       if (b.dataset.tm) d.timerMode = b.dataset.tm;
       else if (b.dataset.ts && d.timerMode === "down") { setTime(d.timer + +b.dataset.ts); return; }
-      else if (b.classList.contains("aw-o-apply")) { Object.assign(opt, d); if (host && host.saveOptions) { try { host.saveOptions({ ...opt }); } catch (e) { console.warn("TRAIN RUSH: save options", e); } } closePanel(); toStart(); return; }   // 1ak: AWord lưu Options theo act
+      else if (b.classList.contains("aw-o-apply")) { Object.assign(opt, d); if (awHost && awHost.saveOptions) { try { awHost.saveOptions({ ...opt }); } catch (e) { console.warn("TRAIN RUSH: save options", e); } } closePanel(); toStart(); return; }   // 1ak: AWord lưu Options theo act
       paint();
     };
     // ô giờ kiểu AWord: chạm / vuốt lên số phút = +1 phút, vuốt xuống = −1 phút; số giây: lên +10, xuống −10 (bám mốc :10);
