@@ -322,6 +322,7 @@ Còn 11–19 ms/câu: `getProgramInfoLog`/`getProgramParameter` — shader mản
 **Đo 2p** (myActivity, `__awMaxPR = 1`): màn chờ 60 · intro 60 · chơi 59,2–59,8 fps, khung dài nhất 33–67 ms (2o: 200–280) · Fight 59,7–59,8 (1 % khung > 33 ms).
 Không trần (như Chrome, DPR 1,25): tự xuống PR 1,05 + MSAA 0, 59–60 fps. Ảnh: sàn khớp đúng mê cung mới sau khi vẽ chia khung.
 Còn: 1 lần ~40 ms/câu (`getImageData` sau bộ lọc làm mờ pháp tuyến) — chấp nhận.
+✅ Đã ghép vào AWord: Đợt 476 `7c3c408`, LIVE 5/5 mã băm; myActivity + game LIVE: hostCap 1, chơi 59,2–59,8 fps.
 ## VIỆC ĐANG CHỜ
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.
 - ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.
