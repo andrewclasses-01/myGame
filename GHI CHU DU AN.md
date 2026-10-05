@@ -305,7 +305,25 @@ màn chờ 40 fps · chơi 36–38 fps, 30–35 % khung > 33 ms · card 97–100
 Fight: 1al 31 fps (47 % khung > 33 ms) → 1am 58,4 fps (2 %), 2 bàn dừng ở PR 0,8–0,9. Ảnh: bỏ MSAA hơi răng cưa ở mép gò cỏ / bụi cỏ, chữ + tàu nét như cũ.
 ✅ Đã ghép vào AWord: Đợt 475 `b8d36b2`, LIVE 4/4 mã băm; myActivity + game LIVE: hostCap 1, chơi 59,6 fps.
 ⚠️ Máy TOMKO (HP Z2 Mini G5): card 76 °C khi KHÔNG chạy game, 83–84 °C khi chơi, đang hạ xung vì nhiệt ⇒ nên vệ sinh bụi / kiểm quạt.
+## Star Loot 2p — 05/10/2026 · HIỆU NĂNG: hết giật lag trên TOMKO (tiếp theo Train Rush 1am) · phiên máy BOARD
+Thầy: "tạm ổn rồi (Train Rush). Tiếp tục đo đạc và tối ưu tương tự với STAR LOOT".
+**Đo 2o LIVE trong myActivity** (cùng cách đo Train Rush; bàn thử `__mc` có sẵn renderer/composer ⇒ thử núm ngay lúc chạy, không cần bản thử):
+màn chờ 52 fps · chơi 44 fps, 18–20 % khung > 33 ms · Fight 42–44 fps (21 %) · card 96–100 % · canvas 3840×1780 (bỏ qua `__awMaxPR`).
+Thử: PR 1 + MSAA 4 ⇒ 44 (độ nét gần như KHÔNG ảnh hưởng) · PR 1 + MSAA 0 ⇒ 56 · PR 1,25 + MSAA 0 ⇒ 58 ⇒ MSAA quyết định.
+Khựng 140–280 ms MỖI CÂU (profiler CDP): `nextQuestion → useMap → deck.paint` vẽ lại 4 canvas sàn + Sobel JS + `getImageData` đọc ngược GPU trong 1 khung.
+Còn 11–19 ms/câu: `getProgramInfoLog`/`getProgramParameter` — shader mảnh xác robot bị three.js xoá khi dispose (pha hold) rồi dịch lại câu sau.
+**Mẫu 2p** (`mau-2p-star-loot-aword.html` · `core/mc3d-2p.js/.css` · `core/mc3d-floor-2p.js` · `core/mc3d-autoq-2p.js` mới):
+- `mc3d-autoq-2p.js` = auto-res-1am (Train Rush) + nấc nào RỚT 2 LẦN ⇒ chốt trần dưới nó (màn chờ nhẹ ⇒ thử MSAA 4 ⇒ vào chơi rớt ⇒ lặp, mỗi lần đổi MSAA khựng ~50 ms).
+- canvas `antialias: false`; `renderer.debug.checkShaderErrors` tắt (`?glcheck=1` bật lại để dò lỗi shader); `__mc.quality`, `__mc.deckBusy`.
+- sàn: `paintGen` (generator, điểm dừng mỗi tấm thép / hàng ô / 96 hàng Sobel) + `paintLazy`; canvas độ cao + pháp tuyến `willReadFrequently`.
+  `useMap(m, true)` ở `nextQuestion` ⇒ vẽ ~4 ms/khung trong lúc câu hỏi to che màn (4,7 s), xong tải lên card mỗi khung 1 ảnh (needsUpdate đặt ngay trước initTexture);
+  `finishDeck()` trước `buildMaze` (chắc chắn xong). Lúc tải / intro vẫn vẽ ngay.
+- `pinPrograms()` (mỗi 30 khung): cộng 1 `usedTimes` cho mỗi program một lần ⇒ không bao giờ bị xoá ⇒ không dịch lại giữa ván.
+**Đo 2p** (myActivity, `__awMaxPR = 1`): màn chờ 60 · intro 60 · chơi 59,2–59,8 fps, khung dài nhất 33–67 ms (2o: 200–280) · Fight 59,7–59,8 (1 % khung > 33 ms).
+Không trần (như Chrome, DPR 1,25): tự xuống PR 1,05 + MSAA 0, 59–60 fps. Ảnh: sàn khớp đúng mê cung mới sau khi vẽ chia khung.
+Còn: 1 lần ~40 ms/câu (`getImageData` sau bộ lọc làm mờ pháp tuyến) — chấp nhận.
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.
 - ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.
 - ✅ Maze Chase mẫu 1 ⇒ … ⇒ 1e ⇒ 1f ⇒ 1g ⇒ 1h ⇒ 1i ⇒ 1j ⇒ 1k ⇒ 1l ⇒ 1m ⇒ 1n (thầy: ổn) ⇒ 1o (3 intro, thầy chọn A) ⇒ 1p STAR LOOT (tên mới + intro cốt truyện hạm đội) ⇒ 1q (intro lỗ giun + cảnh báo ENEMY LOCATED + ba lô ANDREW TEAM) ⇒ 1r (tàu bay vào màn chờ, lỗ giun mượt, robot chui vào gầm, sàn dày gấp 3, câu hỏi hiện lúc lùi máy quay) ⇒ 1s (ô xuất phát cố định, tàu không chúi/ngóc, NOT FOUND, bom chạm mới nổ, tường trung tính) ⇒ ✅ 29/9 thầy CHỐT MẪU 1t (chưa đưa vào AWord, thầy còn cải tiến tiếp) (lửa bùng khi tăng tốc, chân không lún, tên thiên hà, map gọn) `maze-chase/mau-1t-star-loot-lua-bung.html`.
 - ⬜ Thầy bấm tay Đợt 417 trên AWord thật (TOMKO): BOOST +1 nấc, canh né 1,25 s, 2 thanh Options mới, va chạm, trúng lan, lửa xanh, act voice 35 %.
