@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STAR LOOT — Mẫu 2q · iPad làm D-pad</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/mc3d-2q.css">
+<style>html, body { margin: 0; height: 100%; background: #07060f; overflow: hidden; font-family: "Baloo 2", system-ui, sans-serif; }</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="game"></div>
+<script type="module">
+// Mẫu 2q: như 2p + nút Tablet ⇒ QR nối iPad làm D-pad. Bàn thử myGame: kênh bắt tay CỤC BỘ (2 tab cùng trình duyệt — mở
+// pad-2q.html?t=0 / ?t=1 ở tab khác). Trên AWord kênh bắt tay là Firestore của thầy ⇒ iPad thật nối được.
+import { createMazeChase } from "./core/mc3d-2q.js";
+import { createPadHost, localSignal } from "./core/mc3d-padlink-2q.js";
+import { QUESTIONS, TITLE } from "./core/questions-sample.js";
+const remote = createPadHost({ signal: localSignal(), padUrl: t => new URL("pad-2q.html?t=" + t, location.href).href });
+window.__pad = remote;
+createMazeChase({ mount: document.getElementById("game"), view: "tilt", questions: QUESTIONS, title: TITLE, act: "LSA2-S3.T2.P1-2", remote });
+</script>
+</body>
+</html>

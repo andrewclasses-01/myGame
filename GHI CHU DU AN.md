@@ -343,7 +343,34 @@ Thầy: "repo myGame đã đồng bộ với 3 game 3D trên AWord chưa" → "m
 - `rocket-race/aword/` (cho các trang intro mẫu 4/5 cũ) GIỮ NGUYÊN — thay bằng bản mới thì các trang đó hỏng (API khác).
 - Quy tắc đồng bộ ghi ở CLAUDE.md mục "ĐỒNG BỘ VỚI AWORD".
 
+## Star Loot 2q — 05/10/2026 · iPAD LÀM D-PAD (WebRTC) · phiên máy MSI
+**Bối cảnh (thầy):** "chạy trên màn hình 86 inch quá khổng lồ, học sinh thò tay lên màn hình bấm cũng không nhìn được toàn cảnh do đứng quá sát…
+Tôi muốn điều khiển bằng iPad (2 iPad trong chế độ Fight)… iPad chỉ việc mở D-pad, không cần hiện câu hỏi. Tín hiệu từ iPad đi 1 chiều lên game".
+Thầy chốt: **WebRTC** · **giữ D-pad trên màn để dự phòng** · **làm cả Single lẫn Fight**.
+**Đã làm (mẫu 2q):**
+- `core/mc3d-2q.js/.css` = 2p + tham số `remote`. Lõi không biết mạng: `remote.attach({ press(team,key), status(team,s) })` gọi lúc cuối
+  createMazeChase; `press` đi đúng đường của D-pad trên màn (`screenToGrid` + `queueDir` / `placeBomb`), D-pad trên màn của đội đó cũng sáng nút.
+  Single: chỉ iPad đội A lái (iPad B bị bỏ qua) · Fight: đội 0 = D-pad trái, đội 1 = D-pad phải. Đang tạm dừng ⇒ bỏ phím.
+  Nhãn xanh "iPad" (`.mc-padtag`, anh em của D-pad vì Ring có overflow:hidden) trên D-pad đội đã nối; vàng "iPad · slow" = đường dự phòng; xám "iPad …" = đang nối.
+  Nút **Tablet** (giữ chỗ từ 1h) mở bảng "iPad D-pad": QR + trạng thái từng đội (`remote.panel(el,{fight})`). destroy() ⇒ `remote.detach()`.
+- `core/mc3d-padlink-2q.js`: `createPadHost` (máy chiếu) + `createPadClient` (iPad) + `localSignal` (bàn thử). Giao thức: 3 tài liệu MỖI CÁI 1 NGƯỜI GHI —
+  `host` (sid phiên game, offer n_t/o_t cho iPad có nonce) · `pad0`/`pad1` (sid, nonce, answer, rs/rq dự phòng, hc nudge). Game mở lại = sid mới ⇒ iPad
+  đang mở tự chào lại ⇒ tự nối. STUN Google; chờ gom ICE ≤ 2,5 s (không trickle). iPad ping 1 s ("p:n"), game trả "q:n" ⇒ iPad hiện độ trễ khứ hồi;
+  game không nghe gì quá 4 s ⇒ nhãn về "đang nối". Không mở được kênh thẳng trong 7 s ⇒ iPad chuyển đường dự phòng (ghi phím vào kho).
+- `core/mc3d-padui-2q.js`: D-pad 4 nút to + nút bom tròn (ngang: D-pad trái, bom phải · dọc: trên/dưới), pointerdown, nhiều ngón, chặn phóng to / menu giữ lâu,
+  Wake Lock, thanh trên: tên đội màu đội + trạng thái + ms.
+- `core/mc3d-qr.js` = chép nguyên AWord `core/qr.js`. Trang `mau-2q-star-loot-ipad.html` + `pad-2q.html?t=0|1` (kênh cục bộ — iPad thật nối qua AWord).
+**Đã kiểm (browser pane localhost:8866, 3 tab):** nối WebRTC thật (DataChannel open, ICE connected, khứ hồi 1 ms cùng máy) · bấm nút thật trên pad ⇒ game nhận u/r/bomb ·
+Fight: iPad A ⇒ robot A (3,3)→(5,3), iPad B ⇒ robot B (0,10)→(0,9), D-pad trên màn sáng đúng bên · bom iPad B trừ bom đội B · tạm dừng ⇒ phím bị bỏ ·
+Single: phím iPad B không làm gì · game tải lại 2 lần ⇒ cả 2 iPad tự nối lại (0,5 s / 3,7 s) · chặn RTCPeerConnection trên pad ⇒ "relay", 4 phím l,bomb,d,r tới đủ đúng thứ tự ·
+bảng QR 2 đội "Connected" · nhãn iPad nằm ngay trên D-pad 2 đội · trang pad 1366×1024.
+**Lỗi gặp & gỡ:** (1) đường dự phòng mất phím giữa khi bấm dồn (kho gộp lượt ghi) ⇒ gửi đuôi 4 phím `rq` + đếm `rs`. (2) game tải lại ⇒ iPad kẹt "Connecting…"
+vì lời chào rơi đúng lúc trang game đang nạp ⇒ iPad tự ghi lại mỗi 4 s (`hc`, tối đa 8 lần) tới khi nối. (3) vá file CRLF bằng chuỗi nhiều dòng trượt ⇒ chuẩn hoá LF, vá, ghi lại CRLF.
+➡️ Ghép AWord: Đợt 480 (kênh bắt tay Firestore `sl-pad-signal.js`, trang `pad.html`).
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **Thầy thử iPad D-pad trên lớp thật (AWord Đợt 480)**: 2 iPad cùng Wi-Fi với TOMKO, đăng nhập Google của thầy trên iPad; xem nhãn "iPad" xanh (nối thẳng)
+  hay vàng "slow" (Wi-Fi chặn nối thẳng); độ trễ ms hiện góc trên phải iPad; cảm giác rẽ có kịp không.
 - ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.
 - ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.
