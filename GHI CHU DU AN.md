@@ -287,7 +287,25 @@ luật trong rocket-race.js (Options Missile streak / Missiles max, BOOST `board
 Game 3D thứ 3 của kho: dựng lại Wordwall Maze chase (act 116866716) trên trạm vũ trụ. Thầy chốt: làm cả 3 góc máy · trạm vũ trụ · 1 người trước ·
 điều khiển chạm/vuốt về phía nhân vật + D-pad sát mép (Fight chỉ D-pad). Chi tiết + đã kiểm: `maze-chase/NGHIEN CUU GAMEPLAY.md` mục 5.
 
+## Train Rush 1am — 05/10/2026 · HIỆU NĂNG: hết giật lag trên TOMKO (myActivity + Chrome) · phiên trên máy BOARD
+Thầy: "chơi Train rush trên TOMKO rất giật lag trên myActivity (có lẽ cả Chrome) — mở chơi thử, đo, tìm nguyên nhân, khắc phục". Kho myGame chưa có trên máy này ⇒ clone từ GitHub.
+**Đo 1al** (myActivity, CDP cổng 9351, đếm rAF + long-animation-frame trong khung game, `nvidia-smi`; Quadro T2000, 3840×2160, DPR 1,25):
+màn chờ 40 fps · chơi 36–38 fps, 30–35 % khung > 33 ms · card 97–100 %, 60 W, 83 °C, **SW Thermal Slowdown** (1750 → 1500 MHz) · canvas 3840×1780
+(bỏ qua `__awMaxPR` = 1 của myActivity) · 14 shader dịch GIỮA ván (khựng 1,3 s lúc START, 0,1–0,4 s giữa ván).
+**Thử từng núm** (bản thử, không sửa kho): PR 1 ⇒ 48 fps · PR 1 + MSAA 0 ⇒ 59,5 (card 87 %) · PR 1,25 + MSAA 0 ⇒ 53 · PR 1 + MSAA 2 ⇒ 52 · bỏ bloom ⇒ 54 · bóng 1024/PCF ⇒ không đổi.
+⇒ nút thắt = MSAA 4 HalfFloat + độ nét 1,25. Chrome cùng code ⇒ cùng lag.
+**Mẫu 1am** (`mau-1am-train-rush.html` · `core/bp3d-1am.js` · `core/fight-1am.js` · `core/auto-res-1am.js` mới; CSS dùng lại 1al):
+- `auto-res-1am.js` `makeAutoQuality`: thang [tối đa + MSAA 4] → [tối đa, MSAA 0] → hạ 0,1/nấc tới 0,8; trần `__awMaxPR`; nhớ nấc êm (localStorage `aw.bp3d.q.*`). Máy khoẻ vẫn y 1al.
+- canvas `antialias: false` (mọi thứ vẽ qua composer). `__bp.quality` / `__bp.renderer` cho bàn thử.
+- `prewarm`: dựng 1 bộ mẫu (đầu máy, toa than, toa đáp án, toa trơn, toa khách, toa than đá, thùng, bóng thưởng, máy bay + băng rôn, hạt) bằng chính các hàm dựng
+  + `weather()`, `renderer.compileAsync` với ĐÍCH VẼ = render target của composer (vẽ ra màn hình thì khoá shader thêm ACES + sRGB ⇒ lệch, dịch phí). Giữ bộ mẫu
+  (không vào cảnh, không thả) ⇒ shader sống qua các lần huỷ tàu cuối màn.
+**Đo 1am** (cùng máy, `__awMaxPR = 1`): màn chờ 59,2 fps · chơi 59,3–59,5 fps, 1–2 khung > 33 ms / 12 s · khựng START 1,3 s → 0,1 s · còn 2 shader bóng đổ (depth) dịch giữa ván
+(1 lần ~0,1–0,17 s; khoá phụ thuộc trạng thái đèn nội bộ lượt vẽ bóng — không làm) · bộ tự chỉnh chốt PR 1 + MSAA 0 (thử lại MSAA 4 rớt ⇒ chốt trần).
+Fight: 1al 31 fps (47 % khung > 33 ms) → 1am 58,4 fps (2 %), 2 bàn dừng ở PR 0,8–0,9. Ảnh: bỏ MSAA hơi răng cưa ở mép gò cỏ / bụi cỏ, chữ + tàu nét như cũ.
+⚠️ Máy TOMKO (HP Z2 Mini G5): card 76 °C khi KHÔNG chạy game, 83–84 °C khi chơi, đang hạ xung vì nhiệt ⇒ nên vệ sinh bụi / kiểm quạt.
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.
 - ✅ Maze Chase mẫu 1 ⇒ … ⇒ 1e ⇒ 1f ⇒ 1g ⇒ 1h ⇒ 1i ⇒ 1j ⇒ 1k ⇒ 1l ⇒ 1m ⇒ 1n (thầy: ổn) ⇒ 1o (3 intro, thầy chọn A) ⇒ 1p STAR LOOT (tên mới + intro cốt truyện hạm đội) ⇒ 1q (intro lỗ giun + cảnh báo ENEMY LOCATED + ba lô ANDREW TEAM) ⇒ 1r (tàu bay vào màn chờ, lỗ giun mượt, robot chui vào gầm, sàn dày gấp 3, câu hỏi hiện lúc lùi máy quay) ⇒ 1s (ô xuất phát cố định, tàu không chúi/ngóc, NOT FOUND, bom chạm mới nổ, tường trung tính) ⇒ ✅ 29/9 thầy CHỐT MẪU 1t (chưa đưa vào AWord, thầy còn cải tiến tiếp) (lửa bùng khi tăng tốc, chân không lún, tên thiên hà, map gọn) `maze-chase/mau-1t-star-loot-lua-bung.html`.
 - ⬜ Thầy bấm tay Đợt 417 trên AWord thật (TOMKO): BOOST +1 nấc, canh né 1,25 s, 2 thanh Options mới, va chạm, trúng lan, lửa xanh, act voice 35 %.
 - ⬜ Thầy bấm tay Đợt 409 trên AWord thật (TOMKO): nạp tay, còi báo động b, vết cháy, MISS WAIT giữa màn.

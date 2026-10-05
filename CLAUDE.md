@@ -85,6 +85,7 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 - `launch-site.js`: trời hoàng hôn TỰ VẼ (shader; `Sky` của three.js cháy trắng quanh mặt trời thấp), biển `Water` (normal map tự sinh), đảo = PlaneGeometry dìm dưới nước ngoài đường bờ, khung thép = `InstancedMesh` hộp đơn vị (`Struts`), hạt riêng (xoay góc, `rise`), sương khí quyển theo độ cao + cầu "không gian" đục dần.
 
 ## Khám phá kỹ thuật
+- HIỆU NĂNG (Train Rush 1am, 05/10/2026): trên card yếu + màn 4K, MSAA 4 của render target HalfFloat là phần đắt nhất (đắt hơn bloom, bóng đổ) ⇒ cho tự bỏ MSAA trước khi hạ độ nét (`auto-res-1am.js`). Luôn đọc trần `window.__awMaxPR` (myActivity). Dịch sẵn shader: `compileAsync` khi đích vẽ = render target của composer, và GIỮ bộ mẫu (không thả) để shader không bị xoá khi huỷ vật cũ.
 - NHẤP NHÁY: `EffectComposer` mặc định vẽ vào render target KHÔNG MSAA ⇒ vật mảnh lấp loá khi máy quay trôi — luôn truyền render target `samples: 4`.
 - Ghi chú giữa dòng JS nhiều lệnh phải dùng `/* */`, không `//`.
 - Mặt đất như thật = ảnh "vệ tinh" SINH SẴN bằng Python theo toạ độ thế giới (2 tấm: toàn cảnh + khu phóng chi tiết cao, khớp liền) rồi dựng 3D lên trên — hơn hẳn vẽ bằng shader lúc chạy.
