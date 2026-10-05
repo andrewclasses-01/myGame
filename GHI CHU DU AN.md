@@ -303,6 +303,7 @@ màn chờ 40 fps · chơi 36–38 fps, 30–35 % khung > 33 ms · card 97–100
 **Đo 1am** (cùng máy, `__awMaxPR = 1`): màn chờ 59,2 fps · chơi 59,3–59,5 fps, 1–2 khung > 33 ms / 12 s · khựng START 1,3 s → 0,1 s · còn 2 shader bóng đổ (depth) dịch giữa ván
 (1 lần ~0,1–0,17 s; khoá phụ thuộc trạng thái đèn nội bộ lượt vẽ bóng — không làm) · bộ tự chỉnh chốt PR 1 + MSAA 0 (thử lại MSAA 4 rớt ⇒ chốt trần).
 Fight: 1al 31 fps (47 % khung > 33 ms) → 1am 58,4 fps (2 %), 2 bàn dừng ở PR 0,8–0,9. Ảnh: bỏ MSAA hơi răng cưa ở mép gò cỏ / bụi cỏ, chữ + tàu nét như cũ.
+✅ Đã ghép vào AWord: Đợt 475 `b8d36b2`, LIVE 4/4 mã băm; myActivity + game LIVE: hostCap 1, chơi 59,6 fps.
 ⚠️ Máy TOMKO (HP Z2 Mini G5): card 76 °C khi KHÔNG chạy game, 83–84 °C khi chơi, đang hạ xung vì nhiệt ⇒ nên vệ sinh bụi / kiểm quạt.
 ## VIỆC ĐANG CHỜ
 - ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.
