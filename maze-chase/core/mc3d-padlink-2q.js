@@ -9,7 +9,7 @@
 // game nghe kho (chậm hơn, nhãn "iPad · slow").
 //
 // `signal` = { write(name, flatPatch) → Promise, listen(name, cb(data|null)) → unsub }   — mỗi tài liệu ĐÚNG MỘT người ghi:
-//     "host"  — game ghi:  sid (phiên game) · n0/o0 · n1/o1 (offer gửi cho iPad có nonce n_t)
+//     "host"  — game ghi:  sid (phiên game) · n0/o0 · n1/o1 (offer gửi cho iPad có nonce n_t) · h0/h1 (gửi lại offer khi iPad đá lại)
 //     "pad0", "pad1" — iPad đội đó ghi: sid · nonce · answer · rs (số phím dự phòng đã gửi) + rq (≤ 4 phím GẦN NHẤT, "l,d,bomb")
 //       — kho gộp nhiều lượt ghi sát nhau thành một lần báo, nên phải mang cả đuôi phím chứ không chỉ phím cuối (bấm l rồi d nhanh: mất l).
 //   ⛔ KHÔNG so đồng hồ giữa hai máy (đồng hồ máy em không tin được) — chỉ so sid/nonce/số đếm.
@@ -35,14 +35,14 @@ export const TEAM_META = [{ name: "TEAM A", solo: "PLAYER", color: "#38bdf8" }, 
 // =================================================================== MÁY CHIẾU
 export function createPadHost({ signal, padUrl }) {
   let ctl = null, sid = "", unsubs = [], tick = 0, panelEl = null, panelFight = false, failMsg = "";
-  const st = [0, 1].map(() => ({ pc: null, dc: null, served: "", last: 0, rs: 0, s: "" }));
+  const st = [0, 1].map(() => ({ pc: null, dc: null, served: "", offered: "", hc: 0, last: 0, rs: 0, s: "" }));
   const setS = (t, s) => { if (st[t].s === s) return; st[t].s = s; ctl && ctl.status(t, s); paintPanel(); };
   const press = (t, k) => { st[t].last = performance.now(); if (KEYS.has(k) && ctl) ctl.press(t, k); };
   function closePc(t) { const x = st[t]; try { x.dc && x.dc.close(); } catch (e) { /* */ } try { x.pc && x.pc.close(); } catch (e) { /* */ } x.pc = x.dc = null; }
 
   async function offerTo(t, nonce) {
     const x = st[t]; closePc(t);
-    x.served = nonce; x.rs = 0; setS(t, "wait");
+    x.served = nonce; x.offered = ""; x.hc = 0; x.rs = 0; setS(t, "wait");
     const pc = new RTCPeerConnection({ iceServers: ICE }); x.pc = pc;
     const dc = pc.createDataChannel("pad", { ordered: true }); x.dc = dc;
     dc.onopen = () => { if (x.dc === dc) { x.last = performance.now(); setS(t, "on"); } };
@@ -56,12 +56,15 @@ export function createPadHost({ signal, padUrl }) {
     await pc.setLocalDescription(await pc.createOffer());
     await gather(pc, 2500);
     if (x.pc !== pc || !sid) return;
-    await signal.write("host", { sid, ["n" + t]: nonce, ["o" + t]: sdpOf(pc) });
+    x.offered = sdpOf(pc);
+    await signal.write("host", { sid, ["n" + t]: nonce, ["o" + t]: x.offered });
   }
   async function onPad(t, d) {
     const x = st[t];
     if (!d || !sid || d.sid !== sid || !d.nonce) return;               // chào của phiên game cũ ⇒ bỏ
     if (d.nonce !== x.served) { offerTo(t, d.nonce).catch(e => console.warn("iPad offer", e)); return; }
+    // iPad "đá lại" (hc tăng) mà chưa có answer ⇒ nó chưa thấy offer (lần báo bị rơi) ⇒ ghi lại offer + h_t mới để chắc chắn có thay đổi mà báo
+    if (!d.answer && x.offered && (+d.hc || 0) > x.hc) { x.hc = +d.hc; signal.write("host", { sid, ["n" + t]: x.served, ["o" + t]: x.offered, ["h" + t]: x.hc }).catch(() => {}); }
     if (d.answer && x.pc && !x.pc.remoteDescription) {
       try { await x.pc.setRemoteDescription(JSON.parse(d.answer)); } catch (e) { console.warn("iPad answer", e); }
     }

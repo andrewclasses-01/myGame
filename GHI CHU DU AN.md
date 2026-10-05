@@ -365,7 +365,7 @@ Fight: iPad A ⇒ robot A (3,3)→(5,3), iPad B ⇒ robot B (0,10)→(0,9), D-pa
 Single: phím iPad B không làm gì · game tải lại 2 lần ⇒ cả 2 iPad tự nối lại (0,5 s / 3,7 s) · chặn RTCPeerConnection trên pad ⇒ "relay", 4 phím l,bomb,d,r tới đủ đúng thứ tự ·
 bảng QR 2 đội "Connected" · nhãn iPad nằm ngay trên D-pad 2 đội · trang pad 1366×1024.
 **Lỗi gặp & gỡ:** (1) đường dự phòng mất phím giữa khi bấm dồn (kho gộp lượt ghi) ⇒ gửi đuôi 4 phím `rq` + đếm `rs`. (2) game tải lại ⇒ iPad kẹt "Connecting…"
-vì lời chào rơi đúng lúc trang game đang nạp ⇒ iPad tự ghi lại mỗi 4 s (`hc`, tối đa 8 lần) tới khi nối. (3) vá file CRLF bằng chuỗi nhiều dòng trượt ⇒ chuẩn hoá LF, vá, ghi lại CRLF.
+vì lời chào rơi đúng lúc trang game đang nạp ⇒ iPad tự ghi lại mỗi 4 s (`hc`, tối đa 8 lần) tới khi nối. (2b) chiều ngược lại (thấy ở bàn thử AWord): game đã ghi offer mà iPad lỡ lần báo ⇒ game thấy `hc` tăng mà chưa có answer thì GHI LẠI offer + `h_t` mới (có thay đổi ⇒ chắc chắn báo). Sau vá: 3 vòng tải lại trang game, 2 iPad tự nối lại sau 4,2 / 5,7 / ~5 s. (3) vá file CRLF bằng chuỗi nhiều dòng trượt ⇒ chuẩn hoá LF, vá, ghi lại CRLF.
 ➡️ Ghép AWord: Đợt 480 (kênh bắt tay Firestore `sl-pad-signal.js`, trang `pad.html`).
 
 ## VIỆC ĐANG CHỜ
