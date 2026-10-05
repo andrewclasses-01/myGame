@@ -323,7 +323,16 @@ Còn 11–19 ms/câu: `getProgramInfoLog`/`getProgramParameter` — shader mản
 Không trần (như Chrome, DPR 1,25): tự xuống PR 1,05 + MSAA 0, 59–60 fps. Ảnh: sàn khớp đúng mê cung mới sau khi vẽ chia khung.
 Còn: 1 lần ~40 ms/câu (`getImageData` sau bộ lọc làm mờ pháp tuyến) — chấp nhận.
 ✅ Đã ghép vào AWord: Đợt 476 `7c3c408`, LIVE 5/5 mã băm; myActivity + game LIVE: hostCap 1, chơi 59,2–59,8 fps.
+## Train Rush 1an — 05/10/2026 · 60 khung PHẲNG (thầy: "làm bản 1an cho Train Rush luôn")
+`mau-1an-train-rush.html` · `core/bp3d-1an.js` · `core/fight-1an.js` · `core/auto-res-1an.js` (= mc3d-autoq-2p, khoá aw.bp3d.q.*) · `core/west-world-1an.js`.
+- Rút từ STAR LOOT 2p: chốt trần khi rớt 2 lần · `pinPrograms()` ghim shader · `checkShaderErrors` tắt (`?glcheck=1`).
+- Đo 1am lại trên TOMKO: còn 1 khung 70–130 ms mỗi ~12 s — profiler: `regrow → tallSaguaro → cactus.saguaro` dựng lưới mới (ống 40×80 + mergeVertices)
+  khi khúc cảnh quay vòng lên trước. 1an (`west-world-1an.js`): kho 10 saguaro dựng sẵn lúc tải + cây bị bỏ vào kho DÙNG LẠI (≤ 24),
+  mọc lại = đặt chỗ mới / xoay mới / scale theo chiều cao mới (dáng tỉ lệ theo h). Hết kho mới dựng như cũ.
+- Đo 1an (myActivity, `__awMaxPR = 1`): chơi 60,0 fps × 4 đoạn 12 s, khung dài nhất 17 ms (1am: 59,2–59,8, 66–150 ms) · Fight 60,0 fps, 0 khung > 17 ms.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.
 - ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.
 - ✅ Maze Chase mẫu 1 ⇒ … ⇒ 1e ⇒ 1f ⇒ 1g ⇒ 1h ⇒ 1i ⇒ 1j ⇒ 1k ⇒ 1l ⇒ 1m ⇒ 1n (thầy: ổn) ⇒ 1o (3 intro, thầy chọn A) ⇒ 1p STAR LOOT (tên mới + intro cốt truyện hạm đội) ⇒ 1q (intro lỗ giun + cảnh báo ENEMY LOCATED + ba lô ANDREW TEAM) ⇒ 1r (tàu bay vào màn chờ, lỗ giun mượt, robot chui vào gầm, sàn dày gấp 3, câu hỏi hiện lúc lùi máy quay) ⇒ 1s (ô xuất phát cố định, tàu không chúi/ngóc, NOT FOUND, bom chạm mới nổ, tường trung tính) ⇒ ✅ 29/9 thầy CHỐT MẪU 1t (chưa đưa vào AWord, thầy còn cải tiến tiếp) (lửa bùng khi tăng tốc, chân không lún, tên thiên hà, map gọn) `maze-chase/mau-1t-star-loot-lua-bung.html`.
