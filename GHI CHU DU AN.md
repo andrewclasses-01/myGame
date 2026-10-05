@@ -379,10 +379,10 @@ Tôi bấm nút Fight trong Mode thì không chuyển được, tiện kiểm tr
   (hàm chung `leaveToMenu()` tách từ END GAME); bấm lại đúng chế độ đang chơi ⇒ chỉ đóng bảng.
 - Kiểm: intro bấm Fight ⇒ menu + fight ✓ · đang chơi Fight bấm Single ⇒ menu + single ✓ ⇒ START lại chơi Single bình thường, 0 lỗi · màn chọn đội + D-pad 1366×1024 (ảnh) ·
   chạm lệch góc trái ⇒ "l", robot B (6,11)→(6,10) · bom góc ⇒ bom đội B 1→0 · chạm tâm ⇒ bỏ qua.
+✅ **THẦY ĐÃ THỬ iPad THẬT (05/10/2026): nhãn XANH (nối thẳng WebRTC trên Wi-Fi lớp), chơi ổn.** Thầy sẽ build thêm sau.
 
 ## VIỆC ĐANG CHỜ
-- ⬜ **Thầy thử iPad D-pad trên lớp thật (AWord Đợt 480)**: 2 iPad cùng Wi-Fi với TOMKO, đăng nhập Google của thầy trên iPad; xem nhãn "iPad" xanh (nối thẳng)
-  hay vàng "slow" (Wi-Fi chặn nối thẳng); độ trễ ms hiện góc trên phải iPad; cảm giác rẽ có kịp không.
+- ✅ 05/10 thầy thử iPad D-pad trên lớp thật (AWord Đợt 480b `bc6d839`, myGame `ea20330`): nhãn XANH (nối thẳng), chơi ổn. Thầy sẽ build thêm sau.
 - ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.
 - ⬜ Thầy chơi TRAIN RUSH 1am (AWord) trên TOMKO: nhìn độ mượt + độ lấp loá vật mảnh khi máy quay lia (bỏ MSAA); nếu chói mắt ⇒ cân nhắc thêm FXAA/SMAA rẻ.

@@ -86,7 +86,7 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 - `launch-site.js`: trời hoàng hôn TỰ VẼ (shader; `Sky` của three.js cháy trắng quanh mặt trời thấp), biển `Water` (normal map tự sinh), đảo = PlaneGeometry dìm dưới nước ngoài đường bờ, khung thép = `InstancedMesh` hộp đơn vị (`Struts`), hạt riêng (xoay góc, `rise`), sương khí quyển theo độ cao + cầu "không gian" đục dần.
 
 ## ⭐ ĐỒNG BỘ VỚI AWORD (thầy 05/10/2026: "myGame cũng phải có các bản mới nhất đồng bộ với AWord")
-- STAR LOOT mới nhất = **mẫu 2q** (05/10/2026): `core/mc3d-2q.js/.css` + iPad làm D-pad = `core/mc3d-padlink-2q.js` (WebRTC, cả phía máy chiếu
+- STAR LOOT mới nhất = **mẫu 2q** (05/10/2026, = AWord Đợt 480b, thầy thử iPad thật OK): `core/mc3d-2q.js/.css` + iPad làm D-pad = `core/mc3d-padlink-2q.js` (WebRTC, cả phía máy chiếu
   `createPadHost` lẫn phía iPad `createPadClient`, + `localSignal` cho bàn thử 2 tab) · `core/mc3d-padui-2q.js` (giao diện D-pad iPad) ·
   `core/mc3d-qr.js` (chép NGUYÊN `AWord/web/core/qr.js`). Trang: `mau-2q-star-loot-ipad.html` + `pad-2q.html?t=0|1`. Lõi KHÔNG biết mạng:
   chỉ nhận `remote` { attach({press,status}), detach, panel, panelClosed }. Kênh bắt tay thật (Firestore) nằm ở AWord `templates/maze-chase/sl-pad-signal.js`.
