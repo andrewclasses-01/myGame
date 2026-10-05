@@ -367,6 +367,18 @@ bảng QR 2 đội "Connected" · nhãn iPad nằm ngay trên D-pad 2 đội · 
 **Lỗi gặp & gỡ:** (1) đường dự phòng mất phím giữa khi bấm dồn (kho gộp lượt ghi) ⇒ gửi đuôi 4 phím `rq` + đếm `rs`. (2) game tải lại ⇒ iPad kẹt "Connecting…"
 vì lời chào rơi đúng lúc trang game đang nạp ⇒ iPad tự ghi lại mỗi 4 s (`hc`, tối đa 8 lần) tới khi nối. (2b) chiều ngược lại (thấy ở bàn thử AWord): game đã ghi offer mà iPad lỡ lần báo ⇒ game thấy `hc` tăng mà chưa có answer thì GHI LẠI offer + `h_t` mới (có thay đổi ⇒ chắc chắn báo). Sau vá: 3 vòng tải lại trang game, 2 iPad tự nối lại sau 4,2 / 5,7 / ~5 s. (3) vá file CRLF bằng chuỗi nhiều dòng trượt ⇒ chuẩn hoá LF, vá, ghi lại CRLF.
 ➡️ Ghép AWord: Đợt 480 (kênh bắt tay Firestore `sl-pad-signal.js`, trang `pad.html`).
+**Chỉnh theo thầy (05/10, sau khi xem bản đầu, kèm ảnh):** "AWord đã có nút iPad này, tôi muốn iPad bấm vào thì mở ra trang và chọn 1 trong 2 đội ·
+Thiết kế toàn bộ màn hình iPad là D-pad đang sử dụng của game, nút bom để ở góc trên bên phải, xa xa khu D-pad, D-pad to chiếm cả màn hình cũng được ·
+Tôi bấm nút Fight trong Mode thì không chuyển được, tiện kiểm tra".
+- **Màn chọn đội:** `pad.html` không có `?t` ⇒ 2 nút lớn TEAM A / TEAM B (hình D-pad màu đội) ⇒ `pad.html?t=0|1`. Nút iPad trên thanh AWord (cạnh Settings,
+  Đợt 368f — trước mở `source.html`) nay mở `pad.html`; màn câu hỏi Rocket Race vẫn còn qua link nhỏ dưới màn chọn đội. Màn D-pad có nút ‹ góc trên trái để về chọn đội.
+- **Màn D-pad:** đúng D-pad RING của game (4 múi vành khăn SVG + mũi tên, viền xanh; đội B ngả cam bằng hue-rotate như trong game), cao ~94 % màn; tâm ghi chữ đội A/B;
+  vùng bấm = cả GÓC PHẦN TƯ theo góc so với tâm (chạm lệch vẫn ăn), vòng tâm bỏ qua. Bom = nút tròn riêng ở GÓC TRÊN PHẢI.
+- **Lỗi Mode:** dòng "ENEMY LOCATED / POSITION / TARGET" là INTRO sau khi bấm START (pha `cine`), không phải màn START ⇒ bảng Mode khoá 2 nút + chữ
+  "Change the mode from the start screen". Nay KHÔNG khoá: giữa chừng (intro / đang chơi / kết quả) bấm chế độ kia ⇒ bỏ ván, về màn START với chế độ mới
+  (hàm chung `leaveToMenu()` tách từ END GAME); bấm lại đúng chế độ đang chơi ⇒ chỉ đóng bảng.
+- Kiểm: intro bấm Fight ⇒ menu + fight ✓ · đang chơi Fight bấm Single ⇒ menu + single ✓ ⇒ START lại chơi Single bình thường, 0 lỗi · màn chọn đội + D-pad 1366×1024 (ảnh) ·
+  chạm lệch góc trái ⇒ "l", robot B (6,11)→(6,10) · bom góc ⇒ bom đội B 1→0 · chạm tâm ⇒ bỏ qua.
 
 ## VIỆC ĐANG CHỜ
 - ⬜ **Thầy thử iPad D-pad trên lớp thật (AWord Đợt 480)**: 2 iPad cùng Wi-Fi với TOMKO, đăng nhập Google của thầy trên iPad; xem nhãn "iPad" xanh (nối thẳng)

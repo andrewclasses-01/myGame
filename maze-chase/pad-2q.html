@@ -10,15 +10,20 @@
 <body>
 <div id="pad"></div>
 <script type="module">
-// Bàn thử myGame: D-pad cho iPad, kênh bắt tay cục bộ (cùng trình duyệt với mau-2q). ?t=0 đội A · ?t=1 đội B
+// Bàn thử myGame: D-pad cho iPad, kênh bắt tay cục bộ (cùng trình duyệt với mau-2q). ?t=0 đội A · ?t=1 đội B · không có ?t ⇒ màn chọn đội
 import { createPadClient, localSignal } from "./core/mc3d-padlink-2q.js";
-import { mountPadUI } from "./core/mc3d-padui-2q.js";
-const team = new URLSearchParams(location.search).get("t") === "1" ? 1 : 0;
-let ui = null;
-const client = createPadClient({ signal: localSignal(), team, onState: s => ui && ui.setState(s) });
-ui = mountPadUI(document.getElementById("pad"), { team, send: k => client.send(k) });
-ui.setState(client.state);
-window.__padc = client;
+import { mountPadUI, mountPadChooser } from "./core/mc3d-padui-2q.js";
+const q = new URLSearchParams(location.search), mount = document.getElementById("pad");
+const goTeam = t => { q.set("t", t); location.href = "?" + q; };
+if (!q.has("t")) mountPadChooser(mount, { onPick: goTeam });
+else {
+  const team = q.get("t") === "1" ? 1 : 0;
+  let ui = null;
+  const client = createPadClient({ signal: localSignal(), team, onState: s => ui && ui.setState(s) });
+  ui = mountPadUI(mount, { team, send: k => client.send(k), onBack: () => { client.destroy(); q.delete("t"); location.href = "?" + q; } });
+  ui.setState(client.state);
+  window.__padc = client;
+}
 </script>
 </body>
 </html>
