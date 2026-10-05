@@ -32,7 +32,8 @@ rocket-race/
   game5b/ + core/launch-aerial-5b.js + core/intro-sound-5b.js + assets/sound-5b   MẪU 5b (= bản đang chạy trên AWord Đợt 398)
   game5c/ + core/launch-aerial-5c.js + core/auto-res.js   MẪU 5c: tự giữ 60 khung, bóng theo nhu cầu, dịch sẵn shader
   game6/ (+ rr3d-missile.js) + core/launch-aerial-6.js     MẪU 6: TÊN LỬA tấn công giữa 2 tàu + đội 2 CAM; tiếng tools/tao-am-thanh-6.py
-  game7d/ + core/launch-aerial-7d.js                       MẪU 7d (mới nhất, 28/9): trúng lan tàu cùng nấc / cách 1 nấc (hitShip), sắp thắng ⇒ lửa đuôi dài 1,5 lần + xanh dương (view r.nearWin)
+  game8/ (+ rr3d-launch.js, launch/, rr3d-intro-sound.js, sfx-intro/)   MẪU 8 (MỚI NHẤT, 05/10) = chép NGUYÊN AWord 156cf57 (sau Đợt 478) — cảnh phóng + tiếng intro cũng của AWord
+  game7d/ + core/launch-aerial-7d.js                       MẪU 7d (28/9): trúng lan tàu cùng nấc / cách 1 nấc (hitShip), sắp thắng ⇒ lửa đuôi dài 1,5 lần + xanh dương (view r.nearWin)
   game7c/ + core/launch-aerial-7c.js                       MẪU 7c (27/9): 2 tên lửa hút nhau va nổ giữa đường (nổ sát tàu vẫn tính trúng), cột vạch mỏng trắng, renderOrder nút BOOST, vầng sáng mũi tàu khi còn 1 câu
   game7b/ + core/launch-aerial-7b.js                       MẪU 7b (27/9): 1 nút BOOST giữa cột (thanh 5 đoạn trong nút, +1 nấc thật, tự canh né 1,25 s), cột vạch năng lượng tên lửa, setFxLevel cho act voice
   game7/ + core/launch-aerial-7.js                         MẪU 7 (27/9): CHÉP NGUYÊN AWord origin/main d793bfa (Đợt 413+416) bằng maze-chase/                   (29/9) Maze Chase 3D — dựng lại Wordwall Maze chase; hồ sơ: NGHIEN CUU GAMEPLAY.md
@@ -83,6 +84,13 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 ```
 - `rr3d-core.js`: `export makeRocket` (mẫu 4 dùng chung mô hình tàu) · `cfg.hold` + `beginPlay()` = màn game đứng chờ ở góc đuổi, không mở màn, gọi `beginPlay()` là vào thẳng câu hỏi.
 - `launch-site.js`: trời hoàng hôn TỰ VẼ (shader; `Sky` của three.js cháy trắng quanh mặt trời thấp), biển `Water` (normal map tự sinh), đảo = PlaneGeometry dìm dưới nước ngoài đường bờ, khung thép = `InstancedMesh` hộp đơn vị (`Struts`), hạt riêng (xoay góc, `rise`), sương khí quyển theo độ cao + cầu "không gian" đục dần.
+
+## ⭐ ĐỒNG BỘ VỚI AWORD (thầy 05/10/2026: "myGame cũng phải có các bản mới nhất đồng bộ với AWord")
+- TRAIN RUSH (`balloon-pop/`) + STAR LOOT (`maze-chase/`): GỐC ở myGame. Sửa ở đây (bản mới = tên mới) ⇒ commit + push ⇒ AWord chạy
+  `python -X utf8 tools/chep-train-rush.py` / `tools/chep-star-loot.py` (ghi `3d/NGUON.json` = commit myGame). Kiểm khớp: chạy lại script chép, AWord không đổi gì = khớp.
+- ROCKET RACE: GỐC ở AWord (`templates/rocket-race/`). MỖI Đợt Rocket Race trên AWord ⇒ ở myGame chạy
+  `python -X utf8 tools/chep-aword-sang-game.py gameN` (thư mục MỚI) + trang `mau-N-…html` (chép trang mẫu gần nhất, đổi import sang gameN) ⇒ commit + push.
+  Bản mới nhất: `game8` = AWord `156cf57` (Đợt 478).
 
 ## Khám phá kỹ thuật
 - HIỆU NĂNG (Train Rush 1am, 05/10/2026): trên card yếu + màn 4K, MSAA 4 của render target HalfFloat là phần đắt nhất (đắt hơn bloom, bóng đổ) ⇒ cho tự bỏ MSAA trước khi hạ độ nét (`auto-res-1am.js`). Luôn đọc trần `window.__awMaxPR` (myActivity). Dịch sẵn shader: `compileAsync` khi đích vẽ = render target của composer, và GIỮ bộ mẫu (không thả) để shader không bị xoá khi huỷ vật cũ.

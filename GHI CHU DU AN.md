@@ -331,6 +331,18 @@ Còn: 1 lần ~40 ms/câu (`getImageData` sau bộ lọc làm mờ pháp tuyến
   mọc lại = đặt chỗ mới / xoay mới / scale theo chiều cao mới (dáng tỉ lệ theo h). Hết kho mới dựng như cũ.
 - Đo 1an (myActivity, `__awMaxPR = 1`): chơi 60,0 fps × 4 đoạn 12 s, khung dài nhất 17 ms (1am: 59,2–59,8, 66–150 ms) · Fight 60,0 fps, 0 khung > 17 ms.
 
+## Đồng bộ AWord — 05/10/2026 · ROCKET RACE MẪU 8 = AWord Đợt 478 · TRAIN RUSH 1an đã ghép (Đợt 477)
+Thầy: "repo myGame đã đồng bộ với 3 game 3D trên AWord chưa" → "myGame cũng phải có các bản mới nhất đồng bộ với AWord luôn".
+- Kiểm: TRAIN RUSH (1an, `ca4d0ac`) + STAR LOOT (2p, `ed155cd`) — chạy lại 2 script chép phía AWord ⇒ AWord KHÔNG đổi file nào ⇒ khớp từng byte.
+  ✅ TRAIN RUSH 1an đã ghép AWord Đợt 477 `3e28cc9`, LIVE 5/5 mã băm, app thật 60,0 fps.
+- ROCKET RACE lệch: bản chụp mới nhất của myGame là game7 (AWord d793bfa, Đợt 416, 27/9); `aword/` còn cũ hơn (Đợt 397). AWord đã thêm 24 commit Rocket Race.
+- `tools/chep-aword-sang-game.py` nâng cấp: chép thêm cảnh phóng `rr3d-launch.js` + `launch/` và tiếng intro `rr3d-intro-sound.js` + `sfx-intro/`
+  (trước chỉ cảnh đua; trang mẫu dùng cảnh phóng riêng core/launch-aerial-*). Chạy ra `game8` ← AWord `156cf57` (8 file js, 25 tiếng, 27 tài nguyên phóng/intro).
+- `mau-8-khop-aword.html` = trang 7d đổi import sang game8 (cả createLaunch / createIntroSound của AWord). Thử (localhost:8865): cảnh phóng AWord hiện,
+  START ⇒ phóng ⇒ vào cảnh đua, câu hỏi + ô 2 đội, chạm ô ⇒ sang câu kế, 0 lỗi console. Luật thử của trang vẫn theo 7d (luật thật ở AWord rocket-race.js).
+- `rocket-race/aword/` (cho các trang intro mẫu 4/5 cũ) GIỮ NGUYÊN — thay bằng bản mới thì các trang đó hỏng (API khác).
+- Quy tắc đồng bộ ghi ở CLAUDE.md mục "ĐỒNG BỘ VỚI AWORD".
+
 ## VIỆC ĐANG CHỜ
 - ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.
