@@ -397,6 +397,7 @@ thanh Lives thêm một nấc cuối là không giới hạn · thêm một than
 0 địch ⇒ 0 · ngòi 2 s ⇒ nổ 2,1 s · 10 s ⇒ 10,0 s · `enemiesFor` 1→1 3→1 4→2 6→2 7→3 8→3 9→4 10→4 · 0 lỗi console.
 **Lỗi gặp & gỡ:** dòng dựng robot là MỘT DÒNG `.map(c => { … })` — chèn ghi chú `//` giữa dòng nuốt mất thân hàm ⇒ `node --check` báo "missing )" ⇒ đổi sang `/* */`
 (đúng bẫy đã ghi ở CLAUDE.md "Ghi chú giữa dòng JS nhiều lệnh phải dùng /* */").
+✅ Fight đã kiểm riêng (8 địch, ∞ hai đội, ngòi 3 s cả đội A/B, mạng thường trừ đúng). ✅ ĐÃ PUSH myGame `1fd3173` + AWord `1a5afe2` LIVE 4/4.
 ➡️ Ghép AWord: Đợt 503 (`tools/chep-star-loot.py` BAN 2r, khoá phẳng `slEnemies` / `slFuse`, `lives` kẹp 1..10; gỡ `mc3d-2q.js/.css` khỏi AWord).
 
 ## SPEED RUN — 11/10/2026 · NGHIÊN CỨU TRƯỚC (chưa dựng mẫu) · phiên máy MSI
