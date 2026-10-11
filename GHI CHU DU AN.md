@@ -381,7 +381,36 @@ Tôi bấm nút Fight trong Mode thì không chuyển được, tiện kiểm tr
   chạm lệch góc trái ⇒ "l", robot B (6,11)→(6,10) · bom góc ⇒ bom đội B 1→0 · chạm tâm ⇒ bỏ qua.
 ✅ **THẦY ĐÃ THỬ iPad THẬT (05/10/2026): nhãn XANH (nối thẳng WebRTC trên Wi-Fi lớp), chơi ổn.** Thầy sẽ build thêm sau.
 
+## SPEED RUN — 11/10/2026 · NGHIÊN CỨU TRƯỚC (chưa dựng mẫu) · phiên máy MSI
+**Bối cảnh (thầy):** "chuẩn bị cho một game mới với mục tiêu gắn cho AWord và với vibe tương tự: SPEED RUN — đua ô tô, tương tự Rocket race nhưng
+thiết kế khác khá nhiều: đường đua nhìn từ phía sau 2 xe nhưng camera lên cao hơn, 2 xe cách xa thì camera lên cao hơn nữa; cân nhắc lái xe cho iPad;
+trả lời đúng = năng lượng cho xe chạy; tên lửa trên thân xe bắn đối phương. Hãy nghiên cứu trước."
+**Đã làm:** đọc lại 3 game (Rocket race game8 = AWord Đợt 478 · STAR LOOT 2q · TRAIN RUSH 1ao) + cách AWord gắn template (3 agent khảo sát mã) + chạy thử
+mẫu 8 trong trình duyệt ⇒ viết hồ sơ **`speed-run/NGHIEN CUU GAMEPLAY.md`** (8 mục): kho có gì tái dùng được (bảng), khác biệt cốt lõi (nấc rời → chuyển
+động liên tục), thiết kế đề xuất (bối cảnh đường cao tốc ven biển từ bãi xe ANDREW STUDIO · camera cao + cự ly LIÊN TỤC theo gap, trung điểm 2 xe ·
+3 mô hình năng lượng A/B/C, đề xuất C lai: luật vẫn NẤC, vẽ liên tục · tên lửa bay thấp, trúng = quay tròn · lái iPad = đổi làn rời qua padlink 2q
+có sẵn, né tên lửa bằng làn · HUD · intro bãi xe · tiếng), kỹ thuật (đường vô tận kiểu west-world-1c + curved world shader, xe từ 5 mẫu trong
+`rr3d-launch.js:666–815`, bóng blob, autores), 2 khuôn ghép AWord (A qua `core/fight.js` như Rocket race / B tự vẽ trọn màn như STAR LOOT — đề xuất B),
+rủi ro, **8 câu hỏi cần thầy chốt** (mục 7) và kế hoạch 4 mẫu (mục 8).
+**Khám phá đáng nhớ:** `remote.press` của padlink 2q là phím RỜI (không down/up) ⇒ lái liên tục phải mở rộng giao thức (gói trạng thái 30 Hz + fail-safe
+nhả ga 300 ms), còn ĐỔI LÀN RỜI thì dùng được ngay · Rocket race camera chỉ có 2 nấc chase/high (chuyển 3,2 s) chứ không liên tục · `mau-8 ?skip=1` lỗi
+"Cannot read properties of null (reading 'g')" tại `rr3d-view.js:2159` (startBtn null khi bỏ intro) — lỗi sẵn có của bản thử, chưa sửa.
+⬜ Chờ thầy trả lời mục 7 rồi "ok build" mẫu 1.
+
+## SPEED RUN mẫu 1 — 11/10/2026 · thầy CHỐT 8 đề xuất ⇒ dựng đường + 2 xe + camera theo khoảng cách (2 góc máy) · phiên máy MSI
+**Bối cảnh:** thầy đọc hồ sơ nghiên cứu, trả lời "chốt" = nhận cả 8 phương án đề xuất (luật C lai · khuôn B · iPad tay lái đổi làn rời · cao tốc ven biển · sai = phanh mất năng lượng dồn ·
+trúng tên lửa = quay tròn mất 2 đoạn · 2 góc máy). Claude dựng luôn MẪU 1 theo mục 8 bước 1.
+**Đã làm:** `speed-run/mau-1a-cao-vua.html` + `mau-1b-truc-thang.html` + `index.html`; lõi `core/sr3d-1.js`, thế giới `core/sr3d-world-1.js`, xe `core/sr3d-car-1.js`, HUD `core/sr3d-1.css`,
+vỏ thử `core/page-1.js/.css`, `core/sr3d-autores.js` (chép nguyên Rocket Race). Chi tiết luật/camera/thế giới/xe + bảng số đo ở `speed-run/NGHIEN CUU GAMEPLAY.md` **mục 9**.
+**Quyết định kỹ thuật:** đường đôi 4 làn, MỖI ĐỘI 2 LÀN (Claude tự quyết, đã báo) · camera tính góc chúi để luôn chứa cả 2 xe · cong thế giới trong vertex shader, tắt dần khi 2 xe xa ·
+độ cao đất JS = GPU nhờ `Math.fround` · bóng blob thay shadow map · HUD là DOM theo cqw/cqh · nhãn số đội trên xe ở xa.
+**Lỗi gặp & gỡ:** 7 lỗi ghi ở mục 9 hồ sơ (xe dẫn mất hút, trực thăng bị cột che, mù sương, nhãn dồn góc, máy quay kết vào cây, đèn chìm trong thân, trình duyệt giữ mô-đun cũ).
+Phát hiện bên lề: Rocket Race `mau-8 ?skip=1` vẫn văng (`rr3d-view.js:2159`), chưa sửa.
+⬜ Thầy xem 2 góc máy ⇒ chọn ⇒ mẫu 2 (tên lửa + BOOST + tiếng).
+**Thầy (11/10): "Tạm thời bản 1 đến đây. Commit + push, tôi sẽ tiếp tục trong các phiên sau."** ⇒ đã commit + push mẫu 1 lên GitHub (andrewclasses-01/myGame, nhánh main).
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **SPEED RUN**: thầy xem mẫu 1a (góc cao vừa) và 1b (cao hơn + trực thăng) — chọn góc máy, nhận xét xe/đường/độ cong/tốc độ ⇒ mẫu 2 (tên lửa + BOOST + tiếng). ⏸ Thầy TẠM DỪNG ở mẫu 1 (11/10), đã lên GitHub; phiên sau tiếp tục.
 - ✅ 05/10 thầy thử iPad D-pad trên lớp thật (AWord Đợt 480b `bc6d839`, myGame `ea20330`): nhãn XANH (nối thẳng), chơi ổn. Thầy sẽ build thêm sau.
 - ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.

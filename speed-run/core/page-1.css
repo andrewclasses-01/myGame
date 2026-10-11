@@ -1,0 +1,14 @@
+/* vỏ trang thử SPEED RUN — khung game như AWord trên TOMKO + bảng thử bên dưới (không thuộc game) */
+:root { --bar: 80px; }
+html, body { margin: 0; height: 100%; background: #04060d; overflow: hidden; font-family: "Exo 2", "Segoe UI", sans-serif; color: #e8eefc; }
+#frame { position: fixed; left: 0; top: 0; width: 100vw; height: min(50vw, calc(100vh - var(--bar))); }
+#below { position: fixed; left: 0; right: 0; top: min(50vw, calc(100vh - var(--bar))); bottom: 0; overflow: auto; padding: 10px 14px; box-sizing: border-box;
+  background: linear-gradient(#070b16, #04060d); display: flex; flex-direction: column; gap: 7px; }
+#below .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+#below .lbl { width: 96px; font: 800 12px "Exo 2", sans-serif; letter-spacing: .12em; color: #8ea6d6; text-transform: uppercase; }
+#below button, #below a { border: 0; border-radius: 10px; padding: 8px 12px; font: 700 13px "Exo 2", sans-serif; color: #fff; background: #26324f; cursor: pointer; text-decoration: none; }
+#below button:hover, #below a:hover { filter: brightness(1.2); }
+#below .go { background: #b07a12; } #below .t1 { background: #1f4fa8; } #below .t2 { background: #b8560f; } #below .bad { background: #8c1f28; }
+#below .is-on, #below a.cur { background: #16a06a; }
+#below .info { font: 600 12px ui-monospace, monospace; color: #9fb4e0; }
+#below .info span:first-child { color: #7dffb0; }

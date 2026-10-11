@@ -66,6 +66,11 @@ tools/chep-aword-sang-game.py — gốc để cải tiến tiếp
   game6b/ + core/launch-aerial-6b.js                       MẪU 6b: tay robot + cửa theo vỏ, góc rộng khi bắn, vòng lên lao xuống, ô không chữ, BOOST thanh cyan
   aword/                      BẢN CHÉP game mới nhất từ AWord (tools/chep-game-aword.py) — đừng sửa tay
   assets/                     ảnh địa hình mới nhất (tools/tao-dia-hinh.py sinh ra); assets/4b/ = bộ cũ của mẫu 4b
+speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ sơ + quyết định đã chốt + mẫu 1: NGHIEN CUU GAMEPLAY.md (mục 7, 9)
+  mau-1a-cao-vua.html · mau-1b-truc-thang.html   MẪU 1: đường + 2 xe + camera theo khoảng cách (A cao vừa / B + trực thăng); vỏ thử core/page-1.js
+  core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr
+  core/sr3d-world-1.js         trời/đất/biển/đường 4 làn (mỗi đội 2)/cột đèn/cây/vạch đoạn/cổng đích + CONG THẾ GIỚI (makeBend) + groundH JS khớp GPU (Math.fround)
+  core/sr3d-car-1.js           xe từ 5 dáng bãi xe Rocket Race (lambo/porsche/ferrari/suv/sedan), màu đội, đèn hậu dải, cánh gió, lửa pô
 balloon-pop/                  (29/9) Balloon Pop 3D — dựng lại Wordwall Balloon pop; hồ sơ luật chơi: NGHIEN CUU GAMEPLAY.md
   index.html                  chọn mẫu · mau-1-nhin-ngang.html (view "side") · mau-2-cheo-tren.html (view "top")
   core/bp3d.js                lõi CHUNG: cảnh sa mạc, tàu, khinh khí cầu, luật, HUD; mẫu chỉ khác `view` (VIEWS đầu file)
@@ -97,6 +102,8 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   Bản mới nhất: `game8` = AWord `156cf57` (Đợt 478).
 
 ## Khám phá kỹ thuật
+- CONG THẾ GIỚI (SPEED RUN): đường logic thẳng trục z, hình cong nhờ vertex `x += bx·dz²` — phải TẮT DẦN khi 2 xe xa (dz lớn ⇒ xe dẫn dời ngang hàng chục mét, máy quay nhìn hụt); mọi vật đặt trên đất tính độ cao bằng CÙNG hàm nhiễu ở JS với `Math.fround` từng phép để khớp float32 GPU.
+- Trình duyệt giữ mô-đun ES cũ sau khi sửa file (python http.server) ⇒ `await fetch(url, {cache:'reload'})` từng file rồi `location.reload()`.
 - iPAD ĐIỀU KHIỂN GAME (STAR LOOT 2q): phím đi WebRTC DataChannel thẳng iPad → máy chiếu; kho chung chỉ để bắt tay. ⛔ Kho bắt tay CÓ THỂ RƠI
   một lần báo (bàn thử: game đang nạp ⇒ lỡ lời chào ⇒ iPad kẹt "Connecting…" mãi) ⇒ bên chờ phải tự ghi lại định kỳ (`nudge` 4 s, tối đa 8 lần).
   Đường dự phòng qua kho: kho gộp nhiều lượt ghi sát nhau thành MỘT lần báo ⇒ phải gửi kèm ĐUÔI phím (`rq` 4 phím gần nhất + số đếm `rs`), không chỉ phím cuối.
@@ -112,4 +119,5 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 - Hạt vệt khói phát theo khung hình ⇒ thành từng cục khi tàu nhanh ⇒ rải đều theo QUÃNG ĐƯỜNG (nội suy vị trí loa phụt giữa 2 khung).
 
 ## Roadmap
+- ⬜ SPEED RUN (11/10/2026): thầy chốt hết đề xuất; ✅ mẫu 1 (đường + 2 xe + camera theo gap, 2 góc) ⇒ ⬜ thầy chọn góc ⇒ mẫu 2 tên lửa + BOOST + tiếng ⇒ mẫu 3 iPad đổi làn + vật phẩm ⇒ mẫu 4 intro bãi xe ⇒ ghép AWord khuôn STAR LOOT.
 - ⏸ Intro "phóng từ mặt đất" TẠM CHỐT ở **mẫu 4c** (26/9/2026); **mẫu 4d** (cùng ngày) = bản đồ dựng lại theo ảnh, chờ thầy xem. Ghép vào AWord theo kế hoạch 7 bước ở `GHI CHU DU AN.md` Chặng 4 (tàu dùng `makeRocket` của AWord, vendor three, nhịp 3-2-1 do template giữ, âm thanh, TOMKO).
