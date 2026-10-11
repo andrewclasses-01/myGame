@@ -381,6 +381,24 @@ Tôi bấm nút Fight trong Mode thì không chuyển được, tiện kiểm tr
   chạm lệch góc trái ⇒ "l", robot B (6,11)→(6,10) · bom góc ⇒ bom đội B 1→0 · chạm tâm ⇒ bỏ qua.
 ✅ **THẦY ĐÃ THỬ iPad THẬT (05/10/2026): nhãn XANH (nối thẳng WebRTC trên Wi-Fi lớp), chơi ổn.** Thầy sẽ build thêm sau.
 
+## Star Loot 2r — 11/10/2026 · 3 THANH OPTIONS MỚI: Enemies 0–10 · Lives ∞ · Bomb timer 1–10 s · phiên máy MSI
+**Bối cảnh (thầy):** "Đọc game STAR LOOT trên cả myGame và AWord, sửa options trên AWord: thêm một thanh Enemy để quyết định số Robot địch, 0 đến 10 ·
+thanh Lives thêm một nấc cuối là không giới hạn · thêm một thanh thời gian nổ bom, kéo từ 1s đến 10s".
+**Đã làm (mẫu 2r = 2q + 3 tuỳ chọn; `core/mc3d-2r.js/.css`, trang `mau-2r-star-loot-enemy-fuse.html`; padlink/padui/pad-2q giữ nguyên):**
+- `opt.enemies` 0..10 (`MAX_ENEMIES`) = số robot địch; trước gắn cứng theo difficulty (1–4). Difficulty nay CHỈ là tốc độ địch (nhãn phụ "enemy speed").
+  Options truyền vào không có `enemies` ⇒ `enemiesFor(difficulty)` (export) = luật cũ ⇒ act AWord đã lưu chơi y như trước.
+  Dựng sẵn 10 robot (trước 4). 4 robot đầu ở 4 góc `espots` (Fight vẫn chọn bộ góc công bằng); robot thứ 5+ ở `xspots` = `extraSpots(n)`:
+  ô có sàn, ngoài sân xuất phát, cách ô xuất phát (+ 2 ô đội Fight) ≥ 5 ô, chọn tham lam ô xa mọi ô đã lấy nhất ⇒ trải đều. Hồi sinh sau đổi người dùng cùng `enemySpot(i)`.
+  ⚠️ Cố ý KHÔNG nhét ô thêm vào `espots`: `pickFightSpots` duyệt mọi tổ hợp k góc ⇒ 10 ô là C(10,k) × mọi ô bệ, quá nặng; và `pickSpots` né bệ khỏi espots.
+- `opt.lives` 10 = ∞ (`LIVES_INF`): bị trúng vẫn ngã / đổi người / hồi sinh, không trừ mạng, không "−1"; ô tim "♥ ∞"; vạch năng lượng luôn đầy.
+- `opt.fuse` 1..10 = giây bom tự nổ (bỏ hằng `FUSE_S = 5`); mỗi bom giữ `b.fuse` lúc đặt (đổi Options giữa chừng không làm bom đang cháy nhảy giờ).
+- Bảng Options riêng của myGame: + Enemies (0 = Off), Lives nấc ∞, Bomb timer "Ns"; `OPT_KEYS` + `DEFAULTS` thêm `enemies: 2, fuse: 5`.
+**Đã kiểm (browser pane :8866, `__mc`):** 10 địch / 10 ô khác nhau (Single + Fight) · ∞ bị đâm ⇒ swap, mạng vẫn 10 · Fight 2 đội 10/in · mạng 3 dính bom ⇒ 2 ·
+0 địch ⇒ 0 · ngòi 2 s ⇒ nổ 2,1 s · 10 s ⇒ 10,0 s · `enemiesFor` 1→1 3→1 4→2 6→2 7→3 8→3 9→4 10→4 · 0 lỗi console.
+**Lỗi gặp & gỡ:** dòng dựng robot là MỘT DÒNG `.map(c => { … })` — chèn ghi chú `//` giữa dòng nuốt mất thân hàm ⇒ `node --check` báo "missing )" ⇒ đổi sang `/* */`
+(đúng bẫy đã ghi ở CLAUDE.md "Ghi chú giữa dòng JS nhiều lệnh phải dùng /* */").
+➡️ Ghép AWord: Đợt 503 (`tools/chep-star-loot.py` BAN 2r, khoá phẳng `slEnemies` / `slFuse`, `lives` kẹp 1..10; gỡ `mc3d-2q.js/.css` khỏi AWord).
+
 ## SPEED RUN — 11/10/2026 · NGHIÊN CỨU TRƯỚC (chưa dựng mẫu) · phiên máy MSI
 **Bối cảnh (thầy):** "chuẩn bị cho một game mới với mục tiêu gắn cho AWord và với vibe tương tự: SPEED RUN — đua ô tô, tương tự Rocket race nhưng
 thiết kế khác khá nhiều: đường đua nhìn từ phía sau 2 xe nhưng camera lên cao hơn, 2 xe cách xa thì camera lên cao hơn nữa; cân nhắc lái xe cho iPad;
@@ -430,6 +448,7 @@ tải lại tự nối; phím; 173 lệnh vẽ / 286 nghìn tam giác; 60+ khung
 **Thầy (11/10): "Commit + push. Tôi sẽ tiếp tục trong các phiên sau."** ⇒ đã commit + push mẫu 2 lên GitHub (andrewclasses-01/myGame, nhánh main). ⏸ Tạm dừng ở mẫu 2.
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **STAR LOOT 2r** (11/10, = AWord Đợt 503): thầy chơi trên TOMKO — 10 địch có quá rối / tụt khung không, ngòi 1 s có kịp chạy không, Lives ∞ dùng ổn chưa.
 - ⬜ **SPEED RUN**: 11/10 đã dựng MẪU 2 "buồng lái" (`speed-run/mau-2-buong-lai.html` + `pad-2.html`, hồ sơ mục 10) — ĐÃ push; ⏸ thầy tạm dừng, phiên sau tiếp. Thầy chạy thử ⇒ nhận xét bố cục tap-lô / lái / tên lửa / luật năng lượng ⇒ mẫu tiếp (tiếng · vật phẩm + chướng ngại · intro bãi xe) ⇒ ghép AWord khuôn B (+ kênh bắt tay Firestore để iPad THẬT lái được; TILT chưa thử trên iPad thật).
 - ✅ 05/10 thầy thử iPad D-pad trên lớp thật (AWord Đợt 480b `bc6d839`, myGame `ea20330`): nhãn XANH (nối thẳng), chơi ổn. Thầy sẽ build thêm sau.
 - ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
