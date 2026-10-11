@@ -409,8 +409,28 @@ Phát hiện bên lề: Rocket Race `mau-8 ?skip=1` vẫn văng (`rr3d-view.js:2
 ⬜ Thầy xem 2 góc máy ⇒ chọn ⇒ mẫu 2 (tên lửa + BOOST + tiếng).
 **Thầy (11/10): "Tạm thời bản 1 đến đây. Commit + push, tôi sẽ tiếp tục trong các phiên sau."** ⇒ đã commit + push mẫu 1 lên GitHub (andrewclasses-01/myGame, nhánh main).
 
+## SPEED RUN mẫu 2 — 11/10/2026 · "BUỒNG LÁI": chia đôi màn, góc nhìn trong xe, lái iPad kiểu Asphalt, tên lửa né được · phiên máy MSI
+**Bối cảnh / yêu cầu (thầy, sau khi mẫu 1 đã push):** "Chia màn hình làm 2, sử dụng góc nhìn thứ nhất làm điều khiển trong xe. Các thông số cũng hiển thị bên trong, để chừa một dải trên
+hiện câu hỏi và bản đồ đường đua" · "Sử dụng điều khiển là iPad, điều khiển trái phải, tăng tốc phanh tương tự như các game Asphalt thông thường" · "Xe có trang bị tên lửa, có cơ chế bắn
+tương tự như rocket race, có thể tăng tốc hoặc phanh để tránh, có thể lái trái phải để tránh". Đầu phiên đã kiểm git: myGame khớp origin `ce0a7ff`, không có file dở.
+**Đã làm:** `speed-run/mau-2-buong-lai.html` + `speed-run/pad-2.html` (tay lái iPad) + thẻ mẫu 2 ở `speed-run/index.html`; lõi `core/sr3d-2.js`, `core/sr3d-2.css`, tên lửa + hạt
+`core/sr3d-missile-2.js`, nối iPad `core/sr3d-padlink-2.js` (gốc STAR LOOT 2q + giao thức lái liên tục), giao diện tay lái `core/sr3d-padui-2.js`, vỏ thử `core/page-2.js`
+(thêm 1 dòng `.hint` vào `core/page-1.css`). Dùng lại nguyên thế giới/xe/autores của mẫu 1. Chi tiết luật, màn hình, giao thức, số đo ở `speed-run/NGHIEN CUU GAMEPLAY.md` **mục 10**.
+**Quyết định (Claude tự chốt, cần thầy duyệt khi thử):** dải trên = câu hỏi 2 đội + bản đồ; ĐÁP ÁN nằm trên màn cảm ứng TAP-LÔ ở mép ngoài mỗi nửa (TOMKO: em với tới phần dưới bảng dễ
+hơn, 2 đội đứng tách 2 bên) · vô lăng kiểu F1 có màn km/h + năng lượng · ga TỰ ĐỘNG như Asphalt, BOOST nhanh hơn mà KHÔNG tốn thêm năng lượng (năng lượng = mét đường) · năng lượng
+tối đa 4 ô · sai = mất ô đầy đang dồn + phanh · tên lửa: 3 đúng liền = 1 quả, tối đa 3, bay 2,6 s, khoá điểm rơi khi còn 1,1 s, trúng = xoay + mất 2 ô · không có iPad ⇒ xe tự lái,
+trả lời đúng lúc tên lửa đang bay ⇒ tự né · dải phân cách bê tông giữa 2 nửa đường.
+**Lỗi gặp & gỡ:** (1) màn trong xe ĐEN hẳn sau vài giây — truy bằng cách đọc thẳng render target half-float, đếm NaN: do `Math.pow(f, 1.4)` với f = −1e-8 ở mép capô ⇒ đỉnh NaN ⇒
+bloom loang NaN ra cả màn ⇒ kẹp f · (2) three.js giải MSAA ở cuối mỗi `render()`, phép blit bị scissor cắt ⇒ thêm 1 lần vẽ cảnh rỗng không scissor · (3) chân trời thấp + capô mảnh ⇒
+dịch ống kính `setViewOffset` · (4) vòng ngắm phẳng gần như vô hình từ ghế lái ⇒ cột sáng đỏ đứng, trộn thường · (5) khung báo động che chỗ tên lửa rơi ⇒ dời xuống trên capô ·
+(6) tên lửa bay quá cao ngoài khung nhìn ⇒ vòng cung thấp · (7) nút TILT đè nút lái ⇒ dời góc trên trái.
+**Đã kiểm:** trận tự chơi tới đích; 4 kịch bản tên lửa (đứng im trúng · lái né · phanh né · BOOST né); iPad giả ở tab 2 qua WebRTC (1–2 ms): lái, BOOST, bắn, nhận đồng hồ + báo động,
+tải lại tự nối; phím; 173 lệnh vẽ / 286 nghìn tam giác; 60+ khung/s RTX 4060. Chưa đo TOMKO, chưa thử iPad thật (cần kênh bắt tay Firestore của AWord), chưa có tiếng.
+⬜ Thầy chạy thử mẫu 2 ⇒ nhận xét ⇒ mẫu tiếp theo.
+**Thầy (11/10): "Commit + push. Tôi sẽ tiếp tục trong các phiên sau."** ⇒ đã commit + push mẫu 2 lên GitHub (andrewclasses-01/myGame, nhánh main). ⏸ Tạm dừng ở mẫu 2.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ **SPEED RUN**: thầy xem mẫu 1a (góc cao vừa) và 1b (cao hơn + trực thăng) — chọn góc máy, nhận xét xe/đường/độ cong/tốc độ ⇒ mẫu 2 (tên lửa + BOOST + tiếng). ⏸ Thầy TẠM DỪNG ở mẫu 1 (11/10), đã lên GitHub; phiên sau tiếp tục.
+- ⬜ **SPEED RUN**: 11/10 đã dựng MẪU 2 "buồng lái" (`speed-run/mau-2-buong-lai.html` + `pad-2.html`, hồ sơ mục 10) — ĐÃ push; ⏸ thầy tạm dừng, phiên sau tiếp. Thầy chạy thử ⇒ nhận xét bố cục tap-lô / lái / tên lửa / luật năng lượng ⇒ mẫu tiếp (tiếng · vật phẩm + chướng ngại · intro bãi xe) ⇒ ghép AWord khuôn B (+ kênh bắt tay Firestore để iPad THẬT lái được; TILT chưa thử trên iPad thật).
 - ✅ 05/10 thầy thử iPad D-pad trên lớp thật (AWord Đợt 480b `bc6d839`, myGame `ea20330`): nhãn XANH (nối thẳng), chơi ổn. Thầy sẽ build thêm sau.
 - ⬜ Thầy chơi TRAIN RUSH 1an (AWord) trên TOMKO: xương rồng mọc lại trông có tự nhiên không (cây dùng lại từ khúc khác).
 - ⬜ Thầy chơi STAR LOOT 2p (AWord) trên TOMKO: độ mượt, sàn đổi đúng mỗi câu, độ lấp loá khi bỏ MSAA.

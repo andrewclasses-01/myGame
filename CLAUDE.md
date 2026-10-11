@@ -71,6 +71,10 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr
   core/sr3d-world-1.js         trời/đất/biển/đường 4 làn (mỗi đội 2)/cột đèn/cây/vạch đoạn/cổng đích + CONG THẾ GIỚI (makeBend) + groundH JS khớp GPU (Math.fround)
   core/sr3d-car-1.js           xe từ 5 dáng bãi xe Rocket Race (lambo/porsche/ferrari/suv/sedan), màu đội, đèn hậu dải, cánh gió, lửa pô
+  mau-2-buong-lai.html + pad-2.html?t=0|1   (11/10) MẪU 2 "BUỒNG LÁI": chia đôi màn, góc nhìn TRONG XE, tap-lô DOM (đáp án + vô lăng có màn), lái iPad kiểu Asphalt, tên lửa né được (hồ sơ mục 10)
+  core/sr3d-2.js               lõi mẫu 2: createSpeedRun({mount, questions, title, options, remote, onEvent}) — 2 máy quay vẽ vào 2 nửa CÙNG render target (SplitPass) rồi bloom 1 lần; bàn thử window.__sr
+  core/sr3d-missile-2.js       tên lửa (Bézier tới điểm rơi dự đoán, khoá 1,1 s, cột sáng đỏ + vòng ngắm) + makeParticles (khói/lửa/tia lửa có cong)
+  core/sr3d-padlink-2.js       nối iPad = STAR LOOT 2q + giao thức lái liên tục "s:lái,boost,brake" / "fire" / game→iPad "i:…" · core/sr3d-padui-2.js giao diện tay lái
 balloon-pop/                  (29/9) Balloon Pop 3D — dựng lại Wordwall Balloon pop; hồ sơ luật chơi: NGHIEN CUU GAMEPLAY.md
   index.html                  chọn mẫu · mau-1-nhin-ngang.html (view "side") · mau-2-cheo-tren.html (view "top")
   core/bp3d.js                lõi CHUNG: cảnh sa mạc, tàu, khinh khí cầu, luật, HUD; mẫu chỉ khác `view` (VIEWS đầu file)
@@ -103,6 +107,11 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 
 ## Khám phá kỹ thuật
 - CONG THẾ GIỚI (SPEED RUN): đường logic thẳng trục z, hình cong nhờ vertex `x += bx·dz²` — phải TẮT DẦN khi 2 xe xa (dz lớn ⇒ xe dẫn dời ngang hàng chục mét, máy quay nhìn hụt); mọi vật đặt trên đất tính độ cao bằng CÙNG hàm nhiễu ở JS với `Math.fround` từng phép để khớp float32 GPU.
+- MÀN 3D ĐEN HẲN sau vài giây (SPEED RUN mẫu 2) = một đỉnh NaN (vd. `Math.pow(số âm cực nhỏ, 1.4)`) ⇒ bloom loang NaN ra CẢ khung. Truy: tắt bloom, đọc render target half-float bằng
+  `readRenderTargetPixels` (Uint16Array, NaN/Inf = `(v & 0x7c00) === 0x7c00`) rồi ẩn dần từng vật. ⚠️ Sau `composer.render()` OutputPass đã ĐỔI bộ đệm ⇒ đọc `writeBuffer`.
+- CHIA ĐÔI MÀN bằng scissor trên render target MSAA: three.js giải MSAA (blit) ở cuối mỗi `render()` và phép blit BỊ scissor cắt ⇒ phần ngoài scissor không bao giờ được giải ⇒
+  vẽ thêm 1 cảnh RỖNG (autoClear=false, scissor tắt) để giải trọn khung. Dịch ống kính bằng `camera.setViewOffset` (không chúi máy) để đặt chân trời theo ý mà cột đèn vẫn thẳng.
+- Vật PHẲNG trên mặt đường nhìn từ mắt người lái (1,1 m) gần như vô hình ở 30 m (3–4 px) ⇒ báo hiệu trên đường phải có vật ĐỨNG (cột sáng). Cộng sáng trên trời hoàng hôn bị nhoà ⇒ trộn thường.
 - Trình duyệt giữ mô-đun ES cũ sau khi sửa file (python http.server) ⇒ `await fetch(url, {cache:'reload'})` từng file rồi `location.reload()`.
 - iPAD ĐIỀU KHIỂN GAME (STAR LOOT 2q): phím đi WebRTC DataChannel thẳng iPad → máy chiếu; kho chung chỉ để bắt tay. ⛔ Kho bắt tay CÓ THỂ RƠI
   một lần báo (bàn thử: game đang nạp ⇒ lỡ lời chào ⇒ iPad kẹt "Connecting…" mãi) ⇒ bên chờ phải tự ghi lại định kỳ (`nudge` 4 s, tối đa 8 lần).
@@ -119,5 +128,5 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 - Hạt vệt khói phát theo khung hình ⇒ thành từng cục khi tàu nhanh ⇒ rải đều theo QUÃNG ĐƯỜNG (nội suy vị trí loa phụt giữa 2 khung).
 
 ## Roadmap
-- ⬜ SPEED RUN (11/10/2026): thầy chốt hết đề xuất; ✅ mẫu 1 (đường + 2 xe + camera theo gap, 2 góc) ⇒ ⬜ thầy chọn góc ⇒ mẫu 2 tên lửa + BOOST + tiếng ⇒ mẫu 3 iPad đổi làn + vật phẩm ⇒ mẫu 4 intro bãi xe ⇒ ghép AWord khuôn STAR LOOT.
+- ⬜ SPEED RUN (11/10/2026): thầy chốt hết đề xuất; ✅ mẫu 1 (đường + 2 xe + camera theo gap, 2 góc, đã push) ⇒ thầy đổi hướng ⇒ ✅ mẫu 2 "buồng lái" (chia đôi màn, trong xe, iPad lái kiểu Asphalt, tên lửa né được; đã push) ⇒ ⬜ thầy thử ⇒ tiếng · vật phẩm/chướng ngại · intro bãi xe ⇒ ghép AWord khuôn STAR LOOT (+ bắt tay Firestore cho iPad thật).
 - ⏸ Intro "phóng từ mặt đất" TẠM CHỐT ở **mẫu 4c** (26/9/2026); **mẫu 4d** (cùng ngày) = bản đồ dựng lại theo ảnh, chờ thầy xem. Ghép vào AWord theo kế hoạch 7 bước ở `GHI CHU DU AN.md` Chặng 4 (tàu dùng `makeRocket` của AWord, vendor three, nhịp 3-2-1 do template giữ, âm thanh, TOMKO).

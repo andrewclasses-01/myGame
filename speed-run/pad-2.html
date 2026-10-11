@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>SPEED RUN — iPad steering wheel</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,700;0,800;0,900;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="pad"></div>
+<script type="module">
+// Bàn thử myGame: TAY LÁI iPad của SPEED RUN mẫu 2, kênh bắt tay CỤC BỘ (cùng trình duyệt với mau-2-buong-lai.html, mở ở tab khác).
+// ?t=0 đội 1 · ?t=1 đội 2 · không có ?t ⇒ màn chọn đội. iPad THẬT cần kênh bắt tay qua kho chung (Firestore của AWord) — làm khi ghép AWord.
+import { createPadClient, localSignal } from "./core/sr3d-padlink-2.js";
+import { mountDrivePad, mountPadChooser } from "./core/sr3d-padui-2.js";
+const q = new URLSearchParams(location.search), mount = document.getElementById("pad");
+const goTeam = t => { q.set("t", t); location.href = "?" + q; };
+if (!q.has("t")) mountPadChooser(mount, { onPick: goTeam });
+else {
+  const team = q.get("t") === "1" ? 1 : 0;
+  let ui = null;
+  const client = createPadClient({ signal: localSignal(), team, onState: s => ui && ui.setState(s), onInfo: i => ui && ui.setInfo(i) });
+  ui = mountDrivePad(mount, { team, client, onBack: () => { client.destroy(); q.delete("t"); location.href = "?" + q; } });
+  ui.setState(client.state);
+  window.__padc = client;
+}
+</script>
+</body>
+</html>

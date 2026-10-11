@@ -12,3 +12,4 @@ html, body { margin: 0; height: 100%; background: #04060d; overflow: hidden; fon
 #below .is-on, #below a.cur { background: #16a06a; }
 #below .info { font: 600 12px ui-monospace, monospace; color: #9fb4e0; }
 #below .info span:first-child { color: #7dffb0; }
+#below .hint { font: 600 12px "Exo 2", sans-serif; color: #9fb4e0; }

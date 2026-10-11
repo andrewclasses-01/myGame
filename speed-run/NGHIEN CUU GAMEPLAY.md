@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **11/10/2026 thầy CHỐT cả 8 đề xuất (mục 7) ⇒ đã dựng MẪU 1a + 1b (mục 9). ⏸ Thầy TẠM DỪNG ở mẫu 1, đã commit + push lên GitHub; phiên sau tiếp tục từ mục 9 (⬜ chọn góc máy ⇒ mẫu 2).**
+Trạng thái: **11/10/2026 thầy CHỐT cả 8 đề xuất (mục 7) ⇒ MẪU 1a + 1b (mục 9, đã push) ⇒ cùng ngày thầy đổi hướng: chia đôi màn, góc nhìn TRONG XE, lái iPad kiểu Asphalt, tên lửa né được ⇒ MẪU 2 "buồng lái" (mục 10). Đã commit + push; ⏸ thầy tạm dừng, phiên sau tiếp từ mục 10 (⬜ thầy chạy thử mẫu 2).**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -290,3 +290,52 @@ nhìn dốc xuống + sương theo độ cao · (4) nhãn xe thua dồn vào gó
 (6) đèn xe chìm trong mép vát thân (bản bãi xe cũng vậy) ⇒ đẩy ra 0,07 m · (7) trình duyệt giữ mô-đun cũ sau khi sửa ⇒ `fetch(..., {cache:'reload'})` rồi nạp lại.
 **Chưa có (theo kế hoạch):** tiếng · tên lửa + BOOST (mẫu 2) · iPad + vật phẩm/chướng ngại (mẫu 3) · intro bãi xe ANDREW STUDIO (mẫu 4) · Single · tự giữ 60 khung đã gắn nhưng chưa đo máy yếu.
 ⬜ Thầy xem 2 góc máy (TOMKO nếu được) ⇒ chọn A hay B (hoặc trộn), nhận xét xe/đường/độ cong/tốc độ ⇒ mẫu 2.
+
+## 10. ✅ MẪU 2 "BUỒNG LÁI" (11/10/2026) — chia đôi màn · góc nhìn trong xe · lái iPad kiểu Asphalt · tên lửa né được
+Thầy (11/10, phiên sau mẫu 1):
+> "Chia màn hình làm 2, sử dụng góc nhìn thứ nhất làm điều khiển trong xe. Các thông số cũng hiển thị bên trong, để chừa một dải trên hiện câu hỏi và bản đồ đường đua"
+> "Sử dụng điều khiển là iPad, điều khiển trái phải, tăng tốc phanh tương tự như các game Asphalt thông thường"
+> "Xe có trang bị tên lửa, có cơ chế bắn tương tự như rocket race, có thể tăng tốc hoặc phanh để tránh, có thể lái trái phải để tránh"
+⇒ Câu hỏi "chọn góc A hay B" của mẫu 1 KHÔNG CÒN: thầy chuyển hẳn sang góc nhìn TRONG XE.
+
+Trang: `speed-run/mau-2-buong-lai.html` (+ tay lái iPad `speed-run/pad-2.html?t=0|1`). Mẫu 1 giữ nguyên.
+File mới: `core/sr3d-2.js` (lõi) · `core/sr3d-2.css` · `core/sr3d-missile-2.js` (tên lửa + hạt khói/lửa/tia lửa dùng chung) · `core/sr3d-padlink-2.js` (nối iPad, gốc STAR LOOT 2q,
+MỞ RỘNG giao thức) · `core/sr3d-padui-2.js` (giao diện tay lái) · `core/page-2.js` (vỏ thử). Dùng lại NGUYÊN `sr3d-world-1.js`, `sr3d-car-1.js`, `sr3d-autores.js`.
+
+**Màn hình:** dải trên 15 % = câu hỏi đội 1 | BẢN ĐỒ đường đua (đường lượn từ xuất phát tới cờ đích, vạch mỗi đoạn, 2 chấm xe, chấm đỏ tên lửa đang bay, "TEAM n +34 m") | câu hỏi đội 2.
+Dưới = 2 nửa, mỗi nửa 1 máy quay TRONG XE của đội đó: cột kính + mép mui (SVG), gương chiếu hậu = "TEAM 2 ahead 34 m", nhãn xe đối thủ trên đường, nắp capô 3D màu đội có 2 sọc.
+TAP-LÔ (DOM, 27 % chiều cao khung) = màn cảm ứng 4 đáp án (2×2) + giá 3 tên lửa + nút FIRE + 3 chấm chuỗi đúng; VÔ LĂNG kiểu F1 quay theo tay lái, màn giữa vô lăng hiện
+nguồn lái (AUTO / KEYS / iPAD) + km/h + 4 ô năng lượng. 2 tap-lô ĐỐI XỨNG: màn đáp án ở MÉP NGOÀI (2 nhóm em đứng tách 2 bên bảng như cột đáp án Rocket Race), vô lăng ở giữa.
+Giữa 2 nửa: vạch chia xanh|cam. Màn chờ: máy quay đuổi sau xe mình, nút START + "iPad steering"; đếm đèn F1 thì máy quay lùi vào ghế lái; kết: máy quay ra lại sau xe + bảng kết.
+
+**Lái (kiểu Asphalt):** xe TỰ CHẠY ga đều 112 km/h khi còn năng lượng; ◀ ▶ lái LIÊN TỤC trong nửa đường của đội (dải phân cách bê tông giữa, rào hộ lan ngoài; quệt rào ⇒ chậm + tia lửa;
+đứng yên thì không lách ngang được); BOOST ⇒ 169 km/h; BRAKE ⇒ phanh 22 m/s². Nguồn lái theo thứ tự: iPad đã nối > bàn phím (A/D/W/S/F · ←/→/↑/↓/Enter, 4 s không chạm ⇒ thôi)
+> TỰ LÁI (giữ làn trong, BOOST khi còn > 1,15 ô). iPad đã nối mà em không chạm ⇒ xe đi thẳng ga đều.
+
+**Luật năng lượng (giữ "C lai" mẫu 1):** năng lượng E tính bằng MÉT; mỗi câu đúng +80 m (1 ô), tối đa 4 ô; xe chạy bao nhiêu trừ bấy nhiêu; tốc độ trần √(2·9·E) ⇒ hết năng lượng là
+lăn chậm dần dừng ĐÚNG chỗ (không có quãng "trôi không mất tiền") ⇒ TỔNG QUÃNG ĐƯỜNG = TỔNG NĂNG LƯỢNG, công bằng; lái giỏi (BOOST, né) chỉ làm tới SỚM hơn.
+SAI ⇒ phanh gấp 0,55 s + mất các ô ĐẦY đang dồn, giữ ô đang chạy dở (đúng tinh thần quyết định 6). Chạm đích trước thắng.
+
+**Tên lửa (như Rocket Race):** 3 câu đúng LIÊN TIẾP = +1 quả (tối đa 3, hiện đầu đạn đỏ trên 2 ống phóng ở nóc xe). Bắn: nút FIRE trên tap-lô / nút tên lửa iPad / phím F, Enter (cách nhau ≥ 1 s).
+Bay 2,6 s theo vòng cung thấp (Bézier, đỉnh 5–12 m) tới ĐIỂM RƠI DỰ ĐOÁN = chỗ xe bị bắn SẼ ở (theo v, a hiện tại, không quá năng lượng còn lại), cập nhật liên tục tới khi còn
+1,1 s thì KHOÁ. Đánh dấu điểm rơi: CỘT SÁNG ĐỎ đứng thẳng + vòng ngắm trên đường; nửa màn bị bắn viền đỏ nhấp nháy + "⚠ MISSILE 1.8 s" → "DODGE!"; iPad cũng báo đỏ.
+Lúc chạm: lệch ngang < 1,55 m VÀ lệch dọc < 3,4 m ⇒ TRÚNG: xe xoay tròn 1,4 s (máy quay trong xe xoay theo) + mất 2 ô năng lượng (quyết định 7); trong ~4,2 m ⇒ SƯỢT (khựng);
+xa hơn ⇒ "DODGED!". Né được bằng: lái sang làn kia (3,6 m) · phanh · BOOST (nếu chưa ở tốc độ tối đa). Không có người lái (tự lái): trả lời ĐÚNG khi tên lửa đang bay ⇒ xe tự đánh lái né.
+
+**iPad — giao thức mở rộng** (`sr3d-padlink-2.js`, bắt tay y hệt 2q): iPad → game `"s:<lái −100..100>,<boost>,<brake>"` (gửi khi đổi + nhắc lại 120 ms khi đang giữ; game NHẢ hết nếu im
+> 450 ms) + `"fire"`; game → iPad `"i:km/h,ô,tên lửa,báo động,pha"` 4 lần/giây. Đường dự phòng qua kho: `sn/st` = trạng thái lái MỚI NHẤT (≤ 5 lần/giây) + `rs/rq` cho lệnh rời.
+Tay lái iPad (`pad-2.html`): cầm ngang 2 tay — ngón cái trái ◀ ▶ (giữ để lái), ngón cái phải BRAKE + BOOST (bàn đạp), nút tên lửa góc trên phải (số quả), giữa trên đồng hồ km/h + 4 ô
+năng lượng + "⚠ MISSILE / DODGE! / ANSWER FOR ENERGY"; nút TILT = lái bằng nghiêng iPad (thử nghiệm, iOS hỏi quyền, lúc bật lấy tư thế đang cầm làm "thẳng"; CHƯA thử trên iPad thật).
+⚠️ Bàn thử myGame dùng kênh bắt tay CỤC BỘ (2 tab cùng trình duyệt). iPad THẬT cần kênh bắt tay qua kho chung (Firestore của AWord) ⇒ làm khi ghép AWord.
+
+**Đã kiểm (browser pane):** cả trận tự chơi tới đích (~38 s, có trúng tên lửa) · 4 kịch bản tên lửa: đứng im ⇒ TRÚNG (xoay, mất 2 ô) · lái sang làn ngoài sau khi khoá ⇒ NÉ · phanh ⇒ NÉ ·
+BOOST ⇒ NÉ · tay lái iPad ở tab thứ 2: nối WebRTC (trễ 1–2 ms), ◀ ▶ lái, BOOST tăng tốc, bắn tên lửa từ iPad, iPad nhận km/h + báo động; tải lại trang iPad ⇒ tự nối lại ·
+phím A/F ⇒ nguồn lái KEYS · 0 phần tử NaN trong cảnh · 173 lệnh vẽ, 286 nghìn tam giác (2 máy quay) · thực tế 60+ khung/s trên RTX 4060 — **chưa đo TOMKO/myActivity, chưa thử iPad thật**.
+**Lỗi gặp & gỡ:** (1) MÀN ĐEN sau vài giây trong xe: `Math.pow(f, 1.4)` với f âm 1e-8 ở mép capô ⇒ NaN ⇒ bloom loang NaN đen CẢ 2 nửa ⇒ kẹp f vào 0..1 ·
+(2) three.js giải MSAA (blit) ở cuối mỗi `render()` và phép blit BỊ scissor cắt ⇒ dải dưới tap-lô không được giải ⇒ vẽ thêm 1 cảnh rỗng không scissor để giải trọn khung ·
+(3) chân trời thấp, capô chỉ là vệt mảnh ⇒ dịch ống kính `setViewOffset` (không chúi máy, cột đèn vẫn thẳng) đặt chân trời ở 42 % khoảng 3D + capô "ăn gian" kích thước ·
+(4) vòng ngắm phẳng trên đường nhìn từ mắt người lái (1,1 m) ở 30 m chỉ còn 3–4 px ⇒ thêm CỘT SÁNG đứng · (5) cột cộng sáng bị nhoà trên trời hoàng hôn ⇒ trộn thường ·
+(6) khung báo động che đúng chỗ tên lửa lao xuống ⇒ dời xuống trên capô · (7) tên lửa vọt cao 11 m, ngoài khung nhìn (chỉ thấy tới ~18° trên chân trời) ⇒ vòng cung thấp, đầu đường bay nhanh ·
+(8) nút TILT đè nút ▶ trên iPad ⇒ dời lên góc trên trái. Bài học bàn thử: sau `composer.render()` OutputPass đã ĐỔI bộ đệm ⇒ đọc điểm ảnh ở `writeBuffer`, không phải `readBuffer`.
+**Chưa có:** tiếng · vật phẩm/chướng ngại trên đường · intro bãi xe ANDREW STUDIO · bản Single · ghép AWord (khuôn B + kênh bắt tay Firestore cho iPad thật).
+⬜ Thầy chạy thử (bàn phím hoặc 2 tab iPad giả) ⇒ nhận xét: bố cục tap-lô, cỡ chữ đáp án, cảm giác lái, tốc độ, độ khó né tên lửa, luật năng lượng (ga tự động + BOOST không tốn thêm).
