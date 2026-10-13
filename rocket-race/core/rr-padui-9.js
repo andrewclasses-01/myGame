@@ -54,6 +54,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#05060a;overscroll-beh
 .mp-main{display:grid;grid-template-columns:1fr 1fr;gap:2.4vmin;min-height:0}
 .mp-3d{display:block;position:relative;border-radius:3vmin;overflow:hidden;background:#03050b;touch-action:none}
 .mp-3d-err{position:absolute;inset:0;display:grid;place-items:center;font:800 3vmin "Exo 2",sans-serif;color:#fca5a5}
+.mp-3d-err[hidden]{display:none}
 @media (orientation:portrait){.mp-main{grid-template-columns:1fr;grid-template-rows:1fr 1fr}}
 /* (mẫu 9 · 3D) nút FIRE / BOOST HTML cũ đã bỏ — bảng 3D của game thay thế, xem rr-padscene-9.js */
 /* báo động + màn phủ */

@@ -33,7 +33,8 @@ rocket-race/
   game5c/ + core/launch-aerial-5c.js + core/auto-res.js   MẪU 5c: tự giữ 60 khung, bóng theo nhu cầu, dịch sẵn shader
   game6/ (+ rr3d-missile.js) + core/launch-aerial-6.js     MẪU 6: TÊN LỬA tấn công giữa 2 tàu + đội 2 CAM; tiếng tools/tao-am-thanh-6.py
   game8/ (+ rr3d-launch.js, launch/, rr3d-intro-sound.js, sfx-intro/)   MẪU 8 (05/10) = chép NGUYÊN AWord 156cf57 (sau Đợt 478) — cảnh phóng + tiếng intro cũng của AWord
-  mau-9-ipad-dieu-khien.html + pad-9.html   MẪU 9 (MỚI NHẤT, 13/10): iPAD THAM GIA GAME — dùng game9; luật tên lửa trong trang = chép AWord msLoad/msFire/msBoost/msEnd
+  game10/ + mau-10-khop-aword.html            MẪU 10 (MỚI NHẤT, 13/10) = chép NGUYÊN AWord 20110c4 (Đợt 511 — đã ghép mẫu 9) — gốc để cải tiến tiếp
+  mau-9-ipad-dieu-khien.html + pad-9.html   MẪU 9 (13/10): iPAD THAM GIA GAME — dùng game9; luật tên lửa trong trang = chép AWord msLoad/msFire/msBoost/msEnd
   game9/                      = game8 + `rr3d-missile.js` thêm CHẾ ĐỘ GƯƠNG (api.mirror / mirrorTick / mirrorFlash / ui; threatFor đọc MIR) — để iPad dựng CHÍNH bảng tên lửa
                               + cột vạch năng lượng LUÔN cao 4 ô dự phòng (cả màn lớn, mọi Missiles max) + icon BOOST BỎ 3 vạch tốc độ ở đáy
                               (thầy 13/10 — 2 thay đổi này đổi CẢ game ⇒ khi ghép AWord cũng đổi)
@@ -115,7 +116,9 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   `python -X utf8 tools/chep-train-rush.py` / `tools/chep-star-loot.py` (ghi `3d/NGUON.json` = commit myGame). Kiểm khớp: chạy lại script chép, AWord không đổi gì = khớp.
 - ROCKET RACE: GỐC ở AWord (`templates/rocket-race/`). MỖI Đợt Rocket Race trên AWord ⇒ ở myGame chạy
   `python -X utf8 tools/chep-aword-sang-game.py gameN` (thư mục MỚI) + trang `mau-N-…html` (chép trang mẫu gần nhất, đổi import sang gameN) ⇒ commit + push.
-  Bản mới nhất: `game8` = AWord `156cf57` (Đợt 478) — 13/10/2026 đã soát lại: AWord tới `c7f8296` chỉ đổi `rocket-race.js` (+4 dòng iPad Đợt 508), các file 3D vẫn khớp.
+  Bản mới nhất: `game10` = AWord `20110c4` (Đợt 511 — iPad Game controller). (game8 = `156cf57` Đợt 478.)
+  ⚠️ 4 file iPad của AWord (`templates/rocket-race/rr-padlink.js` / `rr-padui.js` / `rr-padscene.js` = CHÉP `rocket-race/core/*-9.js` của kho này, chỉ đổi import;
+  `rr-pad-signal.js` là của AWord) — tool chép KHÔNG lấy chúng ⇒ sửa ở `core/*-9.js` (hoặc bản mới `-10`), rồi chép tay sang AWord.
   ⚠️ NGOẠI LỆ mẫu 9 (iPad tham gia game): tính năng mới làm ở myGame TRƯỚC (thầy chọn) ⇒ thầy OK ⇒ ghép AWord (xem GHI CHU chặng "Rocket Race mẫu 9").
 
 ## Khám phá kỹ thuật
@@ -144,7 +147,7 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 - Hạt vệt khói phát theo khung hình ⇒ thành từng cục khi tàu nhanh ⇒ rải đều theo QUÃNG ĐƯỜNG (nội suy vị trí loa phụt giữa 2 khung).
 
 ## Roadmap
-- ⬜ ROCKET RACE iPad tham gia game (13/10/2026): ✅ mẫu 9 (`mau-9-ipad-dieu-khien.html` + `pad-9.html`, kênh cục bộ 2 tab) ⇒ ⬜ thầy thử ⇒ ghép AWord: nút iPad thành bảng
+- ✅ ROCKET RACE iPad tham gia game (13/10/2026): mẫu 9 ⇒ ĐÃ GHÉP AWord Đợt 511 `20110c4` (myGame game10 / mẫu 10). ⬜ thầy thử 2 iPad thật. Kế hoạch ghép (đã làm): nút iPad thành bảng
   chọn Off / Question screen / Game controller (`fightScreen` hiện là true/false) · kênh bắt tay Firestore (khuôn `sl-pad-signal.js`, tài liệu riêng rrpad_*, cùng tài khoản thầy
   — KHÔNG QR) · AWord `rr3d-missile.js` nhận chế độ gương của game9 (thêm, không đổi gì cho game) + vendor three/addons cho trang iPad · claim `ipad_now` thêm `ctl` ⇒ `pad.html` rẽ "rocketrace + ctl" ⇒ đội đã nhớ (`aw.ipadTeam`) ⇒ màn tên lửa · luật trong `rocket-race.js` (ms*) gọi padEvent/padState.
 - ⬜ SPEED RUN (11/10/2026): thầy chốt hết đề xuất; ✅ mẫu 1 (đường + 2 xe + camera theo gap, 2 góc, đã push) ⇒ thầy đổi hướng ⇒ ✅ mẫu 2 "buồng lái" (chia đôi màn, trong xe, iPad lái kiểu Asphalt, tên lửa né được; đã push) ⇒ ⬜ thầy thử ⇒ tiếng · vật phẩm/chướng ngại · intro bãi xe ⇒ ghép AWord khuôn STAR LOOT (+ bắt tay Firestore cho iPad thật).

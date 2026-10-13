@@ -1,0 +1,5 @@
+{
+ "aword_commit": "20110c4 Dot 511: Rocket race iPad \"Game controller\" - nut iPad trong tran = bang 3 the Off / Questions / Controller (option core fightPad, loai tru fightScreen); moi doi 1 iPad (trang chu > nut iPad > chon doi, khong QR) ban ten lua + BOOST qua WebRTC (rr-padlink, bat tay Firestore rr-pad-signal); bang iPad = chinh bang 3D cua game (rr3d-missile.js che do guong, rr-padscene) + duong dua mini co ten lua 2D bay/no + %; man lon van bam duoc; cot vach nang luong luon 4 o; icon BOOST bo 3 vach. Ghep myGame mau 9 4755fe1.",
+ "copied": "2026-10-13T22:28",
+ "base": "chép nguyên bộ game Rocket Race 3D từ AWord (20110c4 Dot 511: Rocket race iPad \"Game controller\" - nut iP)"
+}

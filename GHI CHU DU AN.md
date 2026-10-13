@@ -577,8 +577,21 @@ mô phỏng phải có size bằng nhau · Phần đích x/10 ghi số % tương
 4. Chỗ đích "x / 10" ⇒ **%** như thanh % của game (AWord Đợt 444 `view.lead()`): tàu DẪN ĐẦU đã đi bao nhiêu phần đường = round(100·max(p)/L).
 - Tự kiểm: iPad ngang — 2 quả to giữa màn, BOOST ngang hàng, 2 tàu mini cùng cỡ, "40%" (đội 1 ở nấc 4/10) · 0 lỗi mới.
 
+## Rocket Race mẫu 9 ⇒ ✅ ĐÃ GHÉP AWORD Đợt 511 (13/10, cùng phiên) · myGame `4755fe1` · AWord `20110c4` · mẫu 10
+Thầy: *"Commit + push myGame đi. Và đưa lên Aword đi."* ⇒ push myGame `4755fe1` (mẫu 9) ⇒ ghép AWord **Đợt 511** `20110c4` (17 file, +1082 dòng):
+- AWord `rr3d-missile.js` = game9 (vá diff game8→game9, 4 khúc; cần `patch --binary` vì file CRLF) · `rr3d-view.js` getter `trackLen` · 3 file iPad chép `core/*-9.js`
+  (đổi import sang `./vendor/three/...` — AWord vendor đã đổi addon sang đường tương đối nên KHÔNG cần importmap) · `rr-pad-signal.js` Firestore (khuôn sl-pad-signal) ·
+  `rocket-race.js` máy chủ iPad (rrPadStart/rrPadState/padEvent…) · core: nút iPad 3 thẻ (engine, option `fightPad`), `ipad-now` thêm `ctl`, kind `rocketrace-pad`, pad.js nhánh RR.
+- Thử trên AWord (dev 5511, `scratch/dot511-ipad-ctl.html?padsig=local&raf=1` + `pad.html?padsig=local`): iPad tự vào chọn đội ⇒ nối 3 ms ⇒ bảng 3D đúng ⇒ bắn từ iPad
+  trúng tàu đội 2 ⇒ đổi Questions ⇔ Controller qua bảng 3 thẻ, iPad tự theo · 0 lỗi.
+- Gặp (sửa CẢ 2 kho): `.mp-3d-err{display:grid}` đè `hidden` ⇒ thêm `.mp-3d-err[hidden]{display:none}`. Bàn thử AWord 2 tab chung localStorage ⇒ chung đội ⇒
+  `?padsig=local` lưu đội ở sessionStorage (core/ipad-now.js).
+- Đồng bộ: `tools/chep-aword-sang-game.py game10` ⇒ game10 = AWord 20110c4 (khác game9: dòng ghi chú + `trackLen`) · `mau-10-khop-aword.html` (mẫu 9 trên game10,
+  thử chạy được: trackLen 10, iPad nối). Thẻ MẪU 10 lên đầu rocket-race/index.html.
+
 ## VIỆC ĐANG CHỜ
-- ⬜ **ROCKET RACE mẫu 9 — iPad tham gia game** (13/10, đã bỏ QR, bảng iPad = 3D của game): thầy thử `rocket-race/mau-9-ipad-dieu-khien.html` + 2 tab `pad-9.html` (mỗi tab = 1 iPad, chọn đội;
+- ⬜ **ROCKET RACE iPad Game controller — ĐÃ LÊN AWord Đợt 511**: thầy thử 2 iPad THẬT trên lớp (trang chủ AWord ▸ nút iPad ▸ chọn đội; máy chiếu: trận Rocket Race ▸
+  nút iPad ▸ Controller) ⇒ đo độ mượt bảng 3D trên iPad (nặng ⇒ bỏ MSAA / hạ pixelRatio). Lịch sử mẫu 9: thầy thử `rocket-race/mau-9-ipad-dieu-khien.html` + 2 tab `pad-9.html` (mỗi tab = 1 iPad, chọn đội;
   cùng trình duyệt — hoặc GitHub Pages sau khi push) ⇒ nhận xét bố cục iPad / tiếng / báo động ⇒ ghép AWord (kế hoạch cuối chặng "Rocket Race mẫu 9"). iPad THẬT chỉ chạy được
   sau khi ghép (kênh Firestore cùng tài khoản).
 - ⬜ **STAR LOOT 2r** (11/10, = AWord Đợt 503): thầy chơi trên TOMKO — 10 địch có quá rối / tụt khung không, ngòi 1 s có kịp chạy không, Lives ∞ dùng ổn chưa.
