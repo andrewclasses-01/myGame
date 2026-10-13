@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ROCKET RACE — iPad</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,700;0,800;0,900;1,900&family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="pad"></div>
+<script type="module">
+// Bàn thử myGame (mẫu 9) = GIẢ LẬP pad.html của AWord cho chế độ iPad THAM GIA GAME. Thầy 13/10: "không muốn quét QR — bấm nút iPad trên trang chủ
+// AWord là mở ra chọn team luôn; tất cả cùng đăng nhập kho AWord (Firebase) từ đầu".
+//   AWord thật: trang chủ ▸ nút iPad ⇒ pad.html (đã có từ Đợt 480) — iPad nghe `ipad_now` (máy chiếu ghi, Đợt 508) và TỰ đổi màn:
+//     game "" ⇒ màn chờ · rocketrace + ctl ⇒ đội đã nhớ ⇒ bảng tên lửa (chưa chọn đội ⇒ màn chọn đội MỘT lần) · rocketrace không ctl ⇒ màn câu hỏi (source.html).
+//   Ở đây: kho bắt tay CỤC BỘ (localSignal "rrpad9": tài liệu "now" thay `ipad_now`, "host"/"pad0"/"pad1" như Firestore) ⇒ mở trang này ở 2 TAB
+//   cạnh mau-9-ipad-dieu-khien.html. Đội nhớ trong sessionStorage (mỗi TAB là một iPad — AWord thật: localStorage của từng iPad, `aw.ipadTeam`).
+//   ?t=0|1 = chọn sẵn đội (bàn thử).
+import { createPadClient, localSignal } from "./core/rr-padlink-9.js";
+import { mountMissilePad, mountPadChooser, mountPadHub } from "./core/rr-padui-9.js";
+const sig = localSignal(), mount = document.getElementById("pad"), q = new URLSearchParams(location.search);
+const TKEY = "rr9.team";
+const savedTeam = () => { const v = sessionStorage.getItem(TKEY); return v === "0" || v === "1" ? +v : null; };
+const saveTeam = t => sessionStorage.setItem(TKEY, String(t));
+if (q.has("t")) saveTeam(q.get("t") === "1" ? 1 : 0);
+
+let view = "", client = null, ui = null, manual = false, now = undefined, busy = [0, 0], chooser = null;
+function stopPad() { if (client) { client.destroy(); client = null; } if (ui) { ui.destroy(); ui = null; } }
+function showPad(team) {
+  if (view === "pad" + team) return;
+  stopPad(); view = "pad" + team; chooser = null;
+  client = createPadClient({ signal: sig, team,
+    onState: s => ui && ui.setState(s), onInfo: i => ui && ui.setInfo(i), onEvent: e => ui && ui.event(e) });
+  ui = mountMissilePad(mount, { team, client, onBack: () => { manual = true; showChooser(); } });
+  ui.setState(client.state);
+  window.__padc = client; window.__padui = ui;
+}
+function showChooser() {
+  stopPad(); view = "chooser";
+  chooser = mountPadChooser(mount, { current: savedTeam(), onPick: t => { saveTeam(t); manual = false; apply(); } });
+  chooser.setBusy(busy);
+}
+function showHub(title, html) {
+  const key = "hub:" + title; if (view === key) return;
+  stopPad(); view = key; chooser = null;
+  mountPadHub(mount, { title, html, onTeam: () => { manual = true; showChooser(); } });
+}
+function apply() {
+  if (now === undefined) return;
+  if (manual) { if (view !== "chooser") showChooser(); return; }
+  if (now && now.game === "rocketrace" && now.ctl) {
+    const t = savedTeam();
+    if (t === null) showChooser(); else showPad(t);
+  } else if (now && now.game === "rocketrace") {
+    showHub("QUESTION SCREEN", "Rocket Race is in <b>Question screen</b> mode. (AWord: this iPad opens the questions page by itself — not part of this sample.)");
+  } else {
+    showHub("iPAD READY", "Open <b>Rocket Race</b> on the classroom screen and choose <b>iPad ▸ Game controller</b>.<br>This iPad switches by itself.");
+  }
+}
+// máy chiếu ghi "now" = { game, ctl } — nghe để tự đổi màn (vào màn game nhanh, về màn chờ chậm như AWord: đổi act không làm iPad nháy)
+let applyT = 0;
+sig.listen("now", d => {
+  const first = now === undefined; now = d || null;
+  clearTimeout(applyT);
+  if (first) apply(); else applyT = setTimeout(apply, now && now.game ? 300 : 1500);
+});
+// kho cục bộ có thể RƠI một lần báo khi 2 trang cùng đang nạp (thấy thật 13/10: iPad đứng màn chờ dù máy chiếu đã bật Game controller)
+// ⇒ cứ 3 s tự đọc lại "now". (AWord thật: onSnapshot Firestore luôn trả bản mới nhất — không cần.)
+setInterval(() => {
+  let d = null; try { d = JSON.parse(localStorage.getItem("rrpad9:now") || "null"); } catch (e) { /* */ }
+  if (JSON.stringify(d || null) !== JSON.stringify(now || null)) { now = d; apply(); }
+}, 3000);
+// đội nào đang có iPad khác (host ghi c0/c1) ⇒ màn chọn đội ghi chú
+sig.listen("host", d => { busy = [d && d.sid ? +d.c0 || 0 : 0, d && d.sid ? +d.c1 || 0 : 0]; if (chooser) chooser.setBusy(busy); });
+window.__hub = { get view() { return view; }, get now() { return now; } };
+</script>
+</body>
+</html>

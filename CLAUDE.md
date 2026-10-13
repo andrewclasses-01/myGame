@@ -32,7 +32,17 @@ rocket-race/
   game5b/ + core/launch-aerial-5b.js + core/intro-sound-5b.js + assets/sound-5b   MẪU 5b (= bản đang chạy trên AWord Đợt 398)
   game5c/ + core/launch-aerial-5c.js + core/auto-res.js   MẪU 5c: tự giữ 60 khung, bóng theo nhu cầu, dịch sẵn shader
   game6/ (+ rr3d-missile.js) + core/launch-aerial-6.js     MẪU 6: TÊN LỬA tấn công giữa 2 tàu + đội 2 CAM; tiếng tools/tao-am-thanh-6.py
-  game8/ (+ rr3d-launch.js, launch/, rr3d-intro-sound.js, sfx-intro/)   MẪU 8 (MỚI NHẤT, 05/10) = chép NGUYÊN AWord 156cf57 (sau Đợt 478) — cảnh phóng + tiếng intro cũng của AWord
+  game8/ (+ rr3d-launch.js, launch/, rr3d-intro-sound.js, sfx-intro/)   MẪU 8 (05/10) = chép NGUYÊN AWord 156cf57 (sau Đợt 478) — cảnh phóng + tiếng intro cũng của AWord
+  mau-9-ipad-dieu-khien.html + pad-9.html   MẪU 9 (MỚI NHẤT, 13/10): iPAD THAM GIA GAME — dùng game9; luật tên lửa trong trang = chép AWord msLoad/msFire/msBoost/msEnd
+  game9/                      = game8 + `rr3d-missile.js` thêm CHẾ ĐỘ GƯƠNG (api.mirror / mirrorTick / mirrorFlash / ui; threatFor đọc MIR) — để iPad dựng CHÍNH bảng tên lửa
+                              + cột vạch năng lượng LUÔN cao 4 ô dự phòng (cả màn lớn, mọi Missiles max) + icon BOOST BỎ 3 vạch tốc độ ở đáy
+                              (thầy 13/10 — 2 thay đổi này đổi CẢ game ⇒ khi ghép AWord cũng đổi)
+  core/rr-padscene-9.js       bảng 3D trên iPad: createMissiles({rockets: []}).buildConsole + hậu kỳ y game (ACES, bloom 0,85, lọc NaN, vignette/hạt); chạm = raycast vùng chạm game;
+                              NGANG: tên lửa trái · BOOST phải (dời bst bằng nhóm cha vì tickUI ghi bst.position.x) · DỌC: trên/dưới · khung cảnh báo đỏ kéo ra viền màn
+  core/rr-padlink-9.js        nối iPad ⇄ game HAI CHIỀU (gốc SPEED RUN sr3d-padlink-2): iPad gửi "fire"/"boost"/"load"; game gửi "i:<JSON trạng thái>" + "e:<sự kiện>" + "k:" (iPad khác giành đội);
+                              host ghi c0/c1 (đội đang có iPad); localSignal("rrpad9") cho 2 tab. KHÔNG QR (thầy 13/10): iPad = trang chủ AWord ▸ nút iPad ▸ chọn đội
+  core/rr-padui-9.js          màn iPad: thanh trên (đội · đèn nối · đường đua mini) + bảng 3D (rr-padscene-9) + chữ "INCOMING x s / BOOST NOW!" + tiếng Web Audio · rung; mountPadChooser (busy) · mountPadHub
+  pad-9.html                  GIẢ LẬP pad.html AWord: nghe tài liệu "now" {game, ctl} (= ipad_now) ⇒ màn chờ / chọn đội (nhớ sessionStorage, mỗi tab 1 iPad) / bảng tên lửa
   game7d/ + core/launch-aerial-7d.js                       MẪU 7d (28/9): trúng lan tàu cùng nấc / cách 1 nấc (hitShip), sắp thắng ⇒ lửa đuôi dài 1,5 lần + xanh dương (view r.nearWin)
   game7c/ + core/launch-aerial-7c.js                       MẪU 7c (27/9): 2 tên lửa hút nhau va nổ giữa đường (nổ sát tàu vẫn tính trúng), cột vạch mỏng trắng, renderOrder nút BOOST, vầng sáng mũi tàu khi còn 1 câu
   game7b/ + core/launch-aerial-7b.js                       MẪU 7b (27/9): 1 nút BOOST giữa cột (thanh 5 đoạn trong nút, +1 nấc thật, tự canh né 1,25 s), cột vạch năng lượng tên lửa, setFxLevel cho act voice
@@ -105,7 +115,8 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   `python -X utf8 tools/chep-train-rush.py` / `tools/chep-star-loot.py` (ghi `3d/NGUON.json` = commit myGame). Kiểm khớp: chạy lại script chép, AWord không đổi gì = khớp.
 - ROCKET RACE: GỐC ở AWord (`templates/rocket-race/`). MỖI Đợt Rocket Race trên AWord ⇒ ở myGame chạy
   `python -X utf8 tools/chep-aword-sang-game.py gameN` (thư mục MỚI) + trang `mau-N-…html` (chép trang mẫu gần nhất, đổi import sang gameN) ⇒ commit + push.
-  Bản mới nhất: `game8` = AWord `156cf57` (Đợt 478).
+  Bản mới nhất: `game8` = AWord `156cf57` (Đợt 478) — 13/10/2026 đã soát lại: AWord tới `c7f8296` chỉ đổi `rocket-race.js` (+4 dòng iPad Đợt 508), các file 3D vẫn khớp.
+  ⚠️ NGOẠI LỆ mẫu 9 (iPad tham gia game): tính năng mới làm ở myGame TRƯỚC (thầy chọn) ⇒ thầy OK ⇒ ghép AWord (xem GHI CHU chặng "Rocket Race mẫu 9").
 
 ## Khám phá kỹ thuật
 - CONG THẾ GIỚI (SPEED RUN): đường logic thẳng trục z, hình cong nhờ vertex `x += bx·dz²` — phải TẮT DẦN khi 2 xe xa (dz lớn ⇒ xe dẫn dời ngang hàng chục mét, máy quay nhìn hụt); mọi vật đặt trên đất tính độ cao bằng CÙNG hàm nhiễu ở JS với `Math.fround` từng phép để khớp float32 GPU.
@@ -115,6 +126,9 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   vẽ thêm 1 cảnh RỖNG (autoClear=false, scissor tắt) để giải trọn khung. Dịch ống kính bằng `camera.setViewOffset` (không chúi máy) để đặt chân trời theo ý mà cột đèn vẫn thẳng.
 - Vật PHẲNG trên mặt đường nhìn từ mắt người lái (1,1 m) gần như vô hình ở 30 m (3–4 px) ⇒ báo hiệu trên đường phải có vật ĐỨNG (cột sáng). Cộng sáng trên trời hoàng hôn bị nhoà ⇒ trộn thường.
 - Trình duyệt giữ mô-đun ES cũ sau khi sửa file (python http.server) ⇒ `await fetch(url, {cache:'reload'})` từng file rồi `location.reload()`.
+- Bàn thử trong Browser pane bị ẨN: `requestAnimationFrame` đứng hẳn (0 khung/giây, `visibilityState` hidden) ⇒ ô tên lửa kẹt "shuttle" mãi. Lái bằng `__view.step(n)`
+  NHƯNG luật trong trang hẹn giờ bằng `setTimeout` thời gian THẬT (câu mới sau 1,5 s) ⇒ vòng thử phải vừa `step` vừa chờ giờ thật, đừng `step` dồn trong 80 ms.
+- Trang mẫu là `<script type="module">` trên CÙNG một scope: đặt tên biến mới trùng hàm có sẵn (vd `pop` của đếm 3-2-1) ⇒ SyntaxError giết CẢ trang (màn đen, không bàn thử).
 - iPAD ĐIỀU KHIỂN GAME (STAR LOOT 2q): phím đi WebRTC DataChannel thẳng iPad → máy chiếu; kho chung chỉ để bắt tay. ⛔ Kho bắt tay CÓ THỂ RƠI
   một lần báo (bàn thử: game đang nạp ⇒ lỡ lời chào ⇒ iPad kẹt "Connecting…" mãi) ⇒ bên chờ phải tự ghi lại định kỳ (`nudge` 4 s, tối đa 8 lần).
   Đường dự phòng qua kho: kho gộp nhiều lượt ghi sát nhau thành MỘT lần báo ⇒ phải gửi kèm ĐUÔI phím (`rq` 4 phím gần nhất + số đếm `rs`), không chỉ phím cuối.
@@ -130,5 +144,8 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
 - Hạt vệt khói phát theo khung hình ⇒ thành từng cục khi tàu nhanh ⇒ rải đều theo QUÃNG ĐƯỜNG (nội suy vị trí loa phụt giữa 2 khung).
 
 ## Roadmap
+- ⬜ ROCKET RACE iPad tham gia game (13/10/2026): ✅ mẫu 9 (`mau-9-ipad-dieu-khien.html` + `pad-9.html`, kênh cục bộ 2 tab) ⇒ ⬜ thầy thử ⇒ ghép AWord: nút iPad thành bảng
+  chọn Off / Question screen / Game controller (`fightScreen` hiện là true/false) · kênh bắt tay Firestore (khuôn `sl-pad-signal.js`, tài liệu riêng rrpad_*, cùng tài khoản thầy
+  — KHÔNG QR) · AWord `rr3d-missile.js` nhận chế độ gương của game9 (thêm, không đổi gì cho game) + vendor three/addons cho trang iPad · claim `ipad_now` thêm `ctl` ⇒ `pad.html` rẽ "rocketrace + ctl" ⇒ đội đã nhớ (`aw.ipadTeam`) ⇒ màn tên lửa · luật trong `rocket-race.js` (ms*) gọi padEvent/padState.
 - ⬜ SPEED RUN (11/10/2026): thầy chốt hết đề xuất; ✅ mẫu 1 (đường + 2 xe + camera theo gap, 2 góc, đã push) ⇒ thầy đổi hướng ⇒ ✅ mẫu 2 "buồng lái" (chia đôi màn, trong xe, iPad lái kiểu Asphalt, tên lửa né được; đã push) ⇒ ⬜ thầy thử ⇒ tiếng · vật phẩm/chướng ngại · intro bãi xe ⇒ ghép AWord khuôn STAR LOOT (+ bắt tay Firestore cho iPad thật).
 - ⏸ Intro "phóng từ mặt đất" TẠM CHỐT ở **mẫu 4c** (26/9/2026); **mẫu 4d** (cùng ngày) = bản đồ dựng lại theo ảnh, chờ thầy xem. Ghép vào AWord theo kế hoạch 7 bước ở `GHI CHU DU AN.md` Chặng 4 (tàu dùng `makeRocket` của AWord, vendor three, nhịp 3-2-1 do template giữ, âm thanh, TOMKO).

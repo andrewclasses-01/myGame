@@ -448,7 +448,139 @@ tải lại tự nối; phím; 173 lệnh vẽ / 286 nghìn tam giác; 60+ khung
 ⬜ Thầy chạy thử mẫu 2 ⇒ nhận xét ⇒ mẫu tiếp theo.
 **Thầy (11/10): "Commit + push. Tôi sẽ tiếp tục trong các phiên sau."** ⇒ đã commit + push mẫu 2 lên GitHub (andrewclasses-01/myGame, nhánh main). ⏸ Tạm dừng ở mẫu 2.
 
+## Rocket Race mẫu 9 — 13/10/2026 · iPAD THAM GIA GAME (bắn tên lửa + BOOST trên iPad) · phiên máy MSI
+**Bối cảnh.** Thầy: "Đọc Rocket Race trên AWord và myGame để chuẩn bị build tiếp" ⇒ soát đồng bộ: AWord local tụt 1 commit (Đợt 510, không liên quan) ⇒
+`pull --ff-only`; myGame = origin. AWord từ `156cf57` tới `c7f8296` chỉ đổi `rocket-race.js` (+4 dòng claim iPad Đợt 508) ⇒ 7 file 3D của `game8` vẫn khớp từng dòng
+(chỉ khác import three + dòng ghi chú) ⇒ KHÔNG cần game9.
+Rồi thầy: *"thêm một chế độ cho tính năng điều khiển bằng ipad … bấm vào nút ipad ở game sẽ hiện tùy chọn, làm nơi đọc câu hỏi hay tham gia game · tham gia game thì
+chuyển toàn bộ phần bắn tên lửa và tránh vào ipad. Trên màn hình game vẫn hiển thị nhưng điều khiển ở ipad"*. Chốt qua AskUserQuestion:
+2 iPad (mỗi đội 1) · màn lớn VẪN bấm được (cả hai) · iPad có: nút BẮN + BOOST to, báo động tên lửa tới, tiếng + rung, vị trí 2 tàu · làm MẪU myGame trước.
+
+**Đã làm** (`rocket-race/`):
+- `core/rr-padlink-9.js` — nối HAI CHIỀU, gốc SPEED RUN `sr3d-padlink-2.js` (bản hai chiều của STAR LOOT 2q đã thử iPad thật). Bỏ tay lái liên tục; iPad → game lệnh rời
+  `fire` / `boost` / `load` (+ nhịp tim `p:`); game → iPad `i:<JSON>` (trạng thái, CHỈ gửi khi khác lần trước) + `e:<sự kiện>` (mplus · fire · boost · dodge · hit ·
+  refuse-fire · refuse-boost · win · lose). Host có `state(t,obj)` / `event(t,name)` / `status(t)` / `attached`; `detach()` báo `status(t,"")` cho cả 2 đội.
+  Bảng QR 2 đội (`panel(el)`) có link bấm được. Đường dự phòng qua kho: lệnh vẫn đi, trạng thái KHÔNG về (iPad ghi "Slow link").
+- `core/rr-padui-9.js` — màn iPad: ngang = FIRE trái / BOOST phải; dọc = trên/dưới. FIRE: 2 ô bệ (đỏ dần theo `ck` lúc nạp, sáng + nhấp khi sẵn sàng, ô vượt
+  Missiles max mờ), "+N" quả dự phòng, cột vạch chuỗi câu đúng; nhãn FIRE / LOAD / NO MISSILES / PEACE. BOOST: 5 đoạn, đầy thì phát sáng + tiếng. Báo động:
+  `thr` = giây tới lúc nổ ở tàu mình (bỏ quả đã né/bay qua; CỘNG quả bay vào tàu kia khi 2 tàu cùng nấc — trúng lan) ⇒ viền đỏ + "⚠ INCOMING x.x s" + bíp
+  nhanh dần (560 → 300 → 140 ms); trong cửa sổ né (1,25 s) mà có BOOST ⇒ nút BOOST chớp "BOOST NOW!". Đường đua mini 2 tàu + "nấc / L". Màn phủ:
+  WAITING / CONNECTING / READY / YOU WIN! / YOU LOSE. Tiếng Web Audio tổng hợp (mở khoá ở lần chạm đầu — iOS). Rung chỉ khi trang đã được chạm (Chrome báo
+  lỗi nếu chưa) — Safari iPad không có rung. Wake Lock giữ màn sáng.
+- `pad-9.html?t=0|1` (không ?t ⇒ chọn đội) — kênh `localSignal("rrpad9")`.
+- `mau-9-ipad-dieu-khien.html` — chép mẫu 8 (dùng NGUYÊN game8): hàng nút dưới khung (Options/Mode mờ, iPad thật) ⇒ bảng chọn **Off · Question screen · Game
+  controller** (nhớ `localStorage rr9.ipad`, `?ipad=ctl` cho bàn thử). Đổi chế độ KHÔNG chơi lại trận. Game controller ⇒ `host.attach` + QR 2 đội; nút iPad có 2 chấm
+  trạng thái + chip "iPad ●" góc khung mỗi đội. Question screen trong mẫu chỉ là ghi chú (đã có trên AWord Đợt 368/508). Gửi trạng thái 10 lần/giây.
+  ⭐ Luật tên lửa trong trang CHÉP AWord hiện tại (mẫu 8 còn luật 7d 1 ô ⇒ lệch game8): `loaded` = số quả trên bệ, `CAP` 2, `load` thử lại 0,4 s khi view từ chối +
+  nạp tiếp 0,6 s, `fireMissile` ⇒ `M.launch` trả false thì từ chối, tự nạp quả kế 0,7 s, `missileEnd` tag "half" = 50 % làm tròn LÊN, Missiles max 0–5 + ∞.
+  Bảng thử: link mở 2 tab iPad, nút "+1 quả" nay tự lên nòng.
+- `index.html` thẻ MẪU 9 lên đầu.
+
+**Đã tự kiểm** (Browser pane, 3 tab: game + iPad đội 1 + iPad đội 2): 2 iPad nối thẳng (rtt 1 ms), chip + chấm xanh · 3 câu đúng ⇒ iPad đội 1 thấy ô "r", FIRE sáng,
+BOOST đầy, 5/10 · bấm FIRE trên iPad 1 ⇒ quả bay về đội 2, iPad 2 báo "INCOMING 3.3 s" · tới 0,98 s: iPad 2 "BOOST NOW!" + báo động mức 2 ⇒ bấm BOOST trên iPad 2
+⇒ NÉ (tiến 0 → 1, không trúng) · bắn lại không né ⇒ trúng, iPad 2 nhận `hit`, lùi về 0 · iPad 2 bấm FIRE/BOOST khi không có ⇒ `refuse-fire` / `refuse-boost` (nút lắc) ·
+đội 1 về đích ⇒ iPad 1 "YOU WIN!", iPad 2 "YOU LOSE" · bắn từ MÀN LỚN vẫn chạy song song · 0 lỗi console (sau 2 sửa dưới) · chụp iPad ngang 1180×820 + dọc 820×1180.
+
+**Lỗi gặp + gỡ.**
+- `const pop` (bảng chọn iPad) trùng `function pop()` (đếm 3-2-1) cùng scope module ⇒ SyntaxError, cả trang chết ⇒ đổi `ipop`.
+- `navigator.vibrate` trước khi chạm trang ⇒ Chrome báo lỗi đỏ ⇒ kiểm `navigator.userActivation.hasBeenActive`.
+- Bàn thử: Browser pane ẩn ⇒ rAF 0 khung ⇒ lái bằng `__view.step` + chờ giờ thật (luật hẹn câu mới bằng setTimeout 1,5 s).
+
+**Khi ghép AWord (đề xuất, chưa làm):** nút iPad (engine `qScreenBtn`) mở bảng 3 chế độ thay vì bật/tắt; `fightScreen` true/false ⇒ thêm giá trị "ctl" (hoặc khoá riêng)
+— Question screen vẫn phải dựng lại trận, Game controller thì không · kênh bắt tay Firestore khuôn `templates/maze-chase/sl-pad-signal.js` (3 tài liệu riêng
+`rrpad_host/pad0/pad1`, thêm kind vào APP_DATA_KINDS) · `pad.html` đọc `ipad_now` {game:"rocketrace", ctl:true} ⇒ mở màn tên lửa thay vì source.html (claim cần trường mới)
+· chép `rr-padlink-9.js` + `rr-padui-9.js` vào `templates/rocket-race/` · trong `rocket-race.js` các hàm ms* gọi padEvent, thêm padState (đọc `v.missile.slots/flights/inSplash`) ·
+PEACE: gửi `pc` (UI đã có nhãn PEACE). ⚠️ Câu hỏi để thầy chốt khi ghép: Question screen + Game controller có được bật CÙNG LÚC (3 iPad) không — mẫu 9 chọn một.
+
+### Mẫu 9 · sửa 1 (13/10, cùng phiên) — BỎ QR, iPad chọn đội từ trang chủ AWord
+Thầy: *"Tôi không muốn quét qr mà bấm vào nút ipad trên trang chủ AWord là mở ra chọn team luôn. Tất cả đều cùng đăng nhập kho AWord (firebase) như nhau từ đầu rồi"*.
+Soát AWord: trang chủ đã có nút iPad ⇒ `pad.html` (`main.js:3026`, Đợt 480) — màn chọn đội + nghe `ipad_now` (Đợt 508); bắt tay STAR LOOT qua `users/{uid}/items` cùng tài khoản
+⇒ luồng thầy muốn KHỚP hạ tầng sẵn có, chỉ cần thêm nhánh "rocketrace + ctl".
+- Máy chiếu ghi tài liệu `now` {game:"rocketrace"|"", ctl} mỗi lần đổi chế độ (+ `pagehide` ⇒ game ""). Bảng Game controller bỏ QR, chỉ còn 2 thẻ đội + trạng thái
+  ("iPad connected" / "Waiting for an iPad") + hướng dẫn "AWord home ▸ iPad ▸ choose the team".
+- `pad-9.html` viết lại = GIẢ LẬP `pad.html`: nghe `now` (vào game 0,3 s, về màn chờ 1,5 s như AWord) ⇒ màn chờ "iPAD READY" (link Choose team) · ctl + chưa có đội ⇒ màn
+  chọn đội (nhớ đội — bàn thử sessionStorage mỗi tab 1 iPad; AWord thật `aw.ipadTeam` localStorage) · ctl + có đội ⇒ bảng tên lửa tự nối · Question screen ⇒ màn ghi chú.
+  Nút ‹ trên bảng tên lửa ⇒ chọn lại đội.
+- ⭐ 2 iPad chọn TRÙNG đội: trước đây sẽ GIÀNH NHAU MÃI (host đổi nonce ⇒ đóng kênh iPad cũ ⇒ iPad cũ tự chào lại sau 0,8 s ⇒ cướp lại…). Nay host gửi `k:` cho kênh cũ
+  trước khi đóng ⇒ iPad cũ vào trạng thái `kicked` (không chào lại, không nudge) ⇒ màn "TEAM 1 IS ON ANOTHER iPAD" + nút **Take it back** (`client.reconnect()`) / **Choose team**.
+  Trận mới (sid mới) ⇒ bỏ `kicked` (chỉ giành 1 lần, không lặp). Host ghi `c0/c1` vào tài liệu host ⇒ màn chọn đội ghi "iPad already connected" dưới đội đã có iPad.
+- Rung: Chrome chặn `vibrate` khi chưa có cú chạm THẬT (userActivation không đủ — click bằng script cũng bật nó) ⇒ chỉ rung sau `pointerdown` có `isTrusted`.
+- Tự kiểm (3 tab): iPad A chọn TEAM 1 lúc máy chiếu Off ⇒ màn chờ · máy chiếu ▸ Game controller ⇒ A tự vào bảng tên lửa, nối · iPad B mới mở ⇒ màn chọn đội ghi
+  "TEAM 1 · iPad already connected" · B chọn TEAM 1 ⇒ B nối, A "IS ON ANOTHER iPAD" và ĐỨNG YÊN (3 s sau vẫn kicked, không giành lại) · A ▸ Choose team ▸ TEAM 2 ⇒ 2 đội
+  đều "on", chip xanh cả 2 · Off ⇒ cả hai về màn chờ · Game controller lại ⇒ cả hai TỰ vào lại đúng đội đã nhớ · bắn từ iPad ⇒ quả bay · 0 lỗi mới trong console.
+- ⚠️ Bàn thử: tab nền bị trình duyệt hãm hẹn giờ ⇒ "về màn chờ 1,5 s" có lúc > 2 s; iPad thật luôn ở tiền cảnh.
+
+### Mẫu 9 · sửa 2 (13/10, cùng phiên) — BẢNG 3D TRÊN iPAD GIỐNG HỆT GAME
+Thầy: *"Tôi muốn thiết kế lại phần xem trên ipad. Vạch, tên lửa, nút boost cần có thiết kế 3D giống hệt trên game thật"*.
+**Quyết định: KHÔNG vẽ lại — iPad chạy CHÍNH mã bảng của game.** Bảng tên lửa nằm trong `rr3d-missile.js` (`buildConsole` dựng, `tickUI` hoạt ảnh) và chỉ cần
+`createMissiles(X)`; nó dựng được với `rockets: []` (mọi chỗ dùng tàu đều ở hàm chạy lúc trận). Chỉ vướng: trạng thái ô (`SL`) do máy trạng thái nội bộ chạy
+(loadFx/tickSlots cần tàu) và `threatFor` đọc đường bay/tàu ⇒ thêm CHẾ ĐỘ GƯƠNG.
+- `game9/` = chép `game8/` (rẽ thư mục mới vì sửa file game). `game9/rr3d-missile.js` thêm: `MIR[side]` + `threatFor` đọc `MIR` nếu có · `mirror(side, {sl:[[st,k]], threat})`
+  đặt `SL` theo máy chiếu và CHẠY ĐÚNG hoạt ảnh chuyển trạng thái của game (empty→shuttle ⇒ `U.load` quả nhỏ bay sang ô · charge→ready ⇒ loé `B.flash` · →firing ⇒ `B.fireK`
+  quả lùi khỏi màn); k nạp chỉ ghi đè khi lệch > 0,15 (giữa 2 lần gửi iPad tự chạy) · `mirrorTick(side, dt)` thay `tick()` (shuttle 0,5 s → charge, k += dt/2 s,
+  đếm lùi threat, rồi `tickUI`) · `mirrorFlash` (MISSILE +1) · `get ui`. Game KHÔNG đổi hành vi (MIR luôn null trên máy chiếu).
+- `core/rr-padscene-9.js` (mới): renderer + hậu kỳ y `rr3d-view.js` (ACES 1,05, RoomEnvironment 0,45, render target HalfFloat MSAA 4, lọc NaN, bloom 0,85/0,65/1,05,
+  OutputPass, vignette + hạt; bỏ lệch màu rìa), đèn = ánh mặt trời game. `buildConsole({side: team}, inner, {w:16, h:0}, pad 1,4, cm 1)` — cùng cỡ cm như bàn TOMKO.
+  Bố cục: NGANG ⇒ `U.am` trái, `U.bst` dời sang phải bằng NHÓM CHA (`tickUI` ghi `bst.position.x` để rung ⇒ không đặt x trực tiếp được); DỌC ⇒ trên/dưới. Máy quay tự lùi
+  vừa khít (lề 12 %). `U.warn` (khung đỏ cảnh báo của game) thay hình = khung vừa VIỀN MÀN iPad. Chạm: raycast `hitList` (đúng 3 vùng chạm game: quả nhỏ = nạp, quả to = bắn,
+  BOOST) ⇒ `M.tap()` (nhấn lún như game) ⇒ `onKey` ⇒ gửi. Gửi không được ⇒ `api.refuse` (lắc như game).
+- Trang game: `padState` gửi `ar` = đúng đối tượng `setArsenal` (∞ = −1) + `sl` = `[st, k]` thật của view (bỏ mã 1 chữ / SLOT_CODE); import game9.
+- `rr-padui-9.js`: bỏ nút FIRE/BOOST HTML (+ SVG, CSS), bỏ viền đỏ HTML (khung 3D thay); giữ thanh trên, chữ "INCOMING x s · BOOST NOW!", tiếng, rung, màn phủ.
+  `pad-9.html` thêm importmap three r170 + font Baloo 2 (nhãn "+X" của bảng dùng FONT_UI).
+- Tự kiểm (ngang 1180×820 + dọc 820×1180): 2 quả đỏ sẵn sàng phát sáng + cột vạch + BOOST đầy phát sáng cyan — y bảng game · ô đang nạp đỏ dần từ đuôi (shader fillMat) ·
+  chạm BOOST trên bảng 3D ⇒ gửi "boost" ⇒ máy chiếu tiến 6 → 7 · chạm quả to ⇒ "fire" ⇒ quả bay sang đội 2 · đội 2 bắn ⇒ khung đỏ 3D viền màn iPad + "INCOMING 3.1 s" ·
+  0 lỗi mới. Chưa đo tốc độ khung trên iPad THẬT (bloom + MSAA HalfFloat) — nếu nặng: bỏ MSAA / hạ pixelRatio như rr3d-autores.
+
+### Mẫu 9 · sửa 3 (13/10, cùng phiên) — 5 ý thầy sau khi xem bảng 3D
+Thầy: *"Còn thiếu số lượng tên lửa trên đầu · Thanh năng lượng ngắn quá, phải bố trí đều đẹp · Khi tên lửa bay từ tàu A sang B thì đoạn mô hình 2 tên lửa cũng có
+1 tên lửa 2D bay theo đúng những gì bay trên game thật để mô phỏng lại. Va chạm mà nổ thì cũng có nổ ở đó · Bỏ chữ connected 2ms đi · Bỏ 3 cái gạch gạch ở đáy dấu boost
+của cả ipad và game thật đi"* (kèm ảnh icon BOOST).
+1. **Số tên lửa trên đầu** (`rr-padscene-9.js`): sprite canvas trên cụm quả to (x = `U.bigX`, y = 0,5 ammoH), chữ kiểu nhãn "+X" của game (FONT_UI 900, viền đỏ `#ff6a6a`,
+   PEACE viền xanh): "N MISSILES" / "1 MISSILE" / "NO MISSILES" (mờ). N = reserve + loaded (quả trên bệ, kể cả đang nạp). Vẽ lại chỉ khi đổi.
+   ⚠️ Em hiểu "trên đầu" = trên đầu khu tên lửa của bảng iPad — nếu thầy muốn ở chỗ khác (vd. trên tàu ở đường đua mini, hay cả trên màn lớn) thì chuyển.
+2. **Cột vạch đều** (`game9/rr3d-missile.js` `buildMsPips`): `U.pipsSpan = { y0, H }` thì dùng thay chiều cao theo số ô dự phòng; iPad đặt −0,36…+0,36 ammoH (cao bằng
+   cụm 2 quả to) ⇒ 3 vạch dài đều nhau. Màn lớn không đặt ⇒ không đổi.
+3. **Tên lửa 2D trên đường đua mini** (`rr-padui-9.js`): đường đua cao 7 → 12 vmin. Máy chiếu gửi thêm `fl` = [id, từ, tới, t, dur] của `M.flights` (t làm tròn 0,1 s;
+   iPad tự chạy t giữa 2 lần gửi, chỉ chỉnh khi lệch > 0,2 s). Vị trí: từ tâm tàu bắn tới tâm tàu bị bắn (bám vị trí tàu mới nhất), nhanh dần cuối đường, vồng LÊN
+   rồi lao XUỐNG (sin), mũi xoay theo hướng bay; hình tên lửa SVG đỏ (PEACE xanh) có quầng sáng. Nổ: máy chiếu báo CẢ 2 iPad — `boom:<tàu>` khi trúng (nổ tại tàu đó, gỡ
+   quả đang lao vào nó) · `clash` khi 2 quả đâm nhau (nổ TO giữa 2 quả, gỡ cả 2). ⚠️ `clash()` của game gọi `onEnd` cho CẢ 2 tàu cùng lúc (mỗi tàu "clash" hoặc
+   "hit/half") ⇒ trang game nhận ra vụ đâm nhau qua `M.lastClash.at` đổi, báo "clash" MỘT lần và bỏ "boom" của các lần gọi trong 60 ms đó. Quả biến mất không kèm sự kiện
+   (né rồi nổ xa) ⇒ khói nhỏ "puff".
+4. Bỏ chữ "Connected · x ms" — còn chấm đèn xanh (các trạng thái khác vẫn có chữ: Connecting…, Slow link, …).
+5. Icon BOOST (`game9/rr3d-missile.js` `boostIcon`): bỏ 3 vạch tốc độ dưới đáy, 2 mũi tên kép dời xuống 16 px cho cân giữa ô. Áp cho iPad + màn lớn mẫu 9; AWord (game thật đang
+   chạy) đổi khi ghép.
+- 🐞 Gặp: bảng gương CHƯA nhận trạng thái đầu tiên (đang chờ nối) ⇒ `threatFor` rơi xuống `inSplash` hỏi `rockets[side].p` (iPad không có tàu) ⇒ văng lỗi MỖI KHUNG (173 lỗi
+  console). Sửa: `mirrorTick` đặt `MIR[side] = { threat: ∞ }` nếu chưa có. Lần kiểm trước không thấy vì đọc console bằng bộ lọc sai.
+- 🐞 Bàn thử: iPad giả đứng màn chờ dù máy chiếu đã bật Game controller — kho cục bộ RƠI một lần báo "now" khi 2 trang cùng đang nạp ⇒ `pad-9.html` tự đọc lại "now"
+  mỗi 3 s (AWord thật dùng onSnapshot, không cần).
+- Tự kiểm: nhãn "1 MISSILE" sau khi bắn 1 trong 2 quả · cột 3 vạch cao đều · icon BOOST không vạch · không còn chữ Connected · 2 đội bắn cùng lúc ⇒ 2 tên lửa 2D vồng
+  ngược chiều trên đường đua mini ⇒ game đâm nhau (lastClash) ⇒ iPad nổ TO giữa đường, 2 quả biến mất (ảnh chụp) · bắn trúng ⇒ iPad nhận `boom:1` · 0 lỗi mới.
+
+### Mẫu 9 · sửa 4 (13/10, cùng phiên) — bố cục khu tên lửa iPad ĐÚNG bảng game
+Thầy gửi ảnh bảng game (cột 4 tên lửa con + nhãn "+2" trên đỉnh + 2 quả to đã nạp): *"Phần tên lửa đã nạp, tên lửa con và tên lửa chờ được thiết kế như này cơ mà.
+Hãy sửa lại thiết kế"*. ⇒ "số lượng tên lửa trên đầu" ở sửa 3 nghĩa là NHÃN "+X" CỦA GAME trên đỉnh cột tên lửa con (số quả CHỜ vượt 4), không phải nhãn mới.
+- `rr-padscene-9.js`: BỎ nhãn "N MISSILES" (sửa 3 ý 1). Bảng vẫn do `buildConsole`/`tickUI` của game vẽ nên tên lửa con + "+X" + 2 quả to y game (chúng vốn có, chỉ cần
+  khung nhìn đủ chỗ). Cột vạch: `pipsSpan` = đúng công thức `buildMsPips` khi Missiles max = ∞ (4 ô: đáy = (slotY(0) − 0,52·pitch)·ammoH, cao 4·0,3·1,05·ammoH) ⇒ thẳng
+  hàng cột tên lửa con, luôn dài (game ở max 3 chỉ cao 1 ô). Khung nhìn tính theo nội dung thật: đáy cột vạch → đỉnh nhãn "+X" (≈ 1,06 ammoH), căn giữa bằng `AM_MID`
+  (trước: đặt khu tên lửa lệch lên +0,12 ammoH ⇒ nhãn "+X" sẽ bị cắt mép trên khi có ≥ 5 quả dự phòng).
+- Tự kiểm (`?max=inf`, đội 1: 2 quả nạp + 6 dự phòng): iPad ngang + dọc hiện "+2" · 4 tên lửa con · 2 quả to · cột 3 vạch cao bằng cột tên lửa con — khớp ảnh thầy · 0 lỗi mới.
+
+### Mẫu 9 · sửa 5 (13/10, cùng phiên) — 4 ý thầy
+Thầy: *"Sửa cả màn lớn cho cột vạch cao 4 ô luôn · Nâng 2 tên lửa lớn ở ipad lên giữa và cho cân bằng với nút boost (nút boost có thể không cần ở trung tâm) · 2 tên lửa
+mô phỏng phải có size bằng nhau · Phần đích x/10 ghi số % tương tự vạch % trong game thật"*.
+1. `game9/rr3d-missile.js` `buildMsPips`: cột vạch LUÔN cao `MINI_N` (4) ô, đáy = (slotY(0) − 0,52·pitch)·ammoH — bỏ công thức theo số ô dự phòng của trận và bỏ `U.pipsSpan`
+   (iPad dùng chung). Đo màn lớn (Missiles max 3): cột cao 1,26 ammoH cả 2 đội (trước 0,315 = 1 ô). ⇒ khi ghép AWord: đổi dòng này trong `rr3d-missile.js`.
+2. `rr-padscene-9.js` NGANG: tâm 2 quả to (y 0 của `U.am`) ĐÚNG giữa chiều cao màn; BOOST cùng độ cao với tâm đó; khung nhìn đối xứng = 2·max(đỉnh nhãn "+X", đáy cột vạch)
+   ⇒ bảng nhỏ hơn chút (phải chừa chỗ đỉnh "+X" lẫn đáy cột vạch) nhưng cân. DỌC giữ như cũ (tên lửa trên, BOOST dưới).
+3. Đường đua mini: 2 tàu CÙNG cỡ 5,8 vmin, tàu địch hết mờ (trước: tàu mình 6,4, địch 5 + mờ 0,8). (Em hiểu "2 tên lửa mô phỏng" = 2 tàu trên đường đua mini — 2 tên lửa 2D
+   đang bay vốn đã cùng cỡ.)
+4. Chỗ đích "x / 10" ⇒ **%** như thanh % của game (AWord Đợt 444 `view.lead()`): tàu DẪN ĐẦU đã đi bao nhiêu phần đường = round(100·max(p)/L).
+- Tự kiểm: iPad ngang — 2 quả to giữa màn, BOOST ngang hàng, 2 tàu mini cùng cỡ, "40%" (đội 1 ở nấc 4/10) · 0 lỗi mới.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **ROCKET RACE mẫu 9 — iPad tham gia game** (13/10, đã bỏ QR, bảng iPad = 3D của game): thầy thử `rocket-race/mau-9-ipad-dieu-khien.html` + 2 tab `pad-9.html` (mỗi tab = 1 iPad, chọn đội;
+  cùng trình duyệt — hoặc GitHub Pages sau khi push) ⇒ nhận xét bố cục iPad / tiếng / báo động ⇒ ghép AWord (kế hoạch cuối chặng "Rocket Race mẫu 9"). iPad THẬT chỉ chạy được
+  sau khi ghép (kênh Firestore cùng tài khoản).
 - ⬜ **STAR LOOT 2r** (11/10, = AWord Đợt 503): thầy chơi trên TOMKO — 10 địch có quá rối / tụt khung không, ngòi 1 s có kịp chạy không, Lives ∞ dùng ổn chưa.
 - ⬜ **SPEED RUN**: 11/10 đã dựng MẪU 2 "buồng lái" (`speed-run/mau-2-buong-lai.html` + `pad-2.html`, hồ sơ mục 10) — ĐÃ push; ⏸ thầy tạm dừng, phiên sau tiếp. Thầy chạy thử ⇒ nhận xét bố cục tap-lô / lái / tên lửa / luật năng lượng ⇒ mẫu tiếp (tiếng · vật phẩm + chướng ngại · intro bãi xe) ⇒ ghép AWord khuôn B (+ kênh bắt tay Firestore để iPad THẬT lái được; TILT chưa thử trên iPad thật).
 - ✅ 05/10 thầy thử iPad D-pad trên lớp thật (AWord Đợt 480b `bc6d839`, myGame `ea20330`): nhãn XANH (nối thẳng), chơi ổn. Thầy sẽ build thêm sau.
