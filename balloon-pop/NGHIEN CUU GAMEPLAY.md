@@ -520,7 +520,7 @@ khinh khí cầu tối đa ×2 · máy bay mang LEVEL trước mỗi màn (khôn
 - Đã kiểm (máy soạn, khung ẩn ⇒ lái `__fight.step`): Fight vào thẳng · băng LEVEL 1 / LEVEL 2 · 2 tàu phóng đi thùng không rơi · đẩy thùng có điểm sang toa khác ⇒ −5 ·
   khinh khí cầu cả 2 làn trong khung · thú giữa màn z −26 thấy rõ sau tàu xanh · Single: LEVEL 1 sau phim, làn 11,0 trong khung · 0 lỗi console.
 
-## 45. Mẫu 1au (14/10/2026) — iPad thấy nhiều hơn · thả 2 toa cùng lúc (chờ thầy duyệt, CHƯA ghép AWord)
+## 45. Mẫu 1au (14/10/2026) — iPad thấy nhiều hơn · thả 2 toa cùng lúc (thầy duyệt ⇒ = AWord Đợt 522 `f0104d3`)
 Thầy: "màn iPad hiển thị được ít quá" ⇒ (1) mọi thứ nhỏ hơn để nhìn toàn cảnh các ô tàu, thả thùng vào nhiều ô cùng lúc, không phải lần lượt (đổi cả game chính);
 (2) toa cần từ đầu tiên lùi về bên trái để từ lúc khinh khí cầu xuất hiện tới toa đó đủ xa đọc chữ. Trang `mau-1au-train-rush.html` (mở = Fight) + iPad `pad-1au.html?t=0|1`.
 - ⛔ Bản nháp đầu (cùng ngày) NỐI LIỀN các toa đáp án (bỏ 2 toa phụ) + khung vàng ▼ trên mọi toa mở ⇒ thầy BÁC: "màn hình hiển thị các toa như thế nào thì iPad hiển thị
@@ -535,4 +535,4 @@ Thầy: "màn iPad hiển thị được ít quá" ⇒ (1) mọi thứ nhỏ hơ
   6,0 × 2,0 (1as 4,2 × 1,4) · KHÔNG khung vàng / ▼ trên toa · tàu nằm trên dải nhắc ở đáy.
 - Đã kiểm (iPad giả gắn trong trang game, khung 4:3): iPad vẽ đúng `a c c a c c…` như game; thả đúng toa đáp án thứ 2 khi toa đầu còn mở ⇒ +5, toa đầu vẫn mở;
   (bản nháp) mặc định 5 màn qua màn 1–3 đúng điểm. Chữ trên toa kiểm ở khổ 1024×768: rõ, gọn trong khung.
-- ⬜ Chưa: Single vẫn lần lượt; ghép AWord (pad.js ⇒ tr-padui-1au, balloon-pop.js ⇒ 1au).
+- ✅ Đã ghép AWord Đợt 522 (pad.js ⇒ tr-padui-1au, balloon-pop.js ⇒ 1au). ⬜ Single vẫn lần lượt.

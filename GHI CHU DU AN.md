@@ -609,9 +609,9 @@ chồng cao), chỉ bỏ lực quán tính do tàu tăng tốc. Điểm ngay ch�
 **Lỗi gặp:** khai `const top` trùng tên biến có sẵn trong `draw()` ⇒ SyntaxError giết cả mô-đun iPad (đổi `skyTop`); trang game bị phủ iPad giả ⇒ rAF game rất chậm ⇒ lái bằng `__fight.step`.
 
 ## VIỆC ĐANG CHỜ
-- ⬜ **TRAIN RUSH 1au** (CHƯA ghép AWord): thầy thử `balloon-pop/mau-1au-train-rush.html` + `pad-1au.html?t=0` (2 tab cùng trình duyệt) ⇒ duyệt cỡ iPad (VIS 40, FOC 46 %, chữ trên toa) — xem nhanh `balloon-pop/xem-1au.html` (màn lớn + iPad cạnh nhau), 2 toa mở cùng lúc ⇒ OK thì ghép AWord (pad.js + balloon-pop.js ⇒ 1au, chep-train-rush GOC fight-1au, GOC_THEM tr-padui-1au); hỏi thầy có đổi Single sang nhiều toa không.
-- ⬜ **TRAIN RUSH 1at (= AWord Đợt 521)**: thầy chơi Fight trên TOMKO — thùng còn văng khi tàu lao/phóng không, lung lay nhẹ có đủ thật không, độ trễ điểm khi thùng
-  rơi lệch (~0,6 s) có chấp nhận được không, khinh khí cầu nấc 10 nhanh ×2 có quá nhanh không, thú chạy sau ray xa có che khinh khí cầu xanh không.
+- ⬜ **TRAIN RUSH 1au (= AWord Đợt 522, thầy duyệt 14/10)**: thầy chơi Fight trên TOMKO + 2 iPad thật — chữ trên toa iPad đủ to chưa, có cần thấy trọn toa đáp án
+  thứ 2 (hiện nửa toa ở mép trái iPad) không; thùng còn văng khi tàu lao/phóng không, điểm trễ ~0,6 s khi rơi lệch, khinh khí cầu nấc 10 (×2) có quá nhanh không;
+  có đổi Single sang thả nhiều toa không. Xem thử trên máy: `balloon-pop/xem-1au.html`.
 - ⬜ **ROCKET RACE iPad Game controller — ĐÃ LÊN AWord Đợt 511**: thầy thử 2 iPad THẬT trên lớp (trang chủ AWord ▸ nút iPad ▸ chọn đội; máy chiếu: trận Rocket Race ▸
   nút iPad ▸ Controller) ⇒ đo độ mượt bảng 3D trên iPad (nặng ⇒ bỏ MSAA / hạ pixelRatio). Lịch sử mẫu 9: thầy thử `rocket-race/mau-9-ipad-dieu-khien.html` + 2 tab `pad-9.html` (mỗi tab = 1 iPad, chọn đội;
   cùng trình duyệt — hoặc GitHub Pages sau khi push) ⇒ nhận xét bố cục iPad / tiếng / báo động ⇒ ghép AWord (kế hoạch cuối chặng "Rocket Race mẫu 9"). iPad THẬT chỉ chạy được
