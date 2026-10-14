@@ -471,6 +471,7 @@ export function mountTrainPad(el, { signal, team, onLeave = null, onBack = null 
   function loop(ts) {
     if (dead) return;
     raf = requestAnimationFrame(loop);
+    if (ts < last) last = ts;   // giờ lùi (không xảy ra với rAF thật) ⇒ không để vòng vẽ đứng hẳn / dt âm
     if (last && ts - last < 1000 / (idle() && !fx.length && !flash ? IDLE_FPS : PAD_FPS) - 2) return;   // bỏ khung (−2 ms: rAF 60 Hz rơi đúng nhịp 25)
     const dt = last ? Math.min(0.15, (ts - last) / 1000) : 0; last = ts;
     const t0 = performance.now(); draw(dt); const ms = performance.now() - t0;

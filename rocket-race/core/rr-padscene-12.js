@@ -531,6 +531,7 @@ export function createPadScene({ mount, team, onKey, topEl }) {
   function frame(now) {
     if (dead) return;
     raf = requestAnimationFrame(frame);
+    if (now < last) last = now;                                    // giờ rAF có thể sớm hơn performance.now() lúc dựng ⇒ không dt âm
     if (now - last < 1000 / PAD_FPS - 2) return;                  // Đợt 523: bỏ khung — 25 khung/giây (−2 ms: rAF 60 Hz rơi đúng nhịp)
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     update(dt); composer.render();
