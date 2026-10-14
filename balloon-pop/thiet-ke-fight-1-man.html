@@ -25,9 +25,16 @@
   .tv { background: #120c07; border: 3px solid #3a2414; border-radius: 10px; overflow: hidden; }
   .cap { font: 700 14px "Baloo 2"; color: #cdb58a; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px 2px; }
   .hud { height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 0 12px; background: linear-gradient(#4a2e18, #2c1a0d); border-bottom: 3px solid var(--brass); }
-  .team { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 16px; border-radius: 12px; border: 2px solid rgba(255,255,255,.25); }
-  .team.t0 { background: linear-gradient(90deg, #8f1f14, #c73526); }
-  .team.t1 { background: linear-gradient(270deg, #143f8f, #2769c7); flex-direction: row-reverse; }
+  /* thầy 14/10: ô đội = THANH GIỜ của màn (đầy = Time Round) — rút dần khi đội đang chơi, dừng khi đội xong;
+     cả 2 xong ⇒ phần còn lại rút về 0, điểm tăng lên (1 giây = 1 điểm). Phần đã rút để nền tối. */
+  .team { position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 16px; border-radius: 12px; border: 2px solid rgba(255,255,255,.25); background: #2a1a10; }
+  .team > :not(.fill) { position: relative; z-index: 1; }
+  .team .fill { position: absolute; top: 0; bottom: 0; width: 100%; }
+  .team.t0 .fill { left: 0; background: linear-gradient(90deg, #8f1f14, #c73526); }
+  .team.t1 .fill { right: 0; background: linear-gradient(270deg, #143f8f, #2769c7); }
+  .team.t1 { flex-direction: row-reverse; }
+  .team.is-out { border-color: #ff7b6b; }
+  .team.is-count .fill { filter: brightness(1.35); }
   .team span { font: 800 17px "Baloo 2"; letter-spacing: .06em; }
   .team em { font: 700 13px "Baloo 2"; font-style: normal; opacity: .85; }
   .team b { font: 400 30px Rye, serif; min-width: 60px; text-align: center; }
@@ -58,6 +65,25 @@
   .notes h3 { font: 400 20px Rye, serif; color: #ffd98a; margin: 6px 0; }
   .notes li { margin: 2px 0; }
   .notes b { color: #ffd98a; }
+  .clock[hidden] { visibility: hidden; display: block; }
+  .bar i { cursor: pointer; }
+  .bar i.on { background: var(--brass); color: #2a1a0c; }
+  /* bảng nổi trên màn lớn: Options (mẫu bảng AWord) + iPad */
+  .pn { pointer-events: auto; width: min(560px, 92%); padding: 18px 24px 20px; border-radius: 16px; background: #f6efe2; color: #2a1a10; border: 3px solid #7a4a22; box-shadow: 0 14px 40px rgba(0,0,0,.55); }
+  .pn h3 { margin: 0 0 10px; font: 400 26px Rye, serif; color: #6b2a12; text-align: center; }
+  .sl { display: grid; grid-template-columns: 150px 1fr 54px; align-items: center; gap: 12px; margin: 10px 0; }
+  .sl label { font: 800 15px "Baloo 2"; letter-spacing: .06em; }
+  .sl label small { display: block; font: 600 12px "Baloo 2"; letter-spacing: 0; opacity: .7; }
+  .sl input { width: 100%; accent-color: #b8541f; }
+  .sl b { font: 800 18px "Baloo 2"; text-align: center; padding: 2px 0; border-radius: 8px; background: #2a1a10; color: #ffd98a; }
+  .sl b.off { background: #9a8a7a; color: #fff; }
+  .pn .row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  .pn .row button { font: 800 16px "Baloo 2"; padding: 8px 18px; border-radius: 10px; border: 2px solid #7a4a22; background: #fff; color: #3a1f0e; cursor: pointer; }
+  .pn .row button.on, .pn .row button.main { background: #b8541f; color: #fff; border-color: #7d2f10; }
+  .pn p { margin: 6px 0; font: 600 14px "Baloo 2"; opacity: .8; text-align: center; }
+  .hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); font: 700 15px "Baloo 2"; padding: 3px 14px; border-radius: 10px; background: rgba(0,0,0,.6); color: #fff; pointer-events: none; }
+  .hint[hidden] { display: none; }
+  .outtag { position: absolute; font: 400 22px Rye, serif; color: #fff; background: rgba(160,30,20,.9); padding: 2px 14px; border-radius: 10px; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap; }
 </style>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
@@ -66,26 +92,40 @@
 <body>
 <div class="top">
   <h1>TRAIN RUSH · Fight 1 màn — bản phác</h1>
-  <button data-g="A">Góc A</button><button data-g="B">Góc B</button><button data-g="C">Góc C</button>
-  <button id="go">START</button><button id="pause">Tạm dừng</button>
-  <small>Chạm khinh khí cầu trên màn lớn HOẶC trên iPad · khối đơn giản, chỉ để duyệt bố cục + nhịp màn</small>
+  <button id="go">START</button><button id="pause">Tạm dừng</button><button id="fast">Xem nhanh: 1 phút = 15 giây</button>
+  <small>Góc A (thầy chọn) · chạm khinh khí cầu trên màn lớn HOẶC trên iPad · nút ⚙ = Options mới · nút iPad = chế độ bấm</small>
 </div>
 <div class="wrap">
   <div>
     <p class="cap">Màn lớn (TOMKO) — một cảnh, hai ray</p>
     <div class="tv">
       <div class="hud">
-        <div class="team t0"><span>TEAM 1</span><em class="st0"></em><b class="s0">0</b></div>
+        <div class="team t0"><i class="fill f0"></i><span>TEAM 1</span><em class="st0"></em><b class="s0">0</b></div>
         <div class="clock">2:00</div>
-        <div class="team t1"><span>TEAM 2</span><em class="st1"></em><b class="s1">0</b></div>
+        <div class="team t1"><i class="fill f1"></i><span>TEAM 2</span><em class="st1"></em><b class="s1">0</b></div>
       </div>
       <div class="stage" id="stage">
         <canvas id="cv"></canvas>
         <div class="banner" id="banner" hidden></div>
         <div class="ov" id="ovStart"><div class="card"><h2>TRAIN RUSH · FIGHT</h2><p>2 tàu · 1 màn hình · mỗi đội 1 iPad</p><button id="go2">START</button></div></div>
         <div class="ov" id="ovEnd" hidden><div class="card"><h2 id="endT">TEAM 1 WINS!</h2><p id="endS"></p><button id="again">Start again</button></div></div>
+        <div class="ov" id="ovOpt" hidden><div class="pn">
+          <h3>Options</h3>
+          <div class="sl"><label>LEVELS<small>số màn · Off = 1 màn đủ cả bộ từ</small></label><input type="range" min="0" max="20" step="1" id="oLv"><b id="vLv"></b></div>
+          <div class="sl"><label>TIME ROUND<small>phút mỗi màn · Off = không giờ · ∞ = đếm lên</small></label><input type="range" min="0" max="11" step="1" id="oTr"><b id="vTr"></b></div>
+          <p>Thay cho None / Count up / Count down + Max cars. Các thanh khác giữ như cũ: Balloon speed · Train speed · Points off · Bonus.</p>
+          <div class="row"><button id="oCancel">Close</button><button class="main" id="oApply">Apply</button></div>
+        </div></div>
+        <div class="ov" id="ovPad" hidden><div class="pn">
+          <h3>iPad</h3>
+          <div class="row"><button data-pm="off">Off</button><button data-pm="both">iPad + màn lớn</button><button data-pm="ipad">Chỉ iPad</button></div>
+          <p>iPad + màn lớn (mặc định): mỗi đội 1 iPad, chạm thẳng màn lớn vẫn được (chạm quả của đội nào thì thùng rơi xuống tàu đội đó).</p>
+          <p>Chỉ iPad: màn lớn chỉ để xem. Off: không dùng iPad, chơi bằng màn lớn.</p>
+          <div class="row"><button class="main" id="pClose">Close</button></div>
+        </div></div>
+        <div class="hint" id="hint" hidden>Only iPad — the big screen is for watching</div>
       </div>
-      <div class="bar"><i>☰</i><i>🔊</i><i class="gap"></i><i>📁</i><i>⚙</i><i>iPad</i><i>Mode</i></div>
+      <div class="bar"><i>☰</i><i>🔊</i><i class="gap"></i><i>📁</i><i id="bOpt">⚙</i><i id="bPad">iPad</i><i>Mode</i></div>
     </div>
   </div>
   <div class="pads">
@@ -93,13 +133,16 @@
     <div><p class="cap">iPad TEAM 2 (xanh · ray xa)</p><div class="ipad"><canvas id="pad1" width="1024" height="768"></canvas></div></div>
   </div>
   <div class="notes">
-    <h3>Luật Fight một màn (theo thầy chốt 14/10)</h3>
+    <h3>Luật Fight một màn (thầy chốt 14/10 — vòng 2)</h3>
     <ul>
-      <li><b>Một cảnh, hai ray song song.</b> TEAM 1 (đỏ) luôn ray GẦN; TEAM 2 (xanh) luôn ray XA, nhỏ hơn. Mỗi đội có tầng khinh khí cầu riêng: quả đỏ to ở trên tàu gần; quả xanh nhỏ ở xa, ngay trên tàu xa.</li>
-      <li><b>Máy quay trôi đều</b> theo hướng tàu chạy. Mỗi tàu tự nhanh/chậm để toa đang chờ của đội mình luôn ở giữa màn. Thả đúng ⇒ tàu chậm lại, toa chờ kế tiếp trôi vào giữa.</li>
-      <li><b>Cùng màn:</b> màn N = N toa cho cả 2 đội (2 đội khác thứ tự từ). Đội xong trước ⇒ tàu <b>PHÓNG</b> ra khỏi màn + thưởng <b>FIRST +10</b> (đề xuất) — đội kia ở lại làm nốt; xong cũng phóng đi ⇒ máy bay kéo băng báo điểm ⇒ 2 tàu mới (thêm 1 toa) cùng chạy vào.</li>
-      <li><b>Điều khiển:</b> mỗi đội 1 iPad thấy cảnh 2D của RIÊNG đội mình, chạy khớp màn lớn; chạm quả trên iPad = quả đó nổ trên màn lớn. Chạm thẳng màn lớn vẫn được (chạm quả của đội nào thì thùng rơi xuống tàu đội đó).</li>
-      <li><b>Hết giờ</b> ⇒ đội nhiều điểm thắng. Hết từ ⇒ xong trận.</li>
+      <li><b>Một cảnh, hai ray song song, góc A.</b> TEAM 1 (đỏ) luôn ray GẦN; TEAM 2 (xanh) luôn ray XA, nhỏ hơn. Mỗi đội có tầng khinh khí cầu riêng: quả đỏ to ở trên tàu gần; quả xanh nhỏ ở xa, ngay trên tàu xa.</li>
+      <li><b>Máy quay trôi đều</b> theo hướng tàu chạy. Mỗi tàu tự nhanh/chậm để toa đang chờ của đội mình luôn ở giữa màn.</li>
+      <li><b>Options mới (cả Single lẫn Fight):</b> LEVELS Off/1–20 (màn k có k toa; Off = 1 màn duy nhất chứa đủ cả bộ từ) — thay Max cars · TIME ROUND Off/1–10 phút/∞ — thay None/Count up/Count down.</li>
+      <li><b>Thanh giờ = ô điểm đỏ/xanh:</b> đầu màn đầy (= Time Round), rút dần khi đội còn chơi, đội xong thì dừng rút. Đồng hồ giữa = giờ còn lại của màn. Cả 2 xong ⇒ phần còn lại rút về 0, điểm tăng lên (<b>1 giây = 1 điểm</b>) ⇒ máy bay báo điểm ⇒ 2 tàu mới cùng chạy vào.</li>
+      <li><b>Đội xong trước</b> ⇒ tàu PHÓNG ra khỏi màn; đội kia ở lại làm nốt — <b>chờ thoải mái</b>.</li>
+      <li><b>Thanh của một đội rút hết</b> mà chưa xong ⇒ tàu đội đó DỪNG, đội bị xử thua lượt (OUT); đội còn lại chơi nốt màn đó (thưởng giờ như thường) ⇒ <b>kết thúc trận, chốt điểm luôn</b>.</li>
+      <li><b>Time Round ∞:</b> không thanh giờ, không thưởng giờ, đồng hồ giữa đếm lên. <b>Off:</b> ẩn hết. Hết số màn / hết từ ⇒ xong trận.</li>
+      <li><b>Nút iPad:</b> Off · iPad + màn lớn (mặc định) · Chỉ iPad. Mỗi đội 1 iPad thấy cảnh 2D của RIÊNG đội mình, khớp màn lớn.</li>
     </ul>
   </div>
 </div>
@@ -116,13 +159,16 @@ const FONT = '"Baloo 2", system-ui, sans-serif';
 // 3 góc máy quay để duyệt: zf = ray xa lùi sau ray gần; cam = [cao, xa]; look = độ cao điểm nhìn; lanes = làn khinh khí cầu [gần], [xa]
 const VIEWS = {
   // ⚠ thử 14/10: máy quay thấp như bản đơn (cao 4,6) ⇒ tàu gần che gần hết tàu xa ⇒ phải nâng máy quay lên cao 12–15 và nhìn chéo xuống
+  // vòng 1 có 3 góc A/B/C — thầy CHỌN A (14/10). B: zf 11 cam [15,25] look 5.5 fov 26 · C: zf 9 cam [12.5,23] look 5.6 fov 29
   A: { zf: 10, cam: [13, 24],   look: 5.7, fov: 28, near: [8.6, 10.4, 12.2], far: [7.6, 9.2, 10.8], txt: "cân bằng — ray xa lùi 10, máy quay cao 13" },
-  B: { zf: 11, cam: [15, 25],   look: 5.5, fov: 26, near: [8.6, 10.4, 12.2], far: [7.8, 9.4, 11.0], txt: "nhìn cao hơn — tàu xa lùi 11, nhỏ hơn rõ" },
-  C: { zf: 9,  cam: [12.5, 23], look: 5.6, fov: 29, near: [8.6, 10.4, 12.2], far: [7.6, 9.2, 10.8], txt: "gần hơn — ray xa lùi 9, 2 tàu sát nhau, chữ to hơn" },
 };
-const q = new URLSearchParams(location.search);
-let G = q.get("goc") in VIEWS ? q.get("goc") : "A";
+let G = "A";
 let V = VIEWS[G];
+// Options mới (thầy 14/10): levels 0 = Off (1 màn đủ cả bộ từ), 1–20 · round 0 = Off, 1–10 = phút/màn, 11 = ∞ (đếm lên)
+const OPT = { levels: 5, round: 2 };
+let MIN = 60;   // giây của "1 phút" — nút Xem nhanh đổi thành 15
+let padMode = "both";   // off · both (iPad + màn lớn, mặc định) · ipad (chỉ iPad)
+const timed = () => OPT.round >= 1 && OPT.round <= 10;
 const COL = [{ eng: 0x8f1d14, box: 0x9c3424, env: 0xd8574a, css: "#e2402f", frame: "#b0281a" }, { eng: 0x1d3f7a, box: 0x35608f, env: 0x4f86d8, css: "#2f7fe2", frame: "#1f5fb8" }];
 
 // ---------------------------------------------------------------- cảnh
@@ -182,8 +228,9 @@ const crateTex = word => tex(512, 264, (c, w, h) => {
 // ---------------------------------------------------------------- đội
 const norm = s => String(s).trim().toUpperCase();
 const shuf = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const T = [0, 1].map(i => ({ i, z: 0, score: 0, train: null, cars: [], carts: [], x: 0, v: 0, state: "idle", balloons: [], crates: [], spawnT: 0, bag: [], deck: [], doneAt: 0 }));
-let S = { state: "idle", level: 0, time: 120, camX: 0, camV: 3.6, t: 0, betweenT: 0, paused: false };
+// left = giây còn trên thanh giờ của đội (màn này) · shown = phần thanh đang vẽ (lúc đếm thưởng rút về 0) · out = hết giờ, tàu dừng
+const T = [0, 1].map(i => ({ i, z: 0, score: 0, train: null, cars: [], carts: [], x: 0, v: 0, state: "idle", balloons: [], crates: [], spawnT: 0, bag: [], deck: [], left: 0, out: false }));
+let S = { state: "idle", level: 0, lvTime: 0, lvClock: 0, elapsed: 0, camX: 0, camV: 3.6, t: 0, betweenT: 0, countT: 0, paused: false, endWhy: "" };
 const BV = 3.0;   // khinh khí cầu trôi trên màn (đv/giây) ≈ nấc 4 của game thật
 
 function makeOrders() {
@@ -298,32 +345,48 @@ function flash(x, y, z, text, color) {
 function startMatch() {
   for (const tm of T) { tm.score = 0; tm.balloons.slice().forEach(removeBalloon); tm.crates.forEach(c => scene.remove(c.m)); tm.crates = []; }
   const [A, B] = makeOrders(); T[0].bag = A; T[1].bag = B;
-  S.time = 120; S.level = 0; S.camX = 0; S.camV = 3.6;
-  document.getElementById("ovStart").hidden = true; document.getElementById("ovEnd").hidden = true;
+  for (const tm of T) tm.out = false;
+  S.level = 0; S.elapsed = 0; S.camX = 0; S.camV = 3.6; S.endWhy = "";
+  ["ovStart", "ovEnd", "ovOpt", "ovPad"].forEach(id => document.getElementById(id).hidden = true);
   beginLevel(1);
 }
+const maxLevels = () => (OPT.levels === 0 ? 1 : OPT.levels);
 function beginLevel(n) {
+  if (n > maxLevels()) return endMatch("ALL LEVELS DONE");
   S.level = n;
-  for (const tm of T) {
-    const items = []; while (items.length < n && tm.bag.length) items.push(tm.bag.pop());
-    if (!items.length) return endMatch("ALL WORDS DONE");
-    tm.deck = []; tm.doneAt = 0;
-    buildTrain(tm, items);
+  const size = OPT.levels === 0 ? Infinity : n;   // Off ⇒ một màn duy nhất chứa ĐỦ cả bộ từ
+  const sets = T.map(tm => { const items = []; while (items.length < size && tm.bag.length) items.push(tm.bag.pop()); return items; });
+  if (sets.some(s => !s.length)) return endMatch("ALL WORDS DONE");
+  S.lvTime = timed() ? OPT.round * MIN : 0; S.lvClock = 0;
+  T.forEach((tm, k) => {
+    tm.deck = []; tm.left = S.lvTime; tm.shown = S.lvTime;
+    buildTrain(tm, sets[k]);
     // chạy nhanh vào từ mép trái rồi chậm dần về đúng khung (toa chờ ở giữa màn)
     tm.x = S.camX - halfAt(2, tm.z) - 4 - ENGINE_LEN / 2 * TS; tm.v = S.camV + 9;
     tm.state = "play"; tm.spawnT = 2.2 + tm.i * 0.6;
     tm.train.position.x = tm.x;
-  }
+  });
   S.state = "play";
-  showBanner("LEVEL " + n, 1600);
+  showBanner("LEVEL " + n + (OPT.levels ? " / " + OPT.levels : ""), 1600);
 }
 function finishTeam(tm) {
-  tm.state = "launch";
-  const first = !T.some(o => o !== tm && (o.state === "launch" || o.state === "gone"));
-  if (first) { tm.score += 10; flash(tm.x, ROOF_W + 2, tm.z, "FIRST +10", "#ffd34d"); }
+  tm.state = "launch";   // PHÓNG ra khỏi màn; thanh giờ đội này dừng rút (phần còn lại đổi điểm khi cả 2 xong)
   tm.balloons.forEach(b => { b.leaving = true; });
 }
+// thanh giờ của đội rút hết khi chưa xong ⇒ tàu DỪNG, đội OUT; đội kia chơi nốt màn này rồi kết thúc trận
+function timeOut(tm) {
+  tm.state = "out"; tm.out = true; tm.left = 0;
+  tm.balloons.forEach(b => { b.leaving = true; });
+  flash(cartX(tm, tm.carts.find(c => !c.filled) || tm.carts[0]), ROOF_W + 2.2, tm.z, "TIME'S UP", "#ff7b6b");
+}
+// cả 2 đã xong (hoặc OUT): phần còn lại của thanh giờ rút về 0, điểm tăng lên (1 giây = 1 điểm)
 function levelDone() {
+  S.state = "count"; S.countT = 0;
+  T.forEach(tm => { tm.bonus = tm.out ? 0 : Math.floor(tm.left); tm.base = tm.score; });
+}
+function afterCount() {
+  const outs = T.filter(tm => tm.out);
+  if (outs.length) return endMatch(outs.length === 2 ? "BOTH TEAMS RAN OUT OF TIME" : `TEAM ${outs[0].i + 1} RAN OUT OF TIME`);
   S.state = "between"; S.betweenT = 0;
   showBanner(`✈ LEVEL ${S.level} · TEAM 1  ${T[0].score} : ${T[1].score}  TEAM 2`, 3200);
 }
@@ -346,6 +409,8 @@ function updateTeam(tm, dt) {
     const want = S.camX - cur.lx * TS, K = 1.1;
     const a = K * K * (want - tm.x) + 2 * K * (S.camV - tm.v);
     tm.v = Math.max(0.6, Math.min(30, tm.v + a * dt));
+  } else if (tm.state === "out") {
+    tm.v = Math.max(0, tm.v - 3.2 * dt);   // hết giờ: tàu phanh dừng hẳn, bị bỏ lại (máy quay vẫn trôi theo đội kia)
   } else if (tm.state === "launch" || tm.state === "gone") {
     tm.v = Math.min(34, tm.v + 9 * dt);   // PHÓNG lên trước, ra khỏi mép phải
     if (tm.state === "launch" && tm.x - tm.len > S.camX + halfAt(2, tm.z) + 2) tm.state = "gone";
@@ -372,11 +437,11 @@ function updateTeam(tm, dt) {
       if (over && c.y - ROOF_W < 2.8 && tm.state !== "gone") c.vx = tm.v + (c.vx - tm.v) * Math.exp(-dt * 7);
       c.x += c.vx * dt; c.y += c.vy * dt;
       if (over && c.y - CRATE_H / 2 <= ROOF_W && c.y > ROOF_W - 0.4) {
-        if (over.type === "answer" && over.key === c.key && !over.filled) {
+        if (over.type === "answer" && over.key === c.key && !over.filled && tm.state === "play") {
           c.state = "on"; c.cart = over; c.off = c.x - (tm.x + over.lx * TS); c.y = ROOF_W + CRATE_H / 2;
           over.filled = true; tm.score += 5; flash(c.x, c.y + 1.4, tm.z, "+5", "#9dffa9");
           if (tm.carts.every(k => k.filled)) finishTeam(tm);
-        } else { c.state = "kick"; c.vy = 4; c.vz = 3; c.vx = tm.v; if (over.type === "answer") flash(c.x, c.y + 1.4, tm.z, "✗", "#ff7b6b"); }
+        } else { c.state = "kick"; c.vy = 4; c.vz = 3; c.vx = tm.v; if (over.type === "answer" && tm.state === "play") flash(c.x, c.y + 1.4, tm.z, "✗", "#ff7b6b"); }
       } else if (c.y < 0.5 + CRATE_H / 2) { c.state = "ground"; c.y = 0.5 + CRATE_H / 2; }
     } else if (c.state === "on") { c.x = tm.x + c.cart.lx * TS + c.off; }
     else if (c.state === "kick") { c.vy -= GRAV * dt; c.x += c.vx * dt; c.y += c.vy * dt; c.z += c.vz * dt; if (c.y < 0.5) { c.state = "ground"; c.y = 0.5; } }
@@ -389,23 +454,45 @@ function update(dt) {
   S.t += dt;
   S.camX += S.camV * dt;
   placeCamera();
-  if (S.state === "play" || S.state === "between") {
-    S.time -= dt; if (S.time <= 0) { S.time = 0; endMatch("TIME'S UP"); }
+  if (S.state === "play") {
+    S.elapsed += dt;
+    if (T.some(tm => tm.state === "play")) S.lvClock += dt;   // đồng hồ giữa = giờ màn, dừng khi cả 2 đã xong
+    if (timed()) for (const tm of T) if (tm.state === "play") {   // thanh giờ chỉ rút khi đội còn đang chơi
+      tm.left = Math.max(0, tm.left - dt); tm.shown = tm.left;
+      if (tm.left <= 0) timeOut(tm);
+    }
   }
   for (const tm of T) updateTeam(tm, dt);
-  if (S.state === "play" && T.every(tm => tm.state === "gone")) levelDone();
+  if (S.state === "play" && T.every(tm => tm.state === "gone" || tm.state === "out")) levelDone();
+  if (S.state === "count") {   // phần còn lại của thanh rút về 0, điểm đếm lên
+    S.countT += dt;
+    const dur = T.some(tm => tm.bonus > 0) ? 1.8 : 0.3, p = Math.min(1, S.countT / dur), e = 1 - Math.pow(1 - p, 2);
+    T.forEach(tm => { tm.shown = tm.left * (1 - e); tm.score = tm.base + Math.round(tm.bonus * e); });
+    if (p >= 1) { T.forEach(tm => { tm.left = 0; }); afterCount(); }
+  }
   if (S.state === "between") { S.betweenT += dt; if (S.betweenT > 3.4) beginLevel(S.level + 1); }
   sun.position.set(S.camX - 20, 40, 30); sun.target.position.set(S.camX, 0, -4);
-  // HUD
-  const t = Math.ceil(S.time); document.querySelector(".clock").textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+  // HUD: ô đội = thanh giờ · đồng hồ giữa = giờ còn của màn (1–10) / đếm lên (∞) / ẩn (Off)
+  const clk = document.querySelector(".clock");
+  clk.hidden = OPT.round === 0;
+  const t = timed() ? Math.max(0, Math.ceil(S.lvTime - S.lvClock)) : Math.floor(S.elapsed);
+  clk.textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
   T.forEach(tm => {
     document.querySelector(".s" + tm.i).textContent = tm.score;
-    document.querySelector(".st" + tm.i).textContent = S.state === "play" && tm.state !== "play" ? "✓ DONE" : "";
+    const f = timed() && S.lvTime ? (S.state === "idle" ? 1 : (tm.shown ?? 0) / S.lvTime) : 1;
+    document.querySelector(".f" + tm.i).style.width = (f * 100).toFixed(2) + "%";
+    const box = document.querySelector(".team.t" + tm.i);
+    box.classList.toggle("is-out", tm.out); box.classList.toggle("is-count", S.state === "count" && tm.bonus > 0);
+    document.querySelector(".st" + tm.i).textContent = tm.out ? "OUT" : S.state === "count" && tm.bonus > 0 ? "+" + tm.bonus : S.state === "play" && tm.state !== "play" ? "✓ DONE" : "";
   });
 }
 
 // ---------------------------------------------------------------- chạm màn lớn (chạm quả đội nào ⇒ thùng xuống tàu đội đó)
+let hintT = 0;
 cv.addEventListener("pointerdown", e => {
+  if (padMode === "ipad") {   // Chỉ iPad: màn lớn chỉ để xem
+    const h = document.getElementById("hint"); h.hidden = false; clearTimeout(hintT); hintT = setTimeout(() => { h.hidden = true; }, 1500); return;
+  }
   const r = cv.getBoundingClientRect(), nd = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
   _rc.setFromCamera(nd, camera);
   const all = T.flatMap(tm => tm.balloons.filter(b => !b.leaving));
@@ -434,7 +521,12 @@ function drawPad(i) {
   ctx.fillStyle = c.css; ctx.fillRect(0, 0, W, 54);
   ctx.fillStyle = "#fff"; ctx.font = `800 30px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "left"; ctx.fillText(`TEAM ${i + 1}`, 22, 28);
   ctx.textAlign = "right"; ctx.fillText(String(tm.score), W - 22, 28);
-  ctx.textAlign = "center"; ctx.font = `700 22px ${FONT}`; ctx.fillText(tm.state === "play" ? "Tap a balloon to drop its box" : S.state === "play" ? "✓ Train done — wait for the other team" : "", W / 2, 28);
+  ctx.textAlign = "center"; ctx.font = `700 22px ${FONT}`;
+  ctx.fillText(padMode === "off" ? "iPad is OFF" : tm.out ? "TIME'S UP — your train is out" : tm.state === "play" ? "Tap a balloon to drop its box" : S.state === "play" ? "✓ Train done — wait for the other team" : "", W / 2, 28);
+  if (timed() && S.lvTime) {   // thanh giờ của đội ngay dưới đầu thanh (như ô đội trên màn lớn)
+    ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fillRect(0, 54, W, 10);
+    ctx.fillStyle = tm.out ? "#ff7b6b" : "#ffd34d"; ctx.fillRect(0, 54, W * Math.max(0, (tm.shown ?? 0) / S.lvTime), 10);
+  }
   // tàu
   if (tm.train && tm.state !== "gone") {
     const blk = (lx, len, y0, h, col) => { const x0 = X(tm.x + (lx - len / 2) * TS, ROOF_W), x1 = X(tm.x + (lx + len / 2) * TS, ROOF_W); ctx.fillStyle = col; ctx.fillRect(x0, Y(RAIL_TOP + (y0 + h) * TS), x1 - x0, h * TS * ppu); return [x0, x1]; };
@@ -471,6 +563,7 @@ function drawPad(i) {
     ctx.fillStyle = "#2a1608"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; drawLines(ctx, wrapFit(ctx, b.word, bw - 16, bh - 6, 34, 12), x, y + 2);
     if (!b.leaving) P.hits.push({ b, x, y, rx: rx * 1.1, ry: ry * 1.6 });
   }
+  if (padMode === "off") { ctx.fillStyle = "rgba(10,10,14,.78)"; ctx.fillRect(0, 54, W, H - 54); ctx.fillStyle = "#fff"; ctx.font = `800 40px ${FONT}`; ctx.textAlign = "center"; ctx.fillText("iPad OFF — play on the big screen", W / 2, H / 2); P.hits = []; }
 }
 pads.forEach((P, i) => P.c.addEventListener("pointerdown", e => {
   const r = P.c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * P.c.width, y = (e.clientY - r.top) / r.height * P.c.height;
@@ -482,8 +575,9 @@ pads.forEach((P, i) => P.c.addEventListener("pointerdown", e => {
 const tags = T.map(tm => { const d = document.createElement("div"); d.className = "tag t" + tm.i; d.textContent = "TEAM " + (tm.i + 1); stage.append(d); return d; });
 function placeTags() {
   T.forEach((tm, i) => {
-    const show = tm.train && tm.state === "play";
+    const show = tm.train && (tm.state === "play" || tm.state === "out");
     tags[i].hidden = !show; if (!show) return;
+    tags[i].textContent = tm.out ? `TEAM ${i + 1} · OUT` : `TEAM ${i + 1}`;
     const [sx, sy] = screenOf(tm.x + ENGINE_LEN / 2 * TS * 0.2, ROOF_W + 1.4, tm.z);
     tags[i].style.left = sx + "px"; tags[i].style.top = sy + "px";
   });
@@ -504,20 +598,45 @@ function tick(dt) {
 }
 function setView(g) {
   G = g; V = VIEWS[g]; T[0].z = 0; T[1].z = -V.zf;
-  document.querySelectorAll("[data-g]").forEach(b => b.classList.toggle("on", b.dataset.g === g));
-  document.querySelector(".top small").textContent = `Góc ${g}: ${V.txt} · chạm khinh khí cầu trên màn lớn HOẶC trên iPad`;
   buildTracks(); fit();
   if (S.state !== "idle") startMatch();
 }
-document.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => setView(b.dataset.g)));
 for (const id of ["go", "go2", "again"]) document.getElementById(id).addEventListener("click", startMatch);
 document.getElementById("pause").addEventListener("click", e => { S.paused = !S.paused; e.target.classList.toggle("on", S.paused); last = 0; });
+document.getElementById("fast").addEventListener("click", e => {
+  MIN = MIN === 60 ? 15 : 60; e.target.classList.toggle("on", MIN === 15);
+  if (S.state !== "idle") startMatch();
+});
+// ---- bảng Options mẫu: LEVELS Off/1–20 · TIME ROUND Off/1–10/∞ (Apply ⇒ chơi lại từ đầu, như Apply của AWord)
+const $id = id => document.getElementById(id);
+const lvTxt = v => (v === 0 ? "Off" : String(v)), trTxt = v => (v === 0 ? "Off" : v === 11 ? "∞" : v + "'");
+function paintOpt() {
+  $id("vLv").textContent = lvTxt(+$id("oLv").value); $id("vLv").classList.toggle("off", +$id("oLv").value === 0);
+  $id("vTr").textContent = trTxt(+$id("oTr").value); $id("vTr").classList.toggle("off", +$id("oTr").value === 0);
+}
+["oLv", "oTr"].forEach(k => $id(k).addEventListener("input", paintOpt));
+$id("bOpt").addEventListener("click", () => {
+  $id("oLv").value = OPT.levels; $id("oTr").value = OPT.round; paintOpt();
+  $id("ovPad").hidden = true; $id("ovOpt").hidden = !$id("ovOpt").hidden; S.paused = !$id("ovOpt").hidden; last = 0;
+});
+$id("oCancel").addEventListener("click", () => { $id("ovOpt").hidden = true; S.paused = false; last = 0; });
+$id("oApply").addEventListener("click", () => {
+  OPT.levels = +$id("oLv").value; OPT.round = +$id("oTr").value;
+  $id("ovOpt").hidden = true; S.paused = false; last = 0;
+  if (S.state !== "idle") startMatch();
+});
+// ---- bảng iPad: Off · iPad + màn lớn (mặc định) · Chỉ iPad — đổi tại chỗ, KHÔNG chơi lại trận
+function paintPad() { document.querySelectorAll("[data-pm]").forEach(b => b.classList.toggle("on", b.dataset.pm === padMode)); $id("bPad").classList.toggle("on", padMode !== "off"); }
+document.querySelectorAll("[data-pm]").forEach(b => b.addEventListener("click", () => { padMode = b.dataset.pm; paintPad(); }));
+$id("bPad").addEventListener("click", () => { $id("ovOpt").hidden = true; $id("ovPad").hidden = !$id("ovPad").hidden; paintPad(); });
+$id("pClose").addEventListener("click", () => { $id("ovPad").hidden = true; });
+paintPad();
 addEventListener("resize", fit);
 await document.fonts.ready;
 setView(G); placeCamera();
 requestAnimationFrame(frame);
 // bàn thử (khung xem trước bị ẩn thì rAF đứng)
-window.__fd = { S, T, step(n = 1, dt = 1 / 60) { manual = true; for (let i = 0; i < n; i++) tick(dt); return S.state; }, resume() { manual = false; last = 0; }, start: startMatch, setView, pop, camera, VIEWS,
+window.__fd = { S, T, step(n = 1, dt = 1 / 60) { manual = true; for (let i = 0; i < n; i++) tick(dt); return S.state; }, resume() { manual = false; last = 0; }, start: startMatch, setView, pop, camera, VIEWS, OPT, setMin(s) { MIN = s; }, setPad(m) { padMode = m; paintPad(); },
   snap() { tick(0); return cv.toDataURL("image/jpeg", 0.85); } };
 </script>
 </body>
