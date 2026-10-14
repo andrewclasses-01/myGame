@@ -112,6 +112,8 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   `createPadHost` lẫn phía iPad `createPadClient`, + `localSignal` cho bàn thử 2 tab) · `core/mc3d-padui-2q.js` (giao diện D-pad iPad) ·
   `core/mc3d-qr.js` (chép NGUYÊN `AWord/web/core/qr.js`). Trang: `mau-2q-star-loot-ipad.html` + `pad-2q.html?t=0|1`. Lõi KHÔNG biết mạng:
   chỉ nhận `remote` { attach({press,status}), detach, panel, panelClosed }. Kênh bắt tay thật (Firestore) nằm ở AWord `templates/maze-chase/sl-pad-signal.js`.
+- TRAIN RUSH mới nhất = **mẫu 1ap** (14/10/2026, CHƯA ghép AWord — AWord vẫn chạy 1ao/1an): FIGHT MỘT MÀN 2 tàu song song + iPad + Options LEVELS/TIME ROUND
+  (hồ sơ `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 40; trang `mau-1ap-train-rush.html`, iPad `pad-1ap.html?t=0|1`). Ghép AWord: chép 1ap + iPad như Rocket Race.
 - TRAIN RUSH (`balloon-pop/`) + STAR LOOT (`maze-chase/`): GỐC ở myGame. Sửa ở đây (bản mới = tên mới) ⇒ commit + push ⇒ AWord chạy
   `python -X utf8 tools/chep-train-rush.py` / `tools/chep-star-loot.py` (ghi `3d/NGUON.json` = commit myGame). Kiểm khớp: chạy lại script chép, AWord không đổi gì = khớp.
 - ROCKET RACE: GỐC ở AWord (`templates/rocket-race/`). MỖI Đợt Rocket Race trên AWord ⇒ ở myGame chạy

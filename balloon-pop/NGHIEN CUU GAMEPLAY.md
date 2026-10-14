@@ -412,3 +412,43 @@ sinh bằng `tools/tao-am-thanh-1ah.py` (nguồn gốc cất ở %LOCALAPPDATA%\
   rồi nhạc thắng + reo hò + "Yee-haw" + còi; tạm dừng = im hẳn, chơi tiếp đúng chỗ; nút loa tắt cả trang.
 - Đo mức (AnalyserNode trên đường ra): nhạc trận ≈ −25 dB RMS dưới hiệu ứng đúng/sai ≈ −20…−23; gió −33; ngựa hí ở 60 m −30.
   Em KHÔNG nghe được ⇒ chỉ chọn theo mô tả + đo; thầy nghe ở `nghe-am-thanh-1ah.html`, báo số tiếng muốn đổi.
+## 40. Mẫu 1ap (14/10/2026) — FIGHT MỘT MÀN + iPAD + Options mới (thầy duyệt bản phác ⇒ "ok build")
+Thầy: "màn Fight là 1 màn hình duy nhất, 2 tàu chạy song song; tàu xa có khinh khí cầu xa hơn, nhỏ hơn; tàu xong màn phóng lên trước, tàu sau ở lại
+làm nốt, xong cũng phóng đi rồi báo điểm; điều khiển bằng iPad như Rocket Race". Thiết kế trước bằng bản phác khối `thiet-ke-fight-1-man.html`
+(2 vòng, chốt bằng AskUserQuestion), rồi build. Trang `mau-1ap-train-rush.html` (Single; `?mode=fight` = Fight; `?lv=` `?tr=` thử nhanh) + `pad-1ap.html?t=0|1`.
+
+**Thầy chốt:**
+- Một cảnh, 2 ray CỐ ĐỊNH: TEAM 1 đỏ ray gần (z 0), TEAM 2 xanh ray xa (z −10). Góc máy quay A (cao 13, xa 24, fov 28, nhìn chéo xuống).
+- Đội đầy toa ⇒ tàu PHÓNG ra khỏi màn; đội kia làm nốt — CHỜ thoải mái; cả 2 xong ⇒ báo điểm ⇒ 2 tàu mới (màn k có k toa) cùng chạy vào.
+- Ô điểm đỏ/xanh = THANH GIỜ của màn (đầy = Time round), rút khi đội đang chơi, dừng khi đội xong. Cả 2 xong ⇒ phần còn lại rút về 0, điểm
+  tăng lên — 1 giây = 1 điểm. Đồng hồ giữa = giờ còn của màn. Thanh của một đội rút hết khi chưa xong ⇒ tàu DỪNG, đội OUT; đội kia chơi nốt
+  màn đó ⇒ KẾT THÚC TRẬN, chốt điểm.
+- Options MỚI cho CẢ Single lẫn Fight: LEVELS Off / 1–20 (Off = 1 màn chứa đủ cả bộ từ) THAY Max cars · TIME ROUND Off / 1–10 phút mỗi màn / ∞
+  (Off: ẩn đồng hồ + thanh; ∞: đồng hồ đếm lên, không thưởng giờ) THAY None/Count up/Count down. Mặc định LEVELS 5 · TIME ROUND 2 phút.
+- iPad: cảnh 2D thu nhỏ của RIÊNG đội mình, khớp màn lớn; chạm quả = nổ trên màn lớn. Nút iPad 3 chế độ (đổi tại chỗ, không chơi lại):
+  Off · iPad + màn lớn (MẶC ĐỊNH — chạm màn lớn vẫn được, kể cả quả đội bạn: thầy chấp nhận) · Chỉ iPad (màn lớn chỉ để xem, chạm ⇒ dòng nhắc).
+
+**Kỹ thuật (lõi `core/bp3d-1ap.js`, tuỳ chọn `duo: true`):**
+- Mỗi đội một BỘ (rig): tàu, toa, khinh khí cầu (làn riêng `VIEWS.duo.lanes` / `.far`, vỏ nhuộm màu đội), thùng, điểm, thứ tự từ, thân vật lý.
+  Biến `S` trỏ vào bộ đang xử lý (đổi trước mỗi lượt cập nhật / chạm / va chạm) ⇒ mọi hàm luật chơi cũ chạy y nguyên cho từng đội. Khoá DÙNG
+  CHUNG (máy quay, thời gian, hiệu ứng, máy bay, tạm dừng) là get/set về một chỗ `SH`. MỘT thế giới vật lý (cannon) cho cả 2 tàu; thùng nhớ `rig`.
+- Máy quay TRÔI ĐỀU; mỗi tàu tự nhanh/chậm bằng lò xo giảm chấn để toa đang chờ của đội mình luôn ở GIỮA màn (thả đúng ⇒ tàu chậm lại, toa kế
+  trôi vào giữa). Tàu không bao giờ chạy lùi (≥ 25 % tốc độ máy quay).
+- Cảnh `west-world-1ap.js`: `{ tracks: [0, −10] }` dựng 2 ray thật; vật cao (đá to, mô đất, xương rồng, bụi ngải) không mọc GIỮA 2 ray (che tàu xa).
+  Intro Fight `fight-cine-1ap.js`: `zFar` + `ownTrack: false` ⇒ tàu xanh chạy trên ray xa thật, không dựng ray tạm.
+- ĐOÀN TÀU DỰNG DẦN (cả Single): chỉ dựng 5 toa đáp án đầu, gắn thêm vào đuôi khi toa chờ còn ≤ 2 toa phía sau; toa đã qua xa bên phải
+  (> 30 đv ngoài màn) thì gỡ hình + thùng trên đó. Levels Off (55 từ) không dựng 160 toa một lúc. Tốc độ tàu tính theo số toa CỦA MÀN, tối đa như 10 toa.
+- Trận `core/fight-1ap.js` (+ `fight-1ap.css`): thanh giờ, OUT, đếm thưởng, băng máy bay "L1 58 : 55", màn kế; Options mẫu (myGame) / bảng thật
+  (AWord `host.options`); `api.setOptions(o)` ⇒ chơi lại từ đếm 3-2-1; `api.setPadMode("off"|"both"|"ipad")`.
+- iPad: `core/tr-padlink-1ap.js` = CHÉP AWord `rocket-race/rr-padlink.js` (Đợt 514, có chặn iPad thứ 2) chỉ đổi lệnh: iPad gửi `pop:<số quả>`;
+  game gửi `l:` bố cục tàu (khi đổi — tàu dựng dần), `i:` trạng thái ~20 lần/giây, `e:` sự kiện (ok · wrong · done · out · win · lose · draw).
+  Màn iPad `core/tr-padui-1ap.js`: vị trí ngang = toạ độ THẾ GIỚI tính từ giữa màn lớn (camX), phóng to quanh toa chờ; giữa 2 lần nhận trạng thái
+  tự đẩy tiếp theo vận tốc. Bàn thử: kho bắt tay cục bộ `localSignal("trpad1ap")` (2 tab cùng trình duyệt).
+
+**Đã kiểm (máy soạn, 14/10):** Single 5 màn (thưởng giờ màn, "ALL LEVELS DONE!", 15/55) · Single Levels Off + ∞ (tàu dựng dần 9 → …, gỡ toa đã qua,
+đồng hồ đếm lên) · Fight: intro trên ray thật, 2 tàu song song, toa chờ cả 2 đội đúng giữa màn, tàu xong phóng đi, đếm thưởng (54 / 51 giây ⇒ 58 : 55),
+5 màn liền, OUT (tàu xanh phanh dừng, "OUT", hết trận "TEAM 2 RAN OUT OF TIME") · iPad 2 tab nối thẳng WebRTC, chạm THẬT quả "TOUCH" trên iPad ⇒ thùng
+rơi trúng toa trên màn lớn (+5, tàu phóng đi) · Chỉ iPad: chạm màn lớn không nổ + dòng nhắc · mặc định: chạm quả đỏ / xanh trên màn lớn ⇒ thùng xuống
+đúng tàu đội đó · 94 khung/giây MSAA 4 (một cảnh thay vì 2 cảnh như Fight cũ). ⬜ thầy thử TOMKO + 2 iPad thật (sau khi ghép AWord).
+- Bẫy gặp: chèn ghi chú `//` giữa dòng JS nhiều lệnh ⇒ nuốt mất `g.add(env)` (thân khinh khí cầu biến mất) — đúng bẫy đã ghi trong CLAUDE.md.
+- Bẫy Git Bash: tham số dòng lệnh bắt đầu bằng `//` bị MSYS đổi thành `/` (coi là đường dẫn) ⇒ tìm/thay chuỗi trong file bằng script phải tránh.

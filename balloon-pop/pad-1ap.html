@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Train Rush — iPad (1ap)</title>
+<!-- TRAIN RUSH 1ap — GIẢ LẬP iPad cho bàn thử myGame: mở mau-1ap-train-rush.html?mode=fight ở một tab, rồi pad-1ap.html?t=0 (TEAM 1) và
+     pad-1ap.html?t=1 (TEAM 2) ở 2 tab khác CÙNG trình duyệt (kho bắt tay cục bộ localSignal "trpad1ap"). Không ?t ⇒ màn chọn đội.
+     Trong AWord: trang chủ ▸ nút iPad ▸ chọn đội (như Rocket Race) — ghép ở chặng AWord. -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Rye&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #120c07; color: #f6e6c4; font-family: "Baloo 2", system-ui, sans-serif; overflow: hidden; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  #pad { position: fixed; inset: 0; }
+  .trp { position: absolute; inset: 0; }
+  .trp-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .trp-ov { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(20, 10, 4, .72); }
+  .trp-ov[hidden] { display: none; }
+  .trp-card { text-align: center; padding: 22px 34px; border-radius: 18px; background: linear-gradient(#f3e2bf, #e2c996); color: #3a1f0e; border: 4px solid #7a4a22; max-width: 80vw; }
+  .trp-big { display: block; font: 400 clamp(26px, 5vw, 46px) Rye, serif; color: #6b2a12; }
+  .trp-small { margin: 8px 0 0; font: 700 clamp(15px, 2.4vw, 20px) "Baloo 2", system-ui, sans-serif; }
+  .pick { position: fixed; inset: 0; display: grid; place-items: center; }
+  .pick div { display: flex; gap: 24px; }
+  .pick button { font: 400 34px Rye, serif; color: #fff; padding: 26px 46px; border-radius: 18px; border: 4px solid #ffd98a; cursor: pointer; }
+  .pick .t0 { background: linear-gradient(#c73526, #8f1f14); } .pick .t1 { background: linear-gradient(#2769c7, #143f8f); }
+</style>
+</head>
+<body>
+<div id="pad"></div>
+<script type="module">
+import { mountTrainPad } from "./core/tr-padui-1ap.js";
+import { localSignal } from "./core/tr-padlink-1ap.js";
+const q = new URLSearchParams(location.search), el = document.getElementById("pad");
+function go(t) { window.__pad = mountTrainPad(el, { signal: localSignal("trpad1ap"), team: t }); }
+if (q.get("t") === "0" || q.get("t") === "1") go(+q.get("t"));
+else {
+  el.innerHTML = `<div class="pick"><div><button class="t0">TEAM 1</button><button class="t1">TEAM 2</button></div></div>`;
+  el.querySelector(".t0").onclick = () => { el.innerHTML = ""; go(0); };
+  el.querySelector(".t1").onclick = () => { el.innerHTML = ""; go(1); };
+}
+</script>
+</body>
+</html>
