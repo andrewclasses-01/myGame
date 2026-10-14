@@ -273,7 +273,7 @@ function wheel(cx, cy, r, ang) {
   ctx.fillStyle = "#c9a25a"; ctx.beginPath(); ctx.arc(cx, cy, r * 0.18, 0, 7); ctx.fill();
 }
 function drawEngine(ox) {
-  const tm = T(), ang = -ox / 0.42, sx = X(ox), u = ppu;
+  const tm = T(), ang = ox / 0.42, sx = X(ox), u = ppu;   // tàu sang phải ⇒ bánh quay xuôi kim đồng hồ (thầy dặn)
   const bot = Y(RAIL + 0.5), base = Y(RAIL + 1.0);
   // khung + bánh
   ctx.fillStyle = "#2a2220"; ctx.fillRect(X(ox - ENG / 2), Y(RAIL + 1.05), ENG * u, 0.35 * u);
@@ -303,7 +303,7 @@ function drawEngine(ox) {
 }
 function drawTender(x) {
   const tm = T(), u = ppu, x0 = X(x - TEN / 2), x1 = X(x + TEN / 2);
-  for (const dx of [-0.28, 0.28]) wheel(X(x + dx * TEN), Y(RAIL + 0.4), 0.4 * u, -x / 0.4);
+  for (const dx of [-0.28, 0.28]) wheel(X(x + dx * TEN), Y(RAIL + 0.4), 0.4 * u, x / 0.4);
   ctx.fillStyle = shade(tm.eng, -0.1); rr(x0, Y(RAIL + 2.35), x1 - x0, Y(RAIL + 0.75) - Y(RAIL + 2.35), 5 * k); ctx.fill();
   ctx.fillStyle = "#1a1a1c"; ctx.beginPath(); ctx.moveTo(x0 + 3 * k, Y(RAIL + 2.35));
   for (let i = 0; i <= 6; i++) ctx.lineTo(x0 + (x1 - x0) * i / 6, Y(RAIL + 2.55 + 0.18 * Math.sin(i * 2.1)));
@@ -313,7 +313,7 @@ function drawTender(x) {
 }
 function drawCar(c, cx, isWait) {
   const tm = T(), u = ppu, x0 = X(cx - c.len / 2), x1 = X(cx + c.len / 2);
-  for (const dx of [-0.36, -0.22, 0.22, 0.36]) wheel(X(cx + dx * c.len), Y(RAIL + 0.36), 0.36 * u, -cx / 0.36);
+  for (const dx of [-0.36, -0.22, 0.22, 0.36]) wheel(X(cx + dx * c.len), Y(RAIL + 0.36), 0.36 * u, cx / 0.36);
   ctx.fillStyle = "#2a2220"; ctx.fillRect(x0, Y(RAIL + 0.95), x1 - x0, 0.25 * u);
   if (c.type === "p") {   // toa khách
     const g = ctx.createLinearGradient(0, Y(ROOF), 0, Y(RAIL + 0.9)); g.addColorStop(0, STYLE === "C" ? "#3fae6a" : "#3e6a4f"); g.addColorStop(1, STYLE === "C" ? "#2c8a52" : "#2a4a38");

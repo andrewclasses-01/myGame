@@ -464,3 +464,9 @@ lên, chừa đất + cỏ tiền cảnh trước tàu đỏ · (4) tàu to hơn
 - Bản phác iPad `thiet-ke-ipad-1aq.html?s=A|B|C&v=…&t=0|1`: 3 kiểu vẽ (A Miền Tây hoàng hôn · B Gọn chữ thật to · C Hoạt hình ban ngày) × 9 màn
   (chọn đội · chờ START · đếm · đang chơi · tàu đầy chờ đội kia · OUT · kết thúc · iPad tắt · đội đã có iPad). Dữ liệu giả, tự chơi, chạm quả được,
   phím Space dừng hình. Có thêm ĐIỂM ĐỘI BẠN + LEVEL k/n trên thanh đầu (game phải gửi thêm). ⬜ thầy chọn kiểu ⇒ viết lại `tr-padui` theo kiểu đó.
+- ✅ Thầy chọn kiểu **A Miền Tây hoàng hôn** (dặn: bánh xe quay ngược chiều ⇒ sửa: tàu sang phải ⇒ góc bánh TĂNG theo x, xuôi kim đồng hồ trên canvas)
+  + "chờ iPad xong, lên AWord 1 lần". Màn iPad thật `core/tr-padui-1aq.js`: `mountTrainPad` (kiểu A, vẽ từ bố cục `l:` + trạng thái `i:` thật) +
+  `mountTrainChooser` (màn chọn đội cùng kiểu, `setBusy`, `note`). Trang thử `pad-1aq.html` (không ?t ⇒ chọn đội; nút ‹ về chọn đội).
+  Game gửi thêm (fight-1aq padSend): `os` điểm đội bạn · `lvc` số màn (0 = Off) · `cd` số đếm 3-2-1 · `bn` thưởng giờ khi đếm; lõi bp3d-1aq padState: thùng
+  thêm góc nghiêng (2·atan2(q.z, q.w)). Đã kiểm 2 tab: chọn đội ⇒ GET READY ⇒ tàu vào (đầu máy, toa than LV.n, toa có bảng, toa than) ⇒ chạm THẬT
+  quả CERTAINLY ⇒ thùng rơi đúng toa (+5, nằm nghiêng như vật lý) ⇒ TRAIN FULL ⇒ đội 2 xong ⇒ LEVEL COMPLETE thưởng giờ ⇒ màn 2 ⇒ End game ⇒ YOU WIN 112 : 93.

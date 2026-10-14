@@ -2035,7 +2035,7 @@ export async function createBalloonPop({ mount, view = "side", words, wordsTitle
       return { cx: r2(SH.camX), cv: r2(SH.camV), x: R.train ? r2(R.train.position.x) : null, tv: r2(R.trainV), st: R.state, sc: R.score, lv: R.layoutV || 0, ps: SH.paused ? 1 : 0,
         f: R.carts.map(c => (c.filled ? 1 : 0)).join(""), bv: r2(withRig(R, blimpV)),
         b: R.blimps.filter(b => !b.leaving).map(b => [b.id, r2(b.x), r2(b.y), b.word || "", b.bonus || ""]),
-        c: R.crates.filter(c => !c.removed && c.body).map(c => [r2(c.body.position.x), r2(c.body.position.y), c.word, c.kicked ? 1 : 0]) };
+        c: R.crates.filter(c => !c.removed && c.body).map(c => { const q = c.body.quaternion; return [r2(c.body.position.x), r2(c.body.position.y), c.word, c.kicked ? 1 : 0, r2(2 * Math.atan2(q.z, q.w))]; }) };   // 1aq: + góc nghiêng (iPad vẽ thùng nghiêng)
     },
     popById(team, id) {
       const R = RIGS[team]; if (!R || R.state !== "play" || SH.paused) return false;
