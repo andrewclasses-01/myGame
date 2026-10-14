@@ -28,11 +28,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:#03050b;overscroll-beh
 .track{position:relative;flex:1;height:10vmin;min-width:20vmin}
 .track::before{content:"";position:absolute;left:2vmin;right:4vmin;top:50%;height:.6vmin;border-radius:.3vmin;background:rgba(148,163,184,.3)}
 .flag{position:absolute;right:0;top:50%;transform:translateY(-50%);width:3vmin;height:5vmin;background:conic-gradient(#fff 25%,#111 0 50%,#fff 0 75%,#111 0) 0 0/1.5vmin 1.25vmin;border-radius:.4vmin}
-.ship{position:absolute;top:50%;width:3.6vmin;height:3.6vmin;margin:-1.8vmin 0 0 -1.8vmin;border-radius:50%;background:var(--c);box-shadow:0 0 1.6vmin var(--c)}
+.ship{position:absolute;top:50%;width:3.6vmin;height:3.6vmin;margin:-1.8vmin 0 0 -1.8vmin;border-radius:50%;background:var(--c);box-shadow:0 0 1.6vmin var(--c);z-index:2}
 .ship.me{margin-top:-3.2vmin}.ship.foe{margin-top:-.4vmin}
 .cnt{font:900 3vmin/1 "Exo 2";white-space:nowrap}
-.tms{position:absolute;left:0;top:0;width:4.6vmin;height:1.5vmin;margin:-.75vmin 0 0 -2.3vmin;z-index:3}
-.tms svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 .8vmin rgba(255,70,40,.9))}
+.tms{position:absolute;left:0;top:0;width:2.8vmin;height:.9vmin;margin:-.45vmin 0 0 -1.4vmin;z-index:1;transform-origin:50% 50%}
+.tms svg{width:100%;height:100%;overflow:visible;display:block}
 .tboom{position:absolute;width:9vmin;height:9vmin;margin:-4.5vmin 0 0 -4.5vmin;border-radius:50%;pointer-events:none;z-index:4;
   background:radial-gradient(circle,#fff 0%,#ffe08a 18%,#ff8a2a 40%,rgba(255,60,20,.6) 58%,rgba(255,40,10,0) 72%);animation:tboom .7s ease-out forwards}
 @keyframes tboom{0%{transform:scale(.2);opacity:1}60%{opacity:.9}100%{transform:scale(1.25);opacity:0}}
@@ -284,7 +284,10 @@ const bigs = [0, 1].map(j => {
   const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: flareTex, color: new THREE.Color(4, 0.5, 0.35), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 }));
   glow.scale.set(BIG_PITCH * 1.25, BIG_LEN * 1.15, 1); glow.position.z = -1; g.add(glow);
   const hit = new THREE.Mesh(new THREE.PlaneGeometry(BIG_PITCH * 0.98, BIG_LEN * 1.05), mHit); hit.position.z = 3; hit.userData.k = "fire"; hit.userData.j = j; g.add(hit);
-  return { g, red, glow, uFill, pop: 0, flash: 0, rot: rand(0, 6) };   // thầy 14/10: ô trống KHÔNG còn bóng mờ
+  // vệt mờ (motion blur) khi quả con vút lên: 6 vệt sáng mềm nằm dọc quãng vừa bay, xoay theo hướng bay
+  const trail = Array.from({ length: 6 }, () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex, color: new THREE.Color(2.4, 0.45, 0.32),
+    blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 })); sp.visible = false; sp.renderOrder = 4; g.add(sp); return sp; });
+  return { g, red, glow, uFill, trail, pop: 0, flash: 0, rot: rand(0, 6) };   // thầy 14/10: ô trống KHÔNG còn bóng mờ
 });
 
 // --- HÀNG TÊN LỬA CON (sát mép dưới) — 10 ô + chỗ cho "+x"
@@ -306,7 +309,8 @@ const rowLine = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.25), new THREE.MeshB
 
 // --- NẠP TỰ ĐỘNG (thầy 14/10): ô to trống + còn tên lửa con ⇒ quả CUỐI hàng tự bay lên. Chính quả to (vật liệu "đổ đầy") bay từ chỗ quả con,
 // lớn dần, lúc rời hàng chỉ hiện phần ĐUÔI rồi hiện dần lên mũi — đi tiếp liền mạch thành pha nạp năng lượng như cũ tới khi đỏ hết.
-const LOAD_T = 0.75, LOAD_K0 = 0.14;
+const LOAD_T = 0.32, LOAD_K0 = 0.14;
+const LOAD_TOTAL = 0.5 + CHARGE_S;                 // = kiểu cũ của game: quả nhỏ bay sang 0,5 s + nạp đỏ 2 s ⇒ từ lúc quả con rời hàng tới lúc bắn được 2,5 s
 function autoLoad() {
   if (S.slots.some(x => x.mv)) return;                               // mỗi lúc một quả bay
   const j = S.slots.findIndex((x, i) => i < capBig() && x.st === "empty");
@@ -314,7 +318,7 @@ function autoLoad() {
   const i = Math.min(S.reserve, ROW_N) - 1;                          // quả CUỐI hàng ⇒ hàng không thủng giữa
   const B = bigs[j], from = new THREE.Vector3(); minis[i].m.getWorldPosition(from); B.g.worldToLocal(from);
   S.reserve--; minis[i].was = false;
-  S.slots[j] = { st: "charge", k: LOAD_K0, mv: { t: 0, from, s0: MINI_SC * BIG_K * rowG.scale.x / cluster.scale.x } };
+  S.slots[j] = { st: "charge", k: LOAD_K0, rate: (1 - LOAD_K0) / LOAD_TOTAL, mv: { t: 0, from, s0: MINI_SC * BIG_K * rowG.scale.x / cluster.scale.x, trail: [] } };
 }
 
 // ------------------------------------------------------------------ PHÓNG: lửa + khói như tên lửa thật
@@ -331,16 +335,16 @@ function makeFlame() {
   return { g, outer, inner, flare };
 }
 // khói: hạt sprite — sinh ở vòi phun, phình to, chậm dần, nguội từ cam sáng sang xám
-const SMOKE_N = 420, smoke = [];
+const SMOKE_N = 900, smoke = [];
 for (let i = 0; i < SMOKE_N; i++) {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex, transparent: true, depthWrite: false, opacity: 0 }));
   sp.visible = false; sp.renderOrder = 5; scene.add(sp);
   smoke.push({ sp, life: 0, max: 1, v: new THREE.Vector3(), s0: 1, s1: 4, hot: 0, spin: 0 });
 }
 let smokeI = 0;
-function puff(pos, vel, s0, s1, life, hot) {
+function puff(pos, vel, s0, s1, life, hot, a = 1) {
   const p = smoke[smokeI = (smokeI + 1) % SMOKE_N];
-  p.sp.position.copy(pos); p.v.copy(vel); p.s0 = s0; p.s1 = s1; p.max = life; p.life = life; p.hot = hot; p.sp.visible = true;
+  p.sp.position.copy(pos); p.v.copy(vel); p.s0 = s0; p.s1 = s1; p.max = life; p.life = life; p.hot = hot; p.a = a; p.sp.visible = true;
   p.sp.material.rotation = rand(0, 6.28); p.spin = rand(-0.6, 0.6);
 }
 function stepSmoke(dt) {
@@ -354,7 +358,7 @@ function stepSmoke(dt) {
     p.sp.material.rotation += p.spin * dt;
     const heat = Math.max(0, p.hot - k * 2.6);                       // nóng ⇒ cam sáng, nguội ⇒ xám
     p.sp.material.color.setRGB(lerp(0.55, 3.2, heat), lerp(0.56, 1.5, heat), lerp(0.6, 0.5, heat));
-    p.sp.material.opacity = (k < 0.08 ? k / 0.08 : 1) * (1 - k) * (0.55 + 0.25 * (1 - heat));
+    p.sp.material.opacity = (k < 0.08 ? k / 0.08 : 1) * Math.pow(1 - k, 1.3) * (0.55 + 0.25 * (1 - heat)) * p.a;
   });
 }
 const flights = [];   // { j, t, g, fl, x0, y0 }
@@ -389,43 +393,51 @@ function stepFlights(dt) {
     // khói: vòi phun = đuôi tên lửa (thế giới)
     const nz = new THREE.Vector3(f.g.position.x, y + f.tailY - f.sc * 0.2, 0.3);
     if (ig) {                                     // khói cuộn NGANG ra hai bên bệ phóng (như bệ phóng thật)
-      const n = Math.round(lerp(2, 8, f.t / FLY.ign));
+      if (Math.random() < 0.5) puff(nz, new THREE.Vector3(rand(-6, 6), rand(0, 2), 0), rand(8, 10), rand(24, 34), rand(4.5, 6), 0.3, 0.38);   // mù đọng ở bệ
+      const n = Math.round(lerp(3, 10, f.t / FLY.ign));
       for (let q = 0; q < n; q++) { const s = Math.random() < 0.5 ? -1 : 1;
         puff(nz, new THREE.Vector3(s * rand(10, 34), rand(-1, 5), rand(-3, 3)), rand(3, 5), rand(12, 22), rand(1.8, 3), 0.9); }
     } else {
-      const n = 4 + Math.round(Math.min(6, v / 35));
+      const n = 7 + Math.round(Math.min(8, v / 30));                  // thầy 14/10: đuôi nhiều khói hơn
       for (let q = 0; q < n; q++) {
-        const p = nz.clone(); p.y -= Math.random() * Math.min(8, v * dt * 1.4);   // rải theo quãng vừa bay, không đứt khúc
-        puff(p, new THREE.Vector3(rand(-3.5, 3.5), -rand(5, 12), rand(-2, 2)), rand(2.2, 3.6), rand(8, 15), rand(1.5, 2.6), 1);
+        const p = nz.clone(); p.y -= Math.random() * Math.min(10, v * dt * 1.5);   // rải theo quãng vừa bay, không đứt khúc
+        puff(p, new THREE.Vector3(rand(-4, 4), -rand(5, 12), rand(-2, 2)), rand(2.6, 4.2), rand(10, 18), rand(1.8, 3), 1);
       }
+      // khói MÙ đọng lại dọc đường bay: to, chậm, mờ, tan trong ~5 s (phóng xong vẫn còn mù mờ)
+      if (Math.random() < 0.7) { const p = nz.clone(); p.y -= Math.random() * 6;
+        puff(p, new THREE.Vector3(rand(-2.5, 2.5), rand(-1.5, 0.5), rand(-2, 2)), rand(6, 9), rand(20, 30), rand(4.2, 6), 0.2, 0.42); }
       if (tr < 0.5) for (let q = 0; q < 2; q++) { const s = Math.random() < 0.5 ? -1 : 1;     // còn sát bệ: khói vẫn tràn ngang
         puff(new THREE.Vector3(f.x0, f.y0 + f.tailY, 0.3), new THREE.Vector3(s * rand(10, 24), rand(0, 3), 0), rand(3, 5), rand(10, 16), rand(1.6, 2.6), 0.6); }
     }
     light = Math.max(light, grow * (1.5 + 0.5 * Math.random())); lx = f.g.position.x; ly = y + f.tailY;
-    if (tr > 0.35 && S.slots[f.j].st === "fly") S.slots[f.j] = { st: "empty", k: 0 };   // rời bệ ⇒ ô trống (bóng mờ hiện lại)
-    if (y - f.y0 > f.top) { f.g.visible = false; flyPool.push(f.g); flights.splice(i, 1); }
+    // thầy 14/10: quả to RA KHỎI MÀN rồi ô mới trống ⇒ quả con mới bay lên nạp
+    if (y - f.y0 > f.top) { f.g.visible = false; flyPool.push(f.g); flights.splice(i, 1); if (S.slots[f.j].st === "fly") S.slots[f.j] = { st: "empty", k: 0 }; }
   }
   fireLight.intensity = light * 260; fireLight.position.set(lx, ly - 2, 8);
 }
 
 // ------------------------------------------------------------------ đường đua mini (thanh trên): tên lửa 2D bay sang tàu địch + nổ
 const trackEl = document.querySelector(".track"), shots = [];
-const MS_SVG = '<svg viewBox="0 0 46 15"><path d="M2 7.5 L9 2 H32 Q43 3 46 7.5 Q43 12 32 13 H9 Z" fill="#e11d2a"/><rect x="14" y="2.4" width="2.2" height="10.2" fill="#fff"/><path d="M9 2 L4 -2 L13 2 Z M9 13 L4 17 L13 13 Z" fill="#8e0b14"/><path d="M2 7.5 L-8 5 L-8 10 Z" fill="#ffb03a"/></svg>';
+// phẳng 2D: thân đỏ một màu + mũi bo + cánh sẫm + lửa đuôi vàng (không đổ bóng, không 3D)
+const MS_SVG = '<svg viewBox="0 0 30 10"><path d="M-7 5 L1 2.6 L1 7.4 Z" fill="#ffc23a"/><path d="M1 2 H20 Q29 2.4 30 5 Q29 7.6 20 8 H1 Z" fill="#ef2b2b"/><path d="M1 2 L-1 -1 L6 2 Z M1 8 L-1 11 L6 8 Z" fill="#9f1018"/></svg>';
 function trackShot() {
   const e = document.createElement("div"); e.className = "tms"; e.innerHTML = MS_SVG; trackEl.append(e);
   shots.push({ e, t: 0, dur: 3.8 });
 }
 function stepTrack(dt) {
   const W = trackEl.clientWidth, H = trackEl.clientHeight;
-  const px = id => parseFloat(document.getElementById(id).style.left) / 100 * W;
+  const tr0 = trackEl.getBoundingClientRect();
+  const dot = id => { const r = document.getElementById(id).getBoundingClientRect(); return [r.left + r.width / 2 - tr0.left, r.top + r.height / 2 - tr0.top]; };
   for (let i = shots.length - 1; i >= 0; i--) {
     const s = shots[i]; s.t += dt; const k = Math.min(1, s.t / s.dur);
-    const x0 = px("shipMe"), x1 = px("shipFoe"), arc = Math.min(W * 0.05, 26);
-    const x = lerp(x0, x1, k), y = H / 2 - Math.sin(k * Math.PI) * arc;
-    const dx = (x1 - x0), dy = -Math.cos(k * Math.PI) * Math.PI * arc;
-    s.e.style.transform = `translate(${x}px,${y}px) rotate(${Math.atan2(dy, dx)}rad)`;
+    const [x0, y0] = dot("shipMe"), [x1, y1] = dot("shipFoe"), arc = Math.min(W * 0.05, 26);
+    const x = lerp(x0, x1, k), y = lerp(y0, y1, k) - Math.sin(k * Math.PI) * arc;
+    const dx = (x1 - x0), dy = (y1 - y0) - Math.cos(k * Math.PI) * Math.PI * arc;
+    // CHUI RA từ chấm tròn: bắt đầu ở tâm chấm (nằm DƯỚI chấm), lớn dần trong 12 % đầu quãng bay
+    const g = smooth(k / 0.12);
+    s.e.style.transform = `translate(${x}px,${y}px) rotate(${Math.atan2(dy, dx)}rad) scale(${0.25 + 0.75 * g})`;
     if (k >= 1) { s.e.remove(); shots.splice(i, 1);
-      const b = document.createElement("div"); b.className = "tboom"; b.style.left = x1 + "px"; b.style.top = H / 2 + "px"; trackEl.append(b); setTimeout(() => b.remove(), 750); }
+      const b = document.createElement("div"); b.className = "tboom"; b.style.left = x1 + "px"; b.style.top = y1 + "px"; trackEl.append(b); setTimeout(() => b.remove(), 750); }
   }
 }
 
@@ -498,8 +510,18 @@ function tickUI(dt, t) {
     if (s.mv) {                                                       // đang bay từ hàng con lên: lớn dần, vòng nhẹ ra trước
       s.mv.t += dt; const k = smooth(s.mv.t / LOAD_T), e = 1 - Math.pow(1 - k, 3);
       B.red.position.set(lerp(s.mv.from.x, 0, e), lerp(s.mv.from.y, bob, k), Math.sin(k * Math.PI) * 6);
-      fat(B.red, lerp(s.mv.s0, BIG_SC * BIG_K, e));
-      if (s.mv.t >= LOAD_T) s.mv = null;
+      const sc = lerp(s.mv.s0, BIG_SC * BIG_K, e);
+      // vút nhanh ⇒ thân hơi kéo dài theo hướng bay (squash & stretch) + vệt mờ phía sau
+      const tr = s.mv.trail, cur = B.red.position.clone();
+      const prev = tr.length ? tr[0] : cur, sp = cur.distanceTo(prev) / Math.max(dt, 1e-3);
+      const st = 1 + Math.min(0.35, sp / 900);
+      B.red.scale.set(sc * st, sc * 1.35 / Math.sqrt(st), sc * 1.35 / Math.sqrt(st));
+      tr.unshift(cur); if (tr.length > 7) tr.pop();
+      const ang = Math.atan2(cur.y - prev.y, cur.x - prev.x) - Math.PI / 2, w = sc * 0.62;
+      B.trail.forEach((m, i) => { const q = tr[i + 1]; m.visible = !!q && k < 0.98;
+        if (!q) return; m.position.set(q.x, q.y, q.z - 0.5); m.material.rotation = ang;
+        m.scale.set(w * (1 - i * 0.1), w * 2.6, 1); m.material.opacity = 0.32 * (1 - i / 6) * (1 - k * k); });
+      if (s.mv.t >= LOAD_T) { s.mv = null; B.trail.forEach(m => { m.visible = false; }); }
     } else { fat(B.red, BIG_SC * BIG_K); B.red.position.set(0, bob, 0); }
     B.glow.position.set(B.red.position.x, B.red.position.y, -1);
     const fill = s.st === "charge" ? s.k : 1;
@@ -541,9 +563,9 @@ function earn() {                    // đủ vạch ⇒ +1 tên lửa con (nế
 }
 function correct() { earn(); if (S.boostPips < BOOST_MAX) S.boostPips++; }
 function wrong() { S.pips = 0; if (S.boostPips < BOOST_MAX) S.boostPips = 0; }
-function tapFire() {
-  const j = [0, 1].find(j => j < capBig() && S.slots[j].st === "ready");
-  if (j == null) { shakeK = 1; return; }
+function tapFire(want) {                           // thầy 14/10: bấm quả nào phóng ĐÚNG quả đó
+  const j = want != null ? want : [0, 1].find(j => j < capBig() && S.slots[j].st === "ready");
+  if (j == null || S.slots[j].st !== "ready") { shakeK = 1; return; }
   launch(j);
   setTimeout(() => trackShot(), (FLY.ign + 0.4) * 1000);              // tên lửa 2D trên đường đua mini (như bảng iPad cũ)
 }
@@ -568,7 +590,7 @@ renderer.domElement.addEventListener("pointerdown", e => {
   const h = ray.intersectObjects(hits.filter(o => { let p = o; while (p) { if (!p.visible) return false; p = p.parent; } return true; }), false)[0];
   if (!h) return;
   const k = h.object.userData.k;
-  if (k === "boost") tapBoost(); else if (k === "fire") tapFire();
+  if (k === "boost") tapBoost(); else if (k === "fire") tapFire(h.object.userData.j);
 });
 
 // ------------------------------------------------------------------ vòng vẽ
@@ -581,7 +603,7 @@ function frame(now) {
 }
 function update(dt) {
   T += dt;
-  S.slots.forEach(s => { if (s.st === "charge") { s.k += dt / CHARGE_S; if (s.k >= 1) { s.k = 1; s.st = "ready"; } } });
+  S.slots.forEach(s => { if (s.st === "charge") { s.k += dt * (s.rate || 1 / CHARGE_S); if (s.k >= 1) { s.k = 1; s.st = "ready"; } } });
   if (S.threat >= 0) { S.threat -= dt; if (S.threat < 0) { S.threat = -1; toast("HIT!", "#ff5a4a"); } }
   const thr = S.threat >= 0, win = thr && S.threat <= WINDOW, pul = 0.5 + 0.5 * Math.sin(T * (win ? 16 : 5));
   warnEl.style.opacity = thr ? (win ? 0.35 + 0.65 * pul : 0.15 + 0.3 * pul) : 0;
