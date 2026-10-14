@@ -412,6 +412,8 @@ export async function createTrainRushFight({ mount, words, wordsTitle = "", opti
       notifyPad();
     },
     get padMode() { return padMode; },
+    // bàn thử (khung xem trước bị ẩn ⇒ rAF đứng): tua tay n khung — lõi + thanh giờ + gửi iPad
+    step(n = 1, dt = 1 / 60) { for (let i = 0; i < n; i++) { if (core && !G.paused) core.step(1, dt); if (!G.paused) tick(dt); } paintHud(); padSend(); return G.phase; },
     destroy() {
       if (dead) return; dead = true;
       cancelAnimationFrame(raf);

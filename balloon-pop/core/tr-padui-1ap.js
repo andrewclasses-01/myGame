@@ -35,7 +35,13 @@ const CSS = `.trp { position: absolute; inset: 0; background: #120c07; touch-act
 .trp-big { display: block; font: 400 clamp(26px, 5vw, 46px) Rye, serif; color: #6b2a12; }
 .trp-small { margin: 8px 0 0; font: 700 clamp(15px, 2.4vw, 20px) "Baloo 2", system-ui, sans-serif; }
 .trp-back { position: absolute; left: 10px; bottom: 10px; width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(255,255,255,.6); background: rgba(0,0,0,.45); color: #fff; font: 800 26px "Baloo 2", system-ui, sans-serif; cursor: pointer; z-index: 2; }`;
-function ensureCss() { if (document.getElementById("trp-css")) return; const st = document.createElement("style"); st.id = "trp-css"; st.textContent = CSS; document.head.append(st); }   // tự mang CSS (AWord pad.html dùng chung)
+function ensureCss() {
+  if (document.getElementById("trp-css")) return;
+  const st = document.createElement("style"); st.id = "trp-css"; st.textContent = CSS; document.head.append(st);
+  if (![...document.querySelectorAll("link[href*='fonts.googleapis']")].some(l => /Rye/.test(l.href))) {   // phông Rye + Baloo 2 (trang iPad AWord chưa nạp Rye)
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Rye&display=swap"; document.head.append(l);
+  }
+}   // tự mang CSS (AWord pad.html dùng chung)
 export function mountTrainPad(el, { signal, team, onLeave = null, onBack = null }) {   // onBack: nút ‹ về màn chọn đội (AWord pad.html)
   ensureCss();
   const T = TEAM[team ? 1 : 0];
