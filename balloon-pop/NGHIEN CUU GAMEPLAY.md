@@ -492,3 +492,30 @@ giảm lực văng — cần chạy thêm, trượt thêm một chút như tốc
 - iPad (`tr-padui-1as`): game gửi 30 tin/giây (fight-1as PAD_HZ) + số hiệu thùng; tin mới lệch vị trí đang vẽ ⇒ bù phần lệch, tan dần 0,12 s (từng vật);
   đoán tiếp tới 0,6 s khi Wi-Fi khựng (1ar dừng 0,25 s ⇒ đứng hình rồi nhảy); bỏ tin cũ tới muộn. Bàn thử `window.__trpadLag = ms` giả lập Wi-Fi trễ thất thường.
   Đo (2 iPad giả trong cùng trang, Wi-Fi giả 0–350 ms): cú nhảy lớn nhất 12,4 px → 2,5 px. Trang `mau-1as-train-rush.html` + `pad-1as.html`.
+
+## 44. Mẫu 1at (14/10/2026) — mở vào Fight · thùng không văng theo tàu · điểm chỉ khi chắc chắn · máy bay mang LEVEL (= AWord Đợt 521)
+Thầy giao 8 ý (sửa cùng AWord): mở Train Rush ⇒ Fight như Rocket Race · thùng đã xuống tàu thì tàu tăng tốc không được văng đủ để đổi kết quả (lung lay nhẹ được) ·
+khinh khí cầu nhỏ + cao, chỉ chồng ≥ 3 tầng mới va · điểm chỉ khi chắc chắn không rơi (điểm ngay chỉ khi chắc chắn) · đã có điểm mà bị bật ra ⇒ trừ lại ·
+khinh khí cầu tối đa ×2 · máy bay mang LEVEL trước mỗi màn (không mang điểm) · thú đuổi nhau gần đường đua hơn.
+- Trang `mau-1at-train-rush.html`: mở = FIGHT (`?mode=single` ⇒ Single). iPad dùng tiếp `pad-1as.html` (tr-padui-1as; làn khinh khí cầu iPad tự theo bố cục `l:`).
+- Lõi `bp3d-1at.js`:
+  - KHUNG TOA (`stepPhysics`): mỗi khung lấy Δv của tàu cộng vào vận tốc mọi thùng đang nằm trên tàu (chưa bị văng). Trước chỉ ma sát kéo: lò xo tàu lao sang
+    toa kế tới ~20 m/s², phóng đi 7 m/s² (ngưỡng trượt μ·g = 7,5) ⇒ thùng tụt, thùng sát mép rơi ⇒ đổi kết quả. Lung lay: thùng tầng 1 nằm phẳng (nghiêng < ~7°,
+    không đang trượt) nhận thêm xoay ±0,45 rad/s theo gia tốc — xa ngưỡng lật (~60°).
+  - `surelyOn(c, car, slide)` + `touchTrain(..., direct)`: điểm NGAY chỉ khi chạm THẲNG nóc toa đúng + cả thân thùng trọn trên nóc (lề 0,1; nghiêng 12–23° ⇒ phải gần
+    giữa hơn 0,5; > 23° ⇒ không) + chỗ dừng sau trượt vẫn trên nóc. Còn lại chờ nằm yên 0,3 s (settle có từ 1f). Bàn thử: `c.sure` = {x0, x1, allow, tilt}.
+    Đo: thùng rơi phẳng điểm ở đúng khung chạm; nghiêng 0,014–0,022 ⇒ điểm sau 36–39 khung (~0,6 s); tàu lao sang toa kế thùng nằm nguyên (lệch 0).
+  - ⛔ VÁ lỗi 1as: dòng chặn trượt theo chỗ trống tới mép trước toa (`if (car) { const front = …; cap = … }`) nằm LỌT SAU chú thích `//` cùng dòng ⇒ chưa từng chạy
+    (cap luôn 2,6 ⇒ thùng trượt được quá mép trước). Lại đúng bẫy `//` giữa dòng nhiều lệnh (CLAUDE.md). (Cùng dòng dưới còn `v.z *= 0.5;` cũng lọt trong chú thích
+    từ 1j — không đụng, hành vi đã quen.)
+  - Khinh khí cầu: BS0 0,84 → 0,72 · DUO_BS 0,66 → 0,55; làn side 7,7/9,35/11,0 · duo gần 7,9/9,05/10,2 · duo xa 7,8/8,6/9,4 (xa sát nhau để không lòi mép trên —
+    đo NDC đỉnh vỏ làn xa 9,05 = 0,86, 10,2 = 1,01 lòi; `laneFree` coi 2 làn xa kề là chung). Đáy khoang lái (−1,7·BS) luôn trên nóc chồng 2 thùng (+ bập bềnh ±0,22).
+    Nhóm va chạm thùng theo ĐỘ CAO trong `updateCrates`: tâm > nóc + 4·CRATE_H (tầng 3) ⇒ nhóm 3 (khinh khí cầu va được), còn lại nhóm 1. Trước: chạm tàu là nhóm 3.
+  - `blimpV` nấc 10: 6,2 → 12,4 (nấc 1 giữ 0,85).
+  - Máy bay: bỏ "Score n" ở `levelClear`; `beginLevel` bay "LEVEL k" (Single; màn 1 có phim ⇒ `endCine`). API `duoHasLevel()` (còn từ cho màn kế).
+- Trận `fight-1at.js`: `duoBanner("LEVEL 1")` lúc GO!; giữa 2 màn bay "LEVEL k+1" (chỉ khi còn màn); bỏ băng "L1 58 : 55".
+- Cảnh `west-world-1at.js` `{ chaseNear: { walls: [{z:0,h:4,6},{z:−10,h:4,6}] } }` ⇒ `animals-1at.js` createChase near: đường chạy z −38…−32 ⇒ −24 (trước −150…−120 ⇒ −34,
+  giữa màn ~−90); tầm nhìn qua nóc CẢ 2 tàu (`clearWalls`); chờ 4–8 s / 8–16 s (trước 10–20 / 18–38). `sign-chase-1at.js` chỉ đổi import. Single giữ như cũ
+  (máy quay thấp y 4,6 — đường ngắm qua nóc tàu chỉ chạm đất ở z ≤ −78).
+- Đã kiểm (máy soạn, khung ẩn ⇒ lái `__fight.step`): Fight vào thẳng · băng LEVEL 1 / LEVEL 2 · 2 tàu phóng đi thùng không rơi · đẩy thùng có điểm sang toa khác ⇒ −5 ·
+  khinh khí cầu cả 2 làn trong khung · thú giữa màn z −26 thấy rõ sau tàu xanh · Single: LEVEL 1 sau phim, làn 11,0 trong khung · 0 lỗi console.

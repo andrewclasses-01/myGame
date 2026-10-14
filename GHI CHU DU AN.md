@@ -589,7 +589,21 @@ Thầy: *"Commit + push myGame đi. Và đưa lên Aword đi."* ⇒ push myGame 
 - Đồng bộ: `tools/chep-aword-sang-game.py game10` ⇒ game10 = AWord 20110c4 (khác game9: dòng ghi chú + `trackLen`) · `mau-10-khop-aword.html` (mẫu 9 trên game10,
   thử chạy được: trackLen 10, iPad nối). Thẻ MẪU 10 lên đầu rocket-race/index.html.
 
+## Train Rush 1at — 14/10/2026 · mở vào Fight · thùng không văng theo tàu · điểm chỉ khi chắc chắn · máy bay mang LEVEL · phiên máy MSI
+**Bối cảnh (thầy):** đọc Train Rush (myGame) + AWord chế độ Fight rồi sửa cùng 8 ý — mặc định Fight; thùng đã xuống tàu không bị tăng tốc văng đổi kết quả; khinh khí cầu
+nhỏ + cao, chỉ chồng ≥ 3 tầng mới va; điểm chỉ khi chắc chắn; bị bật ra ⇒ trừ; khinh khí cầu tối đa ×2; máy bay mang LEVEL thay điểm; thú chạy gần đường đua.
+**Đã làm:** mẫu `balloon-pop/mau-1at-train-rush.html` + `core/bp3d-1at.js` · `fight-1at.js` · `west-world-1at.js` · `animals-1at.js` · `sign-chase-1at.js`. Chi tiết kỹ thuật +
+số đo: `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 44. Ghép AWord Đợt 521 (`tools/chep-train-rush.py` GOC fight-1at; `balloon-pop.js` mặc định Fight cho thầy, bấm Single ⇒ act
+đó ở lại Single).
+**Quyết định:** khung toa (cộng Δv tàu vào thùng đang nằm trên tàu) thay vì tăng ma sát / gắn chặt thùng — vẫn còn vật lý thật (nảy, lật khi rơi lệch, khinh khí cầu húc
+chồng cao), chỉ bỏ lực quán tính do tàu tăng tốc. Điểm ngay chỉ ở ca "chạm thẳng nóc + trọn thân trên nóc + gần phẳng"; mọi ca khác chờ nằm yên.
+**Lỗi gặp:** (1) dòng chặn trượt 1as lọt sau `//` (đã vá, xem mục 44). (2) làn khinh khí cầu xa đặt bằng làn gần ⇒ quả cao nhất lòi khỏi mép trên (đo NDC 1,01) ⇒ hạ làn xa.
+(3) `sed -i` của Git Bash đổi CRLF ⇒ LF — chuẩn hoá lại bằng Python trước khi commit (file gốc có 5 CR trần `
+`, giữ nguyên).
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **TRAIN RUSH 1at (= AWord Đợt 521)**: thầy chơi Fight trên TOMKO — thùng còn văng khi tàu lao/phóng không, lung lay nhẹ có đủ thật không, độ trễ điểm khi thùng
+  rơi lệch (~0,6 s) có chấp nhận được không, khinh khí cầu nấc 10 nhanh ×2 có quá nhanh không, thú chạy sau ray xa có che khinh khí cầu xanh không.
 - ⬜ **ROCKET RACE iPad Game controller — ĐÃ LÊN AWord Đợt 511**: thầy thử 2 iPad THẬT trên lớp (trang chủ AWord ▸ nút iPad ▸ chọn đội; máy chiếu: trận Rocket Race ▸
   nút iPad ▸ Controller) ⇒ đo độ mượt bảng 3D trên iPad (nặng ⇒ bỏ MSAA / hạ pixelRatio). Lịch sử mẫu 9: thầy thử `rocket-race/mau-9-ipad-dieu-khien.html` + 2 tab `pad-9.html` (mỗi tab = 1 iPad, chọn đội;
   cùng trình duyệt — hoặc GitHub Pages sau khi push) ⇒ nhận xét bố cục iPad / tiếng / báo động ⇒ ghép AWord (kế hoạch cuối chặng "Rocket Race mẫu 9"). iPad THẬT chỉ chạy được

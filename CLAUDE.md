@@ -112,7 +112,9 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   `createPadHost` lẫn phía iPad `createPadClient`, + `localSignal` cho bàn thử 2 tab) · `core/mc3d-padui-2q.js` (giao diện D-pad iPad) ·
   `core/mc3d-qr.js` (chép NGUYÊN `AWord/web/core/qr.js`). Trang: `mau-2q-star-loot-ipad.html` + `pad-2q.html?t=0|1`. Lõi KHÔNG biết mạng:
   chỉ nhận `remote` { attach({press,status}), detach, panel, panelClosed }. Kênh bắt tay thật (Firestore) nằm ở AWord `templates/maze-chase/sl-pad-signal.js`.
-- TRAIN RUSH mới nhất = **mẫu 1aq** (14/10/2026: 1ap + chỉnh cỡ Fight — tàu to, khinh khí cầu nhỏ, máy bay thấp, tiền cảnh; hồ sơ mục 41; bản phác iPad `thiet-ke-ipad-1aq.html` chờ thầy chọn kiểu). Trước đó **mẫu 1ap** (= AWord Đợt 515): FIGHT MỘT MÀN 2 tàu song song + iPad + Options LEVELS/TIME ROUND
+- TRAIN RUSH mới nhất = **mẫu 1at** (14/10/2026, = AWord Đợt 521; hồ sơ mục 44): mở trang = Fight · thùng trên tàu đi theo gia tốc tàu · điểm chỉ khi chắc chắn ·
+  khinh khí cầu nhỏ + cao + nhanh ×2 · máy bay mang LEVEL · thú gần ray. Trang `mau-1at-train-rush.html`, iPad `pad-1as.html`. Trước đó 1as/1ar (iPad mượt) ·
+- TRAIN RUSH **mẫu 1aq** (14/10/2026: 1ap + chỉnh cỡ Fight — tàu to, khinh khí cầu nhỏ, máy bay thấp, tiền cảnh; hồ sơ mục 41; bản phác iPad `thiet-ke-ipad-1aq.html` chờ thầy chọn kiểu). Trước đó **mẫu 1ap** (= AWord Đợt 515): FIGHT MỘT MÀN 2 tàu song song + iPad + Options LEVELS/TIME ROUND
   (hồ sơ `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 40; trang `mau-1ap-train-rush.html`, iPad `pad-1ap.html?t=0|1`). Ghép AWord: chép 1ap + iPad như Rocket Race.
 - TRAIN RUSH (`balloon-pop/`) + STAR LOOT (`maze-chase/`): GỐC ở myGame. Sửa ở đây (bản mới = tên mới) ⇒ commit + push ⇒ AWord chạy
   `python -X utf8 tools/chep-train-rush.py` / `tools/chep-star-loot.py` (ghi `3d/NGUON.json` = commit myGame). Kiểm khớp: chạy lại script chép, AWord không đổi gì = khớp.
