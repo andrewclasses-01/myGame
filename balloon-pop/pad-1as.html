@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Train Rush — iPad (1as)</title>
+<!-- TRAIN RUSH 1aq — GIẢ LẬP iPad kiểu A "Miền Tây hoàng hôn" (thầy chọn từ thiet-ke-ipad-1aq.html): mở mau-1aq-train-rush.html?mode=fight ở một tab,
+     rồi pad-1aq.html?t=0 (TEAM 1) và pad-1aq.html?t=1 (TEAM 2) ở 2 tab khác CÙNG trình duyệt (kho bắt tay cục bộ localSignal "trpad1ap").
+     Không ?t ⇒ màn chọn đội (mountTrainChooser — AWord pad.html dùng chung). -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Rye&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #120c07; overflow: hidden; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  #pad { position: fixed; inset: 0; }
+</style>
+</head>
+<body>
+<div id="pad"></div>
+<script type="module">
+import { mountTrainPad, mountTrainChooser } from "./core/tr-padui-1as.js";
+import { localSignal } from "./core/tr-padlink-1ap.js";
+const q = new URLSearchParams(location.search), el = document.getElementById("pad");
+let cur = null;
+function go(t) { if (cur) cur.destroy(); window.__pad = cur = mountTrainPad(el, { signal: localSignal("trpad1ap"), team: t, onBack: pick }); }
+function pick() { if (cur) cur.destroy(); window.__pad = cur = mountTrainChooser(el, { onPick: t => go(t) }); }
+if (q.get("t") === "0" || q.get("t") === "1") go(+q.get("t")); else pick();
+</script>
+</body>
+</html>

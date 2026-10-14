@@ -480,3 +480,15 @@ Thầy thử iPad thật: "cứ giật giật, hộp thả xuống kể cả khi
   đẩy tiếp mọi thứ theo giờ game; thùng đẩy theo vận tốc (+ trọng lực khi đang rơi); quầng sáng = nét to mờ thay shadowBlur; chạm 3 lần góc phải dưới ⇒
   bảng đo FPS · ms vẽ · nhịp tin · ping. Đo lại: biên độ thùng↔tàu 0,7 px (cũ 20 px), lúc phóng 1,3 px (cũ 160 px). Trang `mau-1ar-train-rush.html` + `pad-1ar.html`.
 - Không phải hạ tầng: kênh WebRTC thẳng (đèn xanh) đủ nhanh; nếu đèn VÀNG (relay) thì iPad KHÔNG nhận trạng thái — là chuyện khác.
+
+## 43. Mẫu 1as (14/10/2026) — điểm ngay khi chạm · thùng trượt tới · iPad mượt hơn nữa
+Thầy thử 1ar: "tốt hơn rất nhiều nhưng vẫn hơi giật nhẹ" + "thùng xác định được vị trí là tính điểm luôn (đang delay)" + "đoạn cuối trước khi chạm tàu thùng bị
+giảm lực văng — cần chạy thêm, trượt thêm một chút như tốc độ thùng cao hơn tàu, rồi do ma sát mới dừng".
+- Điểm: trước chờ thùng nằm yên 0,3 s (1f). Nay `touchTrain` chạm đúng toa ⇒ `scoreCart` NGAY (đo trễ 0 ms). ⚠️ Bẫy: điểm ngay ⇒ toa chờ đổi ⇒ lò xo tàu lao tới toa
+  kế lúc thùng còn nảy ⇒ thùng tụt lùi (đo −0,9). Nên `cart.hold` (≤ 0,9 s, hết sớm khi thùng yên): tàu/máy quay vẫn nhắm toa vừa có điểm; qua màn (`S.clearPend`)
+  cũng đợi thùng cuối yên. Thùng đúng đã yên BÁM tàu khi tàu tăng tốc (lệch < 1,2 m/s; húc mạnh vẫn văng).
+- Trượt: bỏ hãm đà về đúng tốc độ tàu trước khi chạm (1i) ⇒ giữ nhanh hơn tàu `SLIDE_V 2,6`; chạm toa đáp án ⇒ luôn trượt tới ≥ 0,75·SLIDE_V, giảm tốc đều
+  `SLIDE_DEC 4 m/s²` (ma sát cannon μ 0,5 hãm quá gắt — đo chỉ trượt 0,06), trần theo chỗ trống tới mép trước toa (không trượt rơi). Đo: trượt 0,27–0,67 đơn vị.
+- iPad (`tr-padui-1as`): game gửi 30 tin/giây (fight-1as PAD_HZ) + số hiệu thùng; tin mới lệch vị trí đang vẽ ⇒ bù phần lệch, tan dần 0,12 s (từng vật);
+  đoán tiếp tới 0,6 s khi Wi-Fi khựng (1ar dừng 0,25 s ⇒ đứng hình rồi nhảy); bỏ tin cũ tới muộn. Bàn thử `window.__trpadLag = ms` giả lập Wi-Fi trễ thất thường.
+  Đo (2 iPad giả trong cùng trang, Wi-Fi giả 0–350 ms): cú nhảy lớn nhất 12,4 px → 2,5 px. Trang `mau-1as-train-rush.html` + `pad-1as.html`.
