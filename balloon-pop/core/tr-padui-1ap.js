@@ -27,7 +27,7 @@ function wrapFit(ctx, text, maxW, maxH, maxPx, minPx, weight = 800) {
 }
 const drawLines = (ctx, f, cx, cy) => { const n = f.lines.length; f.lines.forEach((l, i) => ctx.fillText(l, cx, cy + (i - (n - 1) / 2) * f.px * 1.08)); };
 
-const CSS = `.trp { position: absolute; inset: 0; background: #120c07; touch-action: none; user-select: none; -webkit-user-select: none; }
+const CSS = `.trp { position: fixed; inset: 0; z-index: 1; background: #120c07; touch-action: none; user-select: none; -webkit-user-select: none; }
 .trp-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 .trp-ov { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(20, 10, 4, .72); }
 .trp-ov[hidden], .trp-back[hidden] { display: none; }
@@ -71,7 +71,7 @@ export function mountTrainPad(el, { signal, team, onLeave = null, onBack = null 
     } });
 
   function fit() {
-    const r = el.getBoundingClientRect(), pr = Math.min(2, window.devicePixelRatio || 1);
+    const r = el.querySelector(".trp").getBoundingClientRect(), pr = Math.min(2, window.devicePixelRatio || 1);   // đo chính màn iPad (phủ cả màn) — ô chứa AWord #pad cao 0
     cv.width = Math.max(320, Math.round(r.width * pr)); cv.height = Math.max(240, Math.round(r.height * pr));
   }
   fit();
