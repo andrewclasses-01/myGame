@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ROCKET RACE — iPad mẫu 11</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,700;0,800;0,900;1,900&family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#03050b;overscroll-behavior:none;font-family:"Exo 2",system-ui,sans-serif;color:#e2e8f0;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#cv{position:fixed;inset:0;touch-action:none}
+#cv canvas{display:block;width:100%;height:100%}
+/* viền đỏ báo động (tên lửa địch đang bay tới) */
+#warn{position:fixed;inset:0;pointer-events:none;opacity:0;box-shadow:inset 0 0 0 1.1vmin rgba(255,40,30,.95),inset 0 0 14vmin rgba(255,30,20,.7)}
+/* thanh trên: giữ như bảng iPad hiện tại (đội · đèn nối · đường đua mini) */
+.top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:2vmin;padding:max(2.2vmin,env(safe-area-inset-top)) 2.6vmin 0;pointer-events:none}
+.back{width:8.5vmin;height:8.5vmin;border-radius:2.2vmin;border:0;background:rgba(255,255,255,.08);color:#cbd5e1;font:900 5vmin/1 "Exo 2";pointer-events:auto}
+.team{padding:1.2vmin 2.6vmin;border-radius:2.2vmin;background:var(--tc);color:#fff;font:900 3.4vmin/1 "Exo 2";letter-spacing:.1em}
+.link{display:flex;align-items:center;gap:1vmin;font:700 2.1vmin "Exo 2";color:#94a3b8;white-space:nowrap}
+.link i{width:2.1vmin;height:2.1vmin;border-radius:50%;background:#22c55e;box-shadow:0 0 1.4vmin #22c55e}
+.track{position:relative;flex:1;height:10vmin;min-width:20vmin}
+.track::before{content:"";position:absolute;left:2vmin;right:4vmin;top:50%;height:.6vmin;border-radius:.3vmin;background:rgba(148,163,184,.3)}
+.flag{position:absolute;right:0;top:50%;transform:translateY(-50%);width:3vmin;height:5vmin;background:conic-gradient(#fff 25%,#111 0 50%,#fff 0 75%,#111 0) 0 0/1.5vmin 1.25vmin;border-radius:.4vmin}
+.ship{position:absolute;top:50%;width:3.6vmin;height:3.6vmin;margin:-1.8vmin 0 0 -1.8vmin;border-radius:50%;background:var(--c);box-shadow:0 0 1.6vmin var(--c)}
+.ship.me{margin-top:-3.2vmin}.ship.foe{margin-top:-.4vmin}
+.cnt{font:900 3vmin/1 "Exo 2";white-space:nowrap}
+#alarm{position:fixed;left:50%;top:16vmin;transform:translateX(-50%);font:900 4.4vmin/1 "Exo 2";color:#fff;text-shadow:0 0 2vmin #ff2a1a,0 0 .6vmin #ff2a1a;opacity:0;pointer-events:none;white-space:nowrap}
+#toast{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%) scale(.8);font:900 9vmin/1 "Exo 2";letter-spacing:.06em;opacity:0;pointer-events:none;transition:all .25s}
+#toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+/* bảng thử (chỉ có ở bản mẫu) */
+.panel{position:fixed;right:1.6vmin;bottom:1.6vmin;z-index:5;font:700 14px/1.3 "Exo 2";color:#dbe4f5}
+.panel>button{border:0;border-radius:12px;padding:9px 14px;background:rgba(30,40,70,.85);color:#fff;font:800 14px "Exo 2"}
+.panel .box{display:none;margin-bottom:8px;width:290px;padding:12px;border-radius:16px;background:rgba(10,16,32,.94);border:1px solid rgba(143,211,255,.25)}
+.panel.open .box{display:block}
+.box .row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.box button{border:0;border-radius:10px;padding:8px 10px;background:#22304f;color:#fff;font:800 13px "Exo 2"}
+.box button.ok{background:#15803d}.box button.no{background:#b91c1c}.box button.w{background:#c2410c}
+.box label{display:block;margin-top:8px}
+.box input[type=range]{width:100%}
+.box .hint{color:#8ea3cf;font-weight:600;font-size:12px;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="cv"></div>
+<div id="warn"></div>
+<div class="top" id="top" style="--tc:#3b8cff">
+  <button class="back" type="button">‹</button>
+  <div class="team" id="teamChip">TEAM 1</div>
+  <div class="link"><i></i>iPad connected</div>
+  <div class="track"><div class="ship me" id="shipMe" style="left:38%;--c:#3b8cff"></div><div class="ship foe" id="shipFoe" style="left:30%;--c:#ff7a00"></div><div class="flag"></div></div>
+  <div class="cnt">42%</div>
+</div>
+<div id="alarm"></div>
+<div id="toast"></div>
+<div class="panel" id="panel">
+  <div class="box">
+    <div><b>BẢNG THỬ</b> — dữ liệu giả, không nối game</div>
+    <div class="row"><button class="ok" data-a="ok">✔ Câu đúng</button><button class="no" data-a="no">✘ Câu sai</button><button data-a="ok5">✔ ×5</button></div>
+    <div class="row"><button class="w" data-a="threat">⚠ Tên lửa địch bay tới</button><button data-a="team">Đổi đội</button></div>
+    <div class="row"><button data-a="add">+1 tên lửa con</button><button data-a="add5">+5</button><button data-a="clear">Xoá hết</button></div>
+    <label>Missiles max: <b id="maxV"></b><input id="maxR" type="range" min="0" max="11" step="1"></label>
+    <label>Missile streak (số vạch): <b id="stV"></b><input id="stR" type="range" min="1" max="10" step="1"></label>
+    <div class="hint">Chạm hàng tên lửa con = nạp lên ô to · chạm tên lửa to (đã đỏ hết) = bắn · chạm BOOST khi đủ 5 vạch.</div>
+  </div>
+  <button type="button" id="pBtn">☰ BẢNG THỬ</button>
+</div>
+
+<script type="module">
+// ROCKET RACE mẫu 11 (14/10/2026) — THIẾT KẾ LẠI BẢNG ĐIỀU KHIỂN iPAD (bản mẫu xem trước, dữ liệu giả).
+// Thầy: (1) tên lửa quay MŨI LÊN TRÊN · (2) tên lửa con thành HÀNG sát mép dưới, tối đa 10 quả — không giới hạn ⇒ căn TRÁI + "+x" ở cuối,
+// giới hạn ⇒ căn GIỮA (ô trống hiện bóng mờ) · Missiles max 0–10 + nấc ∞ · (3) BOOST trái — cột vạch năng lượng giữa — 2 tên lửa phải, cụm to hơn
+// cho cân với cột vạch · (4) bắn ⇒ tên lửa đánh lửa, khói cuộn ở bệ rồi bay TỪ TỪ lên mép trên màn, lửa + khói phụt như tên lửa thật ·
+// (5) hai đội y hệt nhau (chỉ khác màu thẻ đội).
+// Hình tên lửa = CHÉP từ game10/rr3d-missile.js (cùng hình, cùng vật liệu, cùng shader nạp đỏ từ đuôi lên mũi).
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const rand = (a, b) => a + Math.random() * (b - a);
+const smooth = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+const easeOutBack = t => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+
+// ------------------------------------------------------------------ cảnh
+const host = document.getElementById("cv");
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+host.append(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x03050b);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.45;
+const FOV = 24, VH = 100;                                        // khung nhìn ở z = 0 cao đúng 100 đơn vị
+const camera = new THREE.PerspectiveCamera(FOV, 1, 1, 2000);
+camera.position.set(0, 0, (VH / 2) / Math.tan(THREE.MathUtils.degToRad(FOV / 2)));
+const keyL = new THREE.DirectionalLight(0xfff1e0, 3.2); keyL.position.set(30, 40, 60); scene.add(keyL);
+scene.add(new THREE.AmbientLight(0x8090b0, 0.35));
+const fireLight = new THREE.PointLight(0xff8a3a, 0, 60, 1.6); scene.add(fireLight);   // lửa phóng soi sáng thân + bệ
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(16, 16), 0.6, 0.5, 1.05);
+composer.addPass(bloom); composer.addPass(new OutputPass());
+
+// nền: vài ngôi sao mờ cho có chiều sâu
+{ const g = new THREE.BufferGeometry(), n = 260, p = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { p[i * 3] = rand(-160, 160); p[i * 3 + 1] = rand(-80, 80); p[i * 3 + 2] = rand(-300, -60); }
+  g.setAttribute("position", new THREE.BufferAttribute(p, 3));
+  scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0x8090c0, size: 1.1, sizeAttenuation: true, transparent: true, opacity: 0.5 }))); }
+
+function radialTex(stops, size = 128) {
+  const c = document.createElement("canvas"); c.width = c.height = size;
+  const g = c.getContext("2d"), gr = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  stops.forEach(([o, col]) => gr.addColorStop(o, col)); g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  return new THREE.CanvasTexture(c);
+}
+function roundRectGeo(w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  const x = -w / 2, y = -h / 2, sh = new THREE.Shape();
+  sh.moveTo(x + r, y); sh.lineTo(x + w - r, y); sh.quadraticCurveTo(x + w, y, x + w, y + r);
+  sh.lineTo(x + w, y + h - r); sh.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  sh.lineTo(x + r, y + h); sh.quadraticCurveTo(x, y + h, x, y + h - r);
+  sh.lineTo(x, y + r); sh.quadraticCurveTo(x, y, x + r, y);
+  return new THREE.ShapeGeometry(sh, 8);
+}
+
+// ------------------------------------------------------------------ mô hình tên lửa (CHÉP game10/rr3d-missile.js — dọc +X, dài 2,32 đv)
+const mRed = new THREE.MeshPhysicalMaterial({ color: "#d4121e", metalness: 0.35, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.08,
+  emissive: new THREE.Color("#ff1a24"), emissiveIntensity: 0.22, envMapIntensity: 0.8 });
+const mRedDark = new THREE.MeshPhysicalMaterial({ color: "#8e0b14", metalness: 0.4, roughness: 0.35, clearcoat: 0.8, emissive: new THREE.Color("#ff1a24"), emissiveIntensity: 0.1 });
+const mWhite = new THREE.MeshPhysicalMaterial({ color: "#eef0f3", metalness: 0.2, roughness: 0.35, clearcoat: 0.6 });
+const mDark = new THREE.MeshStandardMaterial({ color: "#2b3039", metalness: 0.85, roughness: 0.32 });
+const mGlow = new THREE.MeshBasicMaterial({ color: new THREE.Color(4.2, 0.35, 0.25) });
+const mGhost = new THREE.MeshBasicMaterial({ color: new THREE.Color("#8fa0c0"), transparent: true, opacity: 0.16, depthWrite: false });
+const mHit = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+const alongX = g => { g.rotateZ(-Math.PI / 2); return g; };
+const lat = (pts, segs = 32) => new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), segs);
+const GEO = (() => {
+  const nosePts = []; for (let i = 0; i <= 12; i++) { const y = i / 12 * 0.62; nosePts.push([Math.max(0.001, 0.2 * Math.pow(1 - Math.pow(y / 0.62, 2), 0.55)), y]); }
+  const fs = new THREE.Shape(); fs.moveTo(0, 0); fs.lineTo(0.46, 0); fs.lineTo(0.3, 0.3); fs.lineTo(0.08, 0.3); fs.closePath();
+  const fin = new THREE.ExtrudeGeometry(fs, { depth: 0.035, bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.012, bevelSegments: 2 });
+  fin.translate(-1.1, 0.17, -0.0175);
+  return {
+    body: alongX(new THREE.CylinderGeometry(0.2, 0.2, 1.5, 32)).translate(-0.2, 0, 0),
+    nose: alongX(lat(nosePts)).translate(0.55, 0, 0),
+    band: alongX(new THREE.CylinderGeometry(0.204, 0.204, 0.07, 32, 1, true)),
+    glow: alongX(new THREE.CylinderGeometry(0.207, 0.207, 0.045, 32, 1, true)).translate(-0.86, 0, 0),
+    tail: alongX(lat([[0.001, -0.2], [0.13, -0.2], [0.17, -0.12], [0.2, 0]])).translate(-0.95, 0, 0),
+    fin
+  };
+})();
+const BAND_GEO = [0.43, -0.72].map(x => GEO.band.clone().translate(x, 0, 0));
+function makeMissile(M = { body: mRed, dark: mRedDark, white: mWhite, tail: mDark, glow: mGlow }) {
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(GEO.body, M.body), new THREE.Mesh(GEO.nose, M.body), new THREE.Mesh(GEO.tail, M.tail), new THREE.Mesh(GEO.glow, M.glow));
+  BAND_GEO.forEach(geo => g.add(new THREE.Mesh(geo, M.white)));
+  for (let k = 0; k < 4; k++) { const f = new THREE.Mesh(GEO.fin, M.dark); f.rotation.x = k * Math.PI / 4 * 2 + Math.PI / 4; g.add(f); }
+  return g;
+}
+const ghostMissile = () => { const g = makeMissile(); g.traverse(o => { if (o.isMesh) o.material = mGhost; }); return g; };
+// shader "đổ đầy đỏ từ đuôi lên mũi" — y như game (Đợt 454b)
+const FILL_SOFT = 0.22;
+function fillMat(base, uFill) {
+  const m = base.clone(); m.transparent = true;
+  m.onBeforeCompile = sh => {
+    sh.uniforms.uFill = uFill;
+    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying float vLX;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvLX = position.x;");
+    sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying float vLX;\nuniform float uFill;")
+      .replace("#include <color_fragment>", `#include <color_fragment>
+        diffuseColor.a *= 1.0 - smoothstep(uFill - ${FILL_SOFT.toFixed(3)}, uFill + ${FILL_SOFT.toFixed(3)}, vLX);
+        if (diffuseColor.a < 0.01) discard;`)
+      .replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>
+        totalEmissiveRadiance += vec3(1.6, 0.45, 0.3) * (1.0 - smoothstep(0.0, ${(FILL_SOFT * 1.2).toFixed(3)}, abs(vLX - uFill))) * step(uFill, 1.3);`);
+  };
+  m.customProgramCacheKey = () => "awFill454";
+  return m;
+}
+const UPRIGHT = Math.PI / 2;                       // mô hình dọc +X ⇒ quay +90° quanh Z = MŨI LÊN TRÊN
+const upright = g => { g.rotation.order = "ZYX"; g.rotation.z = UPRIGHT; return g; };   // ZYX ⇒ rotation.x = xoay quanh CHÍNH trục dọc quả
+const BIG_K = 0.85;                                // độ mập/nhỏ của quả trong bảng
+const fat = (g, k) => g.scale.set(k, k * 1.35, k * 1.35);   // quả trong bảng mập hơn cho dễ nhìn (như game)
+const flareTex = radialTex([[0, "rgba(255,255,255,1)"], [0.2, "rgba(255,220,190,0.9)"], [0.5, "rgba(255,90,60,0.3)"], [1, "rgba(0,0,0,0)"]], 128);
+const smokeTex = radialTex([[0, "rgba(255,255,255,0.95)"], [0.35, "rgba(255,255,255,0.55)"], [0.7, "rgba(255,255,255,0.15)"], [1, "rgba(255,255,255,0)"]], 128);
+
+// ------------------------------------------------------------------ trạng thái giả (thay cho trạng thái máy chiếu gửi)
+const S = {
+  team: 0, max: 5, streak: 3,                       // max 0–10, Infinity = không giới hạn
+  reserve: 3, pips: 1, boostPips: 2,
+  slots: [{ st: "ready", k: 1 }, { st: "charge", k: 0.35 }],   // st: empty | charge | ready | fly
+  threat: -1,                                        // giây tới lúc tên lửa địch nổ (−1 = không có)
+};
+const BOOST_MAX = 5, CHARGE_S = 2, WINDOW = 1.25;
+const atCap = () => S.max !== Infinity && S.reserve >= S.max;   // Missiles max = số tên lửa CON tối đa (2 quả to không tính) — phương án A, chờ thầy chốt
+
+// ------------------------------------------------------------------ dựng bảng
+const root = new THREE.Group(); scene.add(root);
+const cluster = new THREE.Group(); root.add(cluster);            // BOOST · cột vạch · 2 tên lửa
+const rowG = new THREE.Group(); root.add(rowG);                   // hàng tên lửa con
+// kích thước (đơn vị cảnh, khung nhìn cao 100)
+const BAR_H = 44, BAR_W = 3.2, BTN = 40, BIG_LEN = 50, BIG_PITCH = 27, GAP = 9;
+const BIG_SC = BIG_LEN / 2.32 / 1.0;                              // dài 50 đv
+const CL_W = BTN + GAP + BAR_W + GAP + BIG_PITCH * 2;
+const xBtn = -CL_W / 2 + BTN / 2, xBar = -CL_W / 2 + BTN + GAP + BAR_W / 2;
+const xBig = j => xBar + BAR_W / 2 + GAP + BIG_PITCH / 2 + j * BIG_PITCH;
+
+// --- BOOST (nút vuông bo góc + 5 vạch trong + icon 2 mũi tên kép) — giống game, to hơn
+const bst = new THREE.Group(); bst.position.set(xBtn, 0, 0); cluster.add(bst);
+const btnRimMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.2, 0.9, 1.2), transparent: true, opacity: 0.5, depthWrite: false });
+const btnFaceMat = new THREE.MeshBasicMaterial({ color: new THREE.Color("#0b1624"), transparent: true, opacity: 0.9, depthWrite: false });
+const btn = new THREE.Group(); bst.add(btn);
+const rim = new THREE.Mesh(roundRectGeo(BTN, BTN, BTN * 0.22), btnRimMat); rim.renderOrder = 20;
+const face = new THREE.Mesh(roundRectGeo(BTN * 0.92, BTN * 0.92, BTN * 0.19), btnFaceMat); face.position.z = 0.01; face.renderOrder = 21;
+btn.add(rim, face);
+const pipsB = [];
+{ const inW = BTN * 0.78, inH = BTN * 0.78, gap = inW * 0.04, w = (inW - gap * (BOOST_MAX - 1)) / BOOST_MAX;
+  for (let i = 0; i < BOOST_MAX; i++) {
+    const x = -inW / 2 + w / 2 + i * (w + gap);
+    const back = new THREE.Mesh(roundRectGeo(w, inH, w * 0.3), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.03, 0.09, 0.14), transparent: true, opacity: 0.9, depthWrite: false }));
+    back.position.set(x, 0, 0.02); back.renderOrder = 22;
+    const fm = new THREE.MeshBasicMaterial({ color: new THREE.Color(0, 0.55, 0.78), transparent: true, opacity: 0, depthWrite: false });
+    const f = new THREE.Mesh(roundRectGeo(w, inH, w * 0.3), fm); f.position.set(x, 0, 0.03); f.renderOrder = 23;
+    btn.add(back, f); pipsB.push({ fm, k: 0 });
+  } }
+const iconTex = (() => { const cv = document.createElement("canvas"); cv.width = cv.height = 256; const g = cv.getContext("2d");
+  g.strokeStyle = "#fff"; g.lineCap = "round"; g.lineJoin = "round"; g.lineWidth = 30;
+  [166, 112].forEach(y => { g.beginPath(); g.moveTo(66, y + 42); g.lineTo(128, y - 20); g.lineTo(190, y + 42); g.stroke(); });
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const iconMat = new THREE.MeshBasicMaterial({ map: iconTex, color: new THREE.Color(0.35, 0.6, 0.75), transparent: true, opacity: 0.55, depthWrite: false });
+const icon = new THREE.Mesh(new THREE.PlaneGeometry(BTN * 0.66, BTN * 0.66), iconMat); icon.position.z = 0.04; icon.renderOrder = 24; btn.add(icon);
+const bGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: flareTex, color: new THREE.Color(0.2, 1.6, 2.2), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 }));
+bGlow.scale.set(BTN * 2.2, BTN * 2.2, 1); bGlow.position.z = -0.5; bst.add(bGlow);
+const nowCv = document.createElement("canvas"); nowCv.width = 768; nowCv.height = 128;
+{ const g = nowCv.getContext("2d"); g.font = '900 78px "Exo 2", sans-serif'; g.textAlign = "center"; g.textBaseline = "middle";
+  g.shadowColor = "rgba(0,200,255,.9)"; g.shadowBlur = 16; g.fillStyle = "#fff"; g.fillText("BOOST NOW!", 384, 66); }
+const nowTex = new THREE.CanvasTexture(nowCv); nowTex.colorSpace = THREE.SRGBColorSpace;
+const boostNow = new THREE.Sprite(new THREE.SpriteMaterial({ map: nowTex, transparent: true, depthWrite: false, opacity: 0 }));
+boostNow.material.toneMapped = false; boostNow.scale.set(BTN * 1.5, BTN * 0.25, 1); boostNow.position.set(0, -BTN * 0.68, 1); boostNow.renderOrder = 30; bst.add(boostNow);
+const hitBoost = new THREE.Mesh(new THREE.PlaneGeometry(BTN * 1.2, BTN * 1.2), mHit); hitBoost.position.z = 2; hitBoost.userData.k = "boost"; bst.add(hitBoost);
+
+// --- CỘT VẠCH NĂNG LƯỢNG (giữa) — sáng từ dưới lên, đủ vạch ⇒ +1 tên lửa con
+const barG = new THREE.Group(); barG.position.set(xBar, 0, 0); cluster.add(barG);
+let barPips = [], barN = -1;
+function buildBar(n) {
+  barG.children.slice().forEach(o => { barG.remove(o); o.geometry.dispose(); });
+  barPips = []; barN = n;
+  const gap = Math.min(BAR_H * 0.03, BAR_H / n * 0.16), h = (BAR_H - gap * (n - 1)) / n;
+  for (let i = 0; i < n; i++) {
+    const y = -BAR_H / 2 + h / 2 + i * (h + gap);
+    const back = new THREE.Mesh(roundRectGeo(BAR_W, h, Math.min(BAR_W, h) * 0.5), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.16, 0.17, 0.2), transparent: true, opacity: 0.85, depthWrite: false }));
+    back.position.y = y; back.renderOrder = 21;
+    const fm = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.5, 1.55, 1.65), transparent: true, opacity: 0, depthWrite: false });
+    const f = new THREE.Mesh(roundRectGeo(BAR_W, h, Math.min(BAR_W, h) * 0.5), fm); f.position.set(0, y, 0.02); f.renderOrder = 22;
+    barG.add(back, f); barPips.push({ fm, k: 0 });
+  }
+}
+
+// --- 2 TÊN LỬA TO (mũi lên trên) — bóng mờ + lớp đỏ nạp từ đuôi lên mũi + quầng sáng khi sẵn sàng
+const bigs = [0, 1].map(j => {
+  const g = new THREE.Group(); g.position.set(xBig(j), 0, 0); cluster.add(g);
+  const ghost = ghostMissile(); upright(ghost); fat(ghost, BIG_SC * BIG_K); g.add(ghost);
+  const uFill = { value: 9 };
+  const mats = { body: fillMat(mRed, uFill), dark: fillMat(mRedDark, uFill), white: fillMat(mWhite, uFill), tail: fillMat(mDark, uFill), glow: mGlow };
+  const red = makeMissile(mats); upright(red); fat(red, BIG_SC * BIG_K); g.add(red);
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: flareTex, color: new THREE.Color(4, 0.5, 0.35), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 }));
+  glow.scale.set(BIG_PITCH * 1.25, BIG_LEN * 1.15, 1); glow.position.z = -1; g.add(glow);
+  const hit = new THREE.Mesh(new THREE.PlaneGeometry(BIG_PITCH * 0.98, BIG_LEN * 1.05), mHit); hit.position.z = 3; hit.userData.k = "fire"; hit.userData.j = j; g.add(hit);
+  return { g, ghost, red, glow, uFill, pop: 0, flash: 0, rot: rand(0, 6) };
+});
+// đường đáy chung (bệ phóng) dưới 2 quả to — để thấy "đứng trên bệ"
+const padBase = new THREE.Mesh(roundRectGeo(BIG_PITCH * 2 - 2, 1.2, 0.6), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.25, 0.3, 0.4), transparent: true, opacity: 0.55, depthWrite: false }));
+padBase.position.set((xBig(0) + xBig(1)) / 2, -BIG_LEN / 2 - 1.6, 0); cluster.add(padBase);
+
+// --- HÀNG TÊN LỬA CON (sát mép dưới) — 10 ô + chỗ cho "+x"
+const ROW_N = 10, MINI_LEN = 11, MINI_PITCH = 8.6, PLUS_W = 13;
+const MINI_SC = MINI_LEN / 2.32;
+const ROW_W = ROW_N * MINI_PITCH + PLUS_W;
+const minis = Array.from({ length: ROW_N }, () => {
+  const g = new THREE.Group(); rowG.add(g);
+  const m = makeMissile(); upright(m); fat(m, MINI_SC * BIG_K); g.add(m);
+  const gh = ghostMissile(); upright(gh); fat(gh, MINI_SC * BIG_K); g.add(gh);
+  return { g, m, gh, pop: 0, was: false, rot: rand(0, 6) };
+});
+const plusCv = document.createElement("canvas"); plusCv.width = 256; plusCv.height = 128;
+const plusTex = new THREE.CanvasTexture(plusCv); plusTex.colorSpace = THREE.SRGBColorSpace;
+const plus = new THREE.Sprite(new THREE.SpriteMaterial({ map: plusTex, transparent: true, depthWrite: false })); plus.scale.set(PLUS_W * 1.15, PLUS_W * 0.575, 1); plus.renderOrder = 25; rowG.add(plus);
+let plusN = -1;
+const rowHit = new THREE.Mesh(new THREE.PlaneGeometry(ROW_W + 6, MINI_LEN * 1.5), mHit); rowHit.position.z = 3; rowHit.userData.k = "load"; rowG.add(rowHit);
+// đường kẻ mờ phân hàng con với cụm trên
+const rowLine = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.25), new THREE.MeshBasicMaterial({ color: 0x334155, transparent: true, opacity: 0.7, depthWrite: false })); rowG.add(rowLine);
+
+// --- quả đang nạp: bay từ hàng con lên ô to, lớn dần
+const shuttle = makeMissile(); upright(shuttle); shuttle.visible = false; scene.add(shuttle);
+let load = null;   // { t, j, from: Vector3 }
+
+// ------------------------------------------------------------------ PHÓNG: lửa + khói như tên lửa thật
+const flyPool = [];
+const FLY = { ign: 0.6, rise: 2.2 };              // đánh lửa (khói cuộn ở bệ) rồi bay lên tới mép trên
+function makeFlame() {
+  const g = new THREE.Group();
+  const coneGeo = new THREE.ConeGeometry(0.15, 1.2, 20, 1, true); coneGeo.rotateZ(Math.PI); coneGeo.translate(0, -0.6, 0);   // đáy ở vòi phun, đỉnh chĩa xuống
+  const outer = new THREE.Mesh(coneGeo, new THREE.MeshBasicMaterial({ color: new THREE.Color(4, 1.4, 0.4), transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  const inner = new THREE.Mesh(coneGeo, new THREE.MeshBasicMaterial({ color: new THREE.Color(5, 4.2, 3), transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  inner.scale.set(0.55, 0.6, 0.55);
+  const flare = new THREE.Sprite(new THREE.SpriteMaterial({ map: flareTex, color: new THREE.Color(5, 2.4, 1.1), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  g.add(outer, inner, flare);
+  return { g, outer, inner, flare };
+}
+// khói: hạt sprite — sinh ở vòi phun, phình to, chậm dần, nguội từ cam sáng sang xám
+const SMOKE_N = 420, smoke = [];
+for (let i = 0; i < SMOKE_N; i++) {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex, transparent: true, depthWrite: false, opacity: 0 }));
+  sp.visible = false; sp.renderOrder = 5; scene.add(sp);
+  smoke.push({ sp, life: 0, max: 1, v: new THREE.Vector3(), s0: 1, s1: 4, hot: 0, spin: 0 });
+}
+let smokeI = 0;
+function puff(pos, vel, s0, s1, life, hot) {
+  const p = smoke[smokeI = (smokeI + 1) % SMOKE_N];
+  p.sp.position.copy(pos); p.v.copy(vel); p.s0 = s0; p.s1 = s1; p.max = life; p.life = life; p.hot = hot; p.sp.visible = true;
+  p.sp.material.rotation = rand(0, 6.28); p.spin = rand(-0.6, 0.6);
+}
+function stepSmoke(dt) {
+  smoke.forEach(p => {
+    if (p.life <= 0) return;
+    p.life -= dt; if (p.life <= 0) { p.sp.visible = false; return; }
+    const k = 1 - p.life / p.max;                                    // 0 → 1
+    p.v.multiplyScalar(Math.pow(0.18, dt)); p.v.y += 1.6 * dt;       // chậm dần + bốc nhẹ lên
+    p.sp.position.addScaledVector(p.v, dt);
+    const s = lerp(p.s0, p.s1, 1 - Math.pow(1 - k, 2.2)); p.sp.scale.set(s, s, 1);
+    p.sp.material.rotation += p.spin * dt;
+    const heat = Math.max(0, p.hot - k * 2.6);                       // nóng ⇒ cam sáng, nguội ⇒ xám
+    p.sp.material.color.setRGB(lerp(0.55, 3.2, heat), lerp(0.56, 1.5, heat), lerp(0.6, 0.5, heat));
+    p.sp.material.opacity = (k < 0.08 ? k / 0.08 : 1) * (1 - k) * (0.55 + 0.25 * (1 - heat));
+  });
+}
+const flights = [];   // { j, t, g, fl, x0, y0 }
+function launch(j) {
+  const B = bigs[j], wp = new THREE.Vector3(); B.g.getWorldPosition(wp);
+  const g = flyPool.pop() || (() => { const m = makeMissile(); upright(m); const holder = new THREE.Group(); holder.add(m); scene.add(holder); const fl = makeFlame(); holder.add(fl.g); return holder; })();
+  if (!g.userData.fl) g.userData.fl = g.children[1] && g.children[1].children ? { g: g.children[1], outer: g.children[1].children[0], inner: g.children[1].children[1], flare: g.children[1].children[2] } : null;
+  const m = g.children[0], sc = BIG_SC * BIG_K * cluster.scale.x;
+  fat(m, sc); g.visible = true; g.position.copy(wp); g.rotation.set(0, 0, 0);
+  const tailY = -1.15 * sc;                                           // đuôi (đơn vị cảnh, theo trục dọc)
+  g.userData.fl.g.position.set(0, tailY, 0);
+  flights.push({ j, t: 0, g, x0: wp.x, y0: wp.y, sc, tailY, top: VH / 2 + BIG_LEN * cluster.scale.x * 0.7 - wp.y });
+  S.slots[j].st = "fly";
+}
+function stepFlights(dt) {
+  let light = 0, lx = 0, ly = 0;
+  for (let i = flights.length - 1; i >= 0; i--) {
+    const f = flights[i]; f.t += dt;
+    const fl = f.g.userData.fl, ig = f.t < FLY.ign, tr = Math.max(0, f.t - FLY.ign);
+    // vị trí: đứng yên rung nhẹ lúc đánh lửa ⇒ bay lên NHANH DẦN (gia tốc đều) tới quá mép trên
+    const a = 2 * f.top / (FLY.rise * FLY.rise);
+    const y = f.y0 + 0.5 * a * tr * tr + (ig ? 0 : 0);
+    const shake = ig ? Math.sin(f.t * 90) * 0.12 * (f.t / FLY.ign) : Math.sin(f.t * 47) * 0.06;
+    f.g.position.set(f.x0 + shake + Math.sin(tr * 3.1) * 0.25 * tr, y, 0.5);
+    f.g.rotation.z = Math.sin(tr * 2.3) * 0.015 * tr;
+    // lửa: lớn dần lúc đánh lửa, dài ra theo tốc độ, chập chờn
+    const v = a * tr, grow = ig ? smooth(f.t / FLY.ign) : 1;
+    const flick = 0.85 + 0.3 * Math.random();
+    const len = f.sc * (0.55 + Math.min(0.75, v / 90)) * grow * flick, wid = f.sc * 1.05 * grow * (0.9 + 0.2 * Math.random());
+    fl.outer.scale.set(wid, len, wid); fl.inner.scale.set(wid * 0.55, len * 0.6, wid * 0.55);
+    fl.flare.scale.setScalar(f.sc * 1.6 * grow * flick); fl.flare.position.y = -f.sc * 0.15;
+    // khói: vòi phun = đuôi tên lửa (thế giới)
+    const nz = new THREE.Vector3(f.g.position.x, y + f.tailY - f.sc * 0.2, 0.3);
+    if (ig) {                                     // khói cuộn NGANG ra hai bên bệ phóng (như bệ phóng thật)
+      const n = Math.round(lerp(2, 8, f.t / FLY.ign));
+      for (let q = 0; q < n; q++) { const s = Math.random() < 0.5 ? -1 : 1;
+        puff(nz, new THREE.Vector3(s * rand(10, 34), rand(-1, 5), rand(-3, 3)), rand(3, 5), rand(12, 22), rand(1.8, 3), 0.9); }
+    } else {
+      const n = 4 + Math.round(Math.min(6, v / 35));
+      for (let q = 0; q < n; q++) {
+        const p = nz.clone(); p.y -= Math.random() * Math.min(8, v * dt * 1.4);   // rải theo quãng vừa bay, không đứt khúc
+        puff(p, new THREE.Vector3(rand(-3.5, 3.5), -rand(5, 12), rand(-2, 2)), rand(2.2, 3.6), rand(8, 15), rand(1.5, 2.6), 1);
+      }
+      if (tr < 0.5) for (let q = 0; q < 2; q++) { const s = Math.random() < 0.5 ? -1 : 1;     // còn sát bệ: khói vẫn tràn ngang
+        puff(new THREE.Vector3(f.x0, f.y0 + f.tailY, 0.3), new THREE.Vector3(s * rand(10, 24), rand(0, 3), 0), rand(3, 5), rand(10, 16), rand(1.6, 2.6), 0.6); }
+    }
+    light = Math.max(light, grow * (1.5 + 0.5 * Math.random())); lx = f.g.position.x; ly = y + f.tailY;
+    if (tr > 0.35 && S.slots[f.j].st === "fly") S.slots[f.j] = { st: "empty", k: 0 };   // rời bệ ⇒ ô trống (bóng mờ hiện lại)
+    if (y - f.y0 > f.top) { f.g.visible = false; flyPool.push(f.g); flights.splice(i, 1); }
+  }
+  fireLight.intensity = light * 260; fireLight.position.set(lx, ly - 2, 8);
+}
+
+// ------------------------------------------------------------------ bố cục theo khung màn
+let VW = 133;
+function layout() {
+  const w = Math.max(1, host.clientWidth), h = Math.max(1, host.clientHeight), pr = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(pr); renderer.setSize(w, h, false);
+  composer.setPixelRatio(pr); composer.setSize(w, h); bloom.resolution.set(w * pr, h * pr);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  VW = VH * camera.aspect;
+  const topBar = VH * (document.getElementById("top").getBoundingClientRect().bottom / h) + 2;   // thanh trên (HTML) chiếm bao nhiêu
+  // hàng con: sát mép dưới
+  const rowK = Math.min(1, (VW - 8) / (ROW_W + 4));
+  rowG.scale.setScalar(rowK);
+  const rowY = -VH / 2 + 3 + MINI_LEN * 0.62 * rowK;
+  rowG.position.set(0, rowY, 0);
+  rowLine.scale.set(Math.min(VW - 10, (ROW_W + 10) * rowK) / rowK, 1, 1); rowLine.position.set(0, MINI_LEN * 0.95, 0);
+  // cụm giữa: lấp khoảng giữa thanh trên và hàng con
+  const top = VH / 2 - topBar, bot = rowY + MINI_LEN * 0.95 * rowK + 2.5;
+  const availH = top - bot, k = Math.min(1.15, (availH - 6) / (BIG_LEN + 6), (VW - 10) / CL_W);
+  cluster.scale.setScalar(k);
+  cluster.position.set(0, (top + bot) / 2, 0);
+}
+new ResizeObserver(layout).observe(host); layout();
+
+// ------------------------------------------------------------------ vẽ từng khung
+const isInf = () => S.max === Infinity;
+function tickUI(dt, t) {
+  // --- BOOST
+  const full = S.boostPips >= BOOST_MAX, threat = S.threat >= 0, win = threat && S.threat <= WINDOW;
+  const soft = 0.5 + 0.5 * Math.sin(t * 5), hard = 0.5 + 0.5 * Math.sin(t * 38);
+  pipsB.forEach((p, i) => { p.k += ((i < S.boostPips ? 1 : 0) - p.k) * Math.min(1, dt * 10); p.fm.opacity = p.k;
+    p.fm.color.setRGB(0, 0.55, 0.78).multiplyScalar(full ? (threat ? 0.9 + 0.55 * hard : 1.1 + 0.2 * soft) : 1); });
+  let glow = 0, rimB = 0.35, iconB = 0.55, scl = 1;
+  if (full && threat) { glow = 0.12 + 0.3 * hard; rimB = 1 + 1.1 * hard; iconB = 1; scl = 1 + 0.06 * hard; }
+  else if (full) { glow = 0.18 + 0.12 * soft; rimB = 1.3 + 0.5 * soft; iconB = 0.9 + 0.1 * soft; scl = 1 + 0.025 * soft; }
+  btnRimMat.color.setRGB(0.2, 0.9, 1.2).multiplyScalar(rimB / 1.2); btnRimMat.opacity = full ? 1 : 0.45;
+  btnFaceMat.color.set("#0b1624").lerp(new THREE.Color(0, 0.32, 0.46), full ? 0.6 + 0.4 * (threat ? hard : soft) : 0);
+  iconMat.color.setRGB(0.35, 0.6, 0.75).lerp(new THREE.Color(1.2, 1.4, 1.55), full ? 1 : 0); iconMat.opacity = iconB;
+  bGlow.material.opacity = glow;
+  press.boost = Math.max(0, press.boost - dt * 4); shakeK = Math.max(0, shakeK - dt * 3);
+  btn.scale.setScalar(scl * (1 - press.boost * 0.08));
+  bst.position.x = xBtn + (shakeK > 0 ? Math.sin(t * 60) * 0.5 * shakeK : 0);
+  boostNow.material.opacity = win && full ? 0.6 + 0.4 * hard : 0;
+  // --- cột vạch
+  const on = S.max > 0;
+  barG.visible = on;
+  if (on && S.streak !== barN) buildBar(S.streak);
+  const atMax = atCap();
+  barPips.forEach((p, i) => { p.k += ((i < S.pips && !atMax ? 1 : 0) - p.k) * Math.min(1, dt * 10); p.fm.opacity = p.k;
+    p.fm.color.setRGB(1.5, 1.55, 1.65).multiplyScalar(1 + barFlash * 0.8); });
+  barG.children.forEach(o => { if (o.material && o.renderOrder === 21) o.material.opacity = atMax ? 0.35 : 0.85; });
+  barFlash = Math.max(0, barFlash - dt * 1.6);
+  // --- 2 tên lửa to
+  bigs.forEach((B, j) => {
+    const s = S.slots[j];
+    B.g.visible = on;
+    const has = s.st === "charge" || s.st === "ready";
+    B.red.visible = has; B.ghost.visible = !has && s.st !== "fly" && !(load && load.j === j);
+    B.pop = Math.max(0, B.pop - dt / 0.5); B.flash = Math.max(0, B.flash - dt * 1.8);
+    const k = BIG_SC * BIG_K * (B.pop > 0 ? Math.max(0.01, easeOutBack(1 - B.pop)) : 1);
+    fat(B.red, k);
+    B.rot += dt * 0.35;
+    B.red.rotation.x = B.ghost.rotation.x = Math.sin(B.rot) * 0.35;    // xoay nhẹ quanh trục dọc cho thấy khối 3D
+    B.red.position.y = Math.sin(t * 2.2 + j) * 0.25;
+    const fill = s.st === "charge" ? s.k : 1;
+    B.uFill.value = fill < 1 ? lerp(-1.15 - FILL_SOFT, 1.17 + FILL_SOFT, fill) : 9;
+    const pulse = 0.5 + 0.5 * Math.sin(t * (6 + fill * 16));
+    B.red.traverse(o => { if (o.isMesh && o.material.emissive && o.material !== mGlow) o.material.emissiveIntensity = s.st === "charge" ? 0.15 + 0.45 * fill * pulse : 0.15 + B.flash * 0.8; });
+    B.glow.material.opacity = 0.5 * ((s.st === "ready" ? 0.22 + 0.12 * Math.sin(t * 4) : 0) + (s.st === "charge" ? fill * 0.25 * pulse : 0) + B.flash * 0.8);
+  });
+  padBase.visible = on;
+  // --- hàng tên lửa con
+  rowG.visible = on;
+  const cap = isInf() ? ROW_N : clamp(S.max | 0, 0, ROW_N);
+  const shown = Math.min(S.reserve, ROW_N);
+  const x0 = isInf() ? -ROW_W / 2 + MINI_PITCH / 2 : -(cap * MINI_PITCH) / 2 + MINI_PITCH / 2;   // ∞ căn TRÁI · giới hạn căn GIỮA
+  minis.forEach((M, i) => {
+    const filled = i < shown, slot = isInf() ? filled : i < cap;
+    M.g.visible = on && slot;
+    M.m.visible = filled; M.gh.visible = !filled && slot;
+    if (filled && !M.was) M.pop = 1; M.was = filled;
+    M.pop = Math.max(0, M.pop - dt / 0.55);
+    fat(M.m, MINI_SC * BIG_K * Math.max(0.01, M.pop > 0 ? easeOutBack(1 - M.pop) : 1));
+    M.rot += dt * 0.5; M.m.rotation.x = M.gh.rotation.x = Math.sin(M.rot + i) * 0.35;
+    M.g.position.set(x0 + i * MINI_PITCH, Math.sin(t * 2 + i * 1.7) * 0.15, 0);
+  });
+  const extra = on && isInf() ? Math.max(0, S.reserve - ROW_N) : 0;
+  if (extra !== plusN) { plusN = extra; const g = plusCv.getContext("2d"); g.clearRect(0, 0, 256, 128);
+    if (extra > 0) { g.font = '900 92px "Baloo 2", sans-serif'; g.textAlign = "center"; g.textBaseline = "middle"; g.shadowColor = "rgba(0,0,0,.85)"; g.shadowBlur = 14;
+      g.lineWidth = 10; g.strokeStyle = "#ff6a6a"; g.fillStyle = "#fff"; g.strokeText("+" + extra, 128, 68); g.fillText("+" + extra, 128, 68); }
+    plusTex.needsUpdate = true; }
+  plus.visible = extra > 0; plus.position.set(-ROW_W / 2 + ROW_N * MINI_PITCH + PLUS_W / 2, 0, 0.5);
+  // --- quả đang nạp
+  if (load) {
+    load.t += dt; const k = smooth(load.t / 0.55);
+    const to = new THREE.Vector3(); bigs[load.j].g.getWorldPosition(to);
+    shuttle.visible = true; shuttle.position.lerpVectors(load.from, to, k); shuttle.position.z = 1 + Math.sin(k * Math.PI) * 4;
+    fat(shuttle, lerp(MINI_SC * BIG_K * rowG.scale.x, BIG_SC * BIG_K * cluster.scale.x, k));
+    if (load.t >= 0.55) { S.slots[load.j] = { st: "charge", k: 0 }; bigs[load.j].pop = 1; load = null; shuttle.visible = false; }
+  }
+}
+const press = { boost: 0 }; let shakeK = 0, barFlash = 0;
+
+// ------------------------------------------------------------------ luật giả (để bấm thử)
+function earn() {                    // đủ vạch ⇒ +1 tên lửa con (nếu chưa chạm Missiles max)
+  if (S.max <= 0) return;
+  if (atCap()) return;
+  S.pips++;
+  if (S.pips >= S.streak) { S.pips = 0; S.reserve++; barFlash = 1; }
+}
+function correct() { earn(); if (S.boostPips < BOOST_MAX) S.boostPips++; }
+function wrong() { S.pips = 0; if (S.boostPips < BOOST_MAX) S.boostPips = 0; }
+function tapLoad() {
+  if (load) return;
+  const j = S.slots.findIndex(s => s.st === "empty");
+  if (j < 0 || S.reserve <= 0) { toast("FULL", "#94a3b8"); return; }
+  const i = Math.min(S.reserve, ROW_N) - 1;                          // lấy quả CUỐI hàng ⇒ hàng không bị thủng giữa
+  const from = new THREE.Vector3(); minis[i].g.getWorldPosition(from);
+  S.reserve--; minis[i].was = false;
+  load = { t: 0, j, from };
+}
+function tapFire() {
+  const j = [0, 1].find(j => S.slots[j].st === "ready");
+  if (j == null) { shakeK = 1; return; }
+  launch(j);
+  
+}
+function tapBoost() {
+  press.boost = 1;
+  if (S.boostPips < BOOST_MAX) { shakeK = 1; return; }
+  S.boostPips = 0;
+  if (S.threat >= 0 && S.threat <= WINDOW) { S.threat = -1; toast("DODGED!", "#5eead4"); }
+  else toast("BOOST!", "#7dd3fc");
+}
+let toastT = 0;
+function toast(txt, col) { const e = document.getElementById("toast"); e.textContent = txt; e.style.color = col; e.style.textShadow = `0 0 3vmin ${col}`; e.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove("on"), 900); }
+
+// chạm
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+const hits = [hitBoost, rowHit, ...bigs.map(B => B.g.children.find(o => o.userData.k === "fire"))];
+renderer.domElement.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const h = ray.intersectObjects(hits.filter(o => { let p = o; while (p) { if (!p.visible) return false; p = p.parent; } return true; }), false)[0];
+  if (!h) return;
+  const k = h.object.userData.k;
+  if (k === "boost") tapBoost(); else if (k === "fire") tapFire(); else if (k === "load") tapLoad();
+});
+
+// ------------------------------------------------------------------ vòng vẽ
+let last = performance.now(), T = 0;
+const warnEl = document.getElementById("warn"), alarmEl = document.getElementById("alarm");
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  update(dt); composer.render();
+}
+function update(dt) {
+  T += dt;
+  S.slots.forEach(s => { if (s.st === "charge") { s.k += dt / CHARGE_S; if (s.k >= 1) { s.k = 1; s.st = "ready"; } } });
+  if (S.threat >= 0) { S.threat -= dt; if (S.threat < 0) { S.threat = -1; toast("HIT!", "#ff5a4a"); } }
+  const thr = S.threat >= 0, win = thr && S.threat <= WINDOW, pul = 0.5 + 0.5 * Math.sin(T * (win ? 16 : 5));
+  warnEl.style.opacity = thr ? (win ? 0.35 + 0.65 * pul : 0.15 + 0.3 * pul) : 0;
+  alarmEl.style.opacity = thr ? 1 : 0; if (thr) alarmEl.textContent = "⚠ INCOMING  " + S.threat.toFixed(1) + " s";
+  tickUI(dt, T); stepFlights(dt); stepSmoke(dt);
+}
+window.__step = sec => { for (let i = 0; i < Math.round(sec * 60); i++) update(1 / 60); composer.render(); };   // bàn thử: tua khi khung bị ẩn
+requestAnimationFrame(frame);
+
+// ------------------------------------------------------------------ bảng thử
+const panel = document.getElementById("panel");
+document.getElementById("pBtn").onclick = () => panel.classList.toggle("open");
+const maxR = document.getElementById("maxR"), stR = document.getElementById("stR");
+const paint = () => { document.getElementById("maxV").textContent = isInf() ? "∞ (không giới hạn)" : S.max; document.getElementById("stV").textContent = S.streak;
+  maxR.value = isInf() ? 11 : S.max; stR.value = S.streak; };
+maxR.oninput = () => { const v = +maxR.value; S.max = v >= 11 ? Infinity : v; if (!isInf()) S.reserve = Math.min(S.reserve, Math.max(0, S.max)); paint(); };
+stR.oninput = () => { S.streak = +stR.value; S.pips = Math.min(S.pips, S.streak - 1); paint(); };
+panel.querySelector(".box").addEventListener("click", e => {
+  const a = e.target.dataset && e.target.dataset.a; if (!a) return;
+  if (a === "ok") correct();
+  else if (a === "ok5") for (let i = 0; i < 5; i++) correct();
+  else if (a === "no") wrong();
+  else if (a === "threat") S.threat = 3.8;
+  else if (a === "add" || a === "add5") { for (let i = 0; i < (a === "add" ? 1 : 5); i++) if (isInf() || S.reserve < (S.max | 0)) S.reserve++; }
+  else if (a === "clear") S.reserve = 0;
+  else if (a === "team") { S.team = 1 - S.team; const c = S.team ? "#ff7a00" : "#3b8cff";
+    document.getElementById("teamChip").textContent = S.team ? "TEAM 2" : "TEAM 1"; document.getElementById("top").style.setProperty("--tc", c);
+    document.getElementById("shipMe").style.setProperty("--c", c); document.getElementById("shipFoe").style.setProperty("--c", S.team ? "#3b8cff" : "#ff7a00"); }
+});
+paint();
+window.__S = S; window.__t = { tapFire, tapLoad, tapBoost, correct };   // bàn thử
+</script>
+</body>
+</html>
