@@ -27,12 +27,24 @@ function wrapFit(ctx, text, maxW, maxH, maxPx, minPx, weight = 800) {
 }
 const drawLines = (ctx, f, cx, cy) => { const n = f.lines.length; f.lines.forEach((l, i) => ctx.fillText(l, cx, cy + (i - (n - 1) / 2) * f.px * 1.08)); };
 
-export function mountTrainPad(el, { signal, team, onLeave = null }) {
+const CSS = `.trp { position: absolute; inset: 0; background: #120c07; touch-action: none; user-select: none; -webkit-user-select: none; }
+.trp-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.trp-ov { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(20, 10, 4, .72); }
+.trp-ov[hidden], .trp-back[hidden] { display: none; }
+.trp-card { text-align: center; padding: 22px 34px; border-radius: 18px; background: linear-gradient(#f3e2bf, #e2c996); color: #3a1f0e; border: 4px solid #7a4a22; max-width: 80vw; }
+.trp-big { display: block; font: 400 clamp(26px, 5vw, 46px) Rye, serif; color: #6b2a12; }
+.trp-small { margin: 8px 0 0; font: 700 clamp(15px, 2.4vw, 20px) "Baloo 2", system-ui, sans-serif; }
+.trp-back { position: absolute; left: 10px; bottom: 10px; width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(255,255,255,.6); background: rgba(0,0,0,.45); color: #fff; font: 800 26px "Baloo 2", system-ui, sans-serif; cursor: pointer; z-index: 2; }`;
+function ensureCss() { if (document.getElementById("trp-css")) return; const st = document.createElement("style"); st.id = "trp-css"; st.textContent = CSS; document.head.append(st); }   // tự mang CSS (AWord pad.html dùng chung)
+export function mountTrainPad(el, { signal, team, onLeave = null, onBack = null }) {   // onBack: nút ‹ về màn chọn đội (AWord pad.html)
+  ensureCss();
   const T = TEAM[team ? 1 : 0];
   el.innerHTML = `<div class="trp">
     <canvas class="trp-cv"></canvas>
     <div class="trp-ov" hidden><div class="trp-card"><b class="trp-big"></b><p class="trp-small"></p></div></div>
+    <button class="trp-back" title="Choose team" hidden>‹</button>
   </div>`;
+  if (onBack) { const bk = el.querySelector(".trp-back"); bk.hidden = false; bk.addEventListener("click", () => onBack()); }
   const cv = el.querySelector(".trp-cv"), ctx = cv.getContext("2d"), ov = el.querySelector(".trp-ov");
   let L = null, St = null, link = { s: "connecting", rtt: 0 }, dead = false, raf = 0, last = 0, flash = null, popped = new Set(), endEv = "";
   // ---- tiếng nhỏ + rung (Web Audio — mở sau lần chạm đầu)

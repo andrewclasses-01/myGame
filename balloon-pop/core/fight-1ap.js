@@ -76,7 +76,8 @@ const keyOf = w => String(w.keyword).trim().toUpperCase().replace(/\s+/g, " ");
 const shuf = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const PAD_HZ = 20;   // trạng thái xuống iPad mỗi giây
 
-export async function createTrainRushFight({ mount, words, wordsTitle = "", options = {}, onSingle = null, onHome = null, host = null, padSignal = null, padMode = "both" }) {
+export async function createTrainRushFight({ mount, words, wordsTitle = "", options = {}, onSingle = null, onHome = null, host = null, padSignal = null, padMode = "both", onPad = null }) {
+  // onPad({ mode, linked: [s0, s1] }) — AWord: báo khi đổi chế độ iPad / iPad nối-rời (claim ipad_now: iPad đi theo game, hold khi có iPad nối)
   let OPT = { levelCount: 5, roundMin: 2, ...options };   // 1ap: thầy chốt mặc định Levels 5 · Time round 2 phút
   mount.classList.add("fb-root", "fb-one");
   mount.innerHTML = MARKUP;
@@ -117,7 +118,7 @@ export async function createTrainRushFight({ mount, words, wordsTitle = "", opti
     pad = createPadHost({ signal: padSignal });
     pad.attach({
       press: (t, k) => { if (k.startsWith("pop:") && core && G.phase === "play" && !G.paused) core.popById(t, +k.slice(4)); },
-      status: (t, s) => { padSent[t].lv = -1; paintPadPanel(); },   // iPad mới nối ⇒ gửi lại bố cục
+      status: (t, s) => { padSent[t].lv = -1; paintPadPanel(); notifyPad(); },   // iPad mới nối ⇒ gửi lại bố cục
     });
   }
   function padSend() {
@@ -131,6 +132,7 @@ export async function createTrainRushFight({ mount, words, wordsTitle = "", opti
     }
   }
   const padEvent = (t, e) => { if (pad && padMode !== "off") pad.event(t, e); };
+  function notifyPad() { if (onPad) { try { onPad({ mode: padMode, linked: [0, 1].map(t => (pad ? pad.status(t) : "")) }); } catch (e) { /* */ } } }
 
   // ------------------------------------------------------------ dựng
   async function build() {
@@ -407,6 +409,7 @@ export async function createTrainRushFight({ mount, words, wordsTitle = "", opti
       $(".fb-ipad").classList.toggle("is-on", m !== "off");
       padSent.forEach(x => { x.lv = -1; });
       if (pad) for (const t of [0, 1]) pad.state(t, { mode: m, ph: G.phase });
+      notifyPad();
     },
     get padMode() { return padMode; },
     destroy() {
@@ -422,5 +425,6 @@ export async function createTrainRushFight({ mount, words, wordsTitle = "", opti
     get dead() { return dead; },
   };
   build();
+  notifyPad();
   return api;
 }
