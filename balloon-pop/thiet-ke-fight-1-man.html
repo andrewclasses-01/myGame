@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Rush — thiết kế Fight 1 màn</title>
+<!-- TRAIN RUSH — BẢN PHÁC THIẾT KẾ "FIGHT MỘT MÀN" (14/10/2026). Thầy: "màn Fight là 1 màn hình duy nhất, 2 tàu chạy song song;
+     tàu xa có khinh khí cầu xa hơn, nhỏ hơn; tàu xong màn phóng lên trước, tàu sau ở lại làm nốt, xong cũng phóng đi rồi báo điểm;
+     điều khiển bằng iPad như Rocket Race". Thầy chốt (AskUserQuestion): CHỜ đội kia rồi cùng vào màn mới · iPad = cảnh 2D thu nhỏ
+     của đội mình · chạm màn lớn VẪN được kể cả khi nối iPad · ray CỐ ĐỊNH (TEAM 1 đỏ ray gần, TEAM 2 xanh ray xa).
+     ⚠ Đây là BẢN PHÁC KHỐI: hình là hộp đơn giản, chỉ để duyệt bố cục (góc máy quay, cỡ chữ, chỗ khinh khí cầu) và nhịp màn.
+     Kích thước tàu / toa / khinh khí cầu / chữ = đúng số đo game thật (bp3d-1an.js: TS 0.74, BS 0.84, CART_W 6.2, ROOF_Y 3.72, fov 36). -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Rye&display=swap" rel="stylesheet">
+<style>
+  :root { --red: #e2402f; --blue: #2f7fe2; --brass: #c89a4a; --paper: #f6e6c4; }
+  html, body { margin: 0; background: #1a120b; color: var(--paper); font-family: "Baloo 2", system-ui, sans-serif; }
+  .top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 16px; background: #2c1a0d; border-bottom: 2px solid var(--brass); }
+  .top h1 { font: 400 22px Rye, serif; margin: 0 14px 0 0; color: #ffd98a; }
+  .top button { font: 700 15px "Baloo 2"; padding: 6px 14px; border-radius: 10px; border: 2px solid rgba(200,154,74,.6); background: #4a2e18; color: var(--paper); cursor: pointer; }
+  .top button.on { background: var(--brass); color: #2a1a0c; border-color: #ffd98a; }
+  .top small { opacity: .75; }
+  .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; padding: 16px; align-items: start; }
+  @media (max-width: 1200px) { .wrap { grid-template-columns: 1fr; } .pads { grid-template-columns: 1fr 1fr; } }
+  /* màn lớn (TOMKO): dải điểm + khung 3D 2:1 + hàng nút — như Fight thật */
+  .tv { background: #120c07; border: 3px solid #3a2414; border-radius: 10px; overflow: hidden; }
+  .cap { font: 700 14px "Baloo 2"; color: #cdb58a; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px 2px; }
+  .hud { height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 0 12px; background: linear-gradient(#4a2e18, #2c1a0d); border-bottom: 3px solid var(--brass); }
+  .team { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 16px; border-radius: 12px; border: 2px solid rgba(255,255,255,.25); }
+  .team.t0 { background: linear-gradient(90deg, #8f1f14, #c73526); }
+  .team.t1 { background: linear-gradient(270deg, #143f8f, #2769c7); flex-direction: row-reverse; }
+  .team span { font: 800 17px "Baloo 2"; letter-spacing: .06em; }
+  .team em { font: 700 13px "Baloo 2"; font-style: normal; opacity: .85; }
+  .team b { font: 400 30px Rye, serif; min-width: 60px; text-align: center; }
+  .team.t0 b { margin-left: auto; } .team.t1 b { margin-right: auto; }
+  .clock { font: 400 30px Rye, serif; min-width: 110px; text-align: center; padding: 0 14px; border-radius: 10px; background: #1c1008; border: 2px solid var(--brass); color: #ffd98a; }
+  .stage { position: relative; width: 100%; aspect-ratio: 2 / 1; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .bar { height: 60px; display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(#2c1a0d, #1c1008); border-top: 3px solid var(--brass); }
+  .bar i { width: 44px; height: 44px; border-radius: 12px; background: #4a2e18; border: 2px solid var(--brass); display: grid; place-items: center; font: 700 11px "Baloo 2"; font-style: normal; color: #ffe6b0; }
+  .bar .gap { width: 30px; background: none; border: 0; }
+  .ov { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+  .ov[hidden] { display: none; }
+  .card { pointer-events: auto; text-align: center; padding: 18px 36px 22px; border-radius: 16px; background: linear-gradient(#f3e2bf, #e2c996); color: #3a1f0e; border: 4px solid #7a4a22; box-shadow: 0 14px 40px rgba(0,0,0,.55); }
+  .card h2 { font: 400 40px Rye, serif; margin: 0 0 6px; color: #6b2a12; }
+  .card p { margin: 4px 0; font: 700 17px "Baloo 2"; }
+  .card button { font: 400 24px Rye, serif; color: #fff4dc; padding: 6px 30px; border-radius: 12px; cursor: pointer; border: 3px solid #ffd98a; background: linear-gradient(#b8541f, #7d2f10); margin-top: 10px; }
+  .banner { position: absolute; left: 50%; top: 9%; transform: translateX(-50%); font: 400 26px Rye, serif; padding: 6px 26px; border-radius: 10px; background: rgba(246,230,196,.94); color: #3a1f0e; border: 3px solid #7a4a22; white-space: nowrap; pointer-events: none; }
+  .banner[hidden] { display: none; }
+  .tag { position: absolute; font: 800 13px "Baloo 2"; padding: 1px 10px; border-radius: 8px; color: #fff; pointer-events: none; white-space: nowrap; transform: translate(-50%, -50%); }
+  .tag.t0 { background: var(--red); } .tag.t1 { background: var(--blue); }
+  .float { position: absolute; font: 400 26px Rye, serif; pointer-events: none; transform: translate(-50%, -50%); text-shadow: 0 2px 0 #000, 0 0 10px #000; animation: up 1.2s ease-out forwards; }
+  @keyframes up { to { transform: translate(-50%, -160%); opacity: 0; } }
+  /* iPad */
+  .pads { display: grid; gap: 16px; }
+  .ipad { background: #0d0d10; border-radius: 22px; padding: 14px; box-shadow: inset 0 0 0 2px #333; }
+  .ipad canvas { display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; touch-action: none; cursor: pointer; }
+  .notes { grid-column: 1 / -1; background: #241709; border: 2px solid #4a2e18; border-radius: 12px; padding: 12px 20px; font: 600 16px/1.5 "Baloo 2"; }
+  .notes h3 { font: 400 20px Rye, serif; color: #ffd98a; margin: 6px 0; }
+  .notes li { margin: 2px 0; }
+  .notes b { color: #ffd98a; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<div class="top">
+  <h1>TRAIN RUSH · Fight 1 màn — bản phác</h1>
+  <button data-g="A">Góc A</button><button data-g="B">Góc B</button><button data-g="C">Góc C</button>
+  <button id="go">START</button><button id="pause">Tạm dừng</button>
+  <small>Chạm khinh khí cầu trên màn lớn HOẶC trên iPad · khối đơn giản, chỉ để duyệt bố cục + nhịp màn</small>
+</div>
+<div class="wrap">
+  <div>
+    <p class="cap">Màn lớn (TOMKO) — một cảnh, hai ray</p>
+    <div class="tv">
+      <div class="hud">
+        <div class="team t0"><span>TEAM 1</span><em class="st0"></em><b class="s0">0</b></div>
+        <div class="clock">2:00</div>
+        <div class="team t1"><span>TEAM 2</span><em class="st1"></em><b class="s1">0</b></div>
+      </div>
+      <div class="stage" id="stage">
+        <canvas id="cv"></canvas>
+        <div class="banner" id="banner" hidden></div>
+        <div class="ov" id="ovStart"><div class="card"><h2>TRAIN RUSH · FIGHT</h2><p>2 tàu · 1 màn hình · mỗi đội 1 iPad</p><button id="go2">START</button></div></div>
+        <div class="ov" id="ovEnd" hidden><div class="card"><h2 id="endT">TEAM 1 WINS!</h2><p id="endS"></p><button id="again">Start again</button></div></div>
+      </div>
+      <div class="bar"><i>☰</i><i>🔊</i><i class="gap"></i><i>📁</i><i>⚙</i><i>iPad</i><i>Mode</i></div>
+    </div>
+  </div>
+  <div class="pads">
+    <div><p class="cap">iPad TEAM 1 (đỏ · ray gần)</p><div class="ipad"><canvas id="pad0" width="1024" height="768"></canvas></div></div>
+    <div><p class="cap">iPad TEAM 2 (xanh · ray xa)</p><div class="ipad"><canvas id="pad1" width="1024" height="768"></canvas></div></div>
+  </div>
+  <div class="notes">
+    <h3>Luật Fight một màn (theo thầy chốt 14/10)</h3>
+    <ul>
+      <li><b>Một cảnh, hai ray song song.</b> TEAM 1 (đỏ) luôn ray GẦN; TEAM 2 (xanh) luôn ray XA, nhỏ hơn. Mỗi đội có tầng khinh khí cầu riêng: quả đỏ to ở trên tàu gần; quả xanh nhỏ ở xa, ngay trên tàu xa.</li>
+      <li><b>Máy quay trôi đều</b> theo hướng tàu chạy. Mỗi tàu tự nhanh/chậm để toa đang chờ của đội mình luôn ở giữa màn. Thả đúng ⇒ tàu chậm lại, toa chờ kế tiếp trôi vào giữa.</li>
+      <li><b>Cùng màn:</b> màn N = N toa cho cả 2 đội (2 đội khác thứ tự từ). Đội xong trước ⇒ tàu <b>PHÓNG</b> ra khỏi màn + thưởng <b>FIRST +10</b> (đề xuất) — đội kia ở lại làm nốt; xong cũng phóng đi ⇒ máy bay kéo băng báo điểm ⇒ 2 tàu mới (thêm 1 toa) cùng chạy vào.</li>
+      <li><b>Điều khiển:</b> mỗi đội 1 iPad thấy cảnh 2D của RIÊNG đội mình, chạy khớp màn lớn; chạm quả trên iPad = quả đó nổ trên màn lớn. Chạm thẳng màn lớn vẫn được (chạm quả của đội nào thì thùng rơi xuống tàu đội đó).</li>
+      <li><b>Hết giờ</b> ⇒ đội nhiều điểm thắng. Hết từ ⇒ xong trận.</li>
+    </ul>
+  </div>
+</div>
+<script type="module">
+import * as THREE from "three";
+import { WORDS } from "./core/words-lsa2-s4-t4.js";
+
+// ---------------------------------------------------------------- số đo game thật (bp3d-1an.js)
+const TS = 0.74, BS = 0.84, RAIL_TOP = 0.62, ROOF_Y = 3.72, CART_W = 6.2, GAP = 0.45, ENGINE_LEN = 6.4, TENDER_LEN = 3.4, FILL_LEN = 7.2;
+const HEAD = ENGINE_LEN / 2 + GAP + TENDER_LEN + GAP;
+const ROOF_W = RAIL_TOP + ROOF_Y * TS;          // nóc toa (thế giới) 3,37
+const CRATE_W = 2.9 * TS, CRATE_H = 1.5 * TS, GRAV = 15;
+const FONT = '"Baloo 2", system-ui, sans-serif';
+// 3 góc máy quay để duyệt: zf = ray xa lùi sau ray gần; cam = [cao, xa]; look = độ cao điểm nhìn; lanes = làn khinh khí cầu [gần], [xa]
+const VIEWS = {
+  // ⚠ thử 14/10: máy quay thấp như bản đơn (cao 4,6) ⇒ tàu gần che gần hết tàu xa ⇒ phải nâng máy quay lên cao 12–15 và nhìn chéo xuống
+  A: { zf: 10, cam: [13, 24],   look: 5.7, fov: 28, near: [8.6, 10.4, 12.2], far: [7.6, 9.2, 10.8], txt: "cân bằng — ray xa lùi 10, máy quay cao 13" },
+  B: { zf: 11, cam: [15, 25],   look: 5.5, fov: 26, near: [8.6, 10.4, 12.2], far: [7.8, 9.4, 11.0], txt: "nhìn cao hơn — tàu xa lùi 11, nhỏ hơn rõ" },
+  C: { zf: 9,  cam: [12.5, 23], look: 5.6, fov: 29, near: [8.6, 10.4, 12.2], far: [7.6, 9.2, 10.8], txt: "gần hơn — ray xa lùi 9, 2 tàu sát nhau, chữ to hơn" },
+};
+const q = new URLSearchParams(location.search);
+let G = q.get("goc") in VIEWS ? q.get("goc") : "A";
+let V = VIEWS[G];
+const COL = [{ eng: 0x8f1d14, box: 0x9c3424, env: 0xd8574a, css: "#e2402f", frame: "#b0281a" }, { eng: 0x1d3f7a, box: 0x35608f, env: 0x4f86d8, css: "#2f7fe2", frame: "#1f5fb8" }];
+
+// ---------------------------------------------------------------- cảnh
+const cv = document.getElementById("cv"), stage = document.getElementById("stage");
+const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95;
+renderer.shadowMap.enabled = true;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xe9b47e);
+scene.fog = new THREE.Fog(0xe9b47e, 60, 260);
+const camera = new THREE.PerspectiveCamera(36, 2, 0.5, 1000);
+scene.add(new THREE.HemisphereLight(0xffe8c8, 0x7a4a2a, 1.1));
+const sun = new THREE.DirectionalLight(0xfff0d8, 2.2); sun.position.set(-20, 40, 30); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -45, right: 45, top: 30, bottom: -30, far: 120 });
+scene.add(sun, sun.target);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 400), new THREE.MeshStandardMaterial({ color: 0xb4643c, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.position.z = -150; ground.receiveShadow = true; scene.add(ground);
+const tracks = new THREE.Group(); scene.add(tracks);
+function buildTracks() {
+  tracks.clear();
+  for (const z of [0, -V.zf]) {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(4000, 0.34, 3.4), new THREE.MeshStandardMaterial({ color: 0x6f5a48, roughness: 1 })); b.position.set(0, 0.17, z); b.receiveShadow = true; tracks.add(b);
+    for (const s of [-0.72, 0.72]) { const r = new THREE.Mesh(new THREE.BoxGeometry(4000, 0.12, 0.12), new THREE.MeshStandardMaterial({ color: 0x9a9aa0, metalness: 0.8, roughness: 0.3 })); r.position.set(0, 0.56, z + s); tracks.add(r); }
+  }
+  // dãy núi xa (khối) cho có chiều sâu
+  const m = new THREE.MeshStandardMaterial({ color: 0x9a4f30, roughness: 1 });
+  for (let i = 0; i < 60; i++) { const h = 8 + (i * 37 % 13); const k = new THREE.Mesh(new THREE.ConeGeometry(14 + (i * 13 % 9), h, 5), m); k.position.set(-600 + i * 22, h / 2, -110 - (i * 7 % 30)); tracks.add(k); }
+}
+
+// ---------------------------------------------------------------- chữ
+function tex(w, h, draw) { const c = document.createElement("canvas"); c.width = w; c.height = h; draw(c.getContext("2d"), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+function wrapFit(ctx, text, maxW, maxH, maxPx, minPx, weight = 800) {
+  for (let px = maxPx; px >= minPx; px -= 2) {
+    ctx.font = `${weight} ${px}px ${FONT}`;
+    const words = String(text).split(/\s+/), lines = []; let cur = "";
+    for (const w of words) { const t = cur ? cur + " " + w : w; if (ctx.measureText(t).width <= maxW || !cur) cur = t; else { lines.push(cur); cur = w; } }
+    if (cur) lines.push(cur);
+    if (lines.length * px * 1.08 <= maxH && lines.every(l => ctx.measureText(l).width <= maxW)) return { lines, px };
+  }
+  return { lines: [String(text)], px: minPx };
+}
+function drawLines(ctx, f, cx, cy) { const n = f.lines.length; f.lines.forEach((l, i) => ctx.fillText(l, cx, cy + (i - (n - 1) / 2) * f.px * 1.08)); }
+const boardTex = (text, frame) => tex(640, 240, (c, w, h) => {
+  c.fillStyle = frame; c.fillRect(0, 0, w, h); c.fillStyle = "#fbf3df"; c.fillRect(12, 12, w - 24, h - 24);
+  c.fillStyle = "#2a1608"; c.textAlign = "center"; c.textBaseline = "middle"; drawLines(c, wrapFit(c, text, w - 60, h - 44, 64, 24, 700), w / 2, h / 2);
+});
+const wordTex = word => tex(640, 156, (c, w, h) => {
+  c.fillStyle = "#fbf3df"; c.beginPath(); c.roundRect(4, 4, w - 8, h - 8, 26); c.fill(); c.lineWidth = 6; c.strokeStyle = "#3a1f0e"; c.stroke();
+  c.fillStyle = "#2a1608"; c.textAlign = "center"; c.textBaseline = "middle"; drawLines(c, wrapFit(c, word, w - 50, h - 30, 96, 30), w / 2, h / 2 + 4);
+});
+const crateTex = word => tex(512, 264, (c, w, h) => {
+  c.fillStyle = "#b27a45"; c.fillRect(0, 0, w, h); c.strokeStyle = "#6b4426"; c.lineWidth = 14; c.strokeRect(7, 7, w - 14, h - 14);
+  c.fillStyle = "#fff3da"; c.textAlign = "center"; c.textBaseline = "middle"; drawLines(c, wrapFit(c, word, w - 60, h - 50, 84, 26), w / 2, h / 2 + 4);
+});
+
+// ---------------------------------------------------------------- đội
+const norm = s => String(s).trim().toUpperCase();
+const shuf = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const T = [0, 1].map(i => ({ i, z: 0, score: 0, train: null, cars: [], carts: [], x: 0, v: 0, state: "idle", balloons: [], crates: [], spawnT: 0, bag: [], deck: [], doneAt: 0 }));
+let S = { state: "idle", level: 0, time: 120, camX: 0, camV: 3.6, t: 0, betweenT: 0, paused: false };
+const BV = 3.0;   // khinh khí cầu trôi trên màn (đv/giây) ≈ nấc 4 của game thật
+
+function makeOrders() {
+  const A = shuf(WORDS.slice()), B = shuf(WORDS.slice());
+  for (let i = 0; i < A.length; i++) if (norm(A[i].keyword) === norm(B[i].keyword)) { const j = (i + 1 + Math.floor(Math.random() * (A.length - 1))) % A.length; [B[i], B[j]] = [B[j], B[i]]; }
+  return [A.reverse(), B.reverse()];   // rút từ cuối
+}
+function box(w, h, d, color, x, y, z = 0) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color, roughness: 0.7 })); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; return m; }
+function buildTrain(tm, items) {
+  if (tm.train) { scene.remove(tm.train); }
+  const g = new THREE.Group(), c = COL[tm.i];
+  // đầu máy (khối) + ống khói + toa than củi
+  g.add(box(ENGINE_LEN, 2.4, 2.0, c.eng, 0, 2.1));
+  g.add(box(2.0, 1.4, 2.1, 0x2a1a10, -1.9, 3.9));
+  g.add(box(0.6, 1.4, 0.6, 0x1d1d20, 2.2, 3.9));
+  g.add(box(TENDER_LEN, 1.9, 2.0, c.eng, -ENGINE_LEN / 2 - GAP - TENDER_LEN / 2, 1.85));
+  let cursor = -HEAD; tm.cars = []; tm.carts = [];
+  items.forEach((it, k) => {
+    if (k > 0) for (let f = 0; f < 2; f++) {   // 2 toa phụ (khách / than) giữa các toa đáp án — như game thật
+      const lx = cursor - FILL_LEN / 2; g.add(box(FILL_LEN, 2.8, 2.0, f ? 0x2c2c2e : 0x1f4a33, lx, 2.3)); tm.cars.push({ type: "fill", lx, len: FILL_LEN }); cursor -= FILL_LEN + GAP;
+    }
+    const lx = cursor - CART_W / 2;
+    const cart = new THREE.Group(); cart.position.x = lx;
+    cart.add(box(CART_W - 0.1, 2.4, 1.95, c.box, 0, 2.3));
+    cart.add(box(CART_W + 0.25, 0.14, 2.2, 0x3b2618, 0, 3.57));
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(CART_W - 0.5, 2.1), new THREE.MeshBasicMaterial({ map: boardTex(it.definition, c.frame) }));
+    face.position.set(0, 2.3, 1.0); cart.add(face);
+    g.add(cart);
+    const ct = { type: "answer", lx, len: CART_W, item: it, key: norm(it.keyword), filled: false, group: cart };
+    tm.cars.push(ct); tm.carts.push(ct); cursor -= CART_W + GAP;
+  });
+  g.scale.setScalar(TS); g.position.set(0, RAIL_TOP, tm.z);
+  tm.len = (ENGINE_LEN / 2 - cursor) * TS;
+  tm.train = g; scene.add(g);
+}
+const cartX = (tm, c) => tm.x + c.lx * TS;
+
+// ---------------------------------------------------------------- khung nhìn (nửa bề ngang ở độ cao y, mặt phẳng z)
+const _rc = new THREE.Raycaster(), _p = new THREE.Vector3();
+function halfAt(y, z) {
+  const v = new THREE.Vector3(S.camX, y, z).project(camera);
+  _rc.setFromCamera(new THREE.Vector2(1, v.y), camera);
+  return _rc.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), -z), _p) ? Math.abs(_p.x - S.camX) : 20;
+}
+function placeCamera() {
+  camera.position.set(S.camX, V.cam[0], V.cam[1]);
+  camera.lookAt(S.camX, V.look, -V.zf / 2);
+  camera.updateMatrixWorld();
+}
+function fit() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = V.fov; camera.updateProjectionMatrix();
+}
+
+// ---------------------------------------------------------------- khinh khí cầu (khối: thân + bảng chữ), mỗi đội một màu vỏ
+const envGeo = new THREE.SphereGeometry(1, 28, 16);
+function makeBalloon(tm, word) {
+  const g = new THREE.Group(), c = COL[tm.i];
+  const env = new THREE.Mesh(envGeo, new THREE.MeshStandardMaterial({ color: c.env, roughness: 0.55 })); env.scale.set(3.4, 1.15, 1.15); env.castShadow = true; g.add(env);
+  const gon = box(1.4, 0.5, 0.6, 0x4d2f1a, -0.3, -1.45); g.add(gon);
+  const ban = new THREE.Mesh(new THREE.PlaneGeometry(5.2, 1.26), new THREE.MeshBasicMaterial({ map: wordTex(word), transparent: true, depthWrite: false }));
+  ban.position.z = 1.32; ban.renderOrder = 5; g.add(ban);
+  const hit = new THREE.Mesh(new THREE.SphereGeometry(1, 10, 8), new THREE.MeshBasicMaterial({ visible: false })); hit.scale.set(3.8, 1.9, 1.9); g.add(hit);
+  g.scale.setScalar(BS);
+  return { g, hit };
+}
+function drawWord(tm) {
+  const open = tm.carts.find(c => !c.filled);
+  if (!open) return null;
+  if (!tm.deck.length) {
+    const inLv = new Set(tm.carts.map(c => c.key));
+    const others = shuf(WORDS.filter(w => !inLv.has(norm(w.keyword)))).slice(0, 2).map(w => w.keyword);
+    tm.deck = shuf([open.item.keyword, open.item.keyword, ...others]);
+  }
+  let k = tm.deck.pop();
+  if (tm.carts.some(c => c.filled && c.key === norm(k))) k = open.item.keyword;
+  return k;
+}
+const lanesOf = tm => (tm.i === 0 ? V.near : V.far);
+function spawnBalloon(tm) {
+  const word = drawWord(tm); if (!word) return;
+  const lanes = shuf(lanesOf(tm).slice());
+  const hx = halfAt(lanes[0], tm.z);
+  const last = tm.balloons.reduce((m, b) => Math.max(m, b.x), -Infinity);
+  const x = Math.max(S.camX + hx + 6, last + 8.5);
+  const y = lanes.find(l => !tm.balloons.some(b => Math.abs(b.baseY - l) < 0.5 && b.x > x - 9)) ?? lanes[0];
+  const { g, hit } = makeBalloon(tm, word);
+  const b = { id: Math.random().toString(36).slice(2, 8), tm, word, x, baseY: y, y, ph: Math.random() * 6, g, hit };
+  hit.userData.b = b; g.position.set(x, y, tm.z); scene.add(g); tm.balloons.push(b);
+}
+function removeBalloon(b) { scene.remove(b.g); const a = b.tm.balloons; const i = a.indexOf(b); if (i >= 0) a.splice(i, 1); }
+function pop(b, from) {
+  if (S.state !== "play" || !b.tm.balloons.includes(b)) return;
+  removeBalloon(b);
+  const tm = b.tm;
+  const m = new THREE.Mesh(new THREE.BoxGeometry(2.9, 1.5, 1.5), [0, 0, 1, 0, 1, 0].map(k => k ? new THREE.MeshStandardMaterial({ map: crateTex(b.word) }) : new THREE.MeshStandardMaterial({ color: 0xb27a45 })));
+  m.scale.setScalar(TS); m.castShadow = true; scene.add(m);
+  const c = { word: b.word, key: norm(b.word), x: b.x, y: b.y - 1.45 * BS, vx: S.camV - BV - 2.2, vy: 0, z: tm.z, vz: 0, m, state: "fall", t: 0 };
+  tm.crates.push(c);
+  flash(b.x, b.y, tm.z, from === "pad" ? "iPad" : "", "#fff");
+}
+// ---------------------------------------------------------------- chữ nổi (điểm) trên màn lớn
+function screenOf(x, y, z) { const v = new THREE.Vector3(x, y, z).project(camera); return [(v.x + 1) / 2 * stage.clientWidth, (1 - v.y) / 2 * stage.clientHeight]; }
+function flash(x, y, z, text, color) {
+  if (!text) return;
+  const [sx, sy] = screenOf(x, y, z), f = document.createElement("div");
+  f.className = "float"; f.textContent = text; f.style.left = sx + "px"; f.style.top = sy + "px"; f.style.color = color; f.style.fontSize = (z ? 20 : 26) + "px";
+  stage.append(f); setTimeout(() => f.remove(), 1300);
+}
+
+// ---------------------------------------------------------------- nhịp trận
+function startMatch() {
+  for (const tm of T) { tm.score = 0; tm.balloons.slice().forEach(removeBalloon); tm.crates.forEach(c => scene.remove(c.m)); tm.crates = []; }
+  const [A, B] = makeOrders(); T[0].bag = A; T[1].bag = B;
+  S.time = 120; S.level = 0; S.camX = 0; S.camV = 3.6;
+  document.getElementById("ovStart").hidden = true; document.getElementById("ovEnd").hidden = true;
+  beginLevel(1);
+}
+function beginLevel(n) {
+  S.level = n;
+  for (const tm of T) {
+    const items = []; while (items.length < n && tm.bag.length) items.push(tm.bag.pop());
+    if (!items.length) return endMatch("ALL WORDS DONE");
+    tm.deck = []; tm.doneAt = 0;
+    buildTrain(tm, items);
+    // chạy nhanh vào từ mép trái rồi chậm dần về đúng khung (toa chờ ở giữa màn)
+    tm.x = S.camX - halfAt(2, tm.z) - 4 - ENGINE_LEN / 2 * TS; tm.v = S.camV + 9;
+    tm.state = "play"; tm.spawnT = 2.2 + tm.i * 0.6;
+    tm.train.position.x = tm.x;
+  }
+  S.state = "play";
+  showBanner("LEVEL " + n, 1600);
+}
+function finishTeam(tm) {
+  tm.state = "launch";
+  const first = !T.some(o => o !== tm && (o.state === "launch" || o.state === "gone"));
+  if (first) { tm.score += 10; flash(tm.x, ROOF_W + 2, tm.z, "FIRST +10", "#ffd34d"); }
+  tm.balloons.forEach(b => { b.leaving = true; });
+}
+function levelDone() {
+  S.state = "between"; S.betweenT = 0;
+  showBanner(`✈ LEVEL ${S.level} · TEAM 1  ${T[0].score} : ${T[1].score}  TEAM 2`, 3200);
+}
+function endMatch(why) {
+  S.state = "over";
+  const [a, b] = [T[0].score, T[1].score];
+  document.getElementById("endT").textContent = a === b ? "DRAW!" : `TEAM ${a > b ? 1 : 2} WINS!`;
+  document.getElementById("endS").textContent = `${why} · TEAM 1 ${a} — TEAM 2 ${b}`;
+  document.getElementById("ovEnd").hidden = false;
+}
+let bannerT = 0;
+function showBanner(t, ms) { const el = document.getElementById("banner"); el.textContent = t; el.hidden = false; clearTimeout(bannerT); bannerT = setTimeout(() => { el.hidden = true; }, ms); }
+
+// ---------------------------------------------------------------- vòng cập nhật
+function updateTeam(tm, dt) {
+  if (!tm.train) return;
+  const cur = tm.carts.find(c => !c.filled);
+  if (tm.state === "play" && cur) {
+    // lò xo giảm chấn: toa đang chờ về giữa màn (theo máy quay trôi đều); tàu không bao giờ chạy lùi
+    const want = S.camX - cur.lx * TS, K = 1.1;
+    const a = K * K * (want - tm.x) + 2 * K * (S.camV - tm.v);
+    tm.v = Math.max(0.6, Math.min(30, tm.v + a * dt));
+  } else if (tm.state === "launch" || tm.state === "gone") {
+    tm.v = Math.min(34, tm.v + 9 * dt);   // PHÓNG lên trước, ra khỏi mép phải
+    if (tm.state === "launch" && tm.x - tm.len > S.camX + halfAt(2, tm.z) + 2) tm.state = "gone";
+  }
+  tm.x += tm.v * dt; tm.train.position.x = tm.x;
+  // khinh khí cầu
+  if (tm.state === "play" && S.state === "play") {
+    tm.spawnT -= dt;
+    if (tm.spawnT <= 0 && tm.balloons.length < 4) { spawnBalloon(tm); tm.spawnT = 6.5 / BV; }
+  }
+  for (const b of tm.balloons.slice()) {
+    if (b.leaving) { b.vy = (b.vy || 0) + dt * 9; b.baseY += b.vy * dt; if (b.baseY > 40) { removeBalloon(b); continue; } }
+    else b.x += (S.camV - BV) * dt;
+    b.y = b.baseY + Math.sin(S.t * 1.3 + b.ph) * 0.22;
+    b.g.position.set(b.x, b.y, tm.z);
+    if (b.x < S.camX - halfAt(b.y, tm.z) - 7) removeBalloon(b);
+  }
+  // thùng: rơi thẳng (mang đà khinh khí cầu), gần nóc toa thì hãm theo tàu; chạm nóc ⇒ chấm
+  for (const c of tm.crates.slice()) {
+    c.t += dt;
+    if (c.state === "fall") {
+      c.vy -= GRAV * dt;
+      const over = tm.cars.find(k => Math.abs(tm.x + k.lx * TS - c.x) <= k.len * TS / 2 + 0.3);
+      if (over && c.y - ROOF_W < 2.8 && tm.state !== "gone") c.vx = tm.v + (c.vx - tm.v) * Math.exp(-dt * 7);
+      c.x += c.vx * dt; c.y += c.vy * dt;
+      if (over && c.y - CRATE_H / 2 <= ROOF_W && c.y > ROOF_W - 0.4) {
+        if (over.type === "answer" && over.key === c.key && !over.filled) {
+          c.state = "on"; c.cart = over; c.off = c.x - (tm.x + over.lx * TS); c.y = ROOF_W + CRATE_H / 2;
+          over.filled = true; tm.score += 5; flash(c.x, c.y + 1.4, tm.z, "+5", "#9dffa9");
+          if (tm.carts.every(k => k.filled)) finishTeam(tm);
+        } else { c.state = "kick"; c.vy = 4; c.vz = 3; c.vx = tm.v; if (over.type === "answer") flash(c.x, c.y + 1.4, tm.z, "✗", "#ff7b6b"); }
+      } else if (c.y < 0.5 + CRATE_H / 2) { c.state = "ground"; c.y = 0.5 + CRATE_H / 2; }
+    } else if (c.state === "on") { c.x = tm.x + c.cart.lx * TS + c.off; }
+    else if (c.state === "kick") { c.vy -= GRAV * dt; c.x += c.vx * dt; c.y += c.vy * dt; c.z += c.vz * dt; if (c.y < 0.5) { c.state = "ground"; c.y = 0.5; } }
+    c.m.position.set(c.x, c.y, c.z);
+    if (c.state === "ground") c.m.rotation.z = 0.2;
+    if (c.x < S.camX - 40 || c.t > 30) { scene.remove(c.m); tm.crates.splice(tm.crates.indexOf(c), 1); }
+  }
+}
+function update(dt) {
+  S.t += dt;
+  S.camX += S.camV * dt;
+  placeCamera();
+  if (S.state === "play" || S.state === "between") {
+    S.time -= dt; if (S.time <= 0) { S.time = 0; endMatch("TIME'S UP"); }
+  }
+  for (const tm of T) updateTeam(tm, dt);
+  if (S.state === "play" && T.every(tm => tm.state === "gone")) levelDone();
+  if (S.state === "between") { S.betweenT += dt; if (S.betweenT > 3.4) beginLevel(S.level + 1); }
+  sun.position.set(S.camX - 20, 40, 30); sun.target.position.set(S.camX, 0, -4);
+  // HUD
+  const t = Math.ceil(S.time); document.querySelector(".clock").textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+  T.forEach(tm => {
+    document.querySelector(".s" + tm.i).textContent = tm.score;
+    document.querySelector(".st" + tm.i).textContent = S.state === "play" && tm.state !== "play" ? "✓ DONE" : "";
+  });
+}
+
+// ---------------------------------------------------------------- chạm màn lớn (chạm quả đội nào ⇒ thùng xuống tàu đội đó)
+cv.addEventListener("pointerdown", e => {
+  const r = cv.getBoundingClientRect(), nd = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+  _rc.setFromCamera(nd, camera);
+  const all = T.flatMap(tm => tm.balloons.filter(b => !b.leaving));
+  const hits = _rc.intersectObjects(all.map(b => b.hit), false);
+  if (hits.length) pop(hits[0].object.userData.b, "tv");
+});
+
+// ---------------------------------------------------------------- iPad: cảnh 2D của RIÊNG đội mình, ngang khớp màn lớn
+// Vị trí ngang của từng vật = đúng chỗ nó hiện trên màn lớn (chiếu bằng chính máy quay) ⇒ canh thả trên iPad = canh trên màn lớn.
+// Chiều đứng: mặt cắt ngang tỉ lệ thật (ray dưới, tàu, các làn khinh khí cầu).
+const pads = [0, 1].map(i => { const c = document.getElementById("pad" + i); return { c, ctx: c.getContext("2d"), hits: [] }; });
+function drawPad(i) {
+  const P = pads[i], ctx = P.ctx, W = P.c.width, H = P.c.height, tm = T[i], c = COL[i];
+  // PHÓNG TO quanh giữa màn (chỗ toa đang chờ): chiều đứng vừa từ mặt ray tới làn khinh khí cầu cao nhất ⇒ iPad thấy ~2/3 bề ngang màn lớn,
+  // chữ to; vị trí ngang vẫn = vị trí trên màn lớn (tính từ giữa màn) ⇒ canh thả trên iPad hay màn lớn như nhau.
+  const gy = H - 60;                                        // mặt ray
+  const ppu = (gy - 70) / (lanesOf(tm)[2] + 1.7 - RAIL_TOP); // điểm ảnh / đơn vị
+  const X = (x, y) => { const v = new THREE.Vector3(x, y, tm.z).project(camera); return W / 2 + v.x * halfAt(y, tm.z) * ppu; };
+  const Y = y => gy - (y - RAIL_TOP) * ppu;
+  ctx.clearRect(0, 0, W, H);
+  const sky = ctx.createLinearGradient(0, 0, 0, gy); sky.addColorStop(0, "#f4c58e"); sky.addColorStop(1, "#e79a62");
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, gy);
+  ctx.fillStyle = "#b4643c"; ctx.fillRect(0, gy, W, H - gy);
+  ctx.fillStyle = "#6f5a48"; ctx.fillRect(0, gy, W, 14); ctx.fillStyle = "#9a9aa0"; ctx.fillRect(0, gy - 3, W, 4);
+  // đầu thanh: đội + điểm
+  ctx.fillStyle = c.css; ctx.fillRect(0, 0, W, 54);
+  ctx.fillStyle = "#fff"; ctx.font = `800 30px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "left"; ctx.fillText(`TEAM ${i + 1}`, 22, 28);
+  ctx.textAlign = "right"; ctx.fillText(String(tm.score), W - 22, 28);
+  ctx.textAlign = "center"; ctx.font = `700 22px ${FONT}`; ctx.fillText(tm.state === "play" ? "Tap a balloon to drop its box" : S.state === "play" ? "✓ Train done — wait for the other team" : "", W / 2, 28);
+  // tàu
+  if (tm.train && tm.state !== "gone") {
+    const blk = (lx, len, y0, h, col) => { const x0 = X(tm.x + (lx - len / 2) * TS, ROOF_W), x1 = X(tm.x + (lx + len / 2) * TS, ROOF_W); ctx.fillStyle = col; ctx.fillRect(x0, Y(RAIL_TOP + (y0 + h) * TS), x1 - x0, h * TS * ppu); return [x0, x1]; };
+    const hex = n => "#" + n.toString(16).padStart(6, "0");
+    blk(0, ENGINE_LEN, 0.9, 2.4, hex(c.eng)); blk(-1.9, 2.0, 3.2, 1.4, "#2a1a10"); blk(2.2, 0.6, 3.2, 1.4, "#1d1d20");
+    blk(-ENGINE_LEN / 2 - GAP - TENDER_LEN / 2, TENDER_LEN, 0.9, 1.9, hex(c.eng));
+    const cur = tm.carts.find(k => !k.filled);
+    for (const k of tm.cars) {
+      if (k.type === "fill") { blk(k.lx, k.len, 0.9, 2.8, "#3a4a40"); continue; }
+      const [x0, x1] = blk(k.lx, k.len, 1.1, 2.4, hex(c.box));
+      const y0 = Y(RAIL_TOP + 3.5 * TS), y1 = Y(RAIL_TOP + 1.25 * TS);
+      ctx.fillStyle = c.frame; ctx.fillRect(x0 + 3, y0, x1 - x0 - 6, y1 - y0);
+      ctx.fillStyle = "#fbf3df"; ctx.fillRect(x0 + 7, y0 + 4, x1 - x0 - 14, y1 - y0 - 8);
+      ctx.fillStyle = "#2a1608"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      drawLines(ctx, wrapFit(ctx, k.item.definition, x1 - x0 - 24, y1 - y0 - 12, 32, 11, 700), (x0 + x1) / 2, (y0 + y1) / 2);
+      if (k === cur) { ctx.strokeStyle = "#ffd34d"; ctx.lineWidth = 5; ctx.strokeRect(x0 - 2, Y(ROOF_W) - 4, x1 - x0 + 4, gy - Y(ROOF_W) + 4); }
+    }
+  }
+  // thùng
+  for (const k of tm.crates) {
+    if (k.state === "ground" || k.z !== tm.z) continue;
+    const x = X(k.x, k.y), w = CRATE_W * ppu, h = CRATE_H * ppu;
+    ctx.fillStyle = "#b27a45"; ctx.fillRect(x - w / 2, Y(k.y) - h / 2, w, h); ctx.strokeStyle = "#6b4426"; ctx.lineWidth = 3; ctx.strokeRect(x - w / 2, Y(k.y) - h / 2, w, h);
+    ctx.fillStyle = "#fff3da"; ctx.textAlign = "center"; drawLines(ctx, wrapFit(ctx, k.word, w - 8, h - 6, 22, 10), x, Y(k.y));
+  }
+  // khinh khí cầu
+  P.hits = [];
+  for (const b of tm.balloons) {
+    const x = X(b.x, b.y), y = Y(b.y), rx = 3.4 * BS * ppu, ry = 1.15 * BS * ppu * 1.25;
+    ctx.fillStyle = c.css; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#4d2f1a"; ctx.fillRect(x - 0.8 * BS * ppu, y + 1.2 * BS * ppu, 1.4 * BS * ppu, 0.5 * BS * ppu);
+    const bw = 5.2 * BS * ppu, bh = 1.26 * BS * ppu;
+    ctx.fillStyle = "#fbf3df"; ctx.beginPath(); ctx.roundRect(x - bw / 2, y - bh / 2, bw, bh, 10); ctx.fill(); ctx.strokeStyle = "#3a1f0e"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = "#2a1608"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; drawLines(ctx, wrapFit(ctx, b.word, bw - 16, bh - 6, 34, 12), x, y + 2);
+    if (!b.leaving) P.hits.push({ b, x, y, rx: rx * 1.1, ry: ry * 1.6 });
+  }
+}
+pads.forEach((P, i) => P.c.addEventListener("pointerdown", e => {
+  const r = P.c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * P.c.width, y = (e.clientY - r.top) / r.height * P.c.height;
+  const h = P.hits.find(k => ((x - k.x) / k.rx) ** 2 + ((y - k.y) / k.ry) ** 2 <= 1);
+  if (h) pop(h.b, "pad");
+}));
+
+// ---------------------------------------------------------------- nhãn đội trên màn lớn (cạnh đầu máy)
+const tags = T.map(tm => { const d = document.createElement("div"); d.className = "tag t" + tm.i; d.textContent = "TEAM " + (tm.i + 1); stage.append(d); return d; });
+function placeTags() {
+  T.forEach((tm, i) => {
+    const show = tm.train && tm.state === "play";
+    tags[i].hidden = !show; if (!show) return;
+    const [sx, sy] = screenOf(tm.x + ENGINE_LEN / 2 * TS * 0.2, ROOF_W + 1.4, tm.z);
+    tags[i].style.left = sx + "px"; tags[i].style.top = sy + "px";
+  });
+}
+
+// ---------------------------------------------------------------- chạy
+let last = 0, manual = false;
+function frame(ts) {
+  requestAnimationFrame(frame);
+  if (manual) return;
+  const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
+  tick(dt);
+}
+function tick(dt) {
+  if (!S.paused && S.state !== "over") update(dt); else placeCamera();
+  renderer.render(scene, camera);
+  placeTags(); drawPad(0); drawPad(1);
+}
+function setView(g) {
+  G = g; V = VIEWS[g]; T[0].z = 0; T[1].z = -V.zf;
+  document.querySelectorAll("[data-g]").forEach(b => b.classList.toggle("on", b.dataset.g === g));
+  document.querySelector(".top small").textContent = `Góc ${g}: ${V.txt} · chạm khinh khí cầu trên màn lớn HOẶC trên iPad`;
+  buildTracks(); fit();
+  if (S.state !== "idle") startMatch();
+}
+document.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => setView(b.dataset.g)));
+for (const id of ["go", "go2", "again"]) document.getElementById(id).addEventListener("click", startMatch);
+document.getElementById("pause").addEventListener("click", e => { S.paused = !S.paused; e.target.classList.toggle("on", S.paused); last = 0; });
+addEventListener("resize", fit);
+await document.fonts.ready;
+setView(G); placeCamera();
+requestAnimationFrame(frame);
+// bàn thử (khung xem trước bị ẩn thì rAF đứng)
+window.__fd = { S, T, step(n = 1, dt = 1 / 60) { manual = true; for (let i = 0; i < n; i++) tick(dt); return S.state; }, resume() { manual = false; last = 0; }, start: startMatch, setView, pop, camera, VIEWS,
+  snap() { tick(0); return cv.toDataURL("image/jpeg", 0.85); } };
+</script>
+</body>
+</html>
