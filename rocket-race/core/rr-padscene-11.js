@@ -12,11 +12,11 @@
 //   o = rrPadState() của trang game: ph, ar { on, max(−1 = ∞), reserve, loaded, pips, pipsMax, full, boost, boostPips, boostMax, locked },
 //   sl [[st, k], [st, k]] (empty · shuttle · charge · ready · queued · firing), thr (giây tới lúc nổ, −1 = không), win, pc (PEACE).
 import * as THREE from "three";
-import { EffectComposer } from "three/addons/EffectComposer.js";
-import { RenderPass } from "three/addons/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/UnrealBloomPass.js";
-import { OutputPass } from "three/addons/OutputPass.js";
-import { RoomEnvironment } from "three/addons/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
