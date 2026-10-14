@@ -452,3 +452,15 @@ rơi trúng toa trên màn lớn (+5, tàu phóng đi) · Chỉ iPad: chạm mà
 đúng tàu đội đó · 94 khung/giây MSAA 4 (một cảnh thay vì 2 cảnh như Fight cũ). ⬜ thầy thử TOMKO + 2 iPad thật (sau khi ghép AWord).
 - Bẫy gặp: chèn ghi chú `//` giữa dòng JS nhiều lệnh ⇒ nuốt mất `g.add(env)` (thân khinh khí cầu biến mất) — đúng bẫy đã ghi trong CLAUDE.md.
 - Bẫy Git Bash: tham số dòng lệnh bắt đầu bằng `//` bị MSYS đổi thành `/` (coi là đường dẫn) ⇒ tìm/thay chuỗi trong file bằng script phải tránh.
+
+## 41. Mẫu 1aq (14/10/2026) — chỉnh cỡ Fight 1 màn + bản phác màn iPad mới
+Thầy xem 1ap ⇒ 5 ý: (1) máy bay kéo băng điểm bay quá cao, không nhìn rõ · (2) thú đuổi nhau xa nhau quá ⇒ còn 1/2 · (3) 2 tàu sát mép dưới, chật ⇒ nâng
+lên, chừa đất + cỏ tiền cảnh trước tàu đỏ · (4) tàu to hơn, khinh khí cầu nhỏ hơn · (5) màn iPad xấu ⇒ thiết kế lại toàn bộ để duyệt.
+- `mau-1aq-train-rush.html` (Single y hệt 1ap; `?mode=fight`). Lõi `bp3d-1aq.js`: `DUO_TS 0,86` (1ap 0,74) · `DUO_BS 0,66` (0,84) — TS/BS/ROOF_W/CRATE_H nay tính
+  TRONG createBalloonPop theo duo · `VIEWS.duo` look y 5,7 → 3,7 · làn gần 7,2/8,6/10,0 · làn xa 6,4/7,6/8,8 · `plane: [y 9,6, z −5]` (1ap bay y 13,4 z −3 sát mép trên).
+  `VIEWS` export (bàn thử chỉnh góc tại chỗ: sửa mảng rồi phát `resize`). Cảnh `west-world-1aq` `{ chaseGap }` ⇒ `animals-1aq` createChase `{ gapK }`
+  (khoảng hở mõm↔đuôi + tốc độ giãn × gapK) + `sign-chase-1aq` (thu KHOẢNG HỞ, không thu thân ⇒ không chồng). Fight `fight-1aq.js` = 1ap + lõi 1aq.
+- Đã kiểm: khoảng hở cặp đuổi đo 2,1–2,6 m (1ap 4,1–6,1) · chơi tự động màn 1 → màn 2 cả 2 đội, thùng đậu đúng toa to, 0 lỗi console.
+- Bản phác iPad `thiet-ke-ipad-1aq.html?s=A|B|C&v=…&t=0|1`: 3 kiểu vẽ (A Miền Tây hoàng hôn · B Gọn chữ thật to · C Hoạt hình ban ngày) × 9 màn
+  (chọn đội · chờ START · đếm · đang chơi · tàu đầy chờ đội kia · OUT · kết thúc · iPad tắt · đội đã có iPad). Dữ liệu giả, tự chơi, chạm quả được,
+  phím Space dừng hình. Có thêm ĐIỂM ĐỘI BẠN + LEVEL k/n trên thanh đầu (game phải gửi thêm). ⬜ thầy chọn kiểu ⇒ viết lại `tr-padui` theo kiểu đó.

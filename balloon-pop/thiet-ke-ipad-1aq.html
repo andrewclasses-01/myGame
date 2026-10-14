@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thiết kế màn iPad Train Rush</title>
+<!-- BẢN PHÁC màn iPad TRAIN RUSH Fight 1 màn (14/10/2026). Thầy: "cần design lại toàn bộ hiển thị trên ipad để tôi duyệt lại vì chúng đang xấu quá".
+     3 kiểu vẽ (A Miền Tây hoàng hôn · B Gọn chữ to · C Hoạt hình ban ngày) × mọi màn iPad (chọn đội, chờ START, đếm, đang chơi, tàu đầy chờ đội kia,
+     hết giờ OUT, kết thúc, iPad tắt / đội đã có iPad). Dữ liệu GIẢ, tự chơi; chạm khinh khí cầu được (thùng rơi thật).
+     Tự chạy một mình (không nối game). Duyệt xong mới viết lại core/tr-padui-*.js. -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Rye&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #1a120b; --panel: #2a1c11; --ink: #f6e7cc; --mute: #c8ad85; --acc: #ffcf5a; --line: #4a3320; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 500 15px "Baloo 2", system-ui, sans-serif; }
+  body { display: flex; min-height: 100%; }
+  aside { width: 300px; flex: none; padding: 16px; background: var(--panel); border-right: 1px solid var(--line); overflow: auto; }
+  aside h1 { margin: 0 0 4px; font: 400 22px Rye, serif; color: var(--acc); }
+  aside p { margin: 0 0 12px; color: var(--mute); line-height: 1.35; }
+  aside h2 { margin: 16px 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+  .grp { display: grid; gap: 6px; }
+  .grp button { text-align: left; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: #3a2717; color: var(--ink); font: 600 14px "Baloo 2", sans-serif; cursor: pointer; line-height: 1.2; }
+  .grp button small { display: block; color: var(--mute); font-weight: 500; font-size: 12px; }
+  .grp button.on { background: #6b3d1f; border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset; }
+  .row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .row button { flex: 1; text-align: center; }
+  main { flex: 1; display: grid; place-items: center; padding: 18px; min-width: 0; }
+  .ipad { position: relative; padding: 18px; border-radius: 34px; background: #0d0d0f; box-shadow: 0 0 0 2px #2c2c30, 0 20px 60px rgba(0,0,0,.6); }
+  .ipad canvas { display: block; border-radius: 16px; touch-action: none; cursor: pointer; }
+  .note { margin-top: 10px; text-align: center; color: var(--mute); font-size: 13px; }
+  @media (max-width: 900px) { body { flex-direction: column; } aside { width: auto; border-right: 0; border-bottom: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<aside>
+  <h1>iPad · Train Rush</h1>
+  <p>Bản phác để thầy duyệt. Dữ liệu giả, máy tự chơi; thầy chạm khinh khí cầu cũng được (thùng rơi thật).</p>
+  <h2>Kiểu vẽ</h2>
+  <div class="grp" id="styles">
+    <button data-s="A">A · Miền Tây hoàng hôn<small>Giống màn lớn: trời chiều, núi đỏ, tàu hơi nước vẽ chi tiết, bảng gỗ</small></button>
+    <button data-s="B">B · Gọn, chữ thật to<small>Nền sáng phẳng, thẻ trắng viền màu đội, chữ to nhất có thể</small></button>
+    <button data-s="C">C · Hoạt hình ban ngày<small>Trời xanh, mây, đồi xanh, nét tròn tươi, hợp học sinh nhỏ</small></button>
+  </div>
+  <h2>Màn hình</h2>
+  <div class="grp" id="screens">
+    <button data-v="chooser">1 · Chọn đội<small>Mở iPad ▸ chọn TEAM 1 / TEAM 2</small></button>
+    <button data-v="wait">2 · Chờ thầy bấm START</button>
+    <button data-v="count">3 · Đếm 3 – 2 – 1</button>
+    <button data-v="play">4 · Đang chơi<small>Chạm quả có từ đúng ⇒ thùng rơi xuống toa sáng</small></button>
+    <button data-v="done">5 · Tàu đầy, chờ đội kia<small>Tàu phóng đi, thanh giờ dừng</small></button>
+    <button data-v="out">6 · Hết giờ — OUT</button>
+    <button data-v="end">7 · Kết thúc trận</button>
+    <button data-v="off">8 · Thầy tắt iPad</button>
+    <button data-v="taken">9 · Đội đã có iPad khác</button>
+  </div>
+  <h2>Đội</h2>
+  <div class="grp row" id="teams"><button data-t="0">TEAM 1 đỏ</button><button data-t="1">TEAM 2 xanh</button></div>
+  <h2>Cỡ iPad</h2>
+  <div class="grp row" id="sizes"><button data-r="1.333">iPad 4:3</button><button data-r="1.44">iPad Air</button></div>
+</aside>
+<main>
+  <div>
+    <div class="ipad"><canvas id="cv"></canvas></div>
+    <div class="note" id="note"></div>
+  </div>
+</main>
+<script>
+// ================================================================ dữ liệu giả
+const WORDS = [
+  ["FEED", "To give food to a person or an animal"], ["EQUAL", "The same in size or amount as another"],
+  ["COSTLY", "Costing a lot of money"], ["CERTAINLY", "Without any doubt"], ["QUIT", "To stop doing something"],
+  ["PITY", "A sad feeling for someone in trouble"], ["MONARCH", "A king or queen who rules a country"], ["ANXIOUS", "Worried and nervous"],
+  ["LIVE ON", "To keep living by eating a type of food"], ["COLA", "A sweet brown fizzy drink"]];
+const TEAMS = [
+  { name: "TEAM 1", main: "#d8392a", dark: "#7c1a10", light: "#f08a7c", env: ["#f2a092", "#d4513f", "#9a2b1f"], eng: "#8f1d14" },
+  { name: "TEAM 2", main: "#2a72d8", dark: "#123d80", light: "#8db7f2", env: ["#a9c8f5", "#3f7fd6", "#1f4c94"], eng: "#1d3f7a" }];
+// toạ độ THẾ GIỚI như game (bp3d-1aq: tàu ×0,86)
+const TS = 0.86, RAIL = 0.62, ROOF = RAIL + 3.72 * TS, CW = 6.2 * TS, GAP = 0.45 * TS, ENG = 6.4 * TS, TEN = 3.4 * TS, COACH = 6.6 * TS;
+const LANES = [7.2, 8.6, 10.0], GRAV = 15, CR = 1.5 * TS, CRW = 2.9 * TS, LV_TIME = 120;
+
+// ================================================================ trạng thái
+const Q = new URLSearchParams(location.search);
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+let STYLE = Q.get("s") || "A", VIEW = Q.get("v") || "play", TEAM = +(Q.get("t") || 0), RATIO = +(Q.get("r") || 1.333);
+let W = 1024, H = 768, k = 1, ppu = 50, HEAD = 84;
+let G;   // thế giới giả
+function resetWorld() {
+  const lv = 3;
+  const pool = WORDS.slice().sort(() => Math.random() - 0.5);
+  const cars = []; let x = -(ENG / 2 + GAP + TEN + GAP);
+  for (let i = 0; i < lv; i++) {
+    cars.push({ type: "a", item: pool[i], len: CW, lx: x - CW / 2, filled: false });
+    x -= CW + GAP;
+    if (i === 0) { cars.push({ type: "p", len: COACH, lx: x - COACH / 2 }); x -= COACH + GAP; }
+  }
+  G = { t: 0, camX: 0, camV: 2.4, ox: 0, v: 2.4, cars, pool, lv, level: 2, levels: 5, blimps: [], crates: [], fx: [], smoke: [], spawnT: 0, id: 0,
+        score: 15, opp: 10, left: 84, autoT: 1.5, nAuto: 0, leaving: false, count: 3, countT: 0, mood: 0 };
+  const w = waitCar(); G.ox = G.camX - (w ? w.lx : 0);
+  for (let i = 0; i < 3; i++) spawnBlimp(G.camX - 6 + i * 6.5);
+  if (VIEW === "out") { G.left = 0; G.v = 0; G.camV = 0; G.cars[0].filled = true; }
+  if (VIEW === "done") { G.cars.forEach(c => { if (c.type !== "a") return; c.filled = true; G.crates.push({ x: G.ox + c.lx, y: ROOF + CR / 2, vy: 0, vx: 0, word: c.item[0], st: "on", car: c, rot: 0 }); }); G.leaving = true; G.left = 38; G.score = 30; }
+  if (VIEW === "end") { G.score = 62; G.opp = 48; }
+}
+const waitCar = () => G.cars.find(c => c.type === "a" && !c.filled);
+const halfW = () => W / 2 / ppu;
+function spawnBlimp(x) {
+  const used = G.blimps.map(b => b.lane), free = [0, 1, 2].filter(l => !used.slice(-2).includes(l));
+  const lane = free.length ? free[Math.floor(Math.random() * free.length)] : Math.floor(Math.random() * 3);
+  const w = waitCar(), notDone = G.pool.slice(0, G.lv).filter(p => !G.cars.some(c => c.item === p && c.filled));
+  const onScreen = new Set(G.blimps.map(b => b.word));
+  const cand = [...notDone, ...G.pool.slice(G.lv, G.lv + 3)].filter(p => !onScreen.has(p[0]));
+  const item = (w && !onScreen.has(w.item[0]) && Math.random() < 0.6) ? w.item : cand[Math.floor(Math.random() * cand.length)] || G.pool[G.lv + 3];
+  G.blimps.push({ id: ++G.id, x: x ?? G.camX + halfW() + 3, y: LANES[lane], lane, word: item[0], ph: Math.random() * 6, vx: G.camV - 1.3 });
+}
+function drop(b) {
+  G.blimps.splice(G.blimps.indexOf(b), 1);
+  G.crates.push({ x: b.x, y: b.y - 0.9, vy: 0, vx: 0, word: b.word, st: "fall", rot: 0 });
+  fx("pop", b.x, b.y);
+}
+function fx(type, x, y, text) { G.fx.push({ type, x, y, t: 0, text, parts: type === "pop" ? Array.from({ length: 14 }, (_, i) => ({ a: i / 14 * 6.28, v: 2 + Math.random() * 3 })) : null }); }
+
+// ================================================================ nhịp
+function step(dt) {
+  G.t += dt;
+  if (VIEW === "count") { G.countT += dt; if (G.countT > 1) { G.countT = 0; G.count = G.count > 1 ? G.count - 1 : 3; } }
+  const playing = VIEW === "play" || VIEW === "done";
+  if (VIEW === "wait" || VIEW === "count" || VIEW === "chooser" || VIEW === "off" || VIEW === "taken") { G.camV = 0; }
+  G.camX += G.camV * dt;
+  // tàu: lò xo giữ toa chờ giữa màn · đầy ⇒ phóng đi · OUT ⇒ đứng
+  if (VIEW === "out" || VIEW === "end") G.v *= Math.exp(-dt * 3);
+  else if (G.leaving) G.v = Math.min(16, G.v + 9 * dt);
+  else { const w = waitCar(); const want = w ? G.camX - w.lx : G.ox; G.v = Math.max(G.camV * 0.25, G.camV + (want - G.ox) * 1.8); }
+  G.ox += G.v * dt;
+  if (VIEW === "play" && G.left > 0) G.left = Math.max(0, G.left - dt);
+  // khói
+  if (G.v > 0.3 || Math.random() < 0.3) { G.smokeT = (G.smokeT || 0) - dt; if (G.smokeT <= 0) { G.smokeT = 0.11; G.smoke.push({ x: G.ox + ENG * 0.33, y: ROOF + 0.9, t: 0, vx: G.v - 2.4, s: 0.35 + Math.random() * 0.2 }); } }
+  for (const s of G.smoke) { s.t += dt; s.x += s.vx * dt; s.y += 1.1 * dt; }
+  G.smoke = G.smoke.filter(s => s.t < 2.4);
+  // khinh khí cầu
+  if (playing && VIEW === "play") { G.spawnT -= dt; if (G.spawnT <= 0 && G.blimps.length < 4) { spawnBlimp(); G.spawnT = 1.4 + Math.random(); } }
+  for (const b of G.blimps) { b.x += (VIEW === "play" ? b.vx : G.camV - 3.5) * dt; }
+  G.blimps = G.blimps.filter(b => b.x > G.camX - halfW() - 5);
+  // tự chơi
+  if (VIEW === "play") {
+    G.autoT -= dt;
+    const w = waitCar();
+    if (G.autoT <= 0 && w) {
+      for (const b of G.blimps) {
+        const tf = Math.sqrt(2 * Math.max(0.1, b.y - 0.9 - ROOF - CR / 2) / GRAV), carX = G.ox + w.lx + G.v * tf;
+        const ok = b.word === w.item[0], wrongTry = !ok && (G.nAuto % 5 === 4);
+        if (Math.abs(b.x - carX) < CW * 0.3 && (ok || wrongTry)) { drop(b); G.nAuto++; G.autoT = 1.6; break; }
+      }
+    }
+    if (!w) { G.cars.forEach(c => { c.filled = false; }); G.crates = G.crates.filter(c => c.st !== "on"); G.left = 120; G.level = G.level % 5 + 1; }
+  }
+  // thùng
+  for (const c of G.crates) {
+    if (c.st === "on") { c.x = G.ox + c.car.lx; continue; }
+    c.vy -= GRAV * dt; c.x += c.vx * dt; c.y += c.vy * dt; if (c.st === "bounce") c.rot += dt * 6;
+    if (c.st === "fall" && c.y - CR / 2 <= ROOF && c.y - CR / 2 > ROOF - 0.6) {
+      const car = G.cars.find(q => Math.abs(G.ox + q.lx - c.x) <= q.len / 2);
+      if (car) {
+        if (car.type === "a" && !car.filled && car.item[0] === c.word) { car.filled = true; c.st = "on"; c.car = car; c.y = ROOF + CR / 2; G.score += 5; fx("ok", c.x, ROOF + 2.4, "+5"); flash("ok"); }
+        else { c.st = "bounce"; c.vy = 5; c.vx = -3.5; c.y = ROOF + CR / 2; fx("bad", c.x, ROOF + 2.4, "✗"); flash("bad"); }
+      }
+    }
+    if (c.y < -2) c.dead = true;
+  }
+  G.crates = G.crates.filter(c => !c.dead);
+  for (const f of G.fx) f.t += dt;
+  G.fx = G.fx.filter(f => f.t < 1.2);
+  if (G.flash) { G.flash.t += dt; if (G.flash.t > 0.45) G.flash = null; }
+}
+function flash(kind) { G.flash = { kind, t: 0 }; }
+
+// ================================================================ vẽ — tiện ích
+const X = wx => W / 2 + (wx - G.camX) * ppu, Y = wy => GY - (wy - RAIL) * ppu;
+let GY = 0;   // y màn hình của mặt ray
+const T = () => TEAMS[TEAM];
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function wrapFit(text, maxW, maxH, maxPx, minPx, font = "Baloo 2", weight = 800) {
+  for (let px = maxPx; px >= minPx; px -= 1) {
+    ctx.font = `${weight} ${px}px "${font}"`;
+    const words = String(text).split(/\s+/), lines = []; let cur = "";
+    for (const w of words) { const t = cur ? cur + " " + w : w; if (ctx.measureText(t).width <= maxW || !cur) cur = t; else { lines.push(cur); cur = w; } }
+    if (cur) lines.push(cur);
+    if (lines.length * px * 1.05 <= maxH && lines.every(l => ctx.measureText(l).width <= maxW)) return { lines, px };
+  }
+  return { lines: [String(text)], px: minPx };
+}
+function drawLines(f, cx, cy) { const n = f.lines.length; f.lines.forEach((l, i) => ctx.fillText(l, cx, cy + (i - (n - 1) / 2) * f.px * 1.05)); }
+const hash = n => { const s = Math.sin(n * 127.1) * 43758.5453; return s - Math.floor(s); };
+function shade(hex, f) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; if (f > 0) { r += (255 - r) * f; g += (255 - g) * f; b += (255 - b) * f; } else { r *= 1 + f; g *= 1 + f; b *= 1 + f; } return `rgb(${r | 0},${g | 0},${b | 0})`; }
+
+// ================================================================ nền
+const PAL = {
+  A: { sky: ["#e7895c", "#f5b97a", "#fbe0ae"], sun: "#fff3c4", far: "#c97a5e", near: "#a65a3f", ground: ["#d99660", "#c27445"], fore: "#a85e37", ballast: "#7d6a5a", tie: "#4a3020", rail: "#d9d4cc", bush: "#7a6a3a", cactus: "#4f6a3a" },
+  C: { sky: ["#5fb8f5", "#9fd6fb", "#d9f1ff"], sun: "#fff6b0", far: "#9cc98a", near: "#76b06a", ground: ["#f0c987", "#e2ae68"], fore: "#d39a52", ballast: "#9b8f84", tie: "#6b4a2c", rail: "#eceae6", bush: "#5c9a4a", cactus: "#3f9a4f" },
+};
+function drawBackdrop() {
+  const P = PAL[STYLE];
+  const hz = Y(ROOF + 0.9);
+  const sg = ctx.createLinearGradient(0, HEAD, 0, hz); sg.addColorStop(0, P.sky[0]); sg.addColorStop(0.6, P.sky[1]); sg.addColorStop(1, P.sky[2]);
+  ctx.fillStyle = sg; ctx.fillRect(0, HEAD, W, hz - HEAD);
+  // mặt trời / mây
+  if (STYLE === "A") {
+    const sx = W * 0.78, sy = hz - 70 * k, gl = ctx.createRadialGradient(sx, sy, 10 * k, sx, sy, 160 * k);
+    gl.addColorStop(0, "rgba(255,245,200,.9)"); gl.addColorStop(0.3, "rgba(255,220,150,.35)"); gl.addColorStop(1, "rgba(255,200,120,0)");
+    ctx.fillStyle = gl; ctx.fillRect(sx - 160 * k, sy - 160 * k, 320 * k, 320 * k);
+    ctx.fillStyle = P.sun; ctx.beginPath(); ctx.arc(sx, sy, 34 * k, 0, 7); ctx.fill();
+  } else {
+    ctx.fillStyle = "rgba(255,255,255,.92)";
+    for (let i = -1; i < 5; i++) {
+      const base = Math.floor(G.camX * 0.15 / 9) + i, cx = W / 2 + (base * 9 - G.camX * 0.15) * ppu * 0.9, cy = HEAD + (40 + hash(base) * 90) * k;
+      for (const [dx, dy, r] of [[0, 0, 26], [28, -10, 32], [58, 0, 24], [30, 8, 26]]) { ctx.beginPath(); ctx.arc(cx + dx * k, cy + dy * k, r * k, 0, 7); ctx.fill(); }
+    }
+  }
+  // 2 lớp núi / đồi trôi chậm (thị sai)
+  const layer = (par, col, hBase, hAmp, flat) => {
+    ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, hz);
+    for (let sx = 0; sx <= W + 8; sx += 8 * k) {
+      const wx = G.camX * par + (sx - W / 2) / ppu;
+      let h = hBase + hAmp * (0.5 + 0.3 * Math.sin(wx * 0.21) + 0.2 * Math.sin(wx * 0.53 + 1.3));
+      if (flat) { const m = Math.sin(wx * 0.17 + 0.4); h = m > 0.35 ? hBase + hAmp * 1.15 : m > 0.1 ? hBase + hAmp * (0.3 + (m - 0.1) * 3.4) : hBase + hAmp * 0.3 * (0.6 + 0.4 * Math.sin(wx * 0.9)); }
+      ctx.lineTo(sx, hz - h * ppu);
+    }
+    ctx.lineTo(W, hz); ctx.closePath(); ctx.fill();
+  };
+  layer(0.08, PAL[STYLE].far, 1.4, 2.6, STYLE === "A");
+  layer(0.18, PAL[STYLE].near, 0.5, 1.5, false);
+  // mặt đất từ chân trời xuống mép dưới
+  const gg = ctx.createLinearGradient(0, hz, 0, H); gg.addColorStop(0, P.ground[0]); gg.addColorStop(1, P.ground[1]);
+  ctx.fillStyle = gg; ctx.fillRect(0, hz, W, H - hz);
+  // bụi / xương rồng giữa (thị sai 0,6)
+  for (let i = -6; i < 8; i++) {
+    const base = Math.floor(G.camX * 0.6 / 4) + i, wx = base * 4 + hash(base) * 3, sx = W / 2 + (wx - G.camX * 0.6) * ppu;
+    const sy = hz + (8 + hash(base + 7) * (Y(RAIL + 0.6) - hz - 18 * k));
+    if (hash(base + 3) < 0.25) drawCactus(sx, sy, (16 + hash(base) * 12) * k, P.cactus); else drawBush(sx, sy, (7 + hash(base + 1) * 8) * k, P.bush);
+  }
+}
+function drawBush(x, y, r, c) { ctx.fillStyle = c; for (const [dx, dy, s] of [[0, 0, 1], [-0.8, 0.2, 0.7], [0.8, 0.25, 0.75]]) { ctx.beginPath(); ctx.ellipse(x + dx * r, y - r * 0.6 + dy * r, r * s, r * s * 0.7, 0, 0, 7); ctx.fill(); } }
+function drawCactus(x, y, h, c) {
+  ctx.strokeStyle = c; ctx.lineCap = "round"; ctx.lineWidth = h * 0.22;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - h);
+  ctx.moveTo(x, y - h * 0.45); ctx.lineTo(x - h * 0.3, y - h * 0.45); ctx.lineTo(x - h * 0.3, y - h * 0.75);
+  ctx.moveTo(x, y - h * 0.6); ctx.lineTo(x + h * 0.28, y - h * 0.6); ctx.lineTo(x + h * 0.28, y - h * 0.85); ctx.stroke();
+}
+function drawTrack() {
+  const P = PAL[STYLE];
+  // nền đá dăm + tà vẹt + ray + tiền cảnh
+  const by = Y(RAIL);
+  ctx.fillStyle = P.ballast; ctx.fillRect(0, by - 2 * k, W, 18 * k);
+  ctx.fillStyle = P.tie;
+  const tieW = 0.25 * ppu, step = 0.9;
+  for (let wx = Math.floor((G.camX - halfW()) / step) * step; wx < G.camX + halfW() + 1; wx += step) ctx.fillRect(X(wx) - tieW / 2, by + 1 * k, tieW, 9 * k);
+  ctx.fillStyle = P.rail; ctx.fillRect(0, by - 4 * k, W, 5 * k);
+  ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.fillRect(0, by + 1 * k, W, 2 * k);
+  ctx.fillStyle = P.fore; ctx.fillRect(0, by + 16 * k, W, H - by - 16 * k);
+  // cỏ tiền cảnh
+  for (let i = -4; i < 16; i++) {
+    const base = Math.floor(G.camX * 1.25 / 2.2) + i, wx = base * 2.2 + hash(base + 11) * 1.6, sx = W / 2 + (wx - G.camX * 1.25) * ppu, sy = by + (26 + hash(base + 5) * (H - by - 30 * k)) ;
+    ctx.strokeStyle = STYLE === "C" ? "#4f8f3c" : "#6d5b2c"; ctx.lineWidth = 2 * k;
+    for (let j = -3; j <= 3; j++) { ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(sx + j * 3 * k, sy - 10 * k, sx + j * 5 * k, sy - (14 + hash(base + j) * 10) * k); ctx.stroke(); }
+  }
+}
+
+// ================================================================ tàu (kiểu A / C vẽ chi tiết)
+function wheel(cx, cy, r, ang) {
+  ctx.fillStyle = "#222226"; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
+  ctx.strokeStyle = STYLE === "C" ? "#f2c94c" : "#b08d4a"; ctx.lineWidth = Math.max(1.5, r * 0.16); ctx.beginPath(); ctx.arc(cx, cy, r * 0.8, 0, 7); ctx.stroke();
+  ctx.lineWidth = Math.max(1, r * 0.1);
+  for (let i = 0; i < 6; i++) { const a = ang + i * Math.PI / 3; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.8, cy + Math.sin(a) * r * 0.8); ctx.stroke(); }
+  ctx.fillStyle = "#c9a25a"; ctx.beginPath(); ctx.arc(cx, cy, r * 0.18, 0, 7); ctx.fill();
+}
+function drawEngine(ox) {
+  const tm = T(), ang = -ox / 0.42, sx = X(ox), u = ppu;
+  const bot = Y(RAIL + 0.5), base = Y(RAIL + 1.0);
+  // khung + bánh
+  ctx.fillStyle = "#2a2220"; ctx.fillRect(X(ox - ENG / 2), Y(RAIL + 1.05), ENG * u, 0.35 * u);
+  for (const [dx, r] of [[-0.3, 0.62], [0.05, 0.62], [0.35, 0.36], [0.44, 0.36]]) wheel(X(ox + dx * ENG), Y(RAIL + r), r * u, ang * 0.42 / r);
+  ctx.strokeStyle = "#8a8f96"; ctx.lineWidth = 4 * k; ctx.beginPath(); ctx.moveTo(X(ox - 0.3 * ENG) + Math.cos(ang) * 0.35 * u, Y(RAIL + 0.62) + Math.sin(ang) * 0.35 * u); ctx.lineTo(X(ox + 0.05 * ENG) + Math.cos(ang) * 0.35 * u, Y(RAIL + 0.62) + Math.sin(ang) * 0.35 * u); ctx.stroke();
+  // nồi hơi
+  const bx0 = X(ox - ENG * 0.18), bx1 = X(ox + ENG * 0.47), by0 = Y(RAIL + 2.55), by1 = Y(RAIL + 1.35);
+  const bg = ctx.createLinearGradient(0, by0, 0, by1); bg.addColorStop(0, shade(tm.eng, 0.35)); bg.addColorStop(0.45, tm.eng); bg.addColorStop(1, shade(tm.eng, -0.45));
+  ctx.fillStyle = bg; rr(bx0, by0, bx1 - bx0, by1 - by0, (by1 - by0) / 2.2); ctx.fill();
+  ctx.fillStyle = "#c9a25a"; for (const f of [0.05, 0.25, 0.45]) ctx.fillRect(X(ox + ENG * f) - 2 * k, by0, 4 * k, by1 - by0);
+  ctx.fillStyle = "#1d1d20"; rr(bx1 - 6 * k, by0 + 3 * k, 14 * k, by1 - by0 - 6 * k, 6 * k); ctx.fill();
+  // ống khói + vòm
+  const cx = X(ox + ENG * 0.33);
+  ctx.fillStyle = "#1c1c1f"; ctx.beginPath(); ctx.moveTo(cx - 0.16 * u, by0); ctx.lineTo(cx - 0.42 * u, Y(ROOF + 0.75)); ctx.lineTo(cx + 0.42 * u, Y(ROOF + 0.75)); ctx.lineTo(cx + 0.16 * u, by0); ctx.fill();
+  ctx.fillStyle = "#c9a25a"; ctx.fillRect(cx - 0.45 * u, Y(ROOF + 0.8), 0.9 * u, 0.12 * u);
+  ctx.beginPath(); ctx.ellipse(X(ox + ENG * 0.1), by0, 0.32 * u, 0.3 * u, 0, Math.PI, 0); ctx.fill();
+  // đèn pha + gạt bò
+  ctx.fillStyle = "#ffe08a"; rr(X(ox + ENG * 0.43), Y(RAIL + 3.0), 0.35 * u, 0.32 * u, 3 * k); ctx.fill(); ctx.fillStyle = "#3a2a1a"; ctx.fillRect(X(ox + ENG * 0.43), Y(RAIL + 2.68), 0.35 * u, 0.1 * u);
+  ctx.fillStyle = tm.main; ctx.beginPath(); ctx.moveTo(X(ox + ENG * 0.47), Y(RAIL + 1.05)); ctx.lineTo(X(ox + ENG * 0.6), Y(RAIL + 0.15)); ctx.lineTo(X(ox + ENG * 0.47), Y(RAIL + 0.15)); ctx.fill();
+  // buồng lái
+  const cb0 = X(ox - ENG * 0.5), cb1 = X(ox - ENG * 0.16);
+  ctx.fillStyle = shade(tm.eng, -0.15); ctx.fillRect(cb0, Y(ROOF), cb1 - cb0, Y(RAIL + 1.05) - Y(ROOF));
+  ctx.fillStyle = "#1c1410"; rr(cb0 - 0.15 * u, Y(ROOF + 0.25), cb1 - cb0 + 0.3 * u, 0.28 * u, 4 * k); ctx.fill();
+  ctx.fillStyle = "#ffe9b8"; rr(cb0 + 0.25 * u, Y(ROOF - 0.35), cb1 - cb0 - 0.5 * u, 0.85 * u, 4 * k); ctx.fill();
+  ctx.fillStyle = "#c9a25a"; ctx.font = `800 ${Math.round(0.36 * u)}px "Baloo 2"`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(tm.name.replace("TEAM ", "#"), (cb0 + cb1) / 2, Y(RAIL + 1.6));
+}
+function drawTender(x) {
+  const tm = T(), u = ppu, x0 = X(x - TEN / 2), x1 = X(x + TEN / 2);
+  for (const dx of [-0.28, 0.28]) wheel(X(x + dx * TEN), Y(RAIL + 0.4), 0.4 * u, -x / 0.4);
+  ctx.fillStyle = shade(tm.eng, -0.1); rr(x0, Y(RAIL + 2.35), x1 - x0, Y(RAIL + 0.75) - Y(RAIL + 2.35), 5 * k); ctx.fill();
+  ctx.fillStyle = "#1a1a1c"; ctx.beginPath(); ctx.moveTo(x0 + 3 * k, Y(RAIL + 2.35));
+  for (let i = 0; i <= 6; i++) ctx.lineTo(x0 + (x1 - x0) * i / 6, Y(RAIL + 2.55 + 0.18 * Math.sin(i * 2.1)));
+  ctx.lineTo(x1 - 3 * k, Y(RAIL + 2.35)); ctx.fill();
+  ctx.fillStyle = "#e9c97a"; ctx.font = `800 ${Math.round(0.42 * u)}px "Baloo 2"`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("LV." + G.level, (x0 + x1) / 2, Y(RAIL + 1.55));
+}
+function drawCar(c, cx, isWait) {
+  const tm = T(), u = ppu, x0 = X(cx - c.len / 2), x1 = X(cx + c.len / 2);
+  for (const dx of [-0.36, -0.22, 0.22, 0.36]) wheel(X(cx + dx * c.len), Y(RAIL + 0.36), 0.36 * u, -cx / 0.36);
+  ctx.fillStyle = "#2a2220"; ctx.fillRect(x0, Y(RAIL + 0.95), x1 - x0, 0.25 * u);
+  if (c.type === "p") {   // toa khách
+    const g = ctx.createLinearGradient(0, Y(ROOF), 0, Y(RAIL + 0.9)); g.addColorStop(0, STYLE === "C" ? "#3fae6a" : "#3e6a4f"); g.addColorStop(1, STYLE === "C" ? "#2c8a52" : "#2a4a38");
+    ctx.fillStyle = g; rr(x0, Y(ROOF - 0.05), x1 - x0, Y(RAIL + 0.95) - Y(ROOF - 0.05), 6 * k); ctx.fill();
+    ctx.fillStyle = "#1c1410"; rr(x0 - 4 * k, Y(ROOF + 0.25), x1 - x0 + 8 * k, 0.3 * u, 6 * k); ctx.fill();
+    for (let i = 0; i < 5; i++) {
+      const wx = x0 + (x1 - x0) * (0.1 + i * 0.18); ctx.fillStyle = "#ffe9b8"; rr(wx, Y(ROOF - 0.5), (x1 - x0) * 0.12, 0.9 * u, 4 * k); ctx.fill();
+      ctx.fillStyle = "#5a3a22"; ctx.beginPath(); ctx.arc(wx + (x1 - x0) * 0.06, Y(ROOF - 1.05), 0.17 * u, 0, 7); ctx.fill();
+    }
+    return;
+  }
+  // toa hàng gỗ + bảng định nghĩa
+  const g = ctx.createLinearGradient(0, Y(ROOF), 0, Y(RAIL + 0.95)); g.addColorStop(0, "#8a5a32"); g.addColorStop(1, "#5c3a1e");
+  ctx.fillStyle = g; rr(x0, Y(ROOF), x1 - x0, Y(RAIL + 0.95) - Y(ROOF), 5 * k); ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,.25)"; ctx.lineWidth = 1.5 * k; for (let i = 1; i < 5; i++) { const yy = Y(RAIL + 0.95 + (ROOF - RAIL - 0.95) * i / 5); ctx.beginPath(); ctx.moveTo(x0 + 3 * k, yy); ctx.lineTo(x1 - 3 * k, yy); ctx.stroke(); }
+  const bx0 = x0 + 0.22 * u, bx1 = x1 - 0.22 * u, by0 = Y(ROOF - 0.18), by1 = Y(RAIL + 1.15);
+  ctx.fillStyle = tm.main; rr(bx0, by0, bx1 - bx0, by1 - by0, 8 * k); ctx.fill();
+  ctx.fillStyle = "#fdf6e3"; rr(bx0 + 5 * k, by0 + 5 * k, bx1 - bx0 - 10 * k, by1 - by0 - 10 * k, 6 * k); ctx.fill();
+  ctx.fillStyle = "#2a1608"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  drawLines(wrapFit(c.item[1], bx1 - bx0 - 26 * k, by1 - by0 - 18 * k, 34 * k, 13 * k, "Baloo 2", 700), (bx0 + bx1) / 2, (by0 + by1) / 2 + 1 * k);
+  if (isWait) waitMark(x0, x1, Y(ROOF), Y(RAIL + 0.9));
+}
+function waitMark(x0, x1, top, bot) {
+  const p = 0.5 + 0.5 * Math.sin(G.t * 6);
+  ctx.save(); ctx.shadowColor = "#ffd34d"; ctx.shadowBlur = (14 + 10 * p) * k;
+  ctx.strokeStyle = `rgba(255,214,77,${0.75 + 0.25 * p})`; ctx.lineWidth = 5 * k; rr(x0 - 5 * k, top - 6 * k, x1 - x0 + 10 * k, bot - top + 12 * k, 10 * k); ctx.stroke(); ctx.restore();
+  // mũi tên ▼ trên nóc
+  const cx = (x0 + x1) / 2, ay = top - (22 + 8 * Math.abs(Math.sin(G.t * 4))) * k;
+  ctx.fillStyle = "#ffd34d"; ctx.strokeStyle = "#7a4a10"; ctx.lineWidth = 2.5 * k;
+  ctx.beginPath(); ctx.moveTo(cx - 16 * k, ay - 14 * k); ctx.lineTo(cx + 16 * k, ay - 14 * k); ctx.lineTo(cx, ay + 6 * k); ctx.closePath(); ctx.fill(); ctx.stroke();
+}
+function drawCrate(c) {
+  const u = ppu, w = CRW * u, h = CR * u, sx = X(c.x), sy = Y(c.y);
+  ctx.save(); ctx.translate(sx, sy); ctx.rotate(c.rot || 0);
+  if (STYLE === "B") {
+    ctx.fillStyle = "#c98a4b"; rr(-w / 2, -h / 2, w, h, 8 * k); ctx.fill(); ctx.strokeStyle = "#7a4a1e"; ctx.lineWidth = 3 * k; ctx.stroke();
+  } else {
+    const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2); g.addColorStop(0, "#d8a266"); g.addColorStop(1, "#a8723e");
+    ctx.fillStyle = g; ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.strokeStyle = "#6b4426"; ctx.lineWidth = 3 * k; ctx.strokeRect(-w / 2, -h / 2, w, h);
+    ctx.lineWidth = 2 * k; ctx.beginPath(); ctx.moveTo(-w / 2, -h / 2); ctx.lineTo(w / 2, h / 2); ctx.moveTo(w / 2, -h / 2); ctx.lineTo(-w / 2, h / 2); ctx.globalAlpha = 0.35; ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  ctx.fillStyle = "#fff7e6"; rr(-w * 0.42, -h * 0.26, w * 0.84, h * 0.52, 5 * k); ctx.fill();
+  ctx.fillStyle = "#2a1608"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; drawLines(wrapFit(c.word, w * 0.78, h * 0.46, 26 * k, 10 * k), 0, 1 * k);
+  ctx.restore();
+}
+
+// ================================================================ khinh khí cầu
+const BW = 4.6, BH = 1.55;   // cỡ trên iPad (đơn vị thế giới) — to hơn màn lớn cho dễ chạm
+let hits = [];
+function drawBlimp(b) {
+  const tm = T(), u = ppu, sx = X(b.x), sy = Y(b.y + Math.sin(G.t * 1.6 + b.ph) * 0.12);
+  const rx = BW / 2 * u, ry = BH / 2 * u;
+  if (STYLE === "B") {
+    // viên thuốc màu đội + dây
+    ctx.strokeStyle = "rgba(60,40,20,.5)"; ctx.lineWidth = 2 * k; ctx.beginPath(); ctx.moveTo(sx, sy + ry); ctx.quadraticCurveTo(sx + 8 * k, sy + ry + 22 * k, sx, sy + ry + 40 * k); ctx.stroke();
+    ctx.fillStyle = tm.main; rr(sx - rx, sy - ry, rx * 2, ry * 2, ry); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,.18)"; rr(sx - rx + 8 * k, sy - ry + 5 * k, rx * 2 - 16 * k, ry * 0.7, ry); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; drawLines(wrapFit(b.word, rx * 2 - 26 * k, ry * 2 - 10 * k, 48 * k, 16 * k), sx, sy + 2 * k);
+  } else {
+    const [l, m, d] = tm.env;
+    // vây đuôi (bên phải — quả bay sang trái)
+    ctx.fillStyle = d;
+    ctx.beginPath(); ctx.moveTo(sx + rx * 0.7, sy - ry * 0.2); ctx.lineTo(sx + rx * 1.12, sy - ry * 1.05); ctx.lineTo(sx + rx * 1.12, sy - ry * 0.1); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(sx + rx * 0.7, sy + ry * 0.2); ctx.lineTo(sx + rx * 1.12, sy + ry * 1.05); ctx.lineTo(sx + rx * 1.12, sy + ry * 0.1); ctx.fill();
+    // giỏ + dây
+    ctx.strokeStyle = "#3a2a1a"; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.moveTo(sx - rx * 0.25, sy + ry * 0.85); ctx.lineTo(sx - rx * 0.15, sy + ry * 1.35); ctx.moveTo(sx + rx * 0.25, sy + ry * 0.85); ctx.lineTo(sx + rx * 0.15, sy + ry * 1.35); ctx.stroke();
+    ctx.fillStyle = "#5a3a1e"; rr(sx - rx * 0.2, sy + ry * 1.3, rx * 0.4, ry * 0.42, 3 * k); ctx.fill();
+    // vỏ
+    const g = ctx.createLinearGradient(0, sy - ry, 0, sy + ry); g.addColorStop(0, l); g.addColorStop(0.45, m); g.addColorStop(1, d);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(sx, sy, rx, ry, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,.18)"; ctx.lineWidth = 1.5 * k;
+    for (const f of [-0.6, -0.2, 0.2, 0.6]) { ctx.beginPath(); ctx.ellipse(sx, sy, rx * Math.abs(f) + 1, ry, 0, f < 0 ? Math.PI / 2 : -Math.PI / 2, f < 0 ? Math.PI * 1.5 : Math.PI / 2); ctx.stroke(); }
+    ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.beginPath(); ctx.ellipse(sx - rx * 0.25, sy - ry * 0.55, rx * 0.45, ry * 0.18, -0.08, 0, 7); ctx.fill();
+    // băng tên
+    const lw = rx * 1.55, lh = ry * 1.02;
+    ctx.fillStyle = "#fdf6e3"; rr(sx - lw / 2, sy - lh / 2, lw, lh, lh / 2.4); ctx.fill(); ctx.strokeStyle = shade(d, -0.3); ctx.lineWidth = 2.5 * k; ctx.stroke();
+    ctx.fillStyle = "#2a1608"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; drawLines(wrapFit(b.word, lw - 18 * k, lh - 6 * k, 44 * k, 14 * k), sx, sy + 2 * k);
+  }
+  hits.push({ b, x: sx, y: sy, rx: rx * 1.08, ry: ry * 1.5 });
+}
+
+// ================================================================ hiệu ứng
+function drawFx() {
+  for (const s of G.smoke) {
+    const a = Math.max(0, 0.42 * (1 - s.t / 2.4)), r = (s.s + s.t * 0.32) * ppu * 0.7;
+    ctx.fillStyle = STYLE === "B" ? `rgba(120,120,130,${a * 0.6})` : `rgba(235,230,225,${a})`; ctx.beginPath(); ctx.arc(X(s.x), Y(s.y), r, 0, 7); ctx.fill();
+  }
+  for (const f of G.fx) {
+    const sx = X(f.x), sy = Y(f.y);
+    if (f.type === "pop") {
+      for (const p of f.parts) { const d = p.v * f.t * ppu * 0.6; ctx.fillStyle = `rgba(255,${200 - f.t * 100 | 0},90,${1 - f.t / 0.6})`; if (f.t < 0.6) { ctx.beginPath(); ctx.arc(sx + Math.cos(p.a) * d, sy + Math.sin(p.a) * d, 4 * k, 0, 7); ctx.fill(); } }
+    } else {
+      const a = 1 - f.t / 1.2; ctx.globalAlpha = Math.max(0, a);
+      ctx.font = `800 ${Math.round(54 * k)}px "${STYLE === "A" ? "Rye" : "Baloo 2"}"`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 6 * k; ctx.strokeStyle = "rgba(40,20,10,.8)"; ctx.strokeText(f.text, sx, sy - f.t * 60 * k);
+      ctx.fillStyle = f.type === "ok" ? "#6dff8e" : "#ff6a5a"; ctx.fillText(f.text, sx, sy - f.t * 60 * k); ctx.globalAlpha = 1;
+    }
+  }
+  if (G.flash) { const a = 1 - G.flash.t / 0.45; ctx.fillStyle = G.flash.kind === "ok" ? `rgba(80,230,120,${0.22 * a})` : `rgba(255,70,50,${0.28 * a})`; ctx.fillRect(0, HEAD, W, H - HEAD); }
+}
+
+// ================================================================ kiểu B: tàu thẻ phẳng
+function drawFlatScene() {
+  // nền phẳng sáng
+  ctx.fillStyle = "#fbf3e4"; ctx.fillRect(0, HEAD, W, H - HEAD);
+  ctx.fillStyle = "#efe0c6"; ctx.fillRect(0, Y(ROOF + 0.9), W, H - Y(ROOF + 0.9));
+  const by = Y(RAIL);
+  ctx.fillStyle = "#8a7766"; ctx.fillRect(0, by - 3 * k, W, 6 * k);
+  ctx.fillStyle = "#b8a48c"; const step = 0.9; for (let wx = Math.floor((G.camX - halfW()) / step) * step; wx < G.camX + halfW() + 1; wx += step) ctx.fillRect(X(wx) - 3 * k, by + 4 * k, 6 * k, 8 * k);
+}
+function drawFlatTrain() {
+  const tm = T(), u = ppu, ox = G.ox, wait = waitCar();
+  // đầu máy đơn giản
+  const e0 = X(ox - ENG / 2), e1 = X(ox + ENG / 2);
+  ctx.fillStyle = tm.main; rr(e0, Y(ROOF - 0.4), (e1 - e0) * 0.42, Y(RAIL + 0.5) - Y(ROOF - 0.4), 10 * k); ctx.fill();
+  rr(e0 + (e1 - e0) * 0.3, Y(RAIL + 2.6), (e1 - e0) * 0.7, Y(RAIL + 0.5) - Y(RAIL + 2.6), 14 * k); ctx.fill();
+  ctx.fillStyle = tm.dark; rr(X(ox + ENG * 0.25), Y(ROOF + 0.6), 0.7 * u, 1.3 * u, 6 * k); ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.font = `800 ${Math.round(0.6 * u)}px "Baloo 2"`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(tm.name, X(ox + ENG * 0.1), Y(RAIL + 1.55));
+  for (const dx of [-0.32, 0, 0.3]) { ctx.fillStyle = "#333"; ctx.beginPath(); ctx.arc(X(ox + dx * ENG), Y(RAIL + 0.42), 0.42 * u, 0, 7); ctx.fill(); }
+  const tx = ox - ENG / 2 - GAP - TEN / 2; ctx.fillStyle = tm.dark; rr(X(tx - TEN / 2), Y(RAIL + 2.3), TEN * u, 1.8 * u, 8 * k); ctx.fill();
+  for (const c of G.cars) {
+    const cx = ox + c.lx, x0 = X(cx - c.len / 2), x1 = X(cx + c.len / 2);
+    for (const dx of [-0.3, 0.3]) { ctx.fillStyle = "#333"; ctx.beginPath(); ctx.arc(X(cx + dx * c.len), Y(RAIL + 0.36), 0.36 * u, 0, 7); ctx.fill(); }
+    if (c.type === "p") { ctx.fillStyle = "#cdbfa8"; rr(x0, Y(ROOF - 0.6), x1 - x0, Y(RAIL + 0.7) - Y(ROOF - 0.6), 10 * k); ctx.fill(); continue; }
+    ctx.fillStyle = "#fff"; rr(x0, Y(ROOF), x1 - x0, Y(RAIL + 0.7) - Y(ROOF), 12 * k); ctx.fill();
+    ctx.strokeStyle = c.filled ? "#41b05a" : tm.main; ctx.lineWidth = 6 * k; ctx.stroke();
+    ctx.fillStyle = "#1c120a"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    drawLines(wrapFit(c.item[1], x1 - x0 - 26 * k, Y(RAIL + 0.7) - Y(ROOF) - 20 * k, 40 * k, 14 * k, "Baloo 2", 700), (x0 + x1) / 2, (Y(ROOF) + Y(RAIL + 0.7)) / 2);
+    if (c === wait && VIEW === "play") waitMark(x0, x1, Y(ROOF), Y(RAIL + 0.7));
+  }
+}
+
+// ================================================================ thanh đầu
+function fmt(s) { s = Math.ceil(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function drawHeader() {
+  const tm = T(), o = TEAMS[1 - TEAM], h = HEAD, f = Math.max(0, Math.min(1, G.left / LV_TIME));
+  if (STYLE === "A") {
+    const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, "#6b3d1f"); g.addColorStop(1, "#3e220f"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, h);
+    ctx.strokeStyle = "rgba(0,0,0,.25)"; ctx.lineWidth = 1; for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.moveTo(0, 10 * k + i * h / 6); ctx.bezierCurveTo(W * 0.3, 4 * k + i * h / 6, W * 0.6, 16 * k + i * h / 6, W, 8 * k + i * h / 6); ctx.stroke(); }
+    ctx.fillStyle = "#c9a25a"; ctx.fillRect(0, h - 4 * k, W, 4 * k);
+  } else if (STYLE === "C") {
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, h); ctx.fillStyle = tm.main; rr(8 * k, 8 * k, W - 16 * k, h - 16 * k, (h - 16 * k) / 2); ctx.fill();
+  } else { ctx.fillStyle = tm.main; ctx.fillRect(0, 0, W, h); }
+  // trái: huy hiệu đội
+  const pad = (STYLE === "C" ? 30 : 20) * k;
+  ctx.textBaseline = "middle"; ctx.textAlign = "left";
+  if (STYLE === "A") { ctx.fillStyle = tm.main; ctx.beginPath(); ctx.arc(pad + 26 * k, h / 2, 24 * k, 0, 7); ctx.fill(); ctx.strokeStyle = "#e9c97a"; ctx.lineWidth = 3 * k; ctx.stroke(); ctx.fillStyle = "#fff"; ctx.font = `800 ${Math.round(26 * k)}px "Baloo 2"`; ctx.textAlign = "center"; ctx.fillText(TEAM + 1, pad + 26 * k, h / 2 + 2 * k); ctx.textAlign = "left"; }
+  ctx.fillStyle = "#fff"; ctx.font = `400 ${Math.round(30 * k)}px ${STYLE === "A" ? "Rye" : '"Baloo 2"'}`; if (STYLE !== "A") ctx.font = `800 ${Math.round(34 * k)}px "Baloo 2"`;
+  ctx.fillText(tm.name, pad + (STYLE === "A" ? 60 : 0) * k, h / 2 + 2 * k);
+  // giữa: LEVEL + thanh giờ
+  const bw = W * 0.36, bx = W / 2 - bw / 2, bh = 22 * k, byy = h / 2 + 4 * k;
+  ctx.textAlign = "center"; ctx.fillStyle = STYLE === "A" ? "#f3d9a8" : "rgba(255,255,255,.92)"; ctx.font = `700 ${Math.round(17 * k)}px "Baloo 2"`;
+  ctx.fillText(`LEVEL ${G.level} / ${G.levels}`, W / 2, byy - 20 * k);
+  ctx.fillStyle = "rgba(0,0,0,.35)"; rr(bx, byy - bh / 2 + 6 * k, bw, bh, bh / 2); ctx.fill();
+  const out = VIEW === "out";
+  ctx.fillStyle = out ? "#ff7b6b" : f < 0.2 ? "#ff9f43" : STYLE === "A" ? "#ffd34d" : "#fff"; if (f > 0) { rr(bx + 3 * k, byy - bh / 2 + 9 * k, (bw - 6 * k) * f, bh - 6 * k, (bh - 6 * k) / 2); ctx.fill(); }
+  ctx.fillStyle = f > 0.5 && STYLE !== "A" ? tm.dark : "#fff"; ctx.font = `800 ${Math.round(16 * k)}px "Baloo 2"`; ctx.fillText(out ? "OUT" : fmt(G.left), W / 2, byy + 7 * k);
+  // phải: điểm mình + đội bạn nhỏ
+  ctx.textAlign = "right";
+  const sx = W - pad;
+  if (STYLE === "A") { ctx.fillStyle = "#f6e7c4"; rr(sx - 112 * k, h / 2 - 26 * k, 112 * k, 52 * k, 10 * k); ctx.fill(); ctx.strokeStyle = "#c9a25a"; ctx.lineWidth = 3 * k; ctx.stroke(); ctx.fillStyle = "#5a1e0e"; ctx.font = `400 ${Math.round(34 * k)}px Rye`; ctx.textAlign = "center"; ctx.fillText(G.score, sx - 56 * k, h / 2 + 3 * k); ctx.textAlign = "right"; }
+  else { ctx.fillStyle = "#fff"; ctx.font = `800 ${Math.round(46 * k)}px "Baloo 2"`; ctx.fillText(G.score, sx, h / 2 + 4 * k); }
+  ctx.font = `700 ${Math.round(15 * k)}px "Baloo 2"`; ctx.fillStyle = STYLE === "A" ? "#e9c97a" : "rgba(255,255,255,.85)";
+  ctx.fillText(`${o.name} · ${G.opp}`, sx - (STYLE === "A" ? 124 : 76) * k, h / 2 + 3 * k);
+  // đèn nối
+  ctx.fillStyle = "#5dff7a"; ctx.beginPath(); ctx.arc(W - 12 * k, H - 12 * k, 6 * k, 0, 7); ctx.fill();
+}
+
+// ================================================================ thẻ thông báo (overlay) theo kiểu
+function card(big, small, opts = {}) {
+  const tm = T();
+  ctx.fillStyle = opts.dim === false ? "rgba(0,0,0,0)" : "rgba(20,10,4,.55)"; ctx.fillRect(0, HEAD, W, H - HEAD);
+  const cw = Math.min(W * 0.72, 640 * k), ch = (opts.h || 230) * k, cx = W / 2 - cw / 2, cy = HEAD + (H - HEAD) / 2 - ch / 2;
+  if (STYLE === "A") {
+    const g = ctx.createLinearGradient(0, cy, 0, cy + ch); g.addColorStop(0, "#f6e6c2"); g.addColorStop(1, "#e2c48e");
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 24 * k; ctx.fillStyle = g; rr(cx, cy, cw, ch, 10 * k); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = "#7a4a22"; ctx.lineWidth = 5 * k; rr(cx + 8 * k, cy + 8 * k, cw - 16 * k, ch - 16 * k, 6 * k); ctx.stroke();
+    for (const [x, y] of [[cx + 20, cy + 20], [cx + cw - 20, cy + 20], [cx + 20, cy + ch - 20], [cx + cw - 20, cy + ch - 20]]) { ctx.fillStyle = "#7a4a22"; ctx.beginPath(); ctx.arc(x, y, 5 * k, 0, 7); ctx.fill(); }
+    ctx.fillStyle = opts.col || "#6b2a12"; ctx.font = `400 ${Math.round((opts.bigPx || 48) * k)}px Rye`;
+  } else if (STYLE === "C") {
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.25)"; ctx.shadowBlur = 20 * k; ctx.fillStyle = "#fff"; rr(cx, cy, cw, ch, 34 * k); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = tm.main; ctx.lineWidth = 8 * k; rr(cx + 4 * k, cy + 4 * k, cw - 8 * k, ch - 8 * k, 30 * k); ctx.stroke();
+    ctx.fillStyle = opts.col || tm.main; ctx.font = `800 ${Math.round((opts.bigPx || 52) * k)}px "Baloo 2"`;
+  } else {
+    ctx.fillStyle = "#fff"; rr(cx, cy, cw, ch, 18 * k); ctx.fill(); ctx.fillStyle = tm.main; ctx.fillRect(cx, cy, cw, 12 * k);
+    ctx.fillStyle = opts.col || "#1c120a"; ctx.font = `800 ${Math.round((opts.bigPx || 56) * k)}px "Baloo 2"`;
+  }
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(big, W / 2, cy + ch * (opts.bigY || (small ? 0.4 : 0.5)));
+  if (small) { ctx.fillStyle = STYLE === "A" ? "#3a1f0e" : "#3a3a3a"; ctx.font = `700 ${Math.round(22 * k)}px "Baloo 2"`; drawLines(wrapFit(small, cw - 60 * k, ch * 0.35, 24 * k, 15 * k, "Baloo 2", 700), W / 2, cy + ch * 0.72); }
+  return { cx, cy, cw, ch };
+}
+function banner(text, sub) {   // dải thông báo trên cảnh (không che quả)
+  const tm = T(), bw = Math.min(W * 0.8, 720 * k), bh = 96 * k, bx = W / 2 - bw / 2, by = HEAD + 26 * k;
+  if (STYLE === "A") { ctx.fillStyle = "rgba(62,34,15,.9)"; rr(bx, by, bw, bh, 12 * k); ctx.fill(); ctx.strokeStyle = "#c9a25a"; ctx.lineWidth = 3 * k; ctx.stroke(); ctx.fillStyle = "#ffe08a"; ctx.font = `400 ${Math.round(34 * k)}px Rye`; }
+  else if (STYLE === "C") { ctx.fillStyle = "#fff"; rr(bx, by, bw, bh, bh / 2); ctx.fill(); ctx.strokeStyle = "#41b05a"; ctx.lineWidth = 6 * k; ctx.stroke(); ctx.fillStyle = "#2f8f46"; ctx.font = `800 ${Math.round(38 * k)}px "Baloo 2"`; }
+  else { ctx.fillStyle = "#41b05a"; rr(bx, by, bw, bh, 16 * k); ctx.fill(); ctx.fillStyle = "#fff"; ctx.font = `800 ${Math.round(40 * k)}px "Baloo 2"`; }
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(text, W / 2, by + bh * 0.38);
+  ctx.font = `700 ${Math.round(19 * k)}px "Baloo 2"`; ctx.fillStyle = STYLE === "A" ? "#f3d9a8" : STYLE === "C" ? "#3a3a3a" : "#eaffea"; ctx.fillText(sub, W / 2, by + bh * 0.76);
+}
+
+// ================================================================ màn chọn đội
+let chooserHits = [];
+function drawChooser() {
+  chooserHits = [];
+  if (STYLE === "A") { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#e7895c"); g.addColorStop(0.55, "#f5b97a"); g.addColorStop(0.56, "#c27445"); g.addColorStop(1, "#8a4a28"); ctx.fillStyle = g; }
+  else if (STYLE === "C") { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#5fb8f5"); g.addColorStop(0.55, "#d9f1ff"); g.addColorStop(0.56, "#9cc98a"); g.addColorStop(1, "#6aa85c"); ctx.fillStyle = g; }
+  else ctx.fillStyle = "#fbf3e4";
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillStyle = STYLE === "B" ? "#1c120a" : STYLE === "A" ? "#5a1e0e" : "#fff";
+  ctx.font = STYLE === "A" ? `400 ${Math.round(68 * k)}px Rye` : `800 ${Math.round(70 * k)}px "Baloo 2"`;
+  if (STYLE === "C") { ctx.lineWidth = 10 * k; ctx.strokeStyle = "#2a72d8"; ctx.strokeText("TRAIN RUSH", W / 2, 110 * k); }
+  ctx.fillText("TRAIN RUSH", W / 2, 110 * k);
+  ctx.font = `700 ${Math.round(26 * k)}px "Baloo 2"`; ctx.fillStyle = STYLE === "A" ? "#5a2a10" : STYLE === "C" ? "#14406e" : "#6a5a4a";
+  ctx.fillText("CHOOSE YOUR TEAM", W / 2, 168 * k);
+  const bw = W * 0.38, bh = H * 0.5, gap = W * 0.06, by = 210 * k;
+  [0, 1].forEach(t => {
+    const tm = TEAMS[t], bx = W / 2 - bw - gap / 2 + t * (bw + gap), taken = t === 1 && G.t % 6 > 3;
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.35)"; ctx.shadowBlur = 18 * k; ctx.shadowOffsetY = 6 * k;
+    ctx.fillStyle = STYLE === "B" ? "#fff" : tm.main; rr(bx, by, bw, bh, (STYLE === "C" ? 40 : 18) * k); ctx.fill(); ctx.restore();
+    if (STYLE === "B") { ctx.strokeStyle = tm.main; ctx.lineWidth = 10 * k; rr(bx + 5 * k, by + 5 * k, bw - 10 * k, bh - 10 * k, 14 * k); ctx.stroke(); }
+    if (STYLE === "A") { ctx.strokeStyle = "#e9c97a"; ctx.lineWidth = 4 * k; rr(bx + 10 * k, by + 10 * k, bw - 20 * k, bh - 20 * k, 10 * k); ctx.stroke(); }
+    // đầu máy nhỏ
+    miniEngine(bx + bw / 2, by + bh * 0.42, bw * 0.55, t);
+    ctx.fillStyle = STYLE === "B" ? tm.main : "#fff"; ctx.font = STYLE === "A" ? `400 ${Math.round(40 * k)}px Rye` : `800 ${Math.round(46 * k)}px "Baloo 2"`;
+    ctx.fillText(tm.name, bx + bw / 2, by + bh * 0.76);
+    ctx.font = `700 ${Math.round(19 * k)}px "Baloo 2"`; ctx.fillStyle = STYLE === "B" ? "#6a5a4a" : "rgba(255,255,255,.9)";
+    ctx.fillText(taken ? "● Another iPad is on this team" : t === 0 ? "near track · red train" : "far track · blue train", bx + bw / 2, by + bh * 0.88);
+    chooserHits.push({ t, x: bx, y: by, w: bw, h: bh });
+  });
+}
+function miniEngine(cx, cy, w, t) {
+  const tm = TEAMS[t], u = w / 6.4, x0 = cx - w / 2;
+  ctx.fillStyle = "#222"; for (const dx of [1.2, 2.6, 4.6, 5.5]) { ctx.beginPath(); ctx.arc(x0 + dx * u, cy + 1.1 * u, (dx < 3 ? 0.62 : 0.4) * u, 0, 7); ctx.fill(); }
+  ctx.fillStyle = STYLE === "B" ? tm.main : shade(tm.main, -0.35); rr(x0 + 0.2 * u, cy - 1.6 * u, 2.2 * u, 2.4 * u, 6 * k); ctx.fill();
+  ctx.fillStyle = STYLE === "B" ? tm.dark : shade(tm.main, -0.2); rr(x0 + 2 * u, cy - 0.7 * u, 4.2 * u, 1.4 * u, 0.7 * u); ctx.fill();
+  ctx.fillStyle = "#1c1c1f"; ctx.beginPath(); ctx.moveTo(x0 + 4.7 * u, cy - 0.7 * u); ctx.lineTo(x0 + 4.4 * u, cy - 2.1 * u); ctx.lineTo(x0 + 5.6 * u, cy - 2.1 * u); ctx.lineTo(x0 + 5.3 * u, cy - 0.7 * u); ctx.fill();
+  ctx.fillStyle = "#ffe9b8"; rr(x0 + 0.6 * u, cy - 1.2 * u, 1.3 * u, 0.8 * u, 3 * k); ctx.fill();
+}
+
+// ================================================================ khung chính
+function frame() {
+  hits = [];
+  ctx.clearRect(0, 0, W, H);
+  if (VIEW === "chooser") { drawChooser(); return; }
+  if (STYLE === "B") drawFlatScene(); else { drawBackdrop(); drawTrack(); }
+  const trainOn = !["wait", "count", "off", "taken"].includes(VIEW);
+  const blimpsOn = VIEW === "play" || VIEW === "done";
+  if (blimpsOn) for (const b of G.blimps) drawBlimp(b);
+  if (trainOn) {
+    if (STYLE === "B") drawFlatTrain();
+    else {
+      const wait = waitCar();
+      for (const c of G.cars) drawCar(c, G.ox + c.lx, c === wait && VIEW === "play");
+      drawTender(G.ox - ENG / 2 - GAP - TEN / 2); drawEngine(G.ox);
+    }
+    if (VIEW === "out") { ctx.fillStyle = "rgba(60,60,70,.45)"; ctx.fillRect(0, Y(ROOF + 1.2), W, Y(RAIL - 0.3) - Y(ROOF + 1.2)); }
+  }
+  for (const c of G.crates) drawCrate(c);
+  drawFx();
+  drawHeader();
+  // lời nhắc dưới đáy khi chơi
+  if (VIEW === "play") {
+    const t = "Tap the balloon with the RIGHT word — its box drops onto the glowing car ▼";
+    ctx.font = `700 ${Math.round(17 * k)}px "Baloo 2"`; const tw = ctx.measureText(t).width + 30 * k;
+    ctx.fillStyle = STYLE === "A" ? "rgba(62,34,15,.78)" : "rgba(0,0,0,.45)"; rr(W / 2 - tw / 2, H - 40 * k, tw, 30 * k, 15 * k); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t, W / 2, H - 25 * k);
+  }
+  const o = TEAMS[1 - TEAM].name;
+  if (VIEW === "wait") card("GET READY!", `You are ${T().name}. Wait for the teacher to press START on the big screen.`);
+  if (VIEW === "count") { card(String(G.count), "", { bigPx: 150, h: 260 }); }
+  if (VIEW === "done") banner("TRAIN FULL! ✓", `Bonus time saved: +${Math.ceil(G.left)} s · waiting for ${o} to finish…`);
+  if (VIEW === "out") card("TIME'S UP!", `Your train is out. Watch ${o} finish this level — then the game ends.`, { col: STYLE === "B" ? "#c0392b" : undefined });
+  if (VIEW === "end") {
+    const c = card(G.score > G.opp ? "YOU WIN!" : "GOOD TRY!", "", { h: 300, bigPx: 64, bigY: 0.3 });
+    ctx.font = `800 ${Math.round(34 * k)}px "Baloo 2"`; ctx.textAlign = "center";
+    [[T().name, G.score, T().main], [o, G.opp, TEAMS[1 - TEAM].main]].forEach(([n, s, col], i) => {
+      ctx.fillStyle = col; ctx.fillText(`${n}   ${s}`, W / 2, c.cy + c.ch * (0.62 + i * 0.17));
+    });
+  }
+  if (VIEW === "off") card("iPads are OFF", "The teacher is using the big screen only. Look up and play together!");
+  if (VIEW === "taken") card(`${T().name} has an iPad`, "Another iPad is already playing for this team. Choose the other team, or wait until that iPad leaves.", { bigPx: 40 });
+}
+
+// ================================================================ khung iPad + vòng lặp
+function fitCanvas() {
+  const main = document.querySelector("main"), maxW = main.clientWidth - 80, maxH = main.clientHeight - 90;
+  let w = Math.min(maxW, maxH * RATIO); const h = w / RATIO;
+  const pr = Math.min(2, devicePixelRatio || 1);
+  cv.style.width = w + "px"; cv.style.height = h + "px";
+  W = Math.round(w * pr); H = Math.round(h * pr); cv.width = W; cv.height = H;
+  k = W / 1024 * (RATIO > 1.4 ? 0.96 : 1); HEAD = 84 * k;
+  // ppu: từ đáy màn (tiền cảnh ~1,3 đv dưới ray) tới làn cao nhất + nửa quả
+  const span = (LANES[2] + BH / 2 + 0.7) - (RAIL - 1.5);
+  ppu = (H - HEAD) / span; GY = H - 1.5 * ppu;
+  document.getElementById("note").textContent = `Màn ${Math.round(w)}×${Math.round(h)} · nhìn thấy ~${(W / ppu).toFixed(1)} đơn vị ≈ ${(W / ppu / (CW + GAP)).toFixed(1)} toa`;
+}
+let last = 0, PAUSE = false;   // phím Space = dừng hình (chụp ảnh)
+addEventListener("keydown", e => { if (e.code === "Space") { PAUSE = !PAUSE; e.preventDefault(); } });
+function loop(ts) {
+  const dt = Math.min(0.05, (ts - last) / 1000 || 0); last = ts;
+  if (!PAUSE) step(dt); frame();
+  requestAnimationFrame(loop);
+}
+cv.addEventListener("pointerdown", e => {
+  const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * H;
+  if (VIEW === "chooser") { const h = chooserHits.find(q => x > q.x && x < q.x + q.w && y > q.y && y < q.y + q.h); if (h) { TEAM = h.t; setView("wait"); } return; }
+  if (VIEW !== "play") return;
+  const h = hits.find(q => ((x - q.x) / q.rx) ** 2 + ((y - q.y) / q.ry) ** 2 <= 1);
+  if (h) { drop(h.b); G.autoT = 2.5; }
+});
+function mark() {
+  document.querySelectorAll("#styles button").forEach(b => b.classList.toggle("on", b.dataset.s === STYLE));
+  document.querySelectorAll("#screens button").forEach(b => b.classList.toggle("on", b.dataset.v === VIEW));
+  document.querySelectorAll("#teams button").forEach(b => b.classList.toggle("on", +b.dataset.t === TEAM));
+  document.querySelectorAll("#sizes button").forEach(b => b.classList.toggle("on", Math.abs(+b.dataset.r - RATIO) < 0.01));
+  history.replaceState(null, "", `?s=${STYLE}&v=${VIEW}&t=${TEAM}&r=${RATIO}`);
+}
+function setView(v) { VIEW = v; resetWorld(); mark(); }
+document.getElementById("styles").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { STYLE = b.dataset.s; mark(); } });
+document.getElementById("screens").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setView(b.dataset.v); });
+document.getElementById("teams").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { TEAM = +b.dataset.t; mark(); } });
+document.getElementById("sizes").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { RATIO = +b.dataset.r; fitCanvas(); mark(); } });
+addEventListener("resize", fitCanvas);
+fitCanvas(); resetWorld(); mark();
+document.fonts && document.fonts.ready.then(() => {});
+requestAnimationFrame(loop);
+// bàn thử
+window.__ip = { pause(p = true) { PAUSE = p; }, step: (n = 1, dt = 1 / 60) => { for (let i = 0; i < n; i++) step(dt); frame(); }, set: (s, v, t) => { if (s) STYLE = s; if (t != null) TEAM = t; if (v) setView(v); else mark(); }, get G() { return G; } };
+</script>
+</body>
+</html>
