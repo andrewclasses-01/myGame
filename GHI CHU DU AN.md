@@ -601,7 +601,15 @@ chồng cao), chỉ bỏ lực quán tính do tàu tăng tốc. Điểm ngay ch�
 (3) `sed -i` của Git Bash đổi CRLF ⇒ LF — chuẩn hoá lại bằng Python trước khi commit (file gốc có 5 CR trần `
 `, giữ nguyên).
 
+## Train Rush 1au — 14/10/2026 · iPad thấy nhiều toa hơn · thả nhiều toa cùng lúc · phiên máy MSI
+**Bối cảnh (thầy):** iPad hiển thị ít quá ⇒ thu nhỏ để thấy toàn cảnh các ô tàu, thả được nhiều ô cùng lúc (đổi cả game chính); toa cần từ đầu tiên lùi về trái để kịp đọc chữ khinh khí cầu.
+**Đã làm:** `balloon-pop/mau-1au-train-rush.html`, `pad-1au.html`, `core/bp3d-1au.js`, `core/fight-1au.js`, `core/tr-padui-1au.js` — chi tiết + số đo: `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 45.
+**Quyết định:** chỉ đổi Fight (Single giữ lần lượt); 2 toa mở cùng lúc; iPad dãn dọc riêng vùng trời thay vì để trống nửa màn.
+**Thầy bác bản nháp đầu:** nối liền toa đáp án + khung vàng ▼ ⇒ sửa: đoàn tàu GIỮ NGUYÊN y màn lớn (2 toa phụ), bỏ đánh dấu vàng; VIS 40 → 48, FOC 42 → 45 %; rồi thầy chê chữ trên toa tràn viền ⇒ bảng phủ kín hông toa + cỡ chữ tối thiểu theo cỡ toa, VIS về 40, FOC 46 %.
+**Lỗi gặp:** khai `const top` trùng tên biến có sẵn trong `draw()` ⇒ SyntaxError giết cả mô-đun iPad (đổi `skyTop`); trang game bị phủ iPad giả ⇒ rAF game rất chậm ⇒ lái bằng `__fight.step`.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **TRAIN RUSH 1au** (CHƯA ghép AWord): thầy thử `balloon-pop/mau-1au-train-rush.html` + `pad-1au.html?t=0` (2 tab cùng trình duyệt) ⇒ duyệt cỡ iPad (VIS 40, FOC 46 %, chữ trên toa) — xem nhanh `balloon-pop/xem-1au.html` (màn lớn + iPad cạnh nhau), 2 toa mở cùng lúc ⇒ OK thì ghép AWord (pad.js + balloon-pop.js ⇒ 1au, chep-train-rush GOC fight-1au, GOC_THEM tr-padui-1au); hỏi thầy có đổi Single sang nhiều toa không.
 - ⬜ **TRAIN RUSH 1at (= AWord Đợt 521)**: thầy chơi Fight trên TOMKO — thùng còn văng khi tàu lao/phóng không, lung lay nhẹ có đủ thật không, độ trễ điểm khi thùng
   rơi lệch (~0,6 s) có chấp nhận được không, khinh khí cầu nấc 10 nhanh ×2 có quá nhanh không, thú chạy sau ray xa có che khinh khí cầu xanh không.
 - ⬜ **ROCKET RACE iPad Game controller — ĐÃ LÊN AWord Đợt 511**: thầy thử 2 iPad THẬT trên lớp (trang chủ AWord ▸ nút iPad ▸ chọn đội; máy chiếu: trận Rocket Race ▸

@@ -519,3 +519,20 @@ khinh khí cầu tối đa ×2 · máy bay mang LEVEL trước mỗi màn (khôn
   (máy quay thấp y 4,6 — đường ngắm qua nóc tàu chỉ chạm đất ở z ≤ −78).
 - Đã kiểm (máy soạn, khung ẩn ⇒ lái `__fight.step`): Fight vào thẳng · băng LEVEL 1 / LEVEL 2 · 2 tàu phóng đi thùng không rơi · đẩy thùng có điểm sang toa khác ⇒ −5 ·
   khinh khí cầu cả 2 làn trong khung · thú giữa màn z −26 thấy rõ sau tàu xanh · Single: LEVEL 1 sau phim, làn 11,0 trong khung · 0 lỗi console.
+
+## 45. Mẫu 1au (14/10/2026) — iPad thấy nhiều hơn · thả 2 toa cùng lúc (chờ thầy duyệt, CHƯA ghép AWord)
+Thầy: "màn iPad hiển thị được ít quá" ⇒ (1) mọi thứ nhỏ hơn để nhìn toàn cảnh các ô tàu, thả thùng vào nhiều ô cùng lúc, không phải lần lượt (đổi cả game chính);
+(2) toa cần từ đầu tiên lùi về bên trái để từ lúc khinh khí cầu xuất hiện tới toa đó đủ xa đọc chữ. Trang `mau-1au-train-rush.html` (mở = Fight) + iPad `pad-1au.html?t=0|1`.
+- ⛔ Bản nháp đầu (cùng ngày) NỐI LIỀN các toa đáp án (bỏ 2 toa phụ) + khung vàng ▼ trên mọi toa mở ⇒ thầy BÁC: "màn hình hiển thị các toa như thế nào thì iPad hiển thị
+  y hệt như vậy", "không được có phần đánh dấu vàng với mũi tên". Bài học: "thả nhiều ô cùng lúc" là đổi LUẬT nhận thùng, KHÔNG phải đổi bố cục đoàn tàu.
+- Lõi `bp3d-1au.js` (CHỈ Fight / duo; Single y 1at): đoàn tàu y 1at (toa đáp án · 2 toa phụ · toa đáp án…) · khinh khí cầu mang từ của `OPEN_N = 2` toa chưa đầy đầu
+  tiên (`openCarts()`: toa tàu đang canh + toa đáp án kế phía sau; bộ bài = mỗi toa mở 1 quả + toa đầu thêm 1 + 1–3 từ nhiễu; từ của toa chưa dựng / còn xa không làm từ
+  nhiễu) · thả đúng toa mở nào cũng điểm (luật chấm vốn theo toa chạm) · tàu vẫn canh toa chưa đầy ĐẦU TIÊN ở giữa màn lớn · `padLayout.on` = OPEN_N.
+- iPad `tr-padui-1au.js`: bề ngang thấy `VIS = 40` đơn vị (1as ~19 — khung chỉ khớp chiều cao) ⇒ thấy toa chờ + nửa toa đáp án kế ở mép trái · camX (≈ toa mở
+  đầu tiên) ở `FOC = 46 %` ⇒ mép phải tới toa đó ~22 đơn vị (1as ~9) · ⛔ thầy chê chữ trên toa tràn viền (ảnh 14/10): bộ co chữ có cỡ TỐI THIỂU cố định 12·k lớn hơn
+  ô bảng khi khung thu nhỏ ⇒ chữ ép tràn. Sửa: cỡ tối thiểu + lề theo CỠ TOA (0,16·ppu), khoảng dòng thật của Baloo 1,15 (`wrapFit(..., lh)`), bảng định nghĩa PHỦ KÍN
+  hông toa như màn lớn (1as chỉ cao 1,9 đv) ⇒ chữ ~2 lần to hơn; VIS 48 → 40 (ở 48 chữ chỉ ~7 px CSS — không đọc được). Nhãn thùng cùng cách · vùng trời trên đáy làn khinh khí cầu dãn dọc SK ≤ 4 (tàu + chồng thùng giữ tỉ lệ thật) · khinh khí cầu
+  6,0 × 2,0 (1as 4,2 × 1,4) · KHÔNG khung vàng / ▼ trên toa · tàu nằm trên dải nhắc ở đáy.
+- Đã kiểm (iPad giả gắn trong trang game, khung 4:3): iPad vẽ đúng `a c c a c c…` như game; thả đúng toa đáp án thứ 2 khi toa đầu còn mở ⇒ +5, toa đầu vẫn mở;
+  (bản nháp) mặc định 5 màn qua màn 1–3 đúng điểm. Chữ trên toa kiểm ở khổ 1024×768: rõ, gọn trong khung.
+- ⬜ Chưa: Single vẫn lần lượt; ghép AWord (pad.js ⇒ tr-padui-1au, balloon-pop.js ⇒ 1au).
