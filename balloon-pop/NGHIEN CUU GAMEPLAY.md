@@ -470,3 +470,13 @@ lên, chừa đất + cỏ tiền cảnh trước tàu đỏ · (4) tàu to hơn
   Game gửi thêm (fight-1aq padSend): `os` điểm đội bạn · `lvc` số màn (0 = Off) · `cd` số đếm 3-2-1 · `bn` thưởng giờ khi đếm; lõi bp3d-1aq padState: thùng
   thêm góc nghiêng (2·atan2(q.z, q.w)). Đã kiểm 2 tab: chọn đội ⇒ GET READY ⇒ tàu vào (đầu máy, toa than LV.n, toa có bảng, toa than) ⇒ chạm THẬT
   quả CERTAINLY ⇒ thùng rơi đúng toa (+5, nằm nghiêng như vật lý) ⇒ TRAIN FULL ⇒ đội 2 xong ⇒ LEVEL COMPLETE thưởng giờ ⇒ màn 2 ⇒ End game ⇒ YOU WIN 112 : 93.
+
+## 42. Mẫu 1ar (14/10/2026) — iPad hết giật
+Thầy thử iPad thật: "cứ giật giật, hộp thả xuống kể cả khi nằm trên tàu rồi vẫn giật 2 bên theo chiều ngang — do hạ tầng hay do game?" ⇒ DO CODE GAME:
+- (1) iPad đẩy tiếp máy quay + tàu + khinh khí cầu theo vận tốc giữa 2 tin, nhưng THÙNG vẽ đứng ở vị trí tin cuối ⇒ thùng trôi lùi so với tàu rồi giật về,
+  20 lần/giây (răng cưa). Đo (2 iPad giả trong cùng trang): tàu chạy đều biên độ 20 px, lúc tàu phóng đi 160 px. (2) đẩy tiếp tính từ LÚC TIN TỚI ⇒ Wi-Fi
+  làm tin tới không đều (đo local đã 62–125 ms) ⇒ cả cảnh nhảy. (3) shadowBlur khung toa chờ đắt trên Safari iPad.
+- Sửa: lõi `bp3d-1ar` padState thêm `t` (giờ game) + vận tốc thùng [.., vx, vy] · `tr-padui-1ar`: ước giờ game = đường bao trên độ lệch (tin ít trễ nhất),
+  đẩy tiếp mọi thứ theo giờ game; thùng đẩy theo vận tốc (+ trọng lực khi đang rơi); quầng sáng = nét to mờ thay shadowBlur; chạm 3 lần góc phải dưới ⇒
+  bảng đo FPS · ms vẽ · nhịp tin · ping. Đo lại: biên độ thùng↔tàu 0,7 px (cũ 20 px), lúc phóng 1,3 px (cũ 160 px). Trang `mau-1ar-train-rush.html` + `pad-1ar.html`.
+- Không phải hạ tầng: kênh WebRTC thẳng (đèn xanh) đủ nhanh; nếu đèn VÀNG (relay) thì iPad KHÔNG nhận trạng thái — là chuyện khác.

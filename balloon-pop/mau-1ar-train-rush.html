@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Rush — 1ar (iPad hết giật)</title>
+<!-- 1ar (14/10/2026) thầy thử iPad thật: thùng giật ngang ⇒ lõi gửi giờ game + vận tốc thùng; iPad pad-1ar.html. -->
+<!-- 1aq (14/10/2026) thầy thử 1ap: máy bay điểm bay thấp · thú đuổi nhau gần 1/2 · 2 tàu nâng lên chừa tiền cảnh · tàu to hơn, khinh khí cầu nhỏ hơn (CHỈ Fight; Single y hệt 1ap). -->
+<!-- TRAIN RUSH mẫu 1ap (14/10/2026): thầy duyệt bản phác thiet-ke-fight-1-man.html ⇒ "ok build":
+     • FIGHT MỘT MÀN: 2 tàu song song trong một cảnh (TEAM 1 ray gần, TEAM 2 ray xa), góc A, ô điểm = thanh giờ màn, đội xong phóng đi,
+       cả 2 xong ⇒ giờ thừa đổi điểm (1 giây = 1 điểm), hết giờ ⇒ OUT ⇒ hết trận. Lõi core/bp3d-1ap.js (duo), trận core/fight-1ap.js.
+     • iPad như Rocket Race: mở pad-1ap.html?t=0 và pad-1ap.html?t=1 ở 2 tab khác (bàn thử: kho bắt tay cục bộ localSignal).
+     • Options mới CẢ Single lẫn Fight: LEVELS Off/1–20 (thay Max cars) · TIME ROUND Off/1–10 phút/∞ (thay None/Count up/Count down).
+       Mặc định Levels 5 · Time round 2 phút.  ?lv= số màn (0 = Off) · ?tr= phút (0 Off, 11 ∞) để thử nhanh. -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Exo+2:ital,wght@1,800;1,900&family=Rye&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/bp3d.css">
+<link rel="stylesheet" href="core/bp3d-1j.css">
+<link rel="stylesheet" href="core/bp3d-1p.css">
+<link rel="stylesheet" href="core/bp3d-1q.css">
+<link rel="stylesheet" href="core/bp3d-1r.css">
+<link rel="stylesheet" href="core/bp3d-1ab.css">
+<link rel="stylesheet" href="core/fight-cine-1ae.css">
+<link rel="stylesheet" href="core/fight-1al.css">
+<link rel="stylesheet" href="core/bp3d-1al.css">
+<link rel="stylesheet" href="core/fight-1ao.css">
+<link rel="stylesheet" href="core/fight-1ap.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #120c07; overflow: hidden; }
+  #game { position: fixed; inset: 0; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/", "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js" } }
+</script>
+</head>
+<body>
+<div id="game"></div>
+<div id="fight" hidden></div>
+<script type="module">
+import { createBalloonPop } from "./core/bp3d-1ar.js";
+import { createTrainRushFight } from "./core/fight-1ar.js";
+import { localSignal } from "./core/tr-padlink-1ap.js";
+import { WORDS, WORDS_TITLE } from "./core/words-lsa2-s4-t4.js";
+const q = new URLSearchParams(location.search);
+const OPTS = {};
+if (q.has("lv")) OPTS.levelCount = Math.max(0, Math.min(20, +q.get("lv") || 0));
+if (q.has("tr")) OPTS.roundMin = Math.max(0, Math.min(11, +q.get("tr") || 0));
+const game = document.getElementById("game"), fightEl = document.getElementById("fight");
+let cur = null;
+async function single() {
+  if (cur) cur.destroy();
+  fightEl.hidden = true; game.hidden = false;
+  cur = await createBalloonPop({ mount: game, view: "side", words: WORDS, wordsTitle: WORDS_TITLE, options: OPTS,
+    onEvent: (k, d) => { if (k === "mode" && d === "fight") fight(); } });
+}
+async function fight() {
+  if (cur) cur.destroy();
+  game.hidden = true; fightEl.hidden = false;
+  cur = await createTrainRushFight({ mount: fightEl, words: WORDS, wordsTitle: WORDS_TITLE, options: OPTS, onSingle: single, padSignal: localSignal("trpad1ap") });
+}
+window.__mode = { single, fight, get cur() { return cur; } };
+q.get("mode") === "fight" ? fight() : single();
+</script>
+</body>
+</html>
