@@ -112,6 +112,7 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   `createPadHost` lẫn phía iPad `createPadClient`, + `localSignal` cho bàn thử 2 tab) · `core/mc3d-padui-2q.js` (giao diện D-pad iPad) ·
   `core/mc3d-qr.js` (chép NGUYÊN `AWord/web/core/qr.js`). Trang: `mau-2q-star-loot-ipad.html` + `pad-2q.html?t=0|1`. Lõi KHÔNG biết mạng:
   chỉ nhận `remote` { attach({press,status}), detach, panel, panelClosed }. Kênh bắt tay thật (Firestore) nằm ở AWord `templates/maze-chase/sl-pad-signal.js`.
+- TRAIN RUSH mới nhất = **1au + màn iPad 1av** (14/10/2026, = AWord Đợt 523): iPad `core/tr-padui-1av.js` giảm tải (25 khung/giây, 8 khi đứng, độ nét ≤ 1,5); trang `pad-1av.html` / `xem-1av.html`; hồ sơ mục 46 ·
 - TRAIN RUSH mới nhất = **mẫu 1au** (14/10/2026, = AWord Đợt 522 `f0104d3`, thầy duyệt; hồ sơ mục 45): Fight khinh khí cầu mang từ 2 toa mở ⇒ thả 2 toa cùng lúc (đoàn tàu GIỮ 2 toa phụ);
   iPad `pad-1au.html` thu nhỏ (VIS 40, toa mở đầu ở 46 %, bảng phủ kín hông toa, không khung vàng); xem cạnh nhau: `xem-1au.html`. ·
 - TRAIN RUSH **mẫu 1at** (14/10/2026, = AWord Đợt 521; hồ sơ mục 44): mở trang = Fight · thùng trên tàu đi theo gia tốc tàu · điểm chỉ khi chắc chắn ·
@@ -128,6 +129,10 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   ⚠️ NGOẠI LỆ mẫu 9 (iPad tham gia game): tính năng mới làm ở myGame TRƯỚC (thầy chọn) ⇒ thầy OK ⇒ ghép AWord (xem GHI CHU chặng "Rocket Race mẫu 9").
 
 ## Khám phá kỹ thuật
+- ⭐ MÀN iPAD NÓNG (14/10/2026, đo kỹ — NGHIEN CUU balloon-pop mục 46): iPad là MÀN PHỤ ⇒ mặc định **25 khung/giây** (bỏ khung trong vòng rAF, hoạt cảnh theo dt),
+  **8 khung/giây khi màn đứng**, **độ nét ≤ 1,5** (Retina ×2 tốn 44 % điểm ảnh hơn), canvas WebGL đã qua EffectComposer thì **antialias: false**. Canvas 2D: thứ đắt
+  là TÔ mảng chuyển màu phủ cả màn — đo phải ép vẽ xong (`getImageData` 1 điểm), đo JS-only thấy 2 ms trong khi thật 15,6 ms; canvas nền đệm + drawImage lại CHẬM
+  hơn. 3D: đo bằng `EXT_disjoint_timer_query_webgl2`. Màn iPad game MỚI phải theo khuôn này từ đầu.
 - CONG THẾ GIỚI (SPEED RUN): đường logic thẳng trục z, hình cong nhờ vertex `x += bx·dz²` — phải TẮT DẦN khi 2 xe xa (dz lớn ⇒ xe dẫn dời ngang hàng chục mét, máy quay nhìn hụt); mọi vật đặt trên đất tính độ cao bằng CÙNG hàm nhiễu ở JS với `Math.fround` từng phép để khớp float32 GPU.
 - MÀN 3D ĐEN HẲN sau vài giây (SPEED RUN mẫu 2) = một đỉnh NaN (vd. `Math.pow(số âm cực nhỏ, 1.4)`) ⇒ bloom loang NaN ra CẢ khung. Truy: tắt bloom, đọc render target half-float bằng
   `readRenderTargetPixels` (Uint16Array, NaN/Inf = `(v & 0x7c00) === 0x7c00`) rồi ẩn dần từng vật. ⚠️ Sau `composer.render()` OutputPass đã ĐỔI bộ đệm ⇒ đọc `writeBuffer`.

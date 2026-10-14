@@ -608,7 +608,15 @@ chồng cao), chỉ bỏ lực quán tính do tàu tăng tốc. Điểm ngay ch�
 **Thầy bác bản nháp đầu:** nối liền toa đáp án + khung vàng ▼ ⇒ sửa: đoàn tàu GIỮ NGUYÊN y màn lớn (2 toa phụ), bỏ đánh dấu vàng; VIS 40 → 48, FOC 42 → 45 %; rồi thầy chê chữ trên toa tràn viền ⇒ bảng phủ kín hông toa + cỡ chữ tối thiểu theo cỡ toa, VIS về 40, FOC 46 %.
 **Lỗi gặp:** khai `const top` trùng tên biến có sẵn trong `draw()` ⇒ SyntaxError giết cả mô-đun iPad (đổi `skyTop`); trang game bị phủ iPad giả ⇒ rAF game rất chậm ⇒ lái bằng `__fight.step`.
 
+## Train Rush 1av + Rocket Race iPad — 14/10/2026 · GIẢM TẢI màn iPad (iPad nóng) · phiên máy MSI
+**Bối cảnh (thầy):** chơi Rocket Race với iPad thấy khá nóng ⇒ nghiên cứu + đo phương án (gợi ý 25 khung/giây; iPad không cần mượt), cả Train Rush.
+**Đã làm:** đo bằng giờ GPU (3D) / ép vẽ xong mỗi khung (2D) ở khổ iPad ×2 ⇒ Train Rush `core/tr-padui-1av.js` (25/8/10 khung/giây, độ nét ≤ 1,5, gradient dùng lại,
+bớt tô chồng) + Rocket Race (gốc AWord `rr-padscene.js`: 25 khung/giây, độ nét ≤ 1,5, tắt antialias; bản chép tra `rocket-race/core/rr-padscene-12.js`). Chi tiết + số
+đo: `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 46. Ghép AWord Đợt 523.
+**Quyết định:** chọn thưa khung + bớt điểm ảnh (hiệu quả chắc, mọi máy) thay vì tối ưu từng lệnh vẽ. **Lỗi/ngõ cụt:** canvas nền đệm chậm hơn; đo JS-only nói dối (xem mục 46).
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **iPad bớt nóng (AWord Đợt 523)**: thầy chơi Rocket Race + Train Rush với iPad thật vài trận ⇒ còn nóng không, 25 khung/giây có bị khó chịu không. Còn nóng ⇒ 20 khung/giây + độ nét 1,25 (hằng PAD_FPS / PR_MAX đầu file).
 - ⬜ **TRAIN RUSH 1au (= AWord Đợt 522, thầy duyệt 14/10)**: thầy chơi Fight trên TOMKO + 2 iPad thật — chữ trên toa iPad đủ to chưa, có cần thấy trọn toa đáp án
   thứ 2 (hiện nửa toa ở mép trái iPad) không; thùng còn văng khi tàu lao/phóng không, điểm trễ ~0,6 s khi rơi lệch, khinh khí cầu nấc 10 (×2) có quá nhanh không;
   có đổi Single sang thả nhiều toa không. Xem thử trên máy: `balloon-pop/xem-1au.html`.

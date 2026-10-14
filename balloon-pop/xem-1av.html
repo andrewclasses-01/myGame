@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Train Rush 1av — màn lớn + iPad (giảm tải)</title>
+<!-- Trang XEM THỬ 1au: màn lớn (trái) + iPad TEAM 1 (phải, khung 4:3) cạnh nhau trong cùng một tab ⇒ cả hai cùng chạy (tab ẩn thì trình duyệt dừng vẽ).
+     Nối nhau qua kho bắt tay cục bộ localSignal("trpad1ap") như pad-1au.html. -->
+<style>
+  html, body { margin: 0; height: 100%; background: #120c07; color: #f3d9a8; font: 600 14px "Baloo 2", system-ui, sans-serif; overflow: hidden; }
+  .wrap { display: flex; gap: 10px; height: calc(100% - 34px); padding: 0 10px 10px; box-sizing: border-box; }
+  .col { display: flex; flex-direction: column; min-width: 0; }
+  .big { flex: 1.35; } .pad { flex: 1; }
+  .lab { height: 34px; line-height: 34px; padding-left: 10px; }
+  iframe { border: 2px solid #6b3d1f; border-radius: 8px; background: #000; width: 100%; }
+  .big iframe { flex: 1; }
+  .pad iframe { aspect-ratio: 4 / 3; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="col big"><div class="lab">MÀN LỚN — bấm START (mặc định vào Fight)</div><iframe src="mau-1au-train-rush.html" allow="autoplay"></iframe></div>
+  <div class="col pad"><div class="lab">iPad TEAM 1 (khung 4:3) — chạm khinh khí cầu ở đây được</div><iframe src="pad-1av.html?t=0" allow="autoplay"></iframe></div>
+</div>
+</body>
+</html>

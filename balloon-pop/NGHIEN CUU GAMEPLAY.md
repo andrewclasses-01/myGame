@@ -536,3 +536,21 @@ Thầy: "màn iPad hiển thị được ít quá" ⇒ (1) mọi thứ nhỏ hơ
 - Đã kiểm (iPad giả gắn trong trang game, khung 4:3): iPad vẽ đúng `a c c a c c…` như game; thả đúng toa đáp án thứ 2 khi toa đầu còn mở ⇒ +5, toa đầu vẫn mở;
   (bản nháp) mặc định 5 màn qua màn 1–3 đúng điểm. Chữ trên toa kiểm ở khổ 1024×768: rõ, gọn trong khung.
 - ✅ Đã ghép AWord Đợt 522 (pad.js ⇒ tr-padui-1au, balloon-pop.js ⇒ 1au). ⬜ Single vẫn lần lượt.
+
+## 46. Mẫu 1av (14/10/2026) — màn iPad GIẢM TẢI (iPad nóng) · cùng AWord Đợt 523 (Rocket Race)
+Thầy: "chơi Rocket Race với iPad thấy khá nóng — nghiên cứu, đo đạc phương án (vd 25 khung/giây), trên iPad không cần mượt" (+ Train Rush).
+**Cách đo** (AWord `scratch/dot523-*`, gitignore): chạy ĐÚNG mô-đun iPad ở khung 1024×768, độ nét ×2 (Retina iPad = 2048×1536).
+- 3D (Rocket Race `rr-padscene.js`): bọc `composer.render()` trong truy vấn giờ GPU `EXT_disjoint_timer_query_webgl2`, trung vị 120 khung/phương án.
+- 2D (Train Rush `tr-padui`): game thật + iPad trong iframe (tab ẩn/khung ẩn thì rAF đứng ⇒ giữ callback rAF rồi TỰ GỌI từng khung); mỗi khung ép vẽ xong bằng
+  `getImageData(0,0,1,1)` để tính cả phần tô điểm ảnh (chỉ đo thời gian JS thì thấy 2 ms — sai bét, phần tô là 15,6 ms).
+- Tải mỗi giây = ms/khung × khung/giây. Số tuyệt đối là của card máy soạn (mạnh hơn iPad nhiều) — TỈ LỆ giữa các phương án mới mang sang iPad.
+**Kết quả:**
+- Train Rush iPad (1au): ~15,5 ms/khung × 60 ⇒ GPU gần như chạy kín (nặng hơn Rocket Race!). Tốn ở các mảng tô CHUYỂN MÀU phủ cả màn (bỏ gradient 18,5 → 9,7 ms;
+  tô màu đặc cùng diện tích 11,7). 1av: 25 khung/giây (8 khi màn đứng: chưa nối / chờ START / thẻ / iPad tắt / tạm dừng; màn chọn đội 10) + độ nét tối đa 1,5 ⇒
+  ~9,5 ms × 25 ⇒ còn **~26 %**. Hoạt cảnh theo dt nên chỉ thưa khung, không chậm.
+- Rocket Race iPad (AWord, gốc ở đó; bản chép tra `rocket-race/core/rr-padscene-12.js`): 0,549 ms × 60 ⇒ 25 khung/giây + độ nét 1,5 + TẮT antialias canvas (ảnh đã
+  qua bloom/OutputPass — khử răng cưa khung cuối thừa, tốn ~27 %) ⇒ 0,25 ms × 25 ⇒ còn **~19 %**. Bloom nửa độ nét: lợi ít, lẫn trong nhiễu ⇒ không làm.
+- ⛔ THỬ MÀ KHÔNG ĂN THUA: (a) dùng lại gradient giữa các khung (D.lg / D.rg) — Chrome không nhanh hơn (cái đắt là TÔ, không phải TẠO); giữ vì vô hại.
+  (b) vẽ sẵn nền tĩnh (trời + mặt trời + đất) vào canvas phụ rồi drawImage mỗi khung — CHẬM HƠN (12–19 ms so với 9,7) ⇒ bỏ.
+- Đã kiểm hình: Train Rush 1av y 1au (trời, núi, ray, toa, khinh khí cầu); bảng tên lửa Rocket Race y cũ, không răng cưa. Trang thử `pad-1av.html`, `xem-1av.html`.
+- Nếu iPad thật còn nóng: nấc kế 20 khung/giây + độ nét 1,25.
