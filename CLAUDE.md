@@ -148,6 +148,10 @@ tools/tao-dia-hinh-4d.py      sinh địa hình mẫu 4d từ assets/4d/layout.j
   `rr-pad-signal.js` là của AWord) — tool chép KHÔNG lấy chúng ⇒ sửa ở `core/*-9.js` (hoặc bản mới `-10`), rồi chép tay sang AWord.
   ⚠️ NGOẠI LỆ mẫu 9 (iPad tham gia game): tính năng mới làm ở myGame TRƯỚC (thầy chọn) ⇒ thầy OK ⇒ ghép AWord (xem GHI CHU chặng "Rocket Race mẫu 9").
 
+## ⭐ TỐI ƯU GAME 3D (TOMKO / myActivity)
+- Sổ tay BẮT BUỘC đọc trước khi tối ưu / đo game 3D: `HUONG DAN TOI UU GAME 3D.md` (máy đích, quy trình đo act thật trong myActivity, 16 bẫy hiệu năng, số liệu).
+- Bộ đo dùng lại: `tools/do-game-3d/` (CDP, đầu đo từng khung, GPU từng pass, profiler, A/B, chơi thật trên live).
+
 ## Khám phá kỹ thuật
 - ⭐ MÀN iPAD NÓNG (14/10/2026, đo kỹ — NGHIEN CUU balloon-pop mục 46): iPad là MÀN PHỤ ⇒ mặc định **25 khung/giây** (bỏ khung trong vòng rAF, hoạt cảnh theo dt),
   **8 khung/giây khi màn đứng**, **độ nét ≤ 1,5** (Retina ×2 tốn 44 % điểm ảnh hơn), canvas WebGL đã qua EffectComposer thì **antialias: false**. Canvas 2D: thứ đắt

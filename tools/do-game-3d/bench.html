@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RW bench act 572</title>
+<link rel="stylesheet" href="/templates/racing-words/racing-words.css">
+<style>html,body{margin:0;background:#04060d;height:100%}</style>
+<script>
+  // như myActivity AWORD_JS (v2.27.0): màn 4K ⇒ trần độ nét 1,0
+  if (screen.width * (devicePixelRatio || 1) >= 3200) window.__awMaxPR = 1;
+</script>
+</head><body><div id="root"></div>
+<script type="module">
+  const act = await (await fetch('/__bench/' + (new URLSearchParams(location.search).get('act') || 'act.json'))).json();
+  const m = await import('/templates/racing-words/racing-words.js');
+  const t = m.default;
+  window.__act = act;
+  window.__cleanup = t.mount(document.getElementById('root'), act, {});
+</script>
+</body></html>
