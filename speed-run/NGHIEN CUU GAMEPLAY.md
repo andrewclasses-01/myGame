@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3d (mục 14): bàn đạp bằng nhau không chữ sát vô lăng, cung sáng mờ 2 đầu, nút tên lửa giữa (2 quả song song), nửa xe trên dốc ⇒ lộn trục dọc, trúng tên lửa ⇒ khói đen che kính. Trước đó 3c (mục 13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3e (mục 15): nút tên lửa bay + nạp từ kho, vệt sáng vô lăng mới (+ gỡ lỗi đội 2 sáng xanh), bàn đạp dài/hẹp, vô lăng chỉ nhận trong vòng tròn, khói lâu hơn, tên lửa chậm hơn. Trước đó 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -473,3 +473,25 @@ Bàn thử: nút "Xe 1 lên dốc MỘT NỬA (lộn trục dọc)".
 nhoè phình ra) phủ kính nửa màn đội bị bắn ~2,3 s. Đo: trúng ⇒ 6 km/h, đang xoay 1,4 s, lớp khói bật. Bàn thử: "Bắn trúng xe 2 (khói đen)".
 **Đã kiểm (browser pane):** lộn trục dọc (ảnh: xe lộn ngửa giữa không) · bố cục tap-lô mới · iPad chế độ đua: bàn đạp bằng nhau, nút 2 quả song song, cung trái sáng mờ 2 đầu · không lỗi console.
 ⬜ Thầy thử 3d. Lớp khói CSS chạy theo thời gian thật nên chưa xem được trong khung thử ẩn — cần xem trên Chrome.
+
+---
+
+## 15. ✅ MẪU 3e (15/10/2026) — nạp tên lửa từ kho · vệt sáng vô lăng mới · bàn đạp dài/hẹp · vô lăng chỉ nhận trong vòng tròn
+Thầy dặn sau khi thử 3d: khói che lâu hơn · tên lửa bay chậm hơn · bàn đạp ga dài lên trên (thanh kim loại còn 1/3), phanh dài hơn · cả 2 hẹp lại (đang chạm khung đáp án) ·
+khung đáp án hẹp lại, cách bàn đạp · bấm nút tên lửa ⇒ CHÍNH icon trong nút bay lên, icon chờ thụt xuống mép dưới khung, từ dưới bay 1 quả vào chỗ vừa trống (nạp từ kho) ·
+vệt sáng tay vô lăng làm lại: mềm, viền mờ, rộng ≈ 2/3 độ dày vô lăng, bên xanh sáng xanh, bên cam sáng cam · chấm năng lượng tên lửa cân lại · chỉ nhận xoay vô lăng khi bấm
+trong vòng tròn vô lăng (ra ngoài một chút), bấm quá xa không nhận.
+
+Trang: `speed-run/mau-3e-nap-ten-lua.html` + iPad `speed-run/pad-3e.html?t=0|1` (kênh `srpad3e`). 3d giữ nguyên.
+File: `core/sr3d-3e.js/.css` · `core/sr3d-dash-3e.js` · `core/sr3d-padui-3e.js` · `core/sr3d-padlink-3e.js` (= 3d) · `core/sr3d-missile-3e.js` (= 3c, MS.T 2,45 s, khoá 1,0 s) · `core/page-3e.js/.css`.
+**⚠️ LỖI CŨ đã gỡ (có từ 3c):** 2 vô lăng trên cùng trang dùng CHUNG id gradient/filter SVG (`srwg…`) ⇒ `url(#id)` lấy cái ĐẦU TIÊN trong trang ⇒ vệt sáng vô lăng đội 2 ra màu XANH
+của đội 1. Nay mỗi vô lăng đổi tiền tố id theo đội (`WHEEL_SVG.replace(/srwg/g, "srwg" + i)`). Bài học: SVG dựng nhiều bản trong 1 trang thì id defs phải riêng từng bản.
+**Vệt sáng:** 3 lớp trên cung 1/4 vành: quầng rộng 24 nhoè 6 (38 %) + lõi 14,5 (≈ 2/3 vành 22) nhoè 1,8 + đường bóng 4,5 màu đội pha trắng; cả 3 tô dải mờ dần 2 đầu.
+**Bàn đạp:** viewBox 60 × 150 (3d: 76), mặt đạp rộng 52; ga: thanh kim loại lộ ~16 (3d ~50), mặt đạp cao 116; phanh: mặt đạp cao 78. Khung đáp án cách cụm lái 2cqw.
+**Nút tên lửa:** 2 ô `.sr-slot` (quả + lửa đuôi) song song. Bắn: ô cao nhất có quả bay vút lên (lửa đuôi bật) 0,52 s; nếu còn kho (≥ 3 quả trước khi bắn): icon chờ cuối THỤT xuống
+(ô chờ cắt ở mép dưới khung đáp án) + quả mới TRỒI từ dưới nút lên đúng ô đó. Icon chờ = số quả ngoài 2 quả trong nút (≤ 4 + "+x"). Được thêm quả ⇒ ô trống trồi quả lên (nạp).
+iPad (chế độ đua trên iPad) diễn y hệt. Đo: 3 quả ⇒ bắn ⇒ ô 2 "fly", 1 icon "sink", 0,8 s sau ô 2 lại có quả, kho 0.
+**Vô lăng:** chỉ nhận bấm khi khoảng cách tới tâm ≤ bán kính × 1,12 (tính theo cỡ thật trên màn); kéo ra ngoài giữa chừng giữ nguyên hướng đang bấm. Đo bằng chạm THẬT: góc khung
+vô lăng ngoài vòng tròn ⇒ không nhận; trong vòng ⇒ TOUCH.
+**Khác:** khói đen 3,6 s (3d: 2,3) · chấm chuỗi đúng 1,5cqh cân giữa ô của nó.
+⬜ Thầy thử 3e. Hiệu ứng CSS (bay/nạp tên lửa, khói) chạy theo thời gian thật — khung thử ẩn không chạy CSS animation, cần xem trên Chrome.
