@@ -2,23 +2,23 @@
 // RACING WORDS — BỘ ÂM THANH (mẫu 3n, 15/10/2026). Thầy: "âm thanh thật, điện ảnh, xịn, cinematic, cả nhạc nền".
 // Web Audio (như Rocket Race Đợt 393): mọi tiếng đã tải sẵn thành buffer; 2 kênh EFFECT / MUSIC tắt riêng (nhớ theo máy);
 // tiếng lặp (máy, gió, nhạc) nối KHÔNG khựng + mọi lần bật/tắt đều TRƯỢT âm lượng; máy xe đổi cao độ theo tốc độ.
-// File ở speed-run/sfx/<tên>.mp3 (thầy chọn trong chon-am-thanh.html); file nào chưa có ⇒ im lặng, không lỗi.
+// File ở speed-run/sfx/<tên>.mp3 — thầy nhờ em chọn (15/10): 29 bản thu thật Pixabay/Mixkit, cắt + ghép lặp + chuẩn độ to bằng make_sfx.py (nguồn: sfx/NGUON AM THANH.md).
 // Dùng: const S = createSound(); await S.load(); S.cue("door"); S.loop("engine0", true, { gain, rate }); S.duck(…)
 // =============================================================
 const BASE = new URL("../sfx/", import.meta.url).href;
 // tên tiếng ⇒ { f: file, v: âm lượng gốc, bus: "fx" | "music", loop }
 export const SOUNDS = {
   // intro
-  garage: { f: "garage_ambience", v: 0.5, loop: true }, door: { f: "roller_door", v: 0.9 }, lights: { f: "lights_on", v: 0.8 },
+  garage: { f: "garage_ambience", v: 0.8, loop: true }, door: { f: "roller_door", v: 0.9 }, lights: { f: "lights_on", v: 0.8 },
   start: { f: "engine_start", v: 1 }, rev: { f: "rev_idle", v: 0.7, loop: true }, pop: { f: "exhaust_pops", v: 0.85 }, flyby: { f: "drive_by", v: 1 },
   hit: { f: "cinematic_hit", v: 1 }, lightsBeep: { f: "start_lights", v: 0.8 }, go: { f: "go_stinger", v: 0.9 },
   // trận đua
-  engine: { f: "engine_loop", v: 0.45, loop: true }, boost: { f: "boost", v: 0.9 }, screech: { f: "tire_screech", v: 0.7 }, wind: { f: "wind_rush", v: 0.35, loop: true },
+  engine: { f: "engine_loop", v: 0.55, loop: true }, boost: { f: "boost", v: 0.9 }, screech: { f: "tire_screech", v: 0.7 }, wind: { f: "wind_rush", v: 0.35, loop: true },
   land: { f: "landing_thud", v: 0.9 }, crash: { f: "crash_bump", v: 0.9 }, mLaunch: { f: "missile_launch", v: 0.9 }, mFly: { f: "missile_flyby", v: 0.7 },
   boom: { f: "explosion", v: 1 }, fire: { f: "fire_burn", v: 0.6, loop: true }, correct: { f: "correct_answer", v: 0.8 }, wrong: { f: "wrong_answer", v: 0.8 },
   reload: { f: "reload_clunk", v: 0.7 }, click: { f: "ui_click", v: 0.5 }, win: { f: "win_stinger", v: 1 }, crowd: { f: "crowd_cheer", v: 0.7 },
   // nhạc
-  mIntro: { f: "intro_music", v: 0.75, bus: "music" }, mRace: { f: "race_music", v: 0.42, bus: "music", loop: true }, mResult: { f: "result_music", v: 0.7, bus: "music" },
+  mIntro: { f: "intro_music", v: 0.75, bus: "music" }, mRace: { f: "race_music", v: 0.38, bus: "music", loop: true }, mResult: { f: "result_music", v: 0.7, bus: "music" },
 };
 const KEY = "racingwords.sound";
 
@@ -64,7 +64,8 @@ export function createSound() {
       const g = ctx.createGain(); g.gain.value = 0;
       const p = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
       src.connect(g); if (p) { g.connect(p); p.connect(bus[s.bus || "fx"]); } else g.connect(bus[s.bus || "fx"]);
-      src.start(0, Math.random() * Math.max(0, b.duration - 0.1)); L = loops[id] = { src, g, p, s };
+      src.loopStart = 0.03; src.loopEnd = b.duration - 0.03;                      // mp3 có đệm câm ở 2 đầu ⇒ lặp bỏ 30 ms mỗi mép (file đã ghép chéo đầu-cuối)
+      src.start(0, 0.03 + Math.random() * Math.max(0, b.duration - 0.2)); L = loops[id] = { src, g, p, s };
       ramp(g.gain, s.v * gain, fade);
     }
     if (!L) return;

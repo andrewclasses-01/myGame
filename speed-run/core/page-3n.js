@@ -51,9 +51,8 @@ export async function boot() {
     else if (n === "engine") { S.play("start", { pan: PAN[t] }); setTimeout(() => S.loop("rev" + t, true, { name: "rev", pan: PAN[t], fade: 0.8 }), 900); }
     else if (n === "pop") S.play("pop", { pan: PAN[t ?? 0], rate: 0.9 + Math.random() * 0.2, gain: introOn && window.__intro.state !== "play" ? 0.45 : 1 });
     else if (n === "door") S.play("door");
-    else if (n === "rollout") { [0, 1].forEach(i => S.loop("rev" + i, true, { name: "rev", rate: 1.35, gain: 1.3, pan: PAN[i] })); S.play("screech", { gain: 0.7 }); }
+    else if (n === "rollout") { [0, 1].forEach(i => S.loop("rev" + i, true, { name: "rev", rate: 1.35, gain: 1.3, pan: PAN[i] })); S.play("screech", { gain: 0.7 }); S.play("flyby", { delay: 1.3 }); }   // tiếng vút qua: đỉnh ở giây thứ 2 của file ⇒ trúng lúc xe lướt máy quay (~11 s)
     else if (n === "title") S.play("hit");
-    else if (n === "flyby") S.play("flyby");
     else if (n === "handoff") { S.loop("rev0", false, { fade: 0.8 }); S.loop("rev1", false, { fade: 0.8 }); S.loop("garage", false, { fade: 1 }); }
   }
   // trận đua: máy 2 xe (cao độ theo tốc độ, lệch trái/phải theo nửa màn), gió khi nhanh / bay, nhạc nền, sự kiện
@@ -71,13 +70,17 @@ export async function boot() {
     S.pause(!!game.G.paused);
     st.teams.forEach((t, i) => {
       const T = game.T[i], v = t.v, boostK = Math.max(T.boostK || 0, T.nitroK || 0);
-      S.loop("engine" + i, racing, { name: "engine", rate: 0.62 + v / 38 + boostK * 0.12, gain: 0.55 + 0.35 * boostK, pan: PAN[i] });
+      S.loop("engine" + i, racing, { name: "engine", rate: 0.85 + v / 45 + boostK * 0.1, gain: 0.55 + 0.35 * boostK, pan: PAN[i] });   // máy Lamborghini: chậm ~1,2× · boost ~1,9×
       S.loop("wind" + i, racing && (v > 25 || t.air), { name: "wind", gain: Math.min(1, (v - 20) / 25) + (t.air ? 0.4 : 0), pan: PAN[i] });
       S.loop("fire" + i, racing && (T.burnT || 0) > 0, { name: "fire", pan: PAN[i] });
       if (T.nitroK > 0.6 && !T._sBoost) { T._sBoost = true; S.play("boost", { pan: PAN[i] }); } else if (T.nitroK < 0.2) T._sBoost = false;
       if (t.spin > 0 && !T._sSpin) { T._sSpin = true; S.play("screech", { pan: PAN[i] }); } else if (t.spin <= 0) T._sSpin = false;
+      if (t.ms > (T._sMs ?? t.ms)) S.play("reload", { pan: PAN[i] }); T._sMs = t.ms;                      // thêm tên lửa ⇒ tiếng nạp
     });
   }, 50);
+  // tiếng bấm nút: chọn xe, START, nút trả lời, hàng nút, MENU
+  frameEl.addEventListener("pointerdown", e => { if (e.target.closest("button")) S.play("click"); }, { capture: true });
+  document.getElementById("bar").addEventListener("pointerdown", e => { if (e.target.closest("button")) S.play("click"); }, { capture: true });
   const tb = document.querySelector('#bar [data-k="sound"]');
   if (tb) { tb.classList.toggle("is-off", !S.fxOn); tb.addEventListener("click", () => { const on = !tb.classList.contains("is-off"); S.setBus("fx", on); S.setBus("music", on); }); }
   function gameSound(k, v) {

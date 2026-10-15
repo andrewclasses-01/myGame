@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3n (mục 26): INTRO xưởng ANDREW STUDIO + bộ máy âm thanh (chờ thầy chọn tiếng thật). Trước đó 3m đổi tên RACING WORDS (25), 3l lửa pô (24)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3n (mục 26): INTRO xưởng ANDREW STUDIO + ÂM THANH THẬT cho intro, mọi hiệu ứng và nhạc nền (29 file sfx/). Trước đó 3m đổi tên RACING WORDS (25), 3l lửa pô (24)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -653,4 +653,10 @@ Viền đen điện ảnh khi chiếu. Đội 1 đỗ ở +x (máy quay màn ch�
 Game ngừng vẽ khi intro hiện (2 khung WebGL không chạy cùng lúc); MENU ▸ CHANGE CARS / START AGAIN ⇒ xưởng hiện lại. Bàn thử: "▶ START (intro)" / "Bỏ intro, đua ngay".
 **Âm thanh (sr3d-sound-3n.js):** Web Audio, 2 kênh Effect / Music (nút loa tắt cả 2, nhớ theo máy), tiếng lặp nối không khựng + trượt âm lượng, máy xe đổi cao độ theo tốc độ, lệch trái/phải theo nửa màn;
 gắn sẵn mốc intro (đèn, nổ máy, pô, cửa, lăn bánh, chữ, vút qua) + trận (máy, gió, nhạc, 5 đèn, GO, boost, lốp rít, tên lửa, nổ, cháy, đúng/sai, tiếp đất, va chạm, thắng + khán giả, nhạc kết quả).
-⬜ File tiếng ở `speed-run/sfx/<tên>.mp3` — chưa có (đang tìm âm thanh THẬT, thầy chọn ở trang chọn âm thanh ⇒ tải về).
+**✅ Âm thanh (15/10):** trang `chon-am-thanh.html` (29 loại × 3–5 bản thu thật Pixabay/Mixkit, 117 bản) ⇒ thầy: "Em tự chọn bản hay nhất mỗi loại giúp tôi, rồi tải về và gắn vào game luôn".
+Em tải 117 bản vào thư mục tạm, đo độ to/độ dài/đoạn lặng + dò đường bao độ to theo 0,1 s để cắt đúng đoạn, chọn 29 bản, cắt + ghép lặp chéo + chuẩn độ to ⇒ `speed-run/sfx/*.mp3` (3,9 MB),
+nguồn + tác giả + giấy phép từng file: `speed-run/sfx/NGUON AM THANH.md`; bộ xử lý: `tools/lam-am-thanh-racing-words.py`.
+Nổi bật: nổ máy + máy chờ + máy khi đua = bản thu Lamborghini thật (máy khi đua = đoạn gầm đều, cao độ 0,85 + tốc độ/45 ⇒ chậm ~1,2×, boost ~1,9×) · xe đua thật vút qua ở Nürburgring
+(phát lúc lăn bánh + 1,3 s ⇒ đỉnh tiếng đúng lúc xe lướt máy quay ~11 s) · cửa cuốn thép thật · lốp rít phanh tay thật · nhạc intro "Cinematic Intro" 15,5 s · nhạc đua "Racing Car Automotive Music" (Pixabay).
+⚠️ Pixabay CDN không gửi CORS ⇒ Web Audio không đọc thẳng từ CDN được ⇒ phải tự host. mp3 có đệm câm 2 đầu ⇒ tiếng lặp đặt loopStart/loopEnd bỏ 30 ms mỗi mép.
+⬜ Chưa có bản thu thật: máy siêu xe vòng tua đều (dùng đoạn máy chờ Lamborghini nâng cao độ), đèn sân vận động bật (dùng cầu dao), xe tiếp đất (trộn va nặng + nắp capô).
