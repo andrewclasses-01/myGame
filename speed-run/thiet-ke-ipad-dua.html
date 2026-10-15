@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>SPEED RUN — thiết kế màn iPad "Đua trên iPad" (4 mẫu)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Bản phác 15/10/2026 — thầy: "trên iPad 2 bàn đạp hơi to và sát vô lăng quá. Thiết kế cho tôi chọn mẫu trên iPad đã. Size 3–4 nhưng trừ phần thanh trạng thái phía trên của iPad".
+   Mỗi mẫu là 1 khung ĐÚNG CỠ màn iPad nằm ngang (px CSS) TRỪ thanh trạng thái, thu nhỏ để xem 4 mẫu cạnh nhau; nội dung tính bằng cqw/cqh của khung ⇒
+   mở ?v=A&full=1 trên iPad thật là ra đúng bố cục toàn màn. Hình vô lăng / bàn đạp / tên lửa lấy NGUYÊN từ core/sr3d-dash-3e.js (y như game). Bấm thử được. */
+:root { --bg: #05070d; }
+html, body { margin: 0; background: var(--bg); color: #e2e8f0; font-family: "Exo 2", system-ui, sans-serif; }
+body:not(.full) { padding: 14px 18px 30px; }
+h1 { margin: 0 0 4px; font: italic 900 26px "Exo 2", sans-serif; letter-spacing: .04em; }
+.sub { margin: 0 0 12px; color: #94a3b8; font-size: 15px; line-height: 1.45; }
+.bar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-bottom: 14px; font-size: 14px; color: #cbd5e1; }
+.bar select, .bar input { font: 700 14px "Exo 2", sans-serif; background: #111827; color: #e2e8f0; border: 1px solid #334155; border-radius: 8px; padding: 5px 8px; }
+.bar input { width: 64px; }
+.bar b { color: #ffcf4a; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.card { min-width: 0; }
+.card h2 { margin: 0 0 4px; font: italic 900 20px "Exo 2", sans-serif; color: #fff; }
+.card h2 span { color: #ffcf4a; margin-right: 6px; }
+.card p { margin: 0 0 6px; color: #94a3b8; font-size: 13.5px; line-height: 1.4; min-height: 38px; }
+.card .meas { font: 600 12px ui-monospace, Consolas, monospace; color: #7dd3fc; margin: 4px 0 0; }
+.card a { color: #93c5fd; font-size: 13px; }
+.holder { position: relative; width: 100%; overflow: hidden; border-radius: 14px; box-shadow: 0 0 0 2px #1f2937; background: #000; }
+.frame { position: absolute; left: 0; top: 0; transform-origin: 0 0; container-type: size; overflow: hidden; }
+body.full .grid, body.full h1, body.full .sub, body.full .bar, body.full .card h2, body.full .card p, body.full .card .meas, body.full .card a { display: none; }
+body.full .holder { position: fixed; inset: 0; border-radius: 0; box-shadow: none; }
+body.full .frame { width: 100vw !important; height: 100vh !important; transform: none !important; }
+body.full .grid.one { display: block; }
+
+/* ---------- màn iPad (dùng chung 4 mẫu) ---------- */
+.ip { position: absolute; inset: 0; --tc: #3b8cff; --team: #3b8cff; user-select: none; -webkit-user-select: none; touch-action: none;
+  background: radial-gradient(120% 90% at 50% 0%, #18233a 0%, #07090f 60%, #030408 100%); }
+.ip.t2 { --tc: #ff7a00; --team: #ff7a00; }
+.dashbg { position: absolute; left: 0; right: 0; bottom: 0; top: 30%; background: linear-gradient(180deg, #15181d, #0c0e11); border-top: 1cqh solid #2f353f; box-shadow: 0 -2cqh 4cqh rgba(0,0,0,.5); }
+.top { position: absolute; left: 3cqw; top: 3cqh; display: flex; align-items: center; gap: 1.4cqw; font-weight: 700; font-size: 2.4cqh; color: #cbd5e1; }
+.top b { font: italic 900 4cqh "Exo 2", sans-serif; letter-spacing: .1em; color: var(--tc); }
+.top i { width: 1.6cqh; height: 1.6cqh; border-radius: 50%; background: #4ade80; box-shadow: 0 0 1.2cqh #4ade80; }
+.top em { font-style: normal; font-size: 1.9cqh; letter-spacing: .14em; color: #94a3b8; border: 1px solid rgba(148,163,184,.35); border-radius: 99px; padding: .5cqh 1.2cqw; text-transform: uppercase; }
+.wheel { position: absolute; transition: transform .05s linear; filter: drop-shadow(0 2cqh 3cqh rgba(0,0,0,.6)); touch-action: none; cursor: pointer; }
+.wheel > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wheel .wg { opacity: 0; transition: opacity .1s; }
+.wheel.l .wg.wl, .wheel.r .wg.wr { opacity: 1; }
+.scrn { position: absolute; left: 25%; right: 25%; top: 26%; height: 31%; border-radius: 4%; background: linear-gradient(180deg, #050a12, #0b1422); border: .5cqh solid #000;
+  box-shadow: 0 0 0 .45cqh color-mix(in srgb, var(--tc) 70%, transparent); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5cqh; container-type: inline-size; }
+.scrn small { font: 900 7cqw "Exo 2", sans-serif; letter-spacing: .2em; color: #4ade80; }
+.scrn strong { font: italic 900 28cqw/1 "Exo 2", sans-serif; color: #fff; }
+.scrn .cells { display: flex; gap: 2cqw; width: 78%; } .scrn .cells i { flex: 1; height: 6cqw; border-radius: 2cqw; background: linear-gradient(90deg, #ffd23f 60%, rgba(255,255,255,.12) 0); }
+.scrn .cells i:nth-child(n+3) { background: rgba(255,255,255,.12); }
+.ped { position: absolute; bottom: 4cqh; padding: 0; border: 0; background: none; cursor: pointer; touch-action: none; }
+.ped svg { display: block; height: 100%; width: auto; filter: drop-shadow(0 1.4cqh 1.8cqh rgba(0,0,0,.6)); }
+.ped .mv { transition: transform .08s, filter .1s; }
+.ped.on .mv { transform: translateY(4px) scale(.96, .9); filter: drop-shadow(0 0 4px var(--tc)) brightness(1.25); }
+.ped .sr-nfill { fill: rgba(70,230,255,.55); transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(.55); }
+.fire { position: absolute; width: 19cqh; height: 19cqh; border-radius: 50%; border: 0; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2.2cqh; overflow: hidden;
+  color: #fff; background: radial-gradient(circle at 40% 35%, #ff7a4a, #c2290e 75%); box-shadow: inset 0 0 0 .6cqh #fed7aa, 0 0 4cqh rgba(255,90,40,.55); touch-action: none; }
+.fire .sr-slot { display: block; width: 3.6cqh; height: 8cqh; }
+.fire .sr-slot svg { display: block; width: 100%; height: 100%; overflow: visible; } .fire .sr-slot .fl { opacity: 0; }
+.fire .sr-slot.fly { animation: fu .52s cubic-bezier(.55,0,.9,.35) forwards; } .fire .sr-slot.fly .fl { opacity: 1; }
+.fire .sr-slot.load { animation: lo .5s cubic-bezier(.2,.9,.3,1) both; }
+@keyframes fu { 0% { transform: none; opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-260%); opacity: 0; } }
+@keyframes lo { from { transform: translateY(170%); opacity: .3; } to { transform: none; opacity: 1; } }
+.res { position: absolute; display: flex; gap: .8cqh; justify-content: center; color: #ff6a3c; }
+.res svg { width: 3.4cqh; height: 4cqh; filter: drop-shadow(0 0 .8cqh rgba(255,90,60,.7)); }
+.guide { position: absolute; inset: -6%; border: 2px dashed rgba(255,207,74,.0); border-radius: 50%; pointer-events: none; }   /* vùng nhận bấm vô lăng (bán kính × 1,12) */
+.show-guides .guide { border-color: rgba(255,207,74,.55); }
+.show-guides .ped { outline: 2px dashed rgba(125,211,252,.55); outline-offset: 2px; }
+.hint { position: absolute; left: 0; right: 0; top: 13cqh; text-align: center; font: italic 900 3.6cqh "Exo 2", sans-serif; color: rgba(255,255,255,.18); letter-spacing: .12em; pointer-events: none; }
+
+/* ---------- 4 bố cục (đơn vị: cqw/cqh của khung = màn iPad trừ thanh trạng thái) ---------- */
+/* A — GỌN GIỮA: vô lăng vừa, 2 bàn đạp nhỏ lại, cách vô lăng một khoảng thở rõ */
+.A .wheel { --d: 60cqh; width: var(--d); height: var(--d); left: calc(50cqw - var(--d) / 2); bottom: -13cqh; }
+.A .gas { height: 46cqh; right: calc(50cqw + 30cqh + 6cqw); }
+.A .brk { height: 40cqh; left: calc(50cqw + 30cqh + 6cqw); }
+.A .fire { right: 4cqw; top: 4cqh; } .A .res { right: 4cqw; top: 25cqh; width: 19cqh; }
+/* B — BÀN ĐẠP 2 MÉP: bàn đạp sát 2 mép màn (đúng chỗ 2 ngón cái khi cầm iPad), vô lăng giữa, khoảng trống lớn */
+.B .wheel { --d: 66cqh; width: var(--d); height: var(--d); left: calc(50cqw - var(--d) / 2); bottom: -15cqh; }
+.B .gas { height: 54cqh; left: 5cqw; }
+.B .brk { height: 46cqh; right: 5cqw; }
+.B .fire { right: 5cqw; top: 6cqh; width: 17cqh; height: 17cqh; } .B .res { right: 5cqw; top: 25cqh; width: 17cqh; }
+/* C — VÔ LĂNG LỚN, BÀN ĐẠP NHỎ Ở 2 GÓC DƯỚI: lái là chính, bàn đạp gọn ở góc */
+.C .wheel { --d: 80cqh; width: var(--d); height: var(--d); left: calc(50cqw - var(--d) / 2); bottom: -24cqh; }
+.C .gas { height: 36cqh; left: 4cqw; bottom: 3cqh; }
+.C .brk { height: 30cqh; right: 4cqw; bottom: 3cqh; }
+.C .fire { right: 4cqw; top: 4cqh; } .C .res { right: 4cqw; top: 25cqh; width: 19cqh; }
+/* D — LÁI BÊN TRÁI, ĐẠP BÊN PHẢI: vô lăng lệch trái, cụm GA + PHANH + tên lửa bên phải (ngón cái phải lo tăng tốc / phanh / bắn) */
+.D .wheel { --d: 70cqh; width: var(--d); height: var(--d); left: calc(34cqw - var(--d) / 2); bottom: -16cqh; }
+.D .gas { height: 50cqh; right: calc(6cqw + 18cqh + 3cqw); }
+.D .brk { height: 44cqh; right: 6cqw; }
+.D .fire { right: 7cqw; top: 6cqh; width: 17cqh; height: 17cqh; } .D .res { right: 7cqw; top: 25cqh; width: 17cqh; }
+</style>
+</head>
+<body>
+<h1>SPEED RUN · màn iPad "Đua trên iPad" — chọn 1 trong 4 mẫu</h1>
+<p class="sub">Mỗi khung = đúng cỡ màn iPad nằm ngang, <b>đã trừ thanh trạng thái</b>. Vô lăng / bàn đạp / tên lửa là hình thật của game (mẫu 3e). Bấm thử được: giữ nửa trái/phải vô lăng (chỉ trong vòng tròn), giữ bàn đạp, chạm nút tên lửa.
+Trên iPad thật: mở link "Toàn màn trên iPad" dưới mỗi mẫu.</p>
+<div class="bar">
+  <label>Máy: <select id="dev">
+    <option value="1180x820">iPad 10 / iPad Air 11" — 1180 × 820</option>
+    <option value="1194x834">iPad Pro 11" — 1194 × 834</option>
+    <option value="1080x810">iPad 9 (10,2") — 1080 × 810</option>
+    <option value="1133x744">iPad mini — 1133 × 744</option>
+    <option value="1366x1024">iPad Pro 12,9" — 1366 × 1024</option>
+  </select></label>
+  <label>Thanh trạng thái: <input id="sb" type="number" value="24" min="0" max="80"> px</label>
+  <span>Khung dùng được: <b id="use"></b></span>
+  <label><input id="gd" type="checkbox" checked> Hiện đường đo (vòng vô lăng + ô bàn đạp)</label>
+  <label>Đội: <select id="tm"><option value="1">TEAM 1 (xanh)</option><option value="2">TEAM 2 (cam)</option></select></label>
+</div>
+<div class="grid" id="grid"></div>
+
+<script type="module">
+import { WHEEL_SVG, GAS_SVG, BRAKE_SVG, FIRE_ICON, MS_ICON } from "./core/sr3d-dash-3e.js";
+const Q = new URLSearchParams(location.search), FULL = Q.get("full") === "1";
+const V = [
+  { k: "A", name: "Gọn giữa", d: "Vô lăng vừa ở giữa, 2 bàn đạp NHỎ lại (ga 46 %, phanh 40 % chiều cao) và cách vành vô lăng một khoảng thở ~6 % bề ngang. Tên lửa góc trên phải." },
+  { k: "B", name: "Bàn đạp sát 2 mép", d: "Ga sát mép TRÁI, phanh sát mép PHẢI — đúng chỗ 2 ngón cái khi cầm iPad bằng 2 tay. Vô lăng giữa, khoảng trống lớn, khó bấm nhầm. Tên lửa trên phanh." },
+  { k: "C", name: "Vô lăng lớn, bàn đạp nhỏ ở góc", d: "Vô lăng to (lái là chính), 2 bàn đạp nhỏ gọn ở 2 góc dưới, xa vô lăng. Tên lửa góc trên phải." },
+  { k: "D", name: "Lái trái — đạp phải", d: "Vô lăng lệch sang TRÁI; cụm GA + PHANH + tên lửa dồn bên PHẢI (ngón cái phải lo tăng tốc / phanh / bắn, ngón trái lo lái)." },
+];
+const grid = document.getElementById("grid"), dev = document.getElementById("dev"), sb = document.getElementById("sb"), gd = document.getElementById("gd"), tm = document.getElementById("tm");
+const only = Q.get("v");
+const list = only ? V.filter(v => v.k === only) : V;
+if (FULL) { document.body.classList.add("full"); grid.classList.add("one"); }
+grid.innerHTML = list.map(v => `<div class="card"><h2><span>${v.k}</span>${v.name}</h2><p>${v.d}</p>
+  <div class="holder"><div class="frame"><div class="ip ${v.k}">
+    <div class="dashbg"></div>
+    <div class="top"><b class="tname">TEAM 1</b><i></i><span>Connected</span><em>Drive on iPad</em></div>
+    <div class="hint">DRIVE</div>
+    <button class="fire" aria-label="Fire">${FIRE_ICON}</button><div class="res">${MS_ICON.repeat(2)}</div>
+    <button class="ped gas" aria-label="Boost">${GAS_SVG}</button>
+    <div class="wheel">${WHEEL_SVG.replace(/srwg/g, "srwg" + v.k)}<div class="scrn"><small>iPAD</small><strong>128</strong><div class="cells"><i></i><i></i><i></i><i></i></div></div><div class="guide"></div></div>
+    <button class="ped brk" aria-label="Brake">${BRAKE_SVG}</button>
+  </div></div></div>
+  <div class="meas"></div><a href="?v=${v.k}&full=1">Toàn màn trên iPad (mẫu ${v.k}) ↗</a></div>`).join("");
+
+const size = () => { const [w, h] = dev.value.split("x").map(Number); return { w, h: h - (+sb.value || 0) }; };
+function layout() {
+  const { w, h } = size();
+  document.getElementById("use").textContent = `${w} × ${h} px`;
+  document.querySelectorAll(".holder").forEach(hd => {
+    const fr = hd.querySelector(".frame");
+    if (FULL) return;
+    const sc = hd.clientWidth / w; fr.style.width = w + "px"; fr.style.height = h + "px"; fr.style.transform = `scale(${sc})`; hd.style.height = h * sc + "px";
+  });
+  document.querySelectorAll(".ip").forEach(ip => ip.classList.toggle("t2", tm.value === "2"));
+  document.querySelectorAll(".tname").forEach(b => b.textContent = "TEAM " + tm.value);
+  document.body.classList.toggle("show-guides", gd.checked && !FULL);
+  requestAnimationFrame(measure);
+}
+function measure() {                                         // đo bằng px THẬT trên iPad (đã bỏ thu nhỏ)
+  document.querySelectorAll(".card").forEach(c => {
+    const fr = c.querySelector(".frame"), sc = FULL ? 1 : fr.getBoundingClientRect().width / fr.offsetWidth;
+    const wl = c.querySelector(".wheel").getBoundingClientRect(), g = c.querySelector(".gas").getBoundingClientRect(), b = c.querySelector(".brk").getBoundingClientRect();
+    const cx = wl.left + wl.width / 2, R = wl.width / 2, gap = r => Math.round(Math.max(r.left - (cx + R), (cx - R) - r.right) / sc), gapG = gap(g), gapB = gap(b);
+    const m = c.querySelector(".meas");
+    if (m) m.textContent = `vô lăng Ø ${Math.round(wl.width / sc)} px · ga ${Math.round(g.width / sc)}×${Math.round(g.height / sc)} · phanh ${Math.round(b.width / sc)}×${Math.round(b.height / sc)} · khoảng trống ga↔vành ${gapG} px, vành↔phanh ${gapB} px`;
+  });
+}
+[dev, sb, gd, tm].forEach(el => el.addEventListener("input", layout));
+window.addEventListener("resize", layout);
+document.fonts?.ready.then(layout); layout();
+
+// ---- bấm thử: vô lăng (chỉ trong vòng tròn +12 %), bàn đạp, tên lửa ----
+document.querySelectorAll(".ip").forEach(ip => {
+  const wh = ip.querySelector(".wheel"), held = new Map();
+  let steer = 0, ang = 0;
+  const paint = () => { const v = [...held.values()]; steer = (v.includes("r") ? 1 : 0) - (v.includes("l") ? 1 : 0);
+    wh.classList.toggle("l", v.includes("l")); wh.classList.toggle("r", v.includes("r"));
+    ip.querySelector(".gas").classList.toggle("on", v.includes("b")); ip.querySelector(".brk").classList.toggle("on", v.includes("k")); };
+  const kindW = e => { const r = wh.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), sc = r.width / Math.max(1, wh.offsetWidth) || 1;
+    const rad = wh.offsetWidth / 2 * 1.12 * (FULL ? 1 : wh.closest(".frame").getBoundingClientRect().width / wh.closest(".frame").offsetWidth);
+    return dx * dx + dy * dy <= rad * rad ? (dx < 0 ? "l" : "r") : null; };
+  const bind = (el, kind) => {
+    el.addEventListener("pointerdown", e => { e.preventDefault(); const k = kind(e); if (!k) return; try { el.setPointerCapture(e.pointerId); } catch (x) { /* */ } held.set(e.pointerId, k); paint(); });
+    el.addEventListener("pointermove", e => { if (!held.has(e.pointerId)) return; const k = kind(e); if (k && k !== held.get(e.pointerId)) { held.set(e.pointerId, k); paint(); } });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(n => el.addEventListener(n, e => { if (held.delete(e.pointerId)) paint(); }));
+  };
+  bind(wh, kindW); bind(ip.querySelector(".gas"), () => "b"); bind(ip.querySelector(".brk"), () => "k");
+  const spin = () => { ang += (steer * 70 - ang) * 0.3; wh.style.transform = `rotate(${ang.toFixed(1)}deg)`; requestAnimationFrame(spin); }; spin();
+  const fire = ip.querySelector(".fire"), slots = [...fire.querySelectorAll(".sr-slot")];
+  slots.forEach(s => s.classList.add("on"));
+  fire.addEventListener("pointerdown", e => { e.preventDefault(); const sl = slots[1]; sl.classList.remove("load"); void sl.offsetWidth; sl.classList.add("fly");
+    setTimeout(() => { sl.classList.remove("fly"); void sl.offsetWidth; sl.classList.add("load"); }, 520); });
+});
+</script>
+</body>
+</html>

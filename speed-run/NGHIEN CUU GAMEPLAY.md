@@ -507,3 +507,17 @@ Trang: `speed-run/mau-3f-khong-xoay-ngang.html` — chỉ `core/sr3d-3f.js` + `c
 ⇒ đừng mở 3e và 3f cùng lúc khi thử iPad.
 Đổi: tự lái không tự xoay · PHANH trên không chỉ có tác dụng khi kèm LÁI ⇒ lộn trục dọc (Barrel Roll, giữ thì lộn tiếp), phanh không thì không xoay · ◀ ▶ trên không chỉ nghiêng thân.
 Đo trên 3f: tự lái 0/19 lần nhảy xoay ngang · phanh không lái: yaw 0, PERFECT LANDING · phanh + lái: yaw 0, lộn dọc · chỉ lái: yaw 0 (nghiêng thân).
+
+---
+
+## 17. ⏳ THIẾT KẾ màn iPad "Đua trên iPad" — 4 mẫu chờ thầy chọn (15/10/2026)
+Thầy: "Trên máy tạm được rồi, nhưng trên iPad chưa ổn vì 2 bàn đạp hơi to và sát vô lăng quá. Thiết kế cho tôi chọn mẫu trên iPad đã. Size 3–4 nhưng trừ phần thanh trạng thái phía trên của iPad."
+Trang phác: `speed-run/thiet-ke-ipad-dua.html` (chưa sửa game). Mỗi khung = đúng cỡ iPad nằm ngang TRỪ thanh trạng thái (chọn máy: iPad 10/Air 11" 1180 × 820 mặc định, Pro 11", iPad 9,
+mini, Pro 12,9"; ô thanh trạng thái mặc định 24 px ⇒ 1180 × 796). Nội dung bằng cqw/cqh của khung; `?v=A&full=1` mở 1 mẫu toàn màn để thử trên iPad thật. Hình vô lăng / bàn đạp /
+tên lửa = `core/sr3d-dash-3e.js`. Bấm thử được (vô lăng chỉ trong vòng tròn +12 %, bàn đạp lún, tên lửa bay + nạp). Đường đo: vòng nhận bấm vô lăng + ô bàn đạp; dòng số đo px thật.
+Số đo ở 1180 × 796:
+- **A Gọn giữa** — vô lăng Ø 478, ga 146 × 366, phanh 127 × 318, cách vành 71 / 71 px.
+- **B Bàn đạp sát 2 mép** (đúng chỗ 2 ngón cái) — vô lăng Ø 525, ga 172 × 430, phanh 146 × 366, cách vành 96 / 122 px.
+- **C Vô lăng lớn, bàn đạp nhỏ ở 2 góc dưới** — vô lăng Ø 637, ga 115 × 287, phanh 96 × 239, cách vành 110 / 129 px.
+- **D Lái trái — đạp phải** — vô lăng lệch trái Ø 557, cụm ga 159 × 398 + phanh 140 × 350 + tên lửa bên phải.
+(3e hiện tại: vô lăng 66vmin, bàn đạp 62vmin cao, margin −2vmin ⇒ bàn đạp chồng lên vành.) ⬜ Thầy chọn ⇒ áp vào sr3d-padui (bản mới).
