@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **11/10/2026 thầy CHỐT cả 8 đề xuất (mục 7) ⇒ MẪU 1a + 1b (mục 9, đã push) ⇒ cùng ngày thầy đổi hướng: chia đôi màn, góc nhìn TRONG XE, lái iPad kiểu Asphalt, tên lửa né được ⇒ MẪU 2 "buồng lái" (mục 10). Đã commit + push; ⏸ thầy tạm dừng, phiên sau tiếp từ mục 10 (⬜ thầy chạy thử mẫu 2).**
+Trạng thái: **15/10/2026 MẪU 3 "ĐUA VÒNG" (mục 11): thầy chạy thử mẫu 2 ⇒ 7 ý (va chạm, cầu nhảy, dải trên thấp + bản đồ giữa, đường vòng, tốc độ tối thiểu + kéo gần, hàng nút gom 1 nút, BOOST/PHANH + vô lăng bấm 2 bên). iPad để sau (thầy: "trong game trước, ipad sau"). Mẫu 1/2 giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -339,3 +339,48 @@ phím A/F ⇒ nguồn lái KEYS · 0 phần tử NaN trong cảnh · 173 lệnh 
 (8) nút TILT đè nút ▶ trên iPad ⇒ dời lên góc trên trái. Bài học bàn thử: sau `composer.render()` OutputPass đã ĐỔI bộ đệm ⇒ đọc điểm ảnh ở `writeBuffer`, không phải `readBuffer`.
 **Chưa có:** tiếng · vật phẩm/chướng ngại trên đường · intro bãi xe ANDREW STUDIO · bản Single · ghép AWord (khuôn B + kênh bắt tay Firestore cho iPad thật).
 ⬜ Thầy chạy thử (bàn phím hoặc 2 tab iPad giả) ⇒ nhận xét: bố cục tap-lô, cỡ chữ đáp án, cảm giác lái, tốc độ, độ khó né tên lửa, luật năng lượng (ga tự động + BOOST không tốn thêm).
+
+---
+
+## 11. ✅ MẪU 3 "ĐUA VÒNG" (15/10/2026) — va chạm · cầu nhảy · đường vòng · tốc độ tối thiểu · nút trên màn
+Thầy chạy thử mẫu 2 (Chrome, 2 tab iPad giả) rồi dặn 7 ý, "trong game trước, iPad sau":
+1. Bỏ vạch cứng giữa 2 đội ⇒ lái sang đường nhau, va chạm, húc, chèn, ép, chắn đầu "như thật".
+2. Cầu nhảy (Jump Ramp): lực đẩy lên + tới giữ xe trên không lâu hơn thật · +20 % tốc độ lúc rời mép · máy quay rộng + thấp + FOV +15–20 % · motion blur + rung lúc cất cánh/đáp ·
+   vệt gió sau đuôi · điều khiển nhẹ trên không · phanh/drift trên không = xoay 360 (Barrel Roll / Flat Spin), mỗi vòng +Nitro · đáp 4 bánh song song < 15° = Landing Boost (vọt + toé lửa/khói),
+   nghiêng/lật = mất đà, nảy nổ, văng đuôi.
+3. Bản đồ ra GIỮA dải trên, 2 khung câu hỏi sang 2 bên; dải trên THẤP hơn; bỏ chữ TEAM trong khung, "TEAM n" hiện giữa khung khi chưa có câu hỏi.
+4. Bản đồ = đường VÒNG, đi trọn vòng và nhiều vòng nếu nhiều câu hỏi.
+5. Xe luôn có tốc độ tối thiểu (trừ khi bị tấn công, dừng tạm) + không để 2 xe quá xa nhau.
+6. Hàng nút chức năng như các game khác (sẽ vào AWord) nhưng DỒN về góc phải vào 1 nút: bấm ⇒ các nút mở ra bên trái; bấm chỗ khác ⇒ thu lại.
+7. Thêm nút PHANH + TĂNG TỐC trên màn chính (không iPad vẫn chơi); vô lăng bấm 2 bên để lái, bấm thì sáng mờ màu đội bên đó.
+
+Trang: `speed-run/mau-3-dua-vong.html` + tay lái iPad `speed-run/pad-3.html?t=0|1` (= pad-2, kênh cục bộ riêng `srpad3` để mở cùng lúc với mẫu 2 không giành nhau; giao thức lái giữ nguyên).
+File mới: `core/sr3d-3.js` (lõi, chép sr3d-2) · `core/sr3d-3.css` (CSS mẫu 2 + khối MẪU 3 cuối file) · `core/sr3d-fx-3.js` (dốc + vệt gió + pass nhoè) ·
+`core/sr3d-world-3.js` (chép world-1: vạch giữa trắng đứt, cổng LAP n / FINAL LAP / FINISH) · `core/page-3.js` + `core/page-3.css` (vỏ thử + hàng nút 80 px). Mẫu 1, 2 không đổi.
+
+**Va chạm:** 2 thân xe = 2 hình chữ nhật xoay trên mặt đường (x, s), dò bằng SAT; tách nửa độ chồng mỗi xe; xung lực e 0,28 (dọc ⇒ đổi thẳng tốc độ chạy, ngang ⇒ lực đẩy `px` tắt dần
+2,2/s ⇒ ÉP được nhau sang ngang tới rào); mô-men r × J ⇒ văng đuôi (`yk`, lò xo tắt dần); tia lửa + rung theo độ mạnh; "BUMP!" / "SLAM!" (≥ 1,1 s một lần). Đo: xe 159 km/h húc đuôi
+xe 43 km/h ⇒ xe trước vọt 134, xe sau còn 89; xe lái sang ngang ép xe kia trôi từ x 0,8 → 4,9 m.
+**Đường vòng:** bản đồ = Catmull-Rom khép kín (14 điểm, chiều kim đồng hồ) trong SVG 1000 × 200; LAPS = `?laps` hoặc tự động round(số đoạn / 4) (mặc định 12 đoạn = 960 m = 3 vòng × 320 m);
+thế giới 3D vẫn là đường thẳng + "cong thế giới" nhưng độ cong `uBend.x` nay LẤY TỪ ĐỘ CONG BẢN ĐỒ 30–150 m phía trước (khớp khúc cua trên bản đồ), làm mượt 0,08/khung.
+Cổng "LAP 1 / 3" ở xuất phát, "LAP 2 / 3", "FINAL LAP", "FINISH"; toast "LAP n" / "FINAL LAP!" khi qua mốc.
+**Tốc độ tối thiểu + kéo gần:** VMIN 12 m/s (43 km/h) luôn có khi đang đua (trừ trúng tên lửa: a −26 ⇒ gần dừng trong 1,4 s xoay; phanh vẫn dưới VMIN được để né). Năng lượng E (m) nay
+chỉ cho chạy NHANH hơn: trần √(VMIN² + 2·DEC·E). Kéo gần: cách > 25 m thì xe sau +14 m/s VMIN (+6 trần), xe trước ×(1 − 0,32), đủ mức ở 115 m; trần cứng 150 m (xe trước không nhanh
+hơn xe sau). Tự chơi 85 % / 40 %: 2 vòng 640 m hết 23 s, cách xa nhất 120 m, về đích cách 46 m ⇒ đổi mặc định 8 → 12 đoạn.
+**Cầu nhảy:** dốc 10 m × cao 1,7 m (9,7°), rộng 7 m, mỗi vòng 2 dốc ở 30 % và 70 % vòng, lệch nửa trái/phải xen kẽ (phải lái sang ⇒ tranh nhau); bỏ dốc trong 90 m đầu và 70 m cuối.
+Rời mép dốc ⇒ v ×1,2 (`AIR.BOOST`), vy = min(8,2; 2,8 + v·sin θ·0,55 + v·0,035); trọng lực 4,5 trong 0,45 s đầu rồi 10,5 ("lơ lửng"). Đo: 52 km/h ⇒ bay 1,5 s / 22 m / cao 3,6 m ·
+131 km/h ⇒ 2,0 s / 74 m · 210 km/h ⇒ ~2,5 s. Trên không: ◀ ▶ = nghiêng 1,5 rad/s + lượn 0,45 rad/s + trôi ngang; nhả tay ⇒ tự cân về vòng trọn gần nhất. PHANH = xoay 7,4 rad/s
+(phanh thẳng = Flat Spin quanh trục đứng, phanh + lái = Barrel Roll); nhả phanh ⇒ tự xoay NỐT tới vòng trọn. Đáp: sai lệch lớn nhất (chúc/nghiêng/hướng) < 15° = PERFECT (+8 m/s ngay +
+`lbT` 1 s trần +12, toé lửa + khói, rung) · < 32° = đáp thường · còn lại = BAD (v × 0,45, nảy lại 3,4 m/s, nổ nhỏ, văng đuôi theo góc đang lệch). Mỗi vòng trọn khi đáp được (không BAD)
+= +0,34 Nitro (+0,1 nếu PERFECT). NITRO: giữ BOOST khi thanh còn ⇒ VNITRO 57 m/s (205 km/h), tốn 0,3/s, lửa pô + FOV +5. Tên lửa nổ khi xe đang bay cao > 1,6 m ⇒ "JUMPED IT!".
+Máy quay nhảy (`jk`): ra ngoài sau–bên xe (±2 m, lùi 8,6 m, cao 0,8 + 0,35·y — THẤP hơn xe), nhìn thẳng xe, FOV ×1,18; đáp đất thì về ghế lái. Nhoè: ShaderPass hướng tâm riêng 2 nửa
+(mẫu không loang qua vạch chia), mạnh khi bay/cất cánh/đáp/Nitro. Vạch tốc độ CSS (repeating-conic-gradient + mask) khi bay/Nitro. Vệt gió: 2 dải ở 2 góc sau, mỗi dải 2 băng chéo, 34 điểm.
+Bóng blob tách khỏi rig (nằm trên đường, nhạt + to theo độ cao).
+**Dải trên:** 10cqh (mẫu 2: 15cqh), cột `1fr 27cqw 1fr`; bản đồ giữa = cột LAP n/N | vòng SVG | khoảng cách; "TEAM n" giữa khung khi chưa đua, câu hỏi ẩn; lúc đua ngược lại.
+**Tap-lô:** màn đáp án | BOOST (xanh, có thanh Nitro dâng trong nút, "N2O" khi có) + BRAKE (đỏ) | vô lăng. Vô lăng: giữ nửa trái/phải ⇒ lái, vầng sáng mờ màu đội bên đó (nhiều ngón
+cùng lúc được — mỗi pointerId 1 việc). Nguồn lái: iPad > TOUCH/KEYS (4 s) > TEST > AUTO. Màn vô lăng thêm thanh Nitro.
+**Hàng nút** (`bar` truyền vào createSpeedRun, ngoài khung game như AWord): 1 nút ô vuông 4 ô ở góc phải; bấm ⇒ Menu · Sound · Switch activity · Options · iPad · Full screen bung sang
+trái; bấm ra ngoài ⇒ thu. Menu = về màn chờ; Folder/Options báo "có khi ghép AWord".
+**Đã kiểm (browser pane, step tay):** nhảy + Flat Spin ⇒ "PERFECT! 360 SPIN ×1 +NITRO" (N 0,44) · Barrel Roll giữ phanh tới lúc chạm đất ⇒ "BAD LANDING!" · ép ngang + húc đuôi (số ở trên) ·
+cả trận tự chơi tới đích, mỗi xe nhảy 3 lần, 0 vị trí NaN · bấm thật nửa vô lăng đội 2 ⇒ nguồn lái TOUCH · nút gom bung/thu đúng · pad-3 nối WebRTC với mẫu 3. Chưa đo fps (khung ẩn).
+⬜ Thầy chạy thử mẫu 3 ⇒ nhận xét: cảm giác va chạm, độ dài bay, độ khó xoay/đáp, tốc độ tối thiểu, kéo gần, bố cục dải trên + tap-lô. ⬜ iPad (thầy dặn làm sau): nút xoay/nitro trên tay lái iPad.
