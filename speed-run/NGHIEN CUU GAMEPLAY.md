@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3i (mục 21): 14 XE 3D THẬT trong game, mỗi đội tự chọn xe ở màn chờ. Trước đó xe 3D (20), 3h (19), 3g (18), 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3j (mục 22): buồng lái thật theo xe, danh sách xe, biển ANDREW TEAM, MENU kiểu Rocket Race, chậm 30 %, đường dài + đa dạng, tiếp đất chông chênh + vết lốp, cháy khi trúng tên lửa. Trước đó 3i (21), xe 3D (20), 3h (19), 3g (18)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -578,3 +578,23 @@ bánh QUAY: nhận mảnh TRÒN ở 4 góc (lốp + mâm + đĩa; kẹp phanh đ
 Centenario (Y3) đổi sang sơn phẳng màu đội (sơn giữ vân carbon ra gần đen, khó nhận đội).
 Đã kiểm (bàn thử, chạy từng khung): màn chờ đổi đủ 14 xe · đua tự lái 1 trận: bay cầu nhảy, bắn trúng (xe thật xoay), về đích TEAM 1 WINS.
 ⬜ iPad chưa chọn xe được (chọn trên màn lớn) · tốc độ khung hình trên máy thật thầy xem ở Chrome.
+
+---
+
+## 22. ✅ MẪU 3j (15/10/2026) — buồng lái thật, biển ANDREW TEAM, MENU, cháy khi trúng tên lửa
+Thầy (sau 3i), 9 việc ⇒ trang `speed-run/mau-3j-buong-lai-that.html` + iPad `pad-3j.html?t=0|1` (kênh `srpad3j`). File mới: `core/sr3d-3j.js` · `core/sr3d-car-3j.js` · `core/page-3j.js` · `core/sr3d-3j.css`.
+1. **Mũi xe buồng lái = xe đang chọn**: `car.hoodView()` = bản sao xe CẮT bằng mặt phẳng ở chân kính chắn gió (clippingPlanes, `renderer.localClippingEnabled`) + tấm táp-lô tối;
+   chân kính = điểm đầu tiên (từ mũi ra sau) tia chiếu xuống trúng vật liệu KÍNH. Mắt tài xế theo từng xe: cao hơn mép capô 0,15 m, sau chân kính 0,32 m.
+   ⚠️ Màn chỉ thấy được ~25° dưới tầm mắt (dưới nữa là bảng điều khiển) ⇒ mắt cao thì capô siêu xe (dốc xuống rất nhanh) lọt hết xuống dưới bảng — đã thử 0,24 / 0,36 m đều chỉ thấy 1 sợi.
+2. **Bấm tên xe ⇒ sổ danh sách** 14 xe (ITALIAN SUPERCARS / HYPERCARS), xe đang chọn có viền màu đội; ◀ ▶ + A/D, ←/→ vẫn dùng được.
+3. **Biển ANDREW TEAM** trước + sau (nền trắng, dải màu đội có chữ AT): xe có biển gốc (Aventador, SF90, Divo, Senna) ⇒ ẩn biển gốc, đặt đúng chỗ; còn lại dò mặt cản phẳng đủ rộng (tia ngang ở 3 điểm ±0,2 m).
+4. **Controls** không tự đóng (chỉ đóng khi bấm lại nút), bỏ nút Full screen.
+5. **MENU** = bảng giữa màn như Rocket Race (AWord engine.js openMenu + rr3dMenuHost): RESUME (vàng) · START AGAIN · CHANGE CARS · CHANGE TEMPLATE; game ĐỨNG HÌNH khi mở; đóng bằng RESUME / bấm ☰ lại / bấm nền mờ / Esc.
+6. **Tốc độ nền −30 %**: VBASE 22 → 15,4 m/s (≈ 55 km/h), VMIN 12 → 8,4.
+7. **Đường dài + đa dạng**: mặc định 1 vòng / 6 đoạn (12 đoạn ⇒ 2 vòng × 480 m, trước 3 × 320 m); bản đồ 34 điểm (chữ S, 2 chỗ lượn, kẹp tóc thụt vào, chicane, cua kép).
+8. **Tiếp đất chông chênh** (lắc nghiêng tắt dần, mạnh hơn sau barrel roll) + **VẾT LỐP** (InstancedMesh vòng đệm 900 đoạn; khi chạm đất, bị bắn xoay, phanh gấp > 58 km/h).
+   ⚠️ đoạn vết lốp phải dài ĐÚNG khoảng cách (chồng mép ⇒ chỗ chồng đậm gấp đôi ⇒ sọc bậc thang).
+9. **Trúng tên lửa ⇒ CHÁY** tại 1 điểm trên thân SƠN (tránh bánh) ~2,6 s (hạt lửa + khói đen bay ngược theo xe) ⇒ vết **CHÁY ĐEN loang lổ** (DecalGeometry dán lên chính mảnh thân) hiện dần, ở lại tới hết trận.
+Sửa thêm: Y3 Centenario có mảnh lạ Object_12 cao 2 m làm xe lơ lửng ⇒ `XE[].hide` (ẩn trước khi đo khung bao).
+⚠️ Bẫy: lõi chuyển xe sang lớp (layers) riêng của đội ⇒ Raycaster mặc định chỉ quét lớp 0 ⇒ phải `ray.layers.enableAll()`. Bẫy 2: chú thích `//` chèn GIỮA dòng nuốt luôn lệnh phía sau (danh sách mảnh rỗng) — node --check vẫn qua.
+Đã kiểm (bàn thử chạy từng khung): mũi xe 6 xe · danh sách chọn Huayra · Controls mở nguyên khi bấm ra ngoài · MENU dừng game · bắn trúng ⇒ cháy + vết đen trên Jesko · tiếp đất lắc tắt dần · vết lốp.
