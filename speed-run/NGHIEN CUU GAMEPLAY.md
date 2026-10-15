@@ -736,3 +736,42 @@ min(L, 0,6 + 0,4·L) s + đứng yên phần còn lại tới ≈ L s (`stallT`,
 HUD tự theo), Missiles max `msMax` 0–10 (0 = không tên lửa). `setOptions`: đổi số mạng / đổi Same↔Different giữa trận ⇒ dựng lại; các mục khác áp ngay.
 Kiểm (CDP): cùng câu 2 đội · Time delay 0,1 khoá đội chậm ⇒ câu mới · đội sai ⇒ thanh chờ hiện bên kia · lives 5 ⇒ trả lời sai tới 0 ⇒ phase end, winner đội kia ·
 ván tự động 112–146 khung/giây, 0 lỗi.
+
+---
+
+## 30. ✅ MẪU 3r (16/10/2026) — MƯỢT TUYỆT ĐỐI TRÊN TOMKO (thầy: "đo từng khung hình với bộ từ thật … tối ưu độ mượt là nhiệm vụ tối thượng; chấp nhận bỏ khử răng cưa, nén xe, giảm đồ hoạ")
+Trang thử: `speed-run/mau-3r-muot.html`. File mới: `rw-3r.js` · `sr3d-3r.js` · `sr3d-intro-3r.js` · `sr3d-car-3r.js` · `sr3d-world-3r.js` · `sr3d-missile-3r.js` ·
+`sr3d-autores-3r.js` · `rw-3r.css` (xe3d / âm thanh / số đo xe / iPad / fx giữ bản cũ).
+
+**Cách đo (TOMKO = HP Z2 Mini G5, Quadro T2000 4 GB, Xeon W-1250, 32 GB, màn 3840×2160 DPR 1,25; card 84 °C, bị SW thermal slowdown):** myActivity mở lại với
+`--remote-debugging-port`; act thật **572 "1. CAU BI DONG 1 WORDS"** (50 câu, Fight · Same · Track 20 · Laps 6 · Missiles max 10 · Streak 1) chép từ trang live (bọc
+`racingWordsTemplate.mount` lấy act đã chuyển WORDS ⇒ câu hỏi) ⇒ bàn thử chạy ĐÚNG template AWord + engine trong bảng 1 của myActivity (server cục bộ, thư mục
+racing-words thay được bằng bản nháp). Đầu đo: nhịp rAF từng khung, long-animation-frame (kèm hàm gây), program mới (`renderer.info.programs`), mức độ nét, timer query
+GPU từng pass (EXT_disjoint_timer_query_webgl2), CPU profiler CDP, nvidia-smi 0,5 s. Kịch bản: xưởng 12 s → START → phim → 5 đèn → đua tự động cả ván (trả lời, tên lửa,
+nổ, cầu nhảy, boost) → kết quả; tình huống nặng: đổi xe Y4 + H7 ở xưởng → đua → PLAY AGAIN.
+⚠️ CDP `Fetch.fulfillRequest` trong myActivity làm TREO trang (xung đột `webRequest` của app) — đừng dùng; dùng server cục bộ + act chép ra file.
+
+**Đo 3q (trước):** xưởng 37,5 fps · PHIM 17,9 fps (khung 67–150 ms, cú đầu 317 ms) · 5 đèn 48 · đua 58,6 (17 lần dịch shader giữa trận, độ nét nhấp nhả 9 lần,
+MSAA bật lại giữa trận ~200 ms) · đổi xe Y4 / H7 đứng hình 4,9 s + 4,1 s.
+
+**Nguyên nhân + sửa:**
+1. **Intro xưởng** (GPU RenderPass 32 ms ở độ nét 1,0): 5 RectAreaLight 22 ms (tính cả lúc tắt!) ⇒ 1 tấm gộp 18 × 3 m sáng dần theo số dãy LED · 2 đèn pha SpotLight
+   8,6 ms ⇒ bỏ · sàn clearcoat 2,5 ms ⇒ MeshStandard · canvas MSAA vô ích ⇒ bỏ · độ nét bỏ qua `__awMaxPR` (vẽ 3858×1823) ⇒ trần chung + tự chỉnh (khoá `rw-3r-intro`,
+   chỉ học ở màn chờ, chỉ chạy sau khi trận dịch sẵn shader xong — `intro.arGo/arWait`) · bóng đổ `autoUpdate = false`, vẽ lại khi vật di chuyển (dựng xe, cửa cuốn,
+   xe lao ra) · chụp môi trường tối đa 4 lần/giây và chỉ ẩn MẢNH xe (giữ đèn ⇒ cùng khoá shader) · `warmIntro()` làm nóng phim lúc nạp / đổi xe · PHIM có ngân sách
+   điểm ảnh ~2,3 triệu (TOMKO ⇒ 0,7; 1080p không chạm) · chữ lớn RACING WORDS: keyframes bỏ `filter: blur` + bóng chữ nhẹ (cũ tụt 30 fps suốt 1,5 s).
+2. **Dịch shader giữa trận**: (a) tên lửa tạo/huỷ ShaderMaterial cột sáng mỗi phát ⇒ three xoá shader stage ⇒ mã stage mới ⇒ dịch lại MỖI phát ⇒ `beamPool` dùng lại;
+   (b) prewarm dispose vật liệu mẫu (vết cháy, tên lửa) TRƯỚC khi `pinPrograms()` ⇒ ghim trước khi dọn; (c) đèn trong xe ở lớp đội ⇒ mỗi máy quay thấy số đèn khác
+   ⇒ 2–3 bản shader / vật liệu ⇒ đèn trong xe `layers.enableAll()` (program trận 115 ⇒ 65).
+3. **Trận**: MSAA tắt hẳn (không nấc MSAA) · tự chỉnh độ nét thử nâng sau ~20 s êm (cũ ~7 s) · thứ tự vẽ: đường/xe/cây trước, đất – biển – trời sau (early-z bỏ
+   shader nhiễu bị che) · pass nhoè hướng tâm tắt khi không nhoè.
+4. **HUD (CSS, A/B cùng độ nét 1,0: 51,7–58,7 ⇒ 59,9 fps)**: vô lăng xoay mỗi khung kèm drop-shadow + filter SVG ⇒ bỏ filter, `will-change: transform`, không
+   transition · bàn đạp / nút FIRE / bản đồ bỏ filter, FIRE hết nhấp nháy box-shadow · xưởng: ô chọn xe bỏ backdrop-filter, START hết nhấp nháy · ô câu hỏi đúng/sai:
+   quầng là lớp `::after` chỉ đổi opacity (cũ animate box-shadow).
+5. **Nén xe** (`slimMat`): bỏ normal / bump / AO / light map, roughness-metalness map ⇒ trung bình kênh G/B của chính ảnh, bỏ clearcoat/sheen ⇒ ít biến thể shader
+   (Y4 + H7: +33 ⇒ +15 program), đổi xe đứng 4,9 s ⇒ 0,7 s. Vết cháy: chỗ đã dùng giữ lại, hết kho thì dùng lại ⇒ không dò tia giữa trận.
+6. Gói nhúng: vào trận chờ lần dịch sẵn HIỆN HÀNH (`game.prewarm()`) — cũ chờ lần đầu, đổi xe rồi bấm START có thể khựng ở 5 đèn.
+
+**Đo 3r (cùng máy, cùng act, cùng kịch bản):** xưởng **59,5–60** · phim **60,0 (0 khung trễ)** · 5 đèn **60,0** · đua **59,6** ở độ nét 1,0 (0 lần dịch shader, không
+khung nào > 50 ms cả ván) · kết quả 59,9. Xe nặng Y4 + H7: đổi xe 0,7 s, phim 60,0, đua 59,9 (không khung > 33 ms), chơi lại 59,3.
+⚠️ Cửa sổ myActivity bị thu nhỏ ⇒ trình duyệt ngừng rAF (trang hidden) — đo lại khi cửa sổ hiện.
