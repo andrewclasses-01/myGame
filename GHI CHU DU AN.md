@@ -624,7 +624,16 @@ Số đo trước/sau + chi tiết: `speed-run/NGHIEN CUU GAMEPLAY.md` mục 28.
 **Lỗi/bẫy gặp:** (1) `renderer.compile()` không có đích vẽ ⇒ khoá shader khác lúc vẽ vào render target ⇒ dịch phí; (2) khoá shader gồm SỐ ĐÈN camera thấy (đèn theo lớp);
 (3) `compile()` bỏ qua `material.clippingPlanes`; (4) heredoc bash nuốt dấu gạch chéo ngược trong chuỗi JS ⇒ trang đen "Invalid or unexpected token"; (5) bộ tự chỉnh nhớ độ nét thấp từ lúc còn khựng ⇒ đổi khoá.
 
+## Racing Words 3q — 15/10/2026 · FIGHT (Lives · Missile damages · Time delay · Miss wait) · CẢNH XA ĐÚNG VẬT LÝ · 35 km/h · phiên máy CLASSES
+**Bối cảnh (thầy):** cảnh xa đổi bất hợp lý gây chóng mặt · tốc độ thường 35 km/h, dưới 40 km/h lên cầu nhảy chỉ chạy qua + rung khi chạm đất · Options như Fight Rocket Race · mặc định Fight.
+**Đã làm:** mẫu 3q (`speed-run/mau-3q-fight.html`) — đường cong theo tiếp tuyến ngoài 150 m ở mọi shader + trời xoay cùng; VBASE 35 km/h, `lowDrop`; Same = theo lượt với
+Time delay / Miss wait; Lives (vạch cột kính, hết ⇒ nổ, đội kia thắng); Missile damages 1–5; streak / Missiles max 0–10. Chi tiết + số đo: `speed-run/NGHIEN CUU GAMEPLAY.md` mục 29.
+Lên AWord Đợt 531 (GOC rw-3q.js, CSS rw-3q.css; AWord thêm cờ `fightOnly` để màn chọn sáng FIGHT, mờ SINGLE).
+**Quyết định (thầy chốt qua câu hỏi):** Same = theo lượt (Different giữ nhịp riêng) · hết mạng = xe nổ, đội kia thắng · Missile damages = mức 1–5 (thời gian xoay / đứng / khói).
+**Lỗi/bẫy:** đo trong khung trình duyệt của app vẫn sai (ẩn) ⇒ dùng Chrome CDP; heredoc bash lại nuốt `\n` ⇒ viết script bằng file.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 3q (= AWord Đợt 531)**: thầy chơi trên TOMKO — cảnh xa còn chóng mặt không (nếu còn: giảm `bend` 0,75 hoặc tầm cong 150 m), 35 km/h có quá chậm không, cầu nhảy chậm + rung, Lives / Time delay / Miss wait đúng ý chưa.
 - ⬜ **RACING WORDS 3p (= AWord Đợt 529)**: thầy chơi trên TOMKO trong myActivity — còn lag không (đo fps nếu còn), chạm đúp bỏ intro có tiện không; kính xe (bỏ transmission) trông ổn không.
 - ⬜ **iPad bớt nóng (AWord Đợt 523)**: thầy chơi Rocket Race + Train Rush với iPad thật vài trận ⇒ còn nóng không, 25 khung/giây có bị khó chịu không. Còn nóng ⇒ 20 khung/giây + độ nét 1,25 (hằng PAD_FPS / PR_MAX đầu file).
 - ⬜ **TRAIN RUSH 1au (= AWord Đợt 522, thầy duyệt 14/10)**: thầy chơi Fight trên TOMKO + 2 iPad thật — chữ trên toa iPad đủ to chưa, có cần thấy trọn toa đáp án

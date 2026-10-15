@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3p (mục 28): MƯỢT (gộp lưới xe, số đo xe sẵn, dịch sẵn shader) + CHẠM ĐÚP bỏ intro — đã lên AWord Đợt 529. Trước đó MẪU 3o (mục 27): GÓI NHÚNG rw-3o.js để đưa RACING WORDS lên AWord (Options AWord, 13 xe, iPad Firestore). Trước đó 3n intro + âm thanh thật (26)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3q (mục 29): FIGHT (theo lượt, Lives, Missile damages, Time delay, Miss wait, streak) + cảnh xa đúng vật lý + 35 km/h — lên AWord Đợt 531. Trước đó MẪU 3p (mục 28): MƯỢT (gộp lưới xe, số đo xe sẵn, dịch sẵn shader) + CHẠM ĐÚP bỏ intro — đã lên AWord Đợt 529. Trước đó MẪU 3o (mục 27): GÓI NHÚNG rw-3o.js để đưa RACING WORDS lên AWord (Options AWord, 13 xe, iPad Firestore). Trước đó 3n intro + âm thanh thật (26)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -706,3 +706,33 @@ CPU 4,9–5,3 ms/khung · cả ván 0 khung > 70 ms trừ 1 lần làm sẵn v�
 các lần sau Chrome lấy shader đã lưu) · dựng xe 6–211 ms. Trong AWord (`scratch/dot529-rw.html`, engine thật): chạm đúp vào trận, 99–130 khung/giây, 0 khung > 70 ms.
 ⚠️ Cú khựng ~200 ms còn lại chỉ khi bộ tự chỉnh NÂNG độ nét (cấp lại khung đệm MSAA + 5 tầng bloom) — sau khi đã nhớ mức êm thì hết.
 ⬜ Chưa đo trên TOMKO (Quadro T2000, 4K, myActivity `__awMaxPR = 1`).
+
+---
+
+## 29. ✅ MẪU 3q (15/10/2026) — FIGHT KIỂU ROCKET RACE · CẢNH XA ĐÚNG VẬT LÝ · 35 km/h · CẦU NHẢY CHẬM
+Trang thử: `speed-run/mau-3q-fight.html` (bảng Options giả có đủ mục mới). File mới: `rw-3q.js` · `sr3d-3q.js` · `sr3d-car-3q.js` · `sr3d-intro-3q.js` · `sr3d-world-3q.js` ·
+`sr3d-missile-3q.js` · `rw-3q.css` (xe3d / âm thanh / số đo xe / iPad giữ bản cũ).
+
+**Thầy (sau khi chơi 3p):** (1) "núi và cảnh phía xa thay đổi rất bất hợp lý … chóng mặt, cần đúng quy tắc vật lý" · (2) "tốc độ mặc định khi không boost ~35 km/h;
+dưới 40 km/h phóng lên ramp thì không đổi góc quay, xe cứ lao qua như đường thường, tiếp đất rung lắc nhiều một chút" · (3) Options gần như Fight Rocket Race:
+Lives (vạch năng lượng mảnh ở góc lái, cạnh mép màn mỗi bên; sai −1, trúng tên lửa −1) · Missile damages · Time delay · Miss wait · Missile streak · Missiles ⇒ Missiles max ·
+(4) game là FIGHT ⇒ mặc định Fight ở màn chọn, tạm tắt Single. Chốt qua câu hỏi: Same = THEO LƯỢT · hết mạng = xe nổ, đội kia thắng · Missile damages = mức 1–5.
+
+**1. Cảnh xa:** công thức cong cũ `x += b·d²` ở MỌI khoảng cách ⇒ núi 1.000 m lệch ~1.800 m mỗi lần độ cong đổi (góc nhìn tới núi đổi tới ~60°). Nay `bendQ`:
+cong thật trong 150 m (đúng tầm đọc khúc cua 30–150 m của `bendFor`), xa hơn theo TIẾP TUYẾN (lệch tuyến tính) ⇒ cảnh xa chỉ XOAY một góc atan(2·b·150) — đúng như xe quay
+đầu thật. Áp đồng bộ 5 chỗ: shader `world` (đất, biển, mọi vật liệu `bend`), `missile` (hạt, lửa, cột sáng), lửa pô `car`, nhãn HUD (JS `bendQ`), và BẦU TRỜI (vốn bám camera,
+không cong ⇒ nay xoay hướng nhìn bằng `uRot` = nghịch đảo góc lệch của cảnh xa ⇒ mặt trời, mây, chân trời đi cùng núi). Độ cong vào dần theo GIÂY THẬT
+(cũ lerp 0,08 MỖI KHUNG ⇒ màn 165 Hz xoay nhanh gấp 2,7 lần màn 60 Hz). Ảnh cùng chỗ cong gắt nhất (m 210): 3p đồi trái quét chiếm nửa màn, 3q cảnh xa đứng đúng chỗ.
+
+**2. Tốc độ + cầu nhảy:** `VBASE` 15,4 ⇒ 9,72 m/s (55 ⇒ 35 km/h), `VMIN` 6,5, bù xe sau +12 ⇒ +5 m/s. Dưới 40 km/h (`LOW_V`) tới mép dốc ⇒ `lowDrop`: không lực
+phóng, không +20 % tốc độ, không camera bay (`jk` giữ 0), không lộn vòng; chạm đất `shake` 0,95 (đáp thường 0,45). Đo: 35 km/h ⇒ leo dốc, rơi từ 1,7 m, jk 0,
+rung 0,86 lúc chạm · 124 km/h (boost) ⇒ bay như cũ (jk 1).
+
+**3. Fight:** Same = THEO LƯỢT (`startRound` / `roundAnswered` / `roundTick`): 2 đội cùng câu cùng lúc; đội ĐÚNG trước ⇒ đội kia còn `tieWait` (Time delay, mặc định 0,1 =
+khoá ngay như Fight AWord; ∞ = chờ); đội SAI trước ⇒ đội kia còn `missWait` (Miss wait, mặc định 20 s); thanh đếm ngược `.rw-wait` dưới ô câu hỏi đội đang được chờ; xong cả
+hai / hết giờ ⇒ cả 2 sang câu mới. Different giữ nhịp riêng. LIVES (`lives`, 0 = tắt): vạch `.rw-lives` dọc cột kính mép ngoài (đội 1 trái, đội 2 phải), mỗi bậc 1 mạng, còn 1
+⇒ đỏ nhấp nháy; sai −1, trúng tên lửa −1 (sượt qua không trừ); hết ⇒ `knockOut`: nổ + cháy + khói, đội kia thắng (`finish`). MISSILE DAMAGES `msDmg` 1–5: xoay
+min(L, 0,6 + 0,4·L) s + đứng yên phần còn lại tới ≈ L s (`stallT`, không nhận lái), khói đen che kính 0,8 + 0,75·L s (mức 2 ≈ bản cũ). Missile streak `streak` 1–10 (số chấm
+HUD tự theo), Missiles max `msMax` 0–10 (0 = không tên lửa). `setOptions`: đổi số mạng / đổi Same↔Different giữa trận ⇒ dựng lại; các mục khác áp ngay.
+Kiểm (CDP): cùng câu 2 đội · Time delay 0,1 khoá đội chậm ⇒ câu mới · đội sai ⇒ thanh chờ hiện bên kia · lives 5 ⇒ trả lời sai tới 0 ⇒ phase end, winner đội kia ·
+ván tự động 112–146 khung/giây, 0 lỗi.
