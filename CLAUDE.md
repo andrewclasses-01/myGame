@@ -78,7 +78,8 @@ tools/chep-aword-sang-game.py — gốc để cải tiến tiếp
   aword/                      BẢN CHÉP game mới nhất từ AWord (tools/chep-game-aword.py) — đừng sửa tay
   assets/                     ảnh địa hình mới nhất (tools/tao-dia-hinh.py sinh ra); assets/4b/ = bộ cũ của mẫu 4b
 speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ sơ + quyết định đã chốt + mẫu 1: NGHIEN CUU GAMEPLAY.md (mục 7, 9)
-  mau-3-dua-vong.html + pad-3.html + core/sr3d-3.js/.css + sr3d-fx-3.js + sr3d-world-3.js + page-3.js/.css   (15/10) MẪU 3 MỚI NHẤT: đường vòng, va chạm 2 xe, cầu nhảy, VMIN + kéo gần, hàng nút gom 1 nút (mục 11)
+  mau-3-dua-vong.html + pad-3.html + core/sr3d-3.js/.css + sr3d-fx-3.js + sr3d-world-3.js + page-3.js/.css   (15/10) MẪU 3: đường vòng, va chạm 2 xe, cầu nhảy, VMIN + kéo gần, hàng nút gom 1 nút (mục 11)
+  mau-3b-ban-dap.html + pad-3b.html + core/sr3d-3b.js/.css + sr3d-dash-3b.js + sr3d-padlink-3b.js + sr3d-padui-3b.js + page-3b.js/.css   (15/10) MẪU 3b MỚI NHẤT: bàn đạp thật, ANDREW STUDIO, iPad 3 chế độ (mục 12)
   mau-1a-cao-vua.html · mau-1b-truc-thang.html   MẪU 1: đường + 2 xe + camera theo khoảng cách (A cao vừa / B + trực thăng); vỏ thử core/page-1.js
   core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr
   core/sr3d-world-1.js         trời/đất/biển/đường 4 làn (mỗi đội 2)/cột đèn/cây/vạch đoạn/cổng đích + CONG THẾ GIỚI (makeBend) + groundH JS khớp GPU (Math.fround)

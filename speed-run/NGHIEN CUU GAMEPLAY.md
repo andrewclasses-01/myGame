@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3 "ĐUA VÒNG" (mục 11): thầy chạy thử mẫu 2 ⇒ 7 ý (va chạm, cầu nhảy, dải trên thấp + bản đồ giữa, đường vòng, tốc độ tối thiểu + kéo gần, hàng nút gom 1 nút, BOOST/PHANH + vô lăng bấm 2 bên). iPad để sau (thầy: "trong game trước, ipad sau"). Mẫu 1/2 giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3b (mục 12): bàn đạp ga/phanh thật 2 bên vô lăng, dải nút 60 px, màn khởi động chỉ ANDREW STUDIO + SPEED RUN + START, nút iPad 3 chế độ (tắt · trả lời trên iPad · đua trên iPad). Trước đó mẫu 3 "đua vòng" (mục 11). Mẫu 1/2/3 giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -384,3 +384,36 @@ trái; bấm ra ngoài ⇒ thu. Menu = về màn chờ; Folder/Options báo "có
 **Đã kiểm (browser pane, step tay):** nhảy + Flat Spin ⇒ "PERFECT! 360 SPIN ×1 +NITRO" (N 0,44) · Barrel Roll giữ phanh tới lúc chạm đất ⇒ "BAD LANDING!" · ép ngang + húc đuôi (số ở trên) ·
 cả trận tự chơi tới đích, mỗi xe nhảy 3 lần, 0 vị trí NaN · bấm thật nửa vô lăng đội 2 ⇒ nguồn lái TOUCH · nút gom bung/thu đúng · pad-3 nối WebRTC với mẫu 3. Chưa đo fps (khung ẩn).
 ⬜ Thầy chạy thử mẫu 3 ⇒ nhận xét: cảm giác va chạm, độ dài bay, độ khó xoay/đáp, tốc độ tối thiểu, kéo gần, bố cục dải trên + tap-lô. ⬜ iPad (thầy dặn làm sau): nút xoay/nitro trên tay lái iPad.
+
+---
+
+## 12. ✅ MẪU 3b (15/10/2026) — bàn đạp thật 2 bên vô lăng · dải nút gọn · ANDREW STUDIO · 3 chế độ iPad
+Thầy thử mẫu 3 rồi dặn tiếp:
+- BOOST và BRAKE ở 2 bên vô lăng (BOOST trái, BRAKE phải), vẽ đúng hình bàn đạp ga và phanh thật.
+- Nút control bằng cỡ các nút khác; dải chứa nút bé lại.
+- Màn khởi động: bỏ dòng hướng dẫn (Answer right = …), bỏ chữ "Space Explorers" (tên bộ câu hỏi), bỏ nút iPad steering (đã có nút control); thêm ANDREW STUDIO thật ngầu trên chữ SPEED RUN.
+- Nút iPad có 3 tùy chọn: (1) tắt iPad — đua + câu hỏi + trả lời trong game; (2) đua trong game, trả lời trên iPad — câu hỏi CHỈ trên iPad, game chỉ hiện đáp án;
+  (3) đua trên iPad, game hiện mọi thứ (cả vô lăng, boost, brake nhưng không điều khiển được); iPad hiện đúng vô lăng + bàn đạp y hệt game, thêm 1 nút tên lửa ở chỗ phù hợp.
+
+Trang: `speed-run/mau-3b-ban-dap.html` + iPad `speed-run/pad-3b.html?t=0|1` (kênh cục bộ `srpad3b`). Mẫu 3 giữ nguyên.
+File mới: `core/sr3d-3b.js` (lõi, chép sr3d-3) · `core/sr3d-3b.css` (CSS mẫu 3 + khối MẪU 3b cuối file) · `core/sr3d-dash-3b.js` (SVG vô lăng + bàn đạp GA + PHANH + tên lửa
+DÙNG CHUNG game/iPad) · `core/sr3d-padlink-3b.js` (chép padlink-2 + giao thức chế độ/câu hỏi/trả lời) · `core/sr3d-padui-3b.js` (màn iPad 3 chế độ) · `core/page-3b.js/.css`.
+
+**Bàn đạp:** GA = tấm cao kiểu "organ pedal" (bản lề ở chân, cao su gân ngang, khung kim loại) — thanh NITRO dâng màu xanh ngọc TRONG mặt đạp (`.sr-nfill`, scaleY);
+PHANH = tay đòn kim loại thả từ trên + mặt đạp rộng thấp viền đỏ. Cụm `.sr-drive` = GA | vô lăng | PHANH, KHÔNG đảo chiều ở đội 2 (GA luôn trái). Nhấn ⇒ bàn đạp lún (rotateX)
++ sáng màu đội. Vô lăng 34cqh (mẫu 3: 37). Bàn đạp/vô lăng sáng theo MỌI nguồn lái tay (chạm màn, phím, iPad) — tự lái thì không.
+**Hàng nút:** 60 px (mẫu 3: 80), mọi nút 42 px kể cả nút Control.
+**Màn khởi động:** chỉ còn ANDREW STUDIO (dải nền tối nghiêng −12°, viền vàng trên/dưới, chữ kim loại vàng chạy ánh sáng `sr-shine`, 2 vạch sáng 2 bên) · SPEED RUN · START.
+**3 chế độ iPad** (`padMode`, nhớ localStorage `speedrun.padMode`, mặc định 0; chọn trong bảng iPad của hàng nút — 3 thẻ, thẻ đang chọn viền vàng; chế độ 2/3 hiện QR/link nối iPad):
+- 0 TẮT: game bỏ qua iPad; iPad hiện "iPad is OFF".
+- 1 TRẢ LỜI TRÊN iPAD: khung câu hỏi trong game hiện "QUESTION ON THE iPAD" (nhấp nháy), đáp án vẫn hiện trên tap-lô nhưng KHÔNG bấm được; iPad hiện câu hỏi + nút đáp án,
+  bấm ⇒ `a:<k>:<số câu>` (game bỏ nếu số câu đã cũ), tô đúng/sai/đáp án đúng theo game gửi lại; chưa đua ⇒ GET READY / 3·2·1 / RACE OVER. Xe trong game lái bằng chạm/phím/tự lái.
+- 2 ĐUA TRÊN iPAD: iPad = tap-lô y hệt (GA | vô lăng có màn km/h + năng lượng + Nitro | PHANH), giữ nửa trái/phải vô lăng để lái; NÚT TÊN LỬA tròn đỏ GÓC TRÊN PHẢI (ngay trên
+  bàn đạp phanh — ngón cái phải trượt lên là tới, không lẫn bàn đạp), số quả trên nút; báo động đỏ viền màn + "⚠ MISSILE / DODGE!". Trong game vô lăng + bàn đạp KHÔNG bấm được,
+  chỉ quay/lún/sáng THEO iPad; câu hỏi + đáp án vẫn bấm trên màn lớn.
+**Giao thức thêm** (padlink-3b): game → iPad `m:<0|1|2>` + `Q:<json>` (gửi khi đổi, gửi lại khi iPad vừa nối, đồng thời GHI m0/m1/q0/q1 vào tài liệu "host" ⇒ Wi-Fi chặn nối thẳng
+vẫn nhận); `i:` thêm trường Nitro. iPad → game `a:<k>:<n>` (đi được cả đường dự phòng rs/rq). Số câu `qn` lấy từ bộ đếm toàn cục (không đặt lại khi chơi lại).
+**Đã kiểm (browser pane):** chế độ 2 — iPad hiện đúng câu hỏi + 3 đáp án, bấm THẬT "Rocket" ⇒ game ✔ +1 ô năng lượng, sang câu mới, iPad nhận câu mới; khung câu hỏi game hiện
+"QUESTION ON THE iPAD". Chế độ 3 — giữ GA + nửa trái vô lăng trên iPad ⇒ game nguồn lái iPAD, steer −1, boost 1, bàn đạp GA game lún + vô lăng sáng trái; bấm THẬT nút FIRE iPad ⇒
+tên lửa bay (2 → 1 quả). Bảng iPad 3 thẻ + QR. Không lỗi console.
+⬜ Thầy thử mẫu 3b trên Chrome + nhận xét bàn đạp, ANDREW STUDIO, 2 màn iPad. ⬜ iPad THẬT cần kênh bắt tay qua kho chung khi ghép AWord.
