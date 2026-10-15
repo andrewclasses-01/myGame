@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3f (mục 16) = 3e bỏ hẳn xoay ngang trên không (tự lái hết tự xoay; phanh trên không chỉ kèm lái mới lộn trục dọc). Trước đó 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3g (mục 18): iPad bố cục B (thầy chọn) + vô lăng đáy phẳng kiểu T248 cả game và iPad. Trước đó 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -521,3 +521,17 @@ Số đo ở 1180 × 796:
 - **C Vô lăng lớn, bàn đạp nhỏ ở 2 góc dưới** — vô lăng Ø 637, ga 115 × 287, phanh 96 × 239, cách vành 110 / 129 px.
 - **D Lái trái — đạp phải** — vô lăng lệch trái Ø 557, cụm ga 159 × 398 + phanh 140 × 350 + tên lửa bên phải.
 (3e hiện tại: vô lăng 66vmin, bàn đạp 62vmin cao, margin −2vmin ⇒ bàn đạp chồng lên vành.) ⬜ Thầy chọn ⇒ áp vào sr3d-padui (bản mới).
+
+---
+
+## 18. ✅ MẪU 3g (15/10/2026) — iPad bố cục B + vô lăng ĐÁY PHẲNG
+Thầy xem thiet-ke-ipad-dua.html (mục 17): **chọn B** (bàn đạp sát 2 mép) + gửi ảnh vô lăng Thrustmaster T248: "đổi phần dưới vô lăng trên cả iPad và trên game theo phong cách
+mép dưới phẳng như trong ví dụ".
+Trang: `speed-run/mau-3g-vo-lang-day-phang.html` + iPad `speed-run/pad-3g.html?t=0|1` (kênh `srpad3g`). File mới: `core/sr3d-3g.js` (= 3f) · `core/sr3d-3g.css` (= 3e + khối 3g) ·
+`core/sr3d-dash-3g.js` · `core/sr3d-padui-3g.js` · `core/page-3g.js/.css`; dùng lại padlink-3e, missile-3e, fx-3c.
+**Vô lăng (dash-3g, chung game + iPad):** vành chữ D — mép trên tròn r 92, ĐÁY PHẲNG y 170; lỗ trong r 70 đáy phẳng y 146; 3 chấu (trái, phải viền bạc trên, dưới xuống đáy phẳng),
+mặt hub bo góc viền bạc quanh màn hình km/h, 4 nút màu trên 2 chấu (xanh/đỏ trái, xanh lá/vàng phải), nút tròn màu đội ở chấu dưới; giữ vạch màu đội trên đỉnh + 2 vệt sáng 1/4.
+Game: vô lăng 31cqh (3e: 34), bottom −4,2cqh ⇒ thấy trọn mép dưới phẳng. iPad: Ø 66vh, bottom −9,6vh.
+**iPad bố cục B (padui-3g):** ga sát mép TRÁI (left 5vw, cao 54vh), phanh sát mép PHẢI (right 5vw, cao 46vh), vô lăng giữa, tên lửa 17vh góc trên phải (top 6vh), tên lửa chờ dưới nó.
+Đã kiểm ở 1180 × 796 (iPad 10/Air 11" trừ thanh trạng thái): bố cục đúng, vô lăng đáy phẳng, chế độ đua trên iPad nối được.
+⬜ Thầy thử trên iPad thật: link Pages https://andrewclasses-01.github.io/myGame/speed-run/pad-3g.html chỉ nối được với game cùng trình duyệt (kênh cục bộ) ⇒ iPad thật cần ghép AWord.
