@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3l (mục 24): lửa pô thật (lưỡi lửa cuộn, màu theo nhiệt, đèn hắt) + trang xem lửa thu-lua-po.html. Trước đó 3k (23), 3j (22), 3i (21), xe 3D (20)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3m (mục 25): game ĐỔI TÊN thành RACING WORDS (thư mục/mã giữ speed-run). Trước đó 3l lửa pô thật (24), 3k (23), 3j (22), 3i (21)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -629,3 +629,12 @@ cùng ánh sáng/tone/bloom như game). File mới: `core/sr3d-car-3l.js` (lửa
 Shader: "nhiệt" = (1 − |lệch trục| / bề ngang lửa) − độ xa miệng ống + nhiễu fbm cuộn ⇒ chỉ chỗ nhiệt > ngưỡng mới cháy ⇒ lưỡi lửa rời, mép rách, đầu lửa tan thành sợi đỏ;
 màu theo nhiệt đỏ sẫm → cam → vàng → trắng (chỉ lõi); chập chờn độ sáng mỗi khung + độ dài ±12 %; pô nổ (màn chờ) ngắn, phình, vàng; boost dài theo lực đạp, lõi xanh + vòng kim cương khi đạp mạnh.
 ⚠️ Bài học chỉnh: 3 tấm cộng sáng chồng nhau + bloom ⇒ cháy thành KHỐI TRẮNG nhạt — phải hạ hệ số sáng (×0,85 tấm, ×0,7 đĩa) và đẩy trắng lên ngưỡng nhiệt cao; đèn 7 ⇒ 3,2 (mặt đường loá).
+
+---
+
+## 25. ✅ MẪU 3m (15/10/2026) — ĐỔI TÊN GAME: RACING WORDS
+Thầy: "ok được rồi nhé. Tôi muốn đổi tên game thành RACING WORDS" (chốt lửa pô 3l).
+Trang: `speed-run/mau-3m-racing-words.html` + iPad `pad-3m.html?t=0|1` (kênh `srpad3m`). File mới: `core/sr3d-3m.js` (= 3l) · `core/page-3m.js` · `core/sr3d-padui-3m.js` (= padui-3h); CSS dùng 3l, xe dùng car-3l.
+Đổi chữ hiển thị: tiêu đề lớn màn chờ, câu báo CHANGE TEMPLATE, màn iPad (chờ kết nối + chọn đội), tiêu đề tab, trang mục lục.
+GIỮ NGUYÊN (không ai thấy, đổi sẽ gãy link/mất lựa chọn đã lưu): thư mục `speed-run/`, tên file `sr3d-*`, hàm `createSpeedRun`, khóa lưu `speedrun.*`, các mẫu cũ (vẫn ghi SPEED RUN).
+Đã kiểm: chữ RACING WORDS rộng 917/1850 px ở màn chờ (vừa khung), iPad tiêu đề đổi.
