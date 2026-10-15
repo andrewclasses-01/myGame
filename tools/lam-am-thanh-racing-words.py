@@ -1,4 +1,4 @@
-# RACING WORDS — bộ cắt/ghép lặp/chuẩn độ to tiếng (15/10/2026). Đọc bản gốc ở thư mục sfx_cand (tải lại từ link trong speed-run/sfx/NGUON AM THANH.md), xuất ra speed-run/sfx/. Cần ffmpeg (E:ap trinh appmodelfmpeg) + numpy.
+# RACING WORDS — bộ cắt/ghép lặp/chuẩn độ to tiếng (15/10/2026). Đọc bản gốc ở thư mục sfx_cand (tải lại từ link trong speed-run/sfx/NGUON AM THANH.md), xuất ra speed-run/sfx/. Cần ffmpeg (E:/LAP TRINH APP/MODEL/ffmpeg) + numpy.
 # Cắt + làm mượt + chuẩn độ to + xuất mp3 cho RACING WORDS (speed-run/sfx/). Tiếng lặp: ghép đầu-cuối chéo (crossfade) để lặp không lộ mối.
 import os, sys, json, subprocess, numpy as np
 sys.stdout.reconfigure(encoding='utf-8')
