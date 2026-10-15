@@ -91,7 +91,8 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   mau-3k-hieu-ung.html + pad-3k.html + core/sr3d-3k.js + sr3d-car-3k.js + page-3k.js + sr3d-3k.css   (15/10) MẪU 3k: hiệu ứng đúng/sai, bánh luôn lăn, lực văng khúc cua (mục 23)
   mau-3l-lua-that.html + pad-3l.html + core/sr3d-3l.js + sr3d-car-3l.js + page-3l.js (+ thu-lua-po.html xem lửa)   (15/10) MẪU 3l: lửa pô thật (mục 24)
   mau-3m-racing-words.html + pad-3m.html + core/sr3d-3m.js + page-3m.js + sr3d-padui-3m.js   (15/10) MẪU 3m: game ĐỔI TÊN thành RACING WORDS (mục 25; thư mục/mã giữ speed-run)
-  mau-3n-intro.html + pad-3n.html + core/sr3d-3n.js + page-3n.js + sr3d-intro-3n.js/.css + sr3d-sound-3n.js   (15/10) MẪU 3n MỚI NHẤT: intro xưởng ANDREW STUDIO + bộ âm thanh (mục 26)
+  mau-3n-intro.html + pad-3n.html + core/sr3d-3n.js + page-3n.js + sr3d-intro-3n.js/.css + sr3d-sound-3n.js   (15/10) MẪU 3n: intro xưởng ANDREW STUDIO + bộ âm thanh (mục 26)
+  mau-3o-aword.html + pad-3o.html + core/rw-3o.js (GÓI NHÚNG createRacingWords) + sr3d-3o.js + sr3d-*-3o.js + rw-3o.css   (15/10) MẪU 3o MỚI NHẤT: đóng gói đưa lên AWord (mục 27)
   XE 3D THẬT (mục 20): chon-xe-3d.html (27 xe Sketchfab) → phong-xe-3d.html (garage 14 xe) + core/sr3d-xe3d.js + xe3d/<id>.glb (nén meshopt/webp; ghi công tác giả CC-BY); thiet-ke-ipad-dua.html = 4 mẫu iPad (mục 17)
   mau-1a-cao-vua.html · mau-1b-truc-thang.html   MẪU 1: đường + 2 xe + camera theo khoảng cách (A cao vừa / B + trực thăng); vỏ thử core/page-1.js
   core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr

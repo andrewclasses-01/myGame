@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3n (mục 26): INTRO xưởng ANDREW STUDIO + ÂM THANH THẬT cho intro, mọi hiệu ứng và nhạc nền (29 file sfx/). Trước đó 3m đổi tên RACING WORDS (25), 3l lửa pô (24)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3o (mục 27): GÓI NHÚNG rw-3o.js để đưa RACING WORDS lên AWord (Options AWord, 13 xe, iPad Firestore). Trước đó 3n intro + âm thanh thật (26)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -660,3 +660,14 @@ Nổi bật: nổ máy + máy chờ + máy khi đua = bản thu Lamborghini th�
 (phát lúc lăn bánh + 1,3 s ⇒ đỉnh tiếng đúng lúc xe lướt máy quay ~11 s) · cửa cuốn thép thật · lốp rít phanh tay thật · nhạc intro "Cinematic Intro" 15,5 s · nhạc đua "Racing Car Automotive Music" (Pixabay).
 ⚠️ Pixabay CDN không gửi CORS ⇒ Web Audio không đọc thẳng từ CDN được ⇒ phải tự host. mp3 có đệm câm 2 đầu ⇒ tiếng lặp đặt loopStart/loopEnd bỏ 30 ms mỗi mép.
 ⬜ Chưa có bản thu thật: máy siêu xe vòng tua đều (dùng đoạn máy chờ Lamborghini nâng cao độ), đèn sân vận động bật (dùng cầu dao), xe tiếp đất (trộn va nặng + nắp capô).
+
+---
+
+## 27. ✅ MẪU 3o (15/10/2026) — GÓI NHÚNG cho AWord (thầy "đưa lên AWord, sử dụng options của AWord" ⇒ chốt 4 Options · 13 xe bỏ Divo · iPad làm luôn ⇒ "ok build")
+Trang thử: `speed-run/mau-3o-aword.html` (dựng bằng gói nhúng + cầu AWord GIẢ: bảng Options giả, danh sách act giả) + `pad-3o.html` (kênh `srpad3o`).
+- `core/rw-3o.js` — **createRacingWords({ mount, questions, title, options, host, remote, onEvent }) ⇒ { setOptions, destroy }**: gom intro xưởng + trận + âm thanh + tải xe (việc của page-3n.js),
+  không bàn thử, không window.__*, destroy() dỡ hết (bộ đếm giờ, listener, AudioContext, 2 khung WebGL). Khung `.rw-root` (rw-3o.css): game ≤ 2:1 giữa dọc + hàng nút 60 px.
+- `core/sr3d-3o.js` (= 3n + chỗ nối AWord): Options ⇒ `host.options({layer, top, onClose})` (game dừng tới khi đóng) · `setOptions(o)`: cùng/khác câu hỏi + số tên lửa áp ngay,
+  đường/vòng/cầu nhảy đổi ⇒ false (AWord dựng lại) · có host ⇒ không đọc/ghi speedrun.opts, iPad mặc định Off không nhớ · Thư mục = act cùng thư mục · MENU ▸ CHANGE TEMPLATE = template + LIBRARY · gỡ phím Esc.
+- `core/sr3d-xe3d-3o.js` 13 xe (BỎ H3 Bugatti Divo — CC-BY-NC) · `sr3d-car-3o.js` · `sr3d-intro-3o.js/.css` (dòng ghi công mẫu 3D dưới ô chọn xe + destroy trả card đồ hoạ) · `sr3d-sound-3o.js` (close()).
+Đã kiểm: Options mở + dừng/chạy lại · setOptions áp ngay / báo dựng lại · destroy không sót canvas / lỗi.
