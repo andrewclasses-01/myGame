@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPEED RUN — thiết kế đáy vô lăng: chữ ATEAM LED + góc bo</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&family=Orbitron:wght@700;900&family=Russo+One&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Bản phác 15/10/2026 — thầy (sau mẫu 3g): "Ở viền dưới vô lăng (cả iPad, cả game) thêm một dòng ATEAM ở đoạn phẳng dưới vô lăng. Góc phẳng và cong ở điểm giao nhau
+   cần bo cong hơn một chút. Thiết kế lại cho tôi xem phần đó. Chữ ATEAM đẹp và ngầu, LED sáng theo màu đội."
+   Vô lăng = NGUYÊN hình mẫu 3g (core/sr3d-dash-3g.js), chỉ thay vành (góc nối bo tròn, tính chính xác tiếp tuyến) + thêm chữ ATEAM trên đoạn phẳng. */
+html, body { margin: 0; background: #05070d; color: #e2e8f0; font-family: "Exo 2", system-ui, sans-serif; }
+body { padding: 16px 20px 40px; }
+h1 { margin: 0 0 4px; font: italic 900 26px "Exo 2", sans-serif; }
+.sub { margin: 0 0 12px; color: #94a3b8; font-size: 15px; line-height: 1.45; max-width: 1100px; }
+.bar { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin-bottom: 16px; font-size: 14px; color: #cbd5e1; }
+.bar b { color: #ffcf4a; min-width: 2.2em; display: inline-block; }
+.bar input[type=range] { width: 160px; vertical-align: middle; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); gap: 22px; }
+.card { background: linear-gradient(180deg, #0c111c, #070a12); border: 1px solid #1f2937; border-radius: 16px; padding: 14px 16px 16px; }
+.card h2 { margin: 0 0 3px; font: italic 900 21px "Exo 2", sans-serif; } .card h2 span { color: #ffcf4a; margin-right: 6px; }
+.card p { margin: 0 0 10px; color: #94a3b8; font-size: 13.5px; line-height: 1.4; min-height: 38px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.w { position: relative; aspect-ratio: 1; border-radius: 12px; background: radial-gradient(90% 90% at 50% 40%, #1a2130, #0b0e14); overflow: hidden; }
+.w > svg { position: absolute; inset: 6%; width: 88%; height: 88%; overflow: visible; filter: drop-shadow(0 10px 16px rgba(0,0,0,.6)); }
+.zoom { position: relative; height: 120px; margin-top: 10px; border-radius: 12px; background: #0b0e14; overflow: hidden; }
+.zoom > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lbl { position: absolute; left: 8px; top: 6px; font: 800 11px "Exo 2", sans-serif; letter-spacing: .14em; color: #64748b; }
+.t1 { --team: #3b8cff; } .t2 { --team: #ff7a00; }
+.w .wg, .zoom .wg { opacity: 0; }                       /* vệt sáng khi bấm lái: tắt trong bản phác */
+.pulse .led { animation: ledp 2.2s ease-in-out infinite; }
+@keyframes ledp { 50% { opacity: .72; } }
+</style>
+</head>
+<body>
+<h1>SPEED RUN · đáy vô lăng — chữ ATEAM LED + góc bo (chọn 1 kiểu)</h1>
+<p class="sub">Vô lăng giữ nguyên mẫu 3g, chỉ đổi phần đáy: <b>góc nối giữa đoạn phẳng và đoạn cong được bo tròn</b> (kéo thanh dưới để chọn độ bo) và thêm <b>chữ ATEAM</b> trên đoạn phẳng,
+đèn LED sáng theo <b>màu đội</b> (xanh đội 1 · cam đội 2). Mỗi kiểu có hình cả vô lăng + phóng to phần đáy. Áp dụng giống nhau cho game và iPad.</p>
+<div class="bar">
+  <label>Độ bo góc NGOÀI: <input id="fo" type="range" min="0" max="22" step="1" value="12"> <b id="fov">12</b></label>
+  <label>Độ bo góc TRONG: <input id="fi" type="range" min="0" max="16" step="1" value="8"> <b id="fiv">8</b></label>
+  <label><input id="pl" type="checkbox"> LED "thở" (sáng mờ nhịp nhàng)</label>
+  <span style="color:#64748b">(3g hiện tại: góc nhọn = 0 / 0)</span>
+</div>
+<div class="grid" id="grid"></div>
+
+<script type="module">
+import { WHEEL_SVG } from "./core/sr3d-dash-3g.js";
+const C = 100;
+// vành chữ D có BO GÓC: cung lớn bán kính R + đoạn phẳng y = yf + cung bo bán kính f tiếp xúc cả hai (tâm bo cách tâm vô lăng R − f)
+function dRim(R, yf, f) {
+  if (f <= 0.01) { const dx = Math.sqrt(R * R - (yf - C) ** 2); return `M${(C - dx).toFixed(2)} ${yf} L${(C + dx).toFixed(2)} ${yf} A${R} ${R} 0 1 0 ${(C - dx).toFixed(2)} ${yf} Z`; }
+  const d = Math.sqrt((R - f) ** 2 - (yf - f - C) ** 2), k = R / (R - f);
+  const cL = [C - d, yf - f], cR = [C + d, yf - f];
+  const tL = [C + (cL[0] - C) * k, C + (cL[1] - C) * k], tR = [C + (cR[0] - C) * k, C + (cR[1] - C) * k];
+  const p = v => v.map(n => n.toFixed(2)).join(" ");
+  return `M${p([C - d, yf])} L${p([C + d, yf])} A${f} ${f} 0 0 0 ${p(tR)} A${R} ${R} 0 1 0 ${p(tL)} A${f} ${f} 0 0 0 ${p([C - d, yf])} Z`;
+}
+const TXT = `x="100" y="158.6" text-anchor="middle" dominant-baseline="central"`;
+// 4 kiểu chữ ATEAM trên đoạn phẳng (dải y 146–170). id = tiền tố riêng mỗi bản (tránh trùng id SVG giữa 2 vô lăng — bẫy 3c)
+const STYLES = [
+  { k: "A", name: "LED đặc — chữ nghiêng phát sáng", d: "Chữ Exo 2 nghiêng đậm, đặc màu đội, lõi trắng nóng ở giữa + quầng sáng; nằm trong rãnh tối khắc chìm trên vành.",
+    svg: id => `<defs><filter id="${id}g" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <rect x="62" y="150.6" width="76" height="16" rx="8" fill="#07090c" stroke="rgba(255,255,255,.08)" stroke-width=".8"/>
+      <g class="led"><text ${TXT} font-family="Exo 2" font-style="italic" font-weight="900" font-size="13" letter-spacing="2.6" fill="var(--team)" filter="url(#${id}g)">ATEAM</text>
+      <text ${TXT} font-family="Exo 2" font-style="italic" font-weight="900" font-size="13" letter-spacing="2.6" fill="color-mix(in srgb, var(--team) 35%, white)" opacity=".75">ATEAM</text></g>` },
+  { k: "B", name: "Neon viền — chữ rỗng phát sáng", d: "Chữ kiểu đua (Russo One) chỉ có VIỀN đèn neon màu đội, ruột tối — nhìn như ống LED uốn chữ.",
+    svg: id => `<defs><filter id="${id}g" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <g class="led"><text ${TXT} font-family="Russo One" font-size="14" letter-spacing="2.2" fill="#0b0d10" stroke="var(--team)" stroke-width="1.15" filter="url(#${id}g)" paint-order="stroke">ATEAM</text>
+      <text ${TXT} font-family="Russo One" font-size="14" letter-spacing="2.2" fill="none" stroke="color-mix(in srgb, var(--team) 30%, white)" stroke-width=".4" opacity=".8">ATEAM</text></g>` },
+  { k: "C", name: "Bảng LED chấm — kiểu đèn ma trận", d: "Chữ Orbitron vuông kỹ thuật số, ruột là các CHẤM LED màu đội (như bảng đèn), quầng sáng nhẹ phía sau; rãnh tối như màn LED.",
+    svg: id => `<defs><pattern id="${id}p" width="1.25" height="1.25" patternUnits="userSpaceOnUse"><circle cx=".62" cy=".62" r=".5" fill="color-mix(in srgb, var(--team) 70%, white)"/></pattern>
+      <filter id="${id}g" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="2.6"/></filter></defs>
+      <rect x="58" y="150" width="84" height="17" rx="3.5" fill="#050608" stroke="#2a2f37" stroke-width=".8"/>
+      <g class="led"><text ${TXT} font-family="Orbitron" font-weight="900" font-size="12.5" letter-spacing="2" fill="var(--team)" opacity=".9" filter="url(#${id}g)">ATEAM</text>
+      <text ${TXT} font-family="Orbitron" font-weight="900" font-size="12.5" letter-spacing="2" fill="url(#${id}p)">ATEAM</text></g>` },
+  { k: "D", name: "Chữ bạc + 2 vạch LED tốc độ", d: "Chữ bạc kim loại nghiêng (khắc nổi) có quầng màu đội, 2 bên là 2 vạch LED màu đội thuôn nhọn như vệt tốc độ.",
+    svg: id => `<defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#c9d0d8"/><stop offset=".55" stop-color="#8d96a1"/><stop offset="1" stop-color="#e8edf2"/></linearGradient>
+      <filter id="${id}g" x="-40%" y="-120%" width="180%" height="340%"><feGaussianBlur stdDeviation="2"/></filter></defs>
+      <g class="led"><path d="M52 158.6 L71 156.4 L73 160.8 Z" fill="var(--team)" filter="url(#${id}g)"/><path d="M52 158.6 L71 156.4 L73 160.8 Z" fill="color-mix(in srgb, var(--team) 40%, white)"/>
+      <path d="M148 158.6 L129 160.8 L127 156.4 Z" fill="var(--team)" filter="url(#${id}g)"/><path d="M148 158.6 L129 160.8 L127 156.4 Z" fill="color-mix(in srgb, var(--team) 40%, white)"/>
+      <text ${TXT} font-family="Exo 2" font-style="italic" font-weight="900" font-size="13" letter-spacing="2.4" fill="var(--team)" filter="url(#${id}g)" opacity=".9">ATEAM</text></g>
+      <text ${TXT} font-family="Exo 2" font-style="italic" font-weight="900" font-size="13" letter-spacing="2.4" fill="url(#${id}s)" stroke="#2b3038" stroke-width=".35">ATEAM</text>` },
+];
+const OLD_RIM = /<path d="M40\.3 170 A92 92[^>]*\/>\s*<path d="M47\.2 146 A70 70[^>]*\/>/;
+let n = 0;
+function wheel(st, team) {
+  const fo = +document.getElementById("fo").value, fi = +document.getElementById("fi").value, id = "w" + (++n);
+  const rim = `<path d="${dRim(92, 170, fo)} ${dRim(70, 146, fi)}" fill="url(#srwg)" fill-rule="evenodd" stroke="#4a515c" stroke-width="1.5" stroke-linejoin="round"/>`;
+  let s = WHEEL_SVG.replace(OLD_RIM, rim).replace("</svg>", `<g class="ateam">${st.svg(id)}</g></svg>`);
+  return s.replace(/srwg/g, "srwg" + id);                      // id riêng mỗi bản
+}
+function render() {
+  document.getElementById("fov").textContent = document.getElementById("fo").value;
+  document.getElementById("fiv").textContent = document.getElementById("fi").value;
+  document.body.classList.toggle("pulse", document.getElementById("pl").checked);
+  document.getElementById("grid").innerHTML = STYLES.map(st => `<div class="card"><h2><span>${st.k}</span>${st.name}</h2><p>${st.d}</p>
+    <div class="pair">${[1, 2].map(t => `<div class="w t${t}"><span class="lbl">TEAM ${t}</span>${wheel(st, t)}</div>`).join("")}</div>
+    <div class="pair">${[1, 2].map(t => `<div class="zoom t${t}"><span class="lbl">PHÓNG TO ĐÁY · TEAM ${t}</span>${wheel(st, t).replace('viewBox="0 0 200 200"', 'viewBox="22 118 156 60" preserveAspectRatio="xMidYMid meet"')}</div>`).join("")}</div></div>`).join("");
+}
+["fo", "fi", "pl"].forEach(k => document.getElementById(k).addEventListener("input", render));
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(render); render();
+</script>
+</body>
+</html>
