@@ -615,7 +615,17 @@ bớt tô chồng) + Rocket Race (gốc AWord `rr-padscene.js`: 25 khung/giây, 
 đo: `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 46. Ghép AWord Đợt 523.
 **Quyết định:** chọn thưa khung + bớt điểm ảnh (hiệu quả chắc, mọi máy) thay vì tối ưu từng lệnh vẽ. **Lỗi/ngõ cụt:** canvas nền đệm chậm hơn; đo JS-only nói dối (xem mục 46).
 
+## Racing Words 3p — 15/10/2026 · MƯỢT + CHẠM ĐÚP BỎ INTRO · phiên máy CLASSES
+**Bối cảnh (thầy):** sau AWord Đợt 528 "game chạy được nhưng khá lag — tham khảo cách tối ưu của Train Rush, trải nghiệm mượt nhất" + "double tap vào intro để vào màn chuẩn bị start luôn".
+**Đã làm:** mẫu 3p (`speed-run/mau-3p-muot.html`, core `rw-3p` / `sr3d-3p` / `sr3d-car-3p` / `sr3d-intro-3p` / `sr3d-carmeta-3p`) — gộp lưới xe theo vật liệu, bỏ kính transmission,
+bảng số đo 13 xe (bỏ ~200 tia/xe), cắt mũi xe bằng shader, prewarm (compileAsync đúng đích vẽ + 2 kiểu số đèn + hậu kỳ + texture + chỗ cháy làm sẵn) + pinPrograms, chạm đúp bỏ phim.
+Số đo trước/sau + chi tiết: `speed-run/NGHIEN CUU GAMEPLAY.md` mục 28. Đưa lên AWord Đợt 529 (`tools/chep-racing-words.py` GOC = rw-3p.js).
+**Quyết định:** đo bằng Chrome riêng điều khiển qua CDP (khung trình duyệt của app bị ẩn ⇒ rAF đứng, số đo sai) · gộp lưới thay vì hạ độ nét (nghẽn CPU, không phải GPU).
+**Lỗi/bẫy gặp:** (1) `renderer.compile()` không có đích vẽ ⇒ khoá shader khác lúc vẽ vào render target ⇒ dịch phí; (2) khoá shader gồm SỐ ĐÈN camera thấy (đèn theo lớp);
+(3) `compile()` bỏ qua `material.clippingPlanes`; (4) heredoc bash nuốt dấu gạch chéo ngược trong chuỗi JS ⇒ trang đen "Invalid or unexpected token"; (5) bộ tự chỉnh nhớ độ nét thấp từ lúc còn khựng ⇒ đổi khoá.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 3p (= AWord Đợt 529)**: thầy chơi trên TOMKO trong myActivity — còn lag không (đo fps nếu còn), chạm đúp bỏ intro có tiện không; kính xe (bỏ transmission) trông ổn không.
 - ⬜ **iPad bớt nóng (AWord Đợt 523)**: thầy chơi Rocket Race + Train Rush với iPad thật vài trận ⇒ còn nóng không, 25 khung/giây có bị khó chịu không. Còn nóng ⇒ 20 khung/giây + độ nét 1,25 (hằng PAD_FPS / PR_MAX đầu file).
 - ⬜ **TRAIN RUSH 1au (= AWord Đợt 522, thầy duyệt 14/10)**: thầy chơi Fight trên TOMKO + 2 iPad thật — chữ trên toa iPad đủ to chưa, có cần thấy trọn toa đáp án
   thứ 2 (hiện nửa toa ở mép trái iPad) không; thùng còn văng khi tàu lao/phóng không, điểm trễ ~0,6 s khi rơi lệch, khinh khí cầu nấc 10 (×2) có quá nhanh không;

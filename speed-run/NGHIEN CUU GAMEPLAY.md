@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3o (mục 27): GÓI NHÚNG rw-3o.js để đưa RACING WORDS lên AWord (Options AWord, 13 xe, iPad Firestore). Trước đó 3n intro + âm thanh thật (26)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3p (mục 28): MƯỢT (gộp lưới xe, số đo xe sẵn, dịch sẵn shader) + CHẠM ĐÚP bỏ intro — đã lên AWord Đợt 529. Trước đó MẪU 3o (mục 27): GÓI NHÚNG rw-3o.js để đưa RACING WORDS lên AWord (Options AWord, 13 xe, iPad Firestore). Trước đó 3n intro + âm thanh thật (26)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -671,3 +671,38 @@ Trang thử: `speed-run/mau-3o-aword.html` (dựng bằng gói nhúng + cầu AW
   đường/vòng/cầu nhảy đổi ⇒ false (AWord dựng lại) · có host ⇒ không đọc/ghi speedrun.opts, iPad mặc định Off không nhớ · Thư mục = act cùng thư mục · MENU ▸ CHANGE TEMPLATE = template + LIBRARY · gỡ phím Esc.
 - `core/sr3d-xe3d-3o.js` 13 xe (BỎ H3 Bugatti Divo — CC-BY-NC) · `sr3d-car-3o.js` · `sr3d-intro-3o.js/.css` (dòng ghi công mẫu 3D dưới ô chọn xe + destroy trả card đồ hoạ) · `sr3d-sound-3o.js` (close()).
 Đã kiểm: Options mở + dừng/chạy lại · setOptions áp ngay / báo dựng lại · destroy không sót canvas / lỗi.
+
+---
+
+## 28. ✅ MẪU 3p (15/10/2026) — MƯỢT + CHẠM ĐÚP BỎ INTRO (thầy: "double tab vào intro để vào màn chuẩn bị start luôn" · "khá lag, tham khảo cách tối ưu của Train Rush")
+Trang thử: `speed-run/mau-3p-muot.html` (= mau-3o-aword.html, nạp `core/rw-3p.js`). File mới: `rw-3p.js` · `sr3d-3p.js` · `sr3d-car-3p.js` · `sr3d-intro-3p.js` · `sr3d-carmeta-3p.js`
+(xe3d / âm thanh / CSS / iPad giữ bản 3o / 3m).
+
+**Đo 3o (Chrome thật qua CDP, RTX 4060, cửa sổ 1920×1080, `long-animation-frame` + đếm rAF + đếm lệnh vẽ `renderer.info`):**
+- Bấm START ⇒ **ĐỨNG HÌNH 4,3 s rồi 5,3 s** (shader 4 ⇒ 78 dịch ngay khung đầu của trận) = "dừng ở 5 đèn đỏ" thầy thấy (cùng với lỗi AWord Đợt 528).
+- Giữa trận khựng ~200 ms mỗi lần tên lửa / nổ / vết cháy đầu tiên (vật liệu mới, dispose xong lần sau dịch lại).
+- **1.092 lệnh vẽ/khung, 1,23 triệu tam giác**: xe Sketchfab 20–1.107 mảnh lưới (Y4 1.107 · Y5 976 · H7 934), frustumCulled tắt (thế giới cong), thêm BẢN SAO mũi xe ở buồng lái.
+  **Nghẽn CPU**: 9,2 ms/khung chỉ để gửi lệnh vẽ — hạ độ nét 0,8 ⇒ 0,5 gần như không đổi ⇒ bộ tự chỉnh (sr3d-autores) chỉ làm MỜ hình (đã xuống 0,8 + tắt MSAA).
+- Kính **transmission** (Y4 Y5 Y6 H4 H7): có 1 vật liệu là three.js VẼ LẠI CẢ CẢNH vào ảnh nền cho mỗi camera mỗi khung (1 mảnh kính H4 kéo 192 lệnh vẽ).
+- **Dựng 1 xe (makeCar3d) 0,2–3,6 s**, ~97 % là raycast (~20 ms/tia × 150–300 tia: nóc, chân kính, mép capô, chỗ biển số); mỗi xe dựng 2 lần (xưởng + trận) ⇒ "LOADING CARS rất lâu".
+- burn() (vết cháy khi trúng) 6–110 ms giữa trận (tia + DecalGeometry).
+
+**Sửa (cách Train Rush 1am / Star Loot 2p + riêng game này):**
+1. `sr3d-car-3p.js` **mergeStatic**: gộp mảnh TĨNH cùng (vật liệu + bộ thuộc tính) thành 1 mảnh (đổi thuộc tính nén meshopt về Float32, ma trận lật ⇒ đảo chiều tam giác),
+   cả bản sao mũi xe. Bánh đã ở trục quay riêng ⇒ không gộp (13/13 xe vẫn 4 bánh quay). Cây gốc (ghost) giữ ngoài cảnh, gắn TẠM khi tìm chỗ cháy. Y4 1.107 ⇒ 79 mảnh.
+2. **noTransmission**: kính transmission ⇒ trong suốt thường (mờ 0,3–0,45). Ảnh xưởng cùng góc 3o/3p sai khác trung bình 0,6/255.
+3. **Số đo xe sẵn** `sr3d-carmeta-3p.js` (13 xe) + nhớ trong phiên ⇒ dựng xe 6–211 ms. Xe mới: tự đo 1 lần; sinh lại bảng = `carMeta()` (xem đầu file bảng).
+4. **Cắt mũi xe bằng shader** (`hoodClip`: uniform mặt phẳng + discard, khoá "|hoodclip") thay `material.clippingPlanes` — `renderer.compile()` BỎ QUA clippingPlanes ⇒
+   biến thể cắt chỉ dịch được khi vẽ thật. Ảnh buồng lái 3o/3p giống nhau.
+5. `sr3d-3p.js` **prewarm()** (gọi ngay khi dựng game, thầy còn ở xưởng): mẫu tên lửa + nổ + vết cháy ⇒ `compileAsync` 2 lần — lớp camera ngoài xe (3 đèn điểm) và buồng lái
+   (2 đèn: đèn lửa pô mỗi xe ở lớp đội ⇒ SỐ ĐÈN camera thấy nằm trong khoá shader) — ⚠️ với đích vẽ = `composer.renderTarget1` (không thì khoá lệch tone mapping / hệ màu
+   ⇒ dịch phí, đúng bẫy Train Rush ghi) · vật liệu hậu kỳ (trừ OutputPass) · texture đẩy lên card từng cái (nghỉ khi quá 12 ms) · 1 khung ẩn · `pinPrograms()` mỗi 30 khung.
+   START / chạm đúp chờ prewarm xong (tối đa 4 s; thường đã xong từ lâu). Đổi xe ⇒ dịch lại.
+6. **Chỗ cháy làm sẵn** (`prepBurns`, 3 chỗ/xe, từng chỗ một cách 40 ms): lúc prewarm + lúc hiện bảng kết quả ⇒ trúng tên lửa không dò tia.
+7. `rw-3p.js` **CHẠM ĐÚP** lúc phim intro chiếu (2 lần ≤ 350 ms, lệch ≤ 40 px, không tính nút) ⇒ `intro.skip()` ⇒ vào thẳng 5 đèn. Khoá nhớ độ nét bộ tự chỉnh đổi `rw-3p`.
+
+**Đo 3p (cùng máy, cùng cách):** START ⇒ đèn: không khựng (dài nhất 24 ms) · đua 85–144 khung/giây ở độ nét 1,0 + MSAA (3o: 46–65, 0,8, không MSAA) · ~430 lệnh vẽ (~380 với Y4+H7),
+CPU 4,9–5,3 ms/khung · cả ván 0 khung > 70 ms trừ 1 lần làm sẵn vết cháy ở bảng kết quả (cố ý) · prewarm 2,2–3,7 s ngầm (lần ĐẦU TIÊN trên máy: Chrome dịch lạnh ⇒ tới 34 s,
+các lần sau Chrome lấy shader đã lưu) · dựng xe 6–211 ms. Trong AWord (`scratch/dot529-rw.html`, engine thật): chạm đúp vào trận, 99–130 khung/giây, 0 khung > 70 ms.
+⚠️ Cú khựng ~200 ms còn lại chỉ khi bộ tự chỉnh NÂNG độ nét (cấp lại khung đệm MSAA + 5 tầng bloom) — sau khi đã nhớ mức êm thì hết.
+⬜ Chưa đo trên TOMKO (Quadro T2000, 4K, myActivity `__awMaxPR = 1`).
