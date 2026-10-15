@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3h (mục 19): vô lăng có chữ ATEAM LED màu đội (kiểu A) + góc đáy bo tròn, cả game và iPad. Trước đó 3g (18), 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3h (mục 19) + XE 3D THẬT đang chọn (mục 20: chon-xe-3d.html, phong-xe-3d.html). Trước đó 3g (18), 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -548,3 +548,17 @@ Trang: `speed-run/mau-3h-ateam.html` + iPad `speed-run/pad-3h.html?t=0|1` (kênh
 **ATEAM kiểu A:** rãnh tối bo tròn 68 × 14 khắc chìm trên đoạn phẳng; chữ Exo 2 nghiêng 900 cỡ 11 (bản phác 13), giãn 2,3, màu đội + quầng sáng (filter `srwgat`) + lớp lõi trắng nóng 75 %.
 id filter có tiền tố `srwg` ⇒ lõi đổi id theo đội (đã kiểm: srwg0at / srwg1at) — tránh lại lỗi màu đội 2 (mục 15).
 Đã kiểm: game 2 đội (ATEAM xanh / cam), iPad 1180 × 796 (ATEAM cam, góc bo).
+
+---
+
+## 20. 🚗 XE 3D THẬT (15/10/2026) — chọn mẫu + phòng trưng bày (CHƯA ghép vào game)
+Thầy: "tạo lại xe thật đẹp, thật xịn, thật chi tiết với các mẫu xe đẹp và ngầu nhất thế giới". Thầy chọn: dùng MẪU 3D CÓ SẴN (không tự dựng bằng code); dòng xe: siêu xe Ý + hypercar + xe đua.
+1. `speed-run/chon-xe-3d.html` — 27 xe Sketchfab tải được, giấy phép CC-BY (vài xe NC), bấm ảnh xoay 3D. Thầy chọn 14: Y1 Aventador SV · Y2 Revuelto · Y3 Centenario · Y4 SF90 XX ·
+   Y5 LaFerrari · Y6 488 Pista Widebody · Y7 Huayra · Y8 Utopia · Y9 Zonda Cinque · H3 Bugatti Divo (CC-BY-NC) · H4 Koenigsegg Jesko · H7 McLaren Senna · H8 McLaren P1 GTR · H9 McLaren 720S.
+2. Tải: thầy đăng nhập Sketchfab trên Chrome; lấy bản glb texture nhỏ nhất (≤1K). ⚠️ Sketchfab chặn "Too many requests" nếu hỏi liên tục ⇒ tải từng xe cách ~45 s. Bản gốc ở Desktop\MAU XE (163 MB).
+3. Nén (gltf-transform: dedup + weld + simplify ≤150k tam giác + texture webp ≤1024 + meshopt): 163 MB → 33 MB, ở `speed-run/xe3d/<id>.glb` (0,3–5 MB/xe).
+4. `core/sr3d-xe3d.js`: XE[] (tên, dài thật L, rotY, vật liệu sơn, tác giả, giấy phép) + `loadXe(id)` (chuẩn hóa: mũi −z, bánh y 0, dài L m) + `setPaint(xe, màu)`.
+   Sơn: "Body" = bỏ texture sơn phẳng màu đội · "~Body" = giữ vân/chữ: texture chuyển TRẮNG ĐEN rồi nhân màu đội (P1 GTR sọc, Jesko, Centenario carbon, Zonda) · "Body*" = theo tiền tố.
+   Hướng xe đã kiểm từng chiếc (nhìn ngang + cả dàn từ đầu xe): Y2 Y3 Y4 Y5 Y7 Y8 Y9 H3 H4 H7 H8 H9 xoay π.
+5. `speed-run/phong-xe-3d.html` — GARAGE: sàn trưng bày, xoay tròn, nút Màu gốc / TEAM 1 / TEAM 2 / 2 đội cạnh nhau, "Chọn xe này" + Chép danh sách, ← → đổi xe; góc trên phải ghi công tác giả (CC-BY bắt buộc).
+⬜ Chờ thầy chọn xe trong garage ⇒ ghép vào game (thay sr3d-car-1: bánh quay, nhún, đèn phanh, lửa pô…) = mẫu 3i.
