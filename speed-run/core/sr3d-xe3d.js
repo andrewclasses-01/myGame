@@ -11,7 +11,7 @@ import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 // rotY: xoay thêm (radian) để mũi xe về −z sau khi đặt trục dài theo z · L: chiều dài thật (m)
 export const XE = [{"id": "Y1", "name": "Lamborghini Aventador SV", "short": "Aventador SV", "L": 4.835, "rotY": 0, "paint": ["Body_Colour*"], "author": "Hari Prasath R", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-fec3fec276d240f6b8a660e2a7874435", "tris": 163489, "mb": 3.07, "ok": true},
   {"id": "Y2", "name": "Lamborghini Revuelto", "short": "Revuelto", "L": 4.947, "rotY": 3.14159, "paint": ["Body"], "author": "ALIEEEN", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-cf52245eb68f48daa909c7ad2a8deaa3", "tris": 91561, "mb": 1.18, "ok": true},
-  {"id": "Y3", "name": "Lamborghini Centenario", "short": "Centenario", "L": 4.924, "rotY": 3.14159, "paint": ["~Carbon_R"], "author": "SDC PERFORMANCE™️", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-d679af35b5694301a185c7454a700c73", "tris": 178079, "mb": 2.88, "ok": true},
+  {"id": "Y3", "name": "Lamborghini Centenario", "short": "Centenario", "L": 4.924, "rotY": 3.14159, "paint": ["Carbon_R"], "author": "SDC PERFORMANCE™️", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-d679af35b5694301a185c7454a700c73", "tris": 178079, "mb": 2.88, "ok": true},
   {"id": "Y4", "name": "Ferrari SF90 XX Stradale", "short": "SF90 XX", "L": 4.85, "rotY": 3.14159, "paint": ["Ferrari_SF90XXStradale_2024Paint*"], "author": "Ddiaz Design", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-2c80c667232544649328cf3589921bcd", "tris": 170783, "mb": 5.09, "ok": true},
   {"id": "Y5", "name": "Ferrari LaFerrari", "short": "LaFerrari", "L": 4.702, "rotY": 3.14159, "paint": ["MAT_Carpaint_Red"], "author": "Ddiaz Design", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-8b46fa49718647de846387ef4c1e95b3", "tris": 113666, "mb": 2.98, "ok": true},
   {"id": "Y6", "name": "Ferrari 488 Pista Widebody", "short": "488 Pista", "L": 4.605, "rotY": 0, "paint": ["GREEN_car_paint"], "author": "Dev365TH", "lic": "CC-BY 4.0", "src": "https://sketchfab.com/3d-models/none-16c28f5b3ed24991ac3d1208f4a8bc1f", "tris": 119329, "mb": 1.87, "ok": true},
@@ -29,13 +29,18 @@ const cache = new Map();
 const BASE = new URL("../xe3d/", import.meta.url).href;
 
 function load(id) {
-  if (!cache.has(id)) cache.set(id, loader.loadAsync(BASE + id + ".glb").then(g => g.scene));
+  if (!cache.has(id)) cache.set(id, loader.loadAsync(BASE + id + ".glb").then(g => { ready.set(id, g.scene); return g.scene; }));
   return cache.get(id);
 }
 
-export async function loadXe(id) {
+// prepXe(id): tải trước (Promise) · buildXe(id): dựng NGAY (đồng bộ) khi đã tải — game dùng cặp này · loadXe = cả hai
+export const prepXe = id => load(id);
+const ready = new Map();
+export async function loadXe(id) { await load(id); return buildXe(id); }
+export function buildXe(id) {
   const cfg = XE.find(x => x.id === id);
-  const src = await load(id);
+  const src = ready.get(id);
+  if (!src) throw new Error("Xe chưa tải: " + id);
   const scene = src.clone(true);
   // vật liệu riêng cho mỗi bản sao (để 2 đội sơn 2 màu khác nhau)
   const mats = new Map();

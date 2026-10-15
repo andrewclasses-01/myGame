@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3h (mục 19) + XE 3D THẬT đang chọn (mục 20: chon-xe-3d.html, phong-xe-3d.html). Trước đó 3g (18), 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3i (mục 21): 14 XE 3D THẬT trong game, mỗi đội tự chọn xe ở màn chờ. Trước đó xe 3D (20), 3h (19), 3g (18), 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -562,3 +562,19 @@ Thầy: "tạo lại xe thật đẹp, thật xịn, thật chi tiết với cá
    Hướng xe đã kiểm từng chiếc (nhìn ngang + cả dàn từ đầu xe): Y2 Y3 Y4 Y5 Y7 Y8 Y9 H3 H4 H7 H8 H9 xoay π.
 5. `speed-run/phong-xe-3d.html` — GARAGE: sàn trưng bày, xoay tròn, nút Màu gốc / TEAM 1 / TEAM 2 / 2 đội cạnh nhau, "Chọn xe này" + Chép danh sách, ← → đổi xe; góc trên phải ghi công tác giả (CC-BY bắt buộc).
 ⬜ Chờ thầy chọn xe trong garage ⇒ ghép vào game (thay sr3d-car-1: bánh quay, nhún, đèn phanh, lửa pô…) = mẫu 3i.
+
+---
+
+## 21. ✅ MẪU 3i (15/10/2026) — 14 XE 3D THẬT trong game, mỗi đội tự chọn xe
+Thầy: "Đưa cả 14 xe vào game, mỗi đội tự chọn xe trước khi đua."
+Trang: `speed-run/mau-3i-xe-that.html` + iPad `speed-run/pad-3i.html?t=0|1` (kênh `srpad3i`). File mới: `core/sr3d-3i.js` (= 3h + xe thật) · `core/sr3d-car-3i.js` · `core/page-3i.js` · `core/sr3d-3i.css`;
+`core/sr3d-xe3d.js` thêm `prepXe(id)` (tải trước) + `buildXe(id)` (dựng đồng bộ).
+**Chọn xe:** màn chờ mỗi nửa có ô ◀ TÊN XE ▶ (bấm, hoặc A/D đội 1 · ←/→ đội 2). Máy quay màn chờ vốn quay quanh xe của đội ⇒ thấy xe đổi ngay. Nhớ lựa chọn (localStorage `speedrun.cars`);
+trang tải trước 2 xe rồi mới dựng game (chữ LOADING CARS…); `?cars=Y2,H4` để ép. Mặc định Y2 Revuelto / H4 Jesko.
+**sr3d-car-3i.js (makeCar3d)** giữ ĐÚNG giao diện makeCar cũ: rig → body (nhún, nghiêng) · M đo từ xe thật (dài, rộng, nóc = tia chiếu xuống giữa xe ⇒ bệ tên lửa đúng nóc) ·
+bánh QUAY: nhận mảnh TRÒN ở 4 góc (lốp + mâm + đĩa; kẹp phanh đứng yên), không đủ thì theo TÊN mảnh ⇒ 10/14 xe quay bánh (Y3 Centenario, Y9 Zonda, H8 P1 GTR, H9 720S gộp bánh vào thân ⇒ bánh đứng) ·
+đèn phanh = vật liệu tên tail/brake light… · lửa pô · bóng blob · mọi vật liệu qua bend (thế giới cong). Va chạm 2 xe dùng kích thước từng xe.
+⚠️ Bẫy đã gặp: bánh trước Aventador nằm TRONG nút tên "Brake_Caliper" ⇒ loại trừ theo tên phải xét tên CHÍNH mảnh, không xét tên cha.
+Centenario (Y3) đổi sang sơn phẳng màu đội (sơn giữ vân carbon ra gần đen, khó nhận đội).
+Đã kiểm (bàn thử, chạy từng khung): màn chờ đổi đủ 14 xe · đua tự lái 1 trận: bay cầu nhảy, bắn trúng (xe thật xoay), về đích TEAM 1 WINS.
+⬜ iPad chưa chọn xe được (chọn trên màn lớn) · tốc độ khung hình trên máy thật thầy xem ở Chrome.

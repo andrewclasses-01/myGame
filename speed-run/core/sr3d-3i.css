@@ -1,0 +1,15 @@
+/* SPEED RUN mẫu 3i — thêm vào sr3d-3g.css: ô CHỌN XE mỗi đội ở màn chờ (◀ tên xe ▶), máy quay màn chờ đang quay quanh xe của đội ⇒ thấy xe luôn */
+.sr-pick { position: absolute; left: 50%; top: 7%; transform: translateX(-50%); z-index: 6; display: none; align-items: stretch; gap: .8cqh;
+  pointer-events: auto; filter: drop-shadow(0 .8cqh 1.6cqh rgba(0, 0, 0, .55)); }
+.sr-root.is-menu .sr-pick { display: flex; }
+.sr-pick-b { width: 6.4cqh; border: 1px solid rgba(255, 255, 255, .22); border-radius: 1.4cqh; background: rgba(8, 11, 16, .72); color: #fff;
+  font: 900 2.6cqh "Exo 2", sans-serif; cursor: pointer; backdrop-filter: blur(6px); transition: background .15s, transform .1s; }
+.sr-pick-b:hover { background: color-mix(in srgb, var(--team) 45%, rgba(8, 11, 16, .8)); }
+.sr-pick-b:active { transform: scale(.94); }
+.sr-pick-n { min-width: 34cqh; padding: 1cqh 2.4cqh 1.1cqh; border-radius: 1.4cqh; text-align: center; background: rgba(8, 11, 16, .72);
+  border: 1px solid rgba(255, 255, 255, .14); border-bottom: .45cqh solid var(--team); backdrop-filter: blur(6px); display: flex; flex-direction: column; gap: .3cqh; }
+.sr-pick-n small { font: 800 1.35cqh "Exo 2", sans-serif; letter-spacing: .25cqh; color: var(--team); }
+.sr-pick-n b { font: italic 900 3.2cqh/1.05 "Exo 2", sans-serif; color: #fff; letter-spacing: .1cqh; white-space: nowrap; }
+.sr-pick-n em { font: 700 1.3cqh "Exo 2", sans-serif; font-style: normal; color: rgba(255, 255, 255, .55); }
+.sr-half.is-loading .sr-pick-n b { opacity: .45; }
+.sr-half.is-loading .sr-pick-n em::after { content: " · loading…"; }
