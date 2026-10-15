@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3k (mục 23): hiệu ứng nút đúng/sai, đúng chỉ nạp boost, START AGAIN về màn chờ, bánh luôn lăn (14/14 xe), xe trước phanh ⇒ xe sau mất lái, pô nổ màn chờ, lực văng khúc cua. Trước đó 3j (22), 3i (21), xe 3D (20), 3h (19)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3l (mục 24): lửa pô thật (lưỡi lửa cuộn, màu theo nhiệt, đèn hắt) + trang xem lửa thu-lua-po.html. Trước đó 3k (23), 3j (22), 3i (21), xe 3D (20)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -618,3 +618,14 @@ Thầy (sau 3j), 7 việc ⇒ trang `speed-run/mau-3k-hieu-ung.html` + iPad `pad
    ⇒ đo 1 trận không ai lái (không cầu nhảy): lệch làn tối đa 1,26 m, trung bình 0,48 m. (Thử DRIFT 4,5 ⇒ lệch 6,5 m đâm mép đường — quá mạnh.)
 ⚠️ Bẫy: chèn khối code giữa `if {…}` và `else` của nó ⇒ lỗi cú pháp nhưng `node --check file.js` vẫn qua ⇒ kiểm bằng `node --input-type=module --check < file.js`.
 ⬜ Đổi sang Centenario mất ~5,5 s (lốp 97 nghìn tam giác) — thầy thấy chậm thì nén lại riêng xe này.
+
+---
+
+## 24. ✅ MẪU 3l (15/10/2026) — LỬA PÔ THẬT
+Thầy: "Phần lửa xì ra từ xe trông giả quá, tôi muốn nó phải giống thật." (3k: 1 cái nón trơn cộng sáng, nhiễu sọc thô.)
+Trang: `speed-run/mau-3l-lua-that.html` + iPad `pad-3l.html` (kênh `srpad3l`) + trang xem riêng **`speed-run/thu-lua-po.html?car=Y2`** (chọn xe, kéo Boost, nút Nổ pô, Tự nổ pô, đổi góc nhìn;
+cùng ánh sáng/tone/bloom như game). File mới: `core/sr3d-car-3l.js` (lửa) · `core/sr3d-3l.js` (= 3k, chỉ đổi xe) · `core/page-3l.js` · `core/sr3d-3l.css` (= 3k).
+**Cấu tạo lửa:** mỗi ống = 3 tấm cắt chéo quanh trục ống (thân lửa) + 1 ĐĨA quay ra sau (xe đối thủ nhìn từ sau thấy tấm dọc bị nhìn cạnh) + đèn cam chập chờn ở đuôi xe (hắt lên xe + mặt đường).
+Shader: "nhiệt" = (1 − |lệch trục| / bề ngang lửa) − độ xa miệng ống + nhiễu fbm cuộn ⇒ chỉ chỗ nhiệt > ngưỡng mới cháy ⇒ lưỡi lửa rời, mép rách, đầu lửa tan thành sợi đỏ;
+màu theo nhiệt đỏ sẫm → cam → vàng → trắng (chỉ lõi); chập chờn độ sáng mỗi khung + độ dài ±12 %; pô nổ (màn chờ) ngắn, phình, vàng; boost dài theo lực đạp, lõi xanh + vòng kim cương khi đạp mạnh.
+⚠️ Bài học chỉnh: 3 tấm cộng sáng chồng nhau + bloom ⇒ cháy thành KHỐI TRẮNG nhạt — phải hạ hệ số sáng (×0,85 tấm, ×0,7 đĩa) và đẩy trắng lên ngưỡng nhiệt cao; đèn 7 ⇒ 3,2 (mặt đường loá).

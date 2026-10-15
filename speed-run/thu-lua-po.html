@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPEED RUN · Xem lửa pô</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,900&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #0b0d12; color: #e8edf3; font-family: "Exo 2", system-ui, sans-serif; overflow: hidden; }
+  canvas { display: block; }
+  #ui { position: fixed; left: 16px; bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: rgba(10, 13, 18, .8); padding: 12px 14px; border-radius: 12px; border: 1px solid #26303d; }
+  #ui h1 { margin: 0 8px 0 0; font: italic 900 18px "Exo 2"; letter-spacing: 1px; }
+  button, select { font: 700 14px "Exo 2"; color: #fff; background: #1d2633; border: 1px solid #3a4658; border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  button.on { background: #ff7a2a; border-color: #ffb07a; color: #1a0d00; }
+  label { font-size: 13px; color: #9aa6b6; display: flex; gap: 8px; align-items: center; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="ui">
+  <h1>LỬA PÔ</h1>
+  <select id="car"></select>
+  <label>Boost <input id="boost" type="range" min="0" max="100" value="0"></label>
+  <button id="pop">💥 Nổ pô</button>
+  <button id="auto" class="on">Tự nổ pô</button>
+  <button id="view">Góc: sau</button>
+</div>
+<script type="module">
+// Trang xem lửa pô mẫu 3l: cùng xe (sr3d-car-3l.js), cùng ánh sáng + tone + bloom như game. ?car=Y2
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { XE, prepXe } from "./core/sr3d-xe3d.js";
+import { makeCar3d } from "./core/sr3d-car-3l.js";
+
+const R = new THREE.WebGLRenderer({ antialias: true }); R.setPixelRatio(Math.min(devicePixelRatio, 2)); R.setSize(innerWidth, innerHeight);
+R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.0; document.body.prepend(R.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color("#c9b9a4"); scene.fog = new THREE.Fog("#c9b9a4", 30, 120);
+const pm = new THREE.PMREMGenerator(R); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; scene.environmentIntensity = 0.55;
+const key = new THREE.DirectionalLight("#ffd9b3", 2.4); key.position.set(-45, 75, 50); scene.add(key);
+scene.add(new THREE.HemisphereLight("#ffd7b8", "#4a5236", 0.9));
+const road = new THREE.Mesh(new THREE.PlaneGeometry(40, 200), new THREE.MeshStandardMaterial({ color: "#4a4c50", roughness: 0.85 })); road.rotation.x = -Math.PI / 2; scene.add(road);
+const cam = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.05, 300);
+const oc = new OrbitControls(cam, R.domElement); oc.enableDamping = true;
+const comp = new EffectComposer(R); comp.addPass(new RenderPass(scene, cam));
+comp.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), 0.32, 0.55, 0.92)); comp.addPass(new OutputPass());
+const U = { uBend: { value: new THREE.Vector2() }, uBendZ: { value: 0 } };
+
+const sel = document.getElementById("car");
+XE.forEach(x => sel.add(new Option(x.id + " " + x.name, x.id)));
+let car = null, pop = 0, popT = 1, auto = true, view = 0, hold = false;
+const VIEWS = [["sau", [1.2, 0.9, 4.2]], ["chéo", [3.2, 1.3, 3.4]], ["ngang", [4.2, 0.7, 1.6]], ["xe sau (như đối thủ)", [0.6, 1.6, 9]]];
+async function load(id) {
+  await prepXe(id);
+  if (car) scene.remove(car.rig);
+  car = makeCar3d({ id, color: "#3b8cff", num: 1, U }); scene.add(car.rig);
+  setView();
+}
+function setView() {
+  const p = VIEWS[view][1], ex = car ? car.exhaust[0] : new THREE.Vector3(0, 0.4, 2.3);
+  cam.position.set(p[0], p[1], ex.z + p[2] - 2); oc.target.set(0, ex.y, ex.z); oc.update();
+  document.getElementById("view").textContent = "Góc: " + VIEWS[view][0];
+}
+sel.onchange = () => load(sel.value);
+document.getElementById("pop").onclick = () => { pop = 1; };
+document.getElementById("auto").onclick = e => { auto = !auto; e.currentTarget.classList.toggle("on", auto); };
+document.getElementById("view").onclick = () => { view = (view + 1) % VIEWS.length; setView(); };
+addEventListener("resize", () => { R.setSize(innerWidth, innerHeight); comp.setSize(innerWidth, innerHeight); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); });
+const clk = new THREE.Clock(); let t = 0;
+R.setAnimationLoop(() => {
+  const dt = Math.min(0.05, clk.getDelta()); t += dt;
+  if (auto) { popT -= dt; if (popT <= 0) { pop = 1; popT = 1.2 + Math.random() * 2; } }
+  if (!hold) pop = Math.max(0, pop - dt * 4.5);
+  if (car) car.update(dt, { dist: 0, boost: +document.getElementById("boost").value / 100, t, pop });
+  oc.update(); comp.render();
+});
+window.__lua = { get car() { return car; }, setPop: v => { pop = v; }, hold: v => { hold = v; }, cam, step(n = 1) { for (let k = 0; k < n; k++) { t += 1 / 60; if (car) car.update(1 / 60, { dist: 0, boost: +document.getElementById("boost").value / 100, t, pop }); } comp.render(); } };
+const id0 = new URLSearchParams(location.search).get("car") || "Y2"; sel.value = id0; load(id0);
+</script>
+</body>
+</html>

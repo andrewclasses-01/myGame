@@ -88,7 +88,8 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   mau-3h-ateam.html + pad-3h.html + core/sr3d-3h.js + sr3d-dash-3h.js + sr3d-padui-3h.js + page-3h.js (CSS dùng 3g)   (15/10) MẪU 3h: chữ ATEAM LED + góc đáy bo tròn (mục 19); thiet-ke-vo-lang-ateam.html = 4 kiểu ATEAM
   mau-3i-xe-that.html + pad-3i.html + core/sr3d-3i.js + sr3d-car-3i.js + page-3i.js + sr3d-3i.css   (15/10) MẪU 3i: 14 xe 3D thật, mỗi đội chọn xe ở màn chờ (mục 21)
   mau-3j-buong-lai-that.html + pad-3j.html + core/sr3d-3j.js + sr3d-car-3j.js + page-3j.js + sr3d-3j.css   (15/10) MẪU 3j: buồng lái thật, MENU, cháy, vết lốp (mục 22)
-  mau-3k-hieu-ung.html + pad-3k.html + core/sr3d-3k.js + sr3d-car-3k.js + page-3k.js + sr3d-3k.css   (15/10) MẪU 3k MỚI NHẤT: hiệu ứng đúng/sai, bánh luôn lăn, lực văng khúc cua (mục 23)
+  mau-3k-hieu-ung.html + pad-3k.html + core/sr3d-3k.js + sr3d-car-3k.js + page-3k.js + sr3d-3k.css   (15/10) MẪU 3k: hiệu ứng đúng/sai, bánh luôn lăn, lực văng khúc cua (mục 23)
+  mau-3l-lua-that.html + pad-3l.html + core/sr3d-3l.js + sr3d-car-3l.js + page-3l.js (+ thu-lua-po.html xem lửa)   (15/10) MẪU 3l MỚI NHẤT: lửa pô thật (mục 24)
   XE 3D THẬT (mục 20): chon-xe-3d.html (27 xe Sketchfab) → phong-xe-3d.html (garage 14 xe) + core/sr3d-xe3d.js + xe3d/<id>.glb (nén meshopt/webp; ghi công tác giả CC-BY); thiet-ke-ipad-dua.html = 4 mẫu iPad (mục 17)
   mau-1a-cao-vua.html · mau-1b-truc-thang.html   MẪU 1: đường + 2 xe + camera theo khoảng cách (A cao vừa / B + trực thăng); vỏ thử core/page-1.js
   core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr
