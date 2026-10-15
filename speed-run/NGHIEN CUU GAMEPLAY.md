@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3b (mục 12): bàn đạp ga/phanh thật 2 bên vô lăng, dải nút 60 px, màn khởi động chỉ ANDREW STUDIO + SPEED RUN + START, nút iPad 3 chế độ (tắt · trả lời trên iPad · đua trên iPad). Trước đó mẫu 3 "đua vòng" (mục 11). Mẫu 1/2/3 giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3c (mục 13): boost tích trữ (đúng = nạp, sai = xịt + khói đen), tên lửa mới + cánh tay robot nóc xe, va chạm đẩy, slow motion về đích, bảng iPad nhỏ có xác nhận, iPad đồng bộ cả lúc chờ. Trước đó 3b (mục 12), 3 (mục 11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -417,3 +417,37 @@ vẫn nhận); `i:` thêm trường Nitro. iPad → game `a:<k>:<n>` (đi đư�
 "QUESTION ON THE iPAD". Chế độ 3 — giữ GA + nửa trái vô lăng trên iPad ⇒ game nguồn lái iPAD, steer −1, boost 1, bàn đạp GA game lún + vô lăng sáng trái; bấm THẬT nút FIRE iPad ⇒
 tên lửa bay (2 → 1 quả). Bảng iPad 3 thẻ + QR. Không lỗi console.
 ⬜ Thầy thử mẫu 3b trên Chrome + nhận xét bàn đạp, ANDREW STUDIO, 2 màn iPad. ⬜ iPad THẬT cần kênh bắt tay qua kho chung khi ghép AWord.
+
+---
+
+## 13. ✅ MẪU 3c (15/10/2026) — boost tích trữ · tên lửa mới + cánh tay nóc xe · slow motion về đích · iPad đồng bộ mọi lúc
+Thầy thử 3b rồi dặn 16 ý: bỏ cột JUMP cạnh dốc · leo dốc không boost thì chậm như vật lý · húc đuôi xe đang phanh ⇒ xe trước được đẩy nhanh, xe sau chậm (không tự tránh) ·
+sai ⇒ vạch boost giảm + khói đen + chậm chút · đúng ⇒ KHÔNG tự tăng tốc, vạch boost tăng (nhanh tay tăng nhiều), bàn đạp boost = năng lượng tích trữ, giữ thì dùng dần ·
+mặc định cùng câu hỏi (đổi trong Options) · bảng chọn chế độ iPad nhỏ giữa màn + hỏi xác nhận, OK là đóng, đổi chế độ vẫn chơi tiếp · máy quay bay/về ghế lái nhanh hơn ·
+điều khiển iPad hiện lên game cả lúc chờ · tên lửa đẹp/nhỏ/tinh tế + cánh tay robot trên nóc 2 quả cạnh nhau · mỗi lần trúng một kiểu văng khác ·
+nút tên lửa chỉ icon 2 quả chéo, bấm ⇒ quả vút lên trong nút, tên lửa chờ dựng đứng ≤ 4 + "+x" · vô lăng chỉ sáng 1 cung 1/4 bên bấm (game + iPad) ·
+bàn đạp: trên cố định, dưới lún · về đích slow motion + cinematic · tên lửa bay nhanh hơn, quỹ đạo thật hơn.
+
+Trang: `speed-run/mau-3c-boost.html` + iPad `speed-run/pad-3c.html?t=0|1` (kênh `srpad3c`). 3b giữ nguyên.
+File: `core/sr3d-3c.js/.css` (chép 3b) · `core/sr3d-dash-3c.js` (vô lăng 2 cung sáng `.wg.wl/.wr`, bàn đạp TREO: nhóm `.mv` quay quanh trục giá, icon 2 quả chéo + quả bay `.sr-fly`,
+`reserveHTML(n)`) · `core/sr3d-missile-3c.js` (`missileGeos()` + `buildMissile()` dùng chung cho quả bay và quả trên giá; MS.T 2,0 s, khoá 0,9 s; Bézier leo dốc rồi bổ nhào;
+u = 0,38x + 0,62x² = tăng tốc dần; khói mảnh) · `core/sr3d-fx-3c.js` (bỏ biển JUMP) · `core/sr3d-padlink-3c.js` (= 3b) · `core/sr3d-padui-3c.js` · `core/page-3c.js/.css`.
+
+**Boost tích trữ:** xe luôn chạy tốc độ NỀN `VBASE` 22 m/s (79 km/h; xe sau được +12 theo kéo gần). E (m, 4 ô × 80) = thanh boost, hiện bằng lớp xanh dâng trong bàn đạp ga + 4 ô trên vô lăng.
+Giữ BOOST khi E > 0 ⇒ tiến tới VBOOST 47 (169 km/h), tốn `BUSE` 0,55 ô/giây (đầy 4 ô ≈ 7 s). ĐÚNG ⇒ +0,6…1,2 ô theo tốc độ trả lời (≤ 1,5 s: 1,2 · ≥ 7,5 s: 0,6), toast "+BOOST"/"FAST! +BOOST",
+KHÔNG đổi tốc độ. SAI ⇒ −0,6 ô, v × 0,86, khựng 0,12 s, khói ĐEN 1,3 s từ 2 ống xả (`missiles.dark`). Xoay 360 đáp được ⇒ +0,6 ô/vòng (+0,25 nếu PERFECT) (Nitro cũ gộp vào đây).
+Đo: đúng 74 → 79 km/h (không tăng tốc), giữ boost 1 s ⇒ 142 km/h; sai ⇒ 1,48 ô, 67 km/h, khói đen.
+**Dốc:** trên dốc không đạp boost ⇒ a −= 9,8·sin θ·3,2 (≈ −5,3 m/s²). **Húc đuôi:** va chạm dọc (|n.s| > 0,55) ⇒ xe trước +2 + 0,35j m/s và `pushT` 1,3 s (giảm tốc rất chậm),
+xe sau −1,5 − 0,4j m/s + khựng 0,15 s. Tự lái bỏ luật tự vượt/tránh xe chắn đầu; tự lái đạp boost khi > 1,4 ô hoặc sắp tới dốc.
+**Cùng câu hỏi** (`opt.sameQ`, mặc định true): `G.qList` chung — cùng thứ tự câu + thứ tự đáp án, mỗi đội đi theo nhịp mình (`t.qi`). Options (hàng nút): Same/Different + Missiles max 1–10,
+lưu localStorage `speedrun.opts` (sau này = Options AWord).
+**Bảng iPad:** nhỏ (40cqw) giữa màn, 3 dòng chế độ + đèn nối 2 iPad; bấm ⇒ lớp xác nhận "Switch to …? Cancel / OK", OK ⇒ đổi + đóng bảng; trận không dừng. Bỏ QR (iPad thật vào từ trang chủ AWord).
+**iPad lúc chờ:** ngoài pha đua, `idleInput()` lấy tay lái iPad (chế độ 3) / phím / chạm ⇒ vô lăng quay, cung sáng, bàn đạp lún trên màn lớn. Máy quay nhảy: vào 13/s, ra 8/s (3b: 5 / 2,6).
+**Bệ phóng nóc xe:** đế + tay A (bản lề sau, 2 thanh) + khớp + tay B giữ GIÁ có 2 quả cạnh nhau (×0,62). Có tên lửa ⇒ tay nâng 0,85 rad, giá chếch lên; hết ⇒ gập sát nóc.
+Bắn quả nào ⇒ quả rời đúng vị trí trên giá (`slotWorld`), chỗ đó trống rồi quả mới lớn dần lên (nạp) nếu còn. Đã soi gần: 2 quả mảnh mũi màu đội trên giá nâng.
+**Trúng tên lửa ngẫu nhiên:** xoay 1,0–1,8 s, 0,55–2,15 vòng (phần lẻ trả về bằng lò xo văng đuôi), v × 0,3–0,6, văng ngang 2–7,5 m, nảy 1,2–4,8 m/s, nghiêng ±0,65 rad.
+**Slow motion về đích:** `SLOW_T` 2,6 s thật, thời gian game ×0,2 (vào 0,3 s, ra 0,36 s cuối); nửa trái quay vòng quanh xe thắng (bán kính 9,5, từ chếch trước ra hông, nâng dần),
+nửa phải đặt thấp sau cổng đích 11 m nhìn xe lao tới; FOV 40; khung đen điện ảnh trên/dưới; chữ "TEAM n WINS!" hiện SAU slow motion.
+**Đã kiểm (browser pane):** cả trận tự chơi ~32 s về đích + slow motion 2 nửa thấy xe thắng · bệ phóng + 2 quả · bắn ⇒ quả bay từ giá · bảng iPad xác nhận + bấm THẬT OK ⇒ đổi chế độ 3, đóng ·
+iPad (chế độ 3) giữ PHANH + nửa phải vô lăng LÚC CHỜ ⇒ game: nguồn iPAD, vô lăng quay phải, cung phải sáng, phanh lún · không lỗi console.
+⬜ Thầy thử 3c trên Chrome + nhận xét cảm giác boost tích trữ, va chạm đẩy, slow motion, tên lửa mới.
