@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3e (mục 15): nút tên lửa bay + nạp từ kho, vệt sáng vô lăng mới (+ gỡ lỗi đội 2 sáng xanh), bàn đạp dài/hẹp, vô lăng chỉ nhận trong vòng tròn, khói lâu hơn, tên lửa chậm hơn. Trước đó 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3f (mục 16) = 3e bỏ hẳn xoay ngang trên không (tự lái hết tự xoay; phanh trên không chỉ kèm lái mới lộn trục dọc). Trước đó 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -495,3 +495,15 @@ iPad (chế độ đua trên iPad) diễn y hệt. Đo: 3 quả ⇒ bắn ⇒ ô
 vô lăng ngoài vòng tròn ⇒ không nhận; trong vòng ⇒ TOUCH.
 **Khác:** khói đen 3,6 s (3d: 2,3) · chấm chuỗi đúng 1,5cqh cân giữa ô của nó.
 ⬜ Thầy thử 3e. Hiệu ứng CSS (bay/nạp tên lửa, khói) chạy theo thời gian thật — khung thử ẩn không chạy CSS animation, cần xem trên Chrome.
+
+---
+
+## 16. ✅ MẪU 3f (15/10/2026) — BỎ HẲN XOAY NGANG TRÊN KHÔNG
+Thầy: "Xe khi phóng lên race ramp có hiện tượng xoay ngang trên không trung, tôi không thích cái này. Hãy tìm hiểu xem đó là tính năng hay lỗi."
+**Kết luận: TÍNH NĂNG** (không phải lỗi), từ mẫu 3: (1) xe TỰ LÁI tự bấm phanh lúc bay ở 60 % số lần nhảy (`aiFlipT`) ⇒ Flat Spin — đo trên 3e: 13/18 lần nhảy xoay ngang;
+(2) người lái bấm PHANH trên không (không lái) = Flat Spin quanh trục đứng (theo yêu cầu cầu nhảy 15/10); (3) ◀ ▶ trên không còn lượn hướng nhẹ (yaw 0,45 rad/s).
+Người lái không bấm gì ⇒ không xoay (đo 0/3). Thầy chọn (AskUserQuestion): **bỏ hẳn xoay ngang**.
+Trang: `speed-run/mau-3f-khong-xoay-ngang.html` — chỉ `core/sr3d-3f.js` + `core/page-3f.js` mới; CSS `sr3d-3e.css`/`page-3e.css`, iPad `pad-3e.html` (kênh `srpad3e`) dùng chung 3e
+⇒ đừng mở 3e và 3f cùng lúc khi thử iPad.
+Đổi: tự lái không tự xoay · PHANH trên không chỉ có tác dụng khi kèm LÁI ⇒ lộn trục dọc (Barrel Roll, giữ thì lộn tiếp), phanh không thì không xoay · ◀ ▶ trên không chỉ nghiêng thân.
+Đo trên 3f: tự lái 0/19 lần nhảy xoay ngang · phanh không lái: yaw 0, PERFECT LANDING · phanh + lái: yaw 0, lộn dọc · chỉ lái: yaw 0 (nghiêng thân).

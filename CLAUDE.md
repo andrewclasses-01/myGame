@@ -82,7 +82,8 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   mau-3b-ban-dap.html + pad-3b.html + core/sr3d-3b.js/.css + sr3d-dash-3b.js + sr3d-padlink-3b.js + sr3d-padui-3b.js + page-3b.js/.css   (15/10) MẪU 3b: bàn đạp thật, ANDREW STUDIO, iPad 3 chế độ (mục 12)
   mau-3c-boost.html + pad-3c.html + core/sr3d-3c.js/.css + sr3d-dash-3c.js + sr3d-missile-3c.js + sr3d-fx-3c.js + sr3d-padlink-3c.js + sr3d-padui-3c.js + page-3c.js/.css   (15/10) MẪU 3c: boost tích trữ, tên lửa + cánh tay nóc, slow motion về đích (mục 13)
   mau-3d-lon-doc.html + pad-3d.html + core/sr3d-3d.js/.css + sr3d-dash-3d.js + sr3d-padlink-3d.js + sr3d-padui-3d.js + page-3d.js/.css   (15/10) MẪU 3d: bàn đạp đều, nút tên lửa giữa, lộn trục dọc, khói đen (mục 14)
-  mau-3e-nap-ten-lua.html + pad-3e.html + core/sr3d-3e.js/.css + sr3d-dash-3e.js + sr3d-missile-3e.js + sr3d-padlink-3e.js + sr3d-padui-3e.js + page-3e.js/.css   (15/10) MẪU 3e MỚI NHẤT: nạp tên lửa, vệt sáng vô lăng, vô lăng chỉ nhận trong vòng (mục 15)
+  mau-3e-nap-ten-lua.html + pad-3e.html + core/sr3d-3e.js/.css + sr3d-dash-3e.js + sr3d-missile-3e.js + sr3d-padlink-3e.js + sr3d-padui-3e.js + page-3e.js/.css   (15/10) MẪU 3e: nạp tên lửa, vệt sáng vô lăng, vô lăng chỉ nhận trong vòng (mục 15)
+  mau-3f-khong-xoay-ngang.html + core/sr3d-3f.js + page-3f.js (CSS/iPad dùng 3e)   (15/10) MẪU 3f MỚI NHẤT: bỏ hẳn xoay ngang trên không (mục 16)
   mau-1a-cao-vua.html · mau-1b-truc-thang.html   MẪU 1: đường + 2 xe + camera theo khoảng cách (A cao vừa / B + trực thăng); vỏ thử core/page-1.js
   core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr
   core/sr3d-world-1.js         trời/đất/biển/đường 4 làn (mỗi đội 2)/cột đèn/cây/vạch đoạn/cổng đích + CONG THẾ GIỚI (makeBend) + groundH JS khớp GPU (Math.fround)
