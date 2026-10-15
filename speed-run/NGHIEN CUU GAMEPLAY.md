@@ -770,8 +770,13 @@ MSAA bật lại giữa trận ~200 ms) · đổi xe Y4 / H7 đứng hình 4,9 s
    quầng là lớp `::after` chỉ đổi opacity (cũ animate box-shadow).
 5. **Nén xe** (`slimMat`): bỏ normal / bump / AO / light map, roughness-metalness map ⇒ trung bình kênh G/B của chính ảnh, bỏ clearcoat/sheen ⇒ ít biến thể shader
    (Y4 + H7: +33 ⇒ +15 program), đổi xe đứng 4,9 s ⇒ 0,7 s. Vết cháy: chỗ đã dùng giữ lại, hết kho thì dùng lại ⇒ không dò tia giữa trận.
+7. **LỖI 3q (bản live Đợt 531)**: `updateHUD` — `const dist = PJ.distanceTo(cam.position); PJ.project(cam);` bị nuốt vào chú thích ⇒ xe kia cách ~60–120 m
+   trong khung nhìn ⇒ ReferenceError MỖI khung, ném ra trước `composer.render()` ⇒ khung KHÔNG được vẽ (đo: 49–83 khung / ván; đầu đo rAF không thấy — phải đếm
+   lần `composer.render` thật + bắt `error`). Đã trả lại thành mã.
 6. Gói nhúng: vào trận chờ lần dịch sẵn HIỆN HÀNH (`game.prewarm()`) — cũ chờ lần đầu, đổi xe rồi bấm START có thể khựng ở 5 đèn.
 
-**Đo 3r (cùng máy, cùng act, cùng kịch bản):** xưởng **59,5–60** · phim **60,0 (0 khung trễ)** · 5 đèn **60,0** · đua **59,6** ở độ nét 1,0 (0 lần dịch shader, không
+**Đo cuối (đếm khung VẼ THẬT, cùng máy, cùng act, cùng kịch bản):** 3q live: xưởng 28,7 · phim 17 · 5 đèn 45 · đua 58,3 (+49 khung lỗi không vẽ, 19 lần dịch
+shader) ⇒ **3r: xưởng 60,1 · phim 59,3 · 5 đèn 60,0 · đua 59,7 · kết quả 59,8 · 0 lỗi · 0 dịch shader giữa trận**.
+Lần đo trước đó (đếm rAF): xưởng **59,5–60** · phim **60,0 (0 khung trễ)** · 5 đèn **60,0** · đua **59,6** ở độ nét 1,0 (0 lần dịch shader, không
 khung nào > 50 ms cả ván) · kết quả 59,9. Xe nặng Y4 + H7: đổi xe 0,7 s, phim 60,0, đua 59,9 (không khung > 33 ms), chơi lại 59,3.
 ⚠️ Cửa sổ myActivity bị thu nhỏ ⇒ trình duyệt ngừng rAF (trang hidden) — đo lại khi cửa sổ hiện.

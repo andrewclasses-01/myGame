@@ -1260,7 +1260,10 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
       const h = H[i];
       h.wheel.style.transform = `rotate(${(t.steer * 70 + (t.spinT > 0 ? Math.sin(G.t * 40) * 6 : 0)).toFixed(1)}deg)`;
       const o = T[1 - i], cam = cams[i], d = Math.min(-o.s - cam.position.z, 0);
-      const bq = bendQ(d); PJ.set(o.x + bxS[i] * bq, 2.0 + o.y - bendFor(i)[1] * bq, -o.s);   // 3q: cùng công thức cong của shader const dist = PJ.distanceTo(cam.position); PJ.project(cam);
+      const bq = bendQ(d); PJ.set(o.x + bxS[i] * bq, 2.0 + o.y - bendFor(i)[1] * bq, -o.s);   // 3q: cùng công thức cong của shader
+      // 3r: SỬA LỖI 3q — dòng dưới bị nuốt vào chú thích ⇒ xe kia cách ~60–120 m trong khung nhìn ⇒ ReferenceError `dist` MỖI khung, ném ra trước
+      //   composer.render() ⇒ khung đó KHÔNG được vẽ (hình đứng trong lúc rAF vẫn chạy).
+      const dist = PJ.distanceTo(cam.position); PJ.project(cam);
       const yTop = (1 - PJ.y) / 2, show = G.phase === "race" && PJ.z < 1 && Math.abs(PJ.x) < 0.98 && yTop > 0.05 && yTop < 1 - dashF - 0.04 ? smooth(14, 40, dist) : 0;
       h.tag.style.opacity = show.toFixed(2);
       if (show > 0) { h.tag.style.left = ((PJ.x + 1) / 2 * 100).toFixed(2) + "%"; h.tag.style.top = (yTop * 100).toFixed(2) + "%"; }
