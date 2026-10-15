@@ -554,3 +554,19 @@ Thầy: "chơi Rocket Race với iPad thấy khá nóng — nghiên cứu, đo �
   (b) vẽ sẵn nền tĩnh (trời + mặt trời + đất) vào canvas phụ rồi drawImage mỗi khung — CHẬM HƠN (12–19 ms so với 9,7) ⇒ bỏ.
 - Đã kiểm hình: Train Rush 1av y 1au (trời, núi, ray, toa, khinh khí cầu); bảng tên lửa Rocket Race y cũ, không răng cưa. Trang thử `pad-1av.html`, `xem-1av.html`.
 - Nếu iPad thật còn nóng: nấc kế 20 khung/giây + độ nét 1,25.
+
+## 47. Mẫu 1aw (15/10/2026) — 1 điểm/thùng · tốc độ +5 %/màn từ nấc Options · bỏ người trong toa
+**Thầy giao 3 ý (cả Single lẫn Fight):** (1) mỗi hộp rơi trúng đích chỉ tính 1 điểm · (2) sau mỗi màn tốc độ tăng lên một chút tính từ tốc độ Options đặt ban đầu ·
+(3) bỏ hẳn người trong toa để tiết kiệm hiệu năng.
+**Đã làm (`core/bp3d-1aw.js`, `core/fight-1aw.js`, `core/coach-1aw.js`, trang `mau-1aw-train-rush.html`; iPad vẫn `pad-1av.html`):**
+- `scoreCart`: gain 5 → **1** (đang x2 ⇒ 2). Bị bật khỏi toa ⇒ `unscore` trừ đúng số đã cộng (c.gain) nên tự theo.
+- Tốc độ: hàm `levelBoost(lv) = min(1,75; 1 + 0,05·lv)` nhân cho CẢ tàu (`cruiseV`, máy quay Fight `duoCamera`) lẫn khinh khí cầu (`blimpV`).
+  Màn 1 = đúng nấc Options. Bỏ kiểu cũ: tàu +4 %/toa của màn (tối đa như 10 toa) — Levels Off (1 màn đủ bộ từ) trước đây chạy nhanh hơn nấc Options tới +36 %,
+  nay đúng nấc · khinh khí cầu +6 %/màn → +5 % chung. Đo trong bàn thử nấc 4: tàu 3,900 → 4,095 → 4,290 đv/s ở màn 1–2–3.
+- Người trong toa: không dựng (`people: null`), `updateCoaches` và `startle` thành rỗng (hết hoạt cảnh hoảng / bật dậy chạy lung tung mỗi khung,
+  hết hàng trăm khúc xương tay–ngón mỗi toa). Rèm toa khách đổi từ kính mờ TRUYỀN SÁNG (`MeshPhysicalMaterial transmission: 1`) sang vải đục sáng ấm
+  (`MeshStandardMaterial` + emissive) — transmission bắt three.js vẽ thêm cả cảnh đục vào một render target riêng MỖI KHUNG khi có toa khách trong khung;
+  không còn người phía sau thì kính mờ vô nghĩa. Intro Fight (fight-cine-1ap) tự bỏ qua vì `o.people` = null.
+**Kiểm:** Single — thùng đúng ⇒ điểm 1, 3 màn liền tốc độ đúng +5 %, `S.coaches` không còn người; Fight — 2 tàu chơi, thùng đúng ⇒ đội 1 = 1 điểm, máy quay 3,9 ở màn 1; console sạch.
+**Còn để nguyên (chưa hỏi thầy):** thưởng giờ thừa khi qua màn vẫn 1 giây = 1 điểm (Single cộng thẳng vào điểm; Fight cộng vào tổng đội) ⇒ nay lấn át điểm thùng;
+Points off 0–10/thùng sai; toa than trừ tối thiểu 2; quả khinh khí cầu thưởng điểm +10.

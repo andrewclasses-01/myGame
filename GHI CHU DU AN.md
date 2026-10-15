@@ -632,7 +632,17 @@ Lên AWord Đợt 531 (GOC rw-3q.js, CSS rw-3q.css; AWord thêm cờ `fightOnly`
 **Quyết định (thầy chốt qua câu hỏi):** Same = theo lượt (Different giữ nhịp riêng) · hết mạng = xe nổ, đội kia thắng · Missile damages = mức 1–5 (thời gian xoay / đứng / khói).
 **Lỗi/bẫy:** đo trong khung trình duyệt của app vẫn sai (ẩn) ⇒ dùng Chrome CDP; heredoc bash lại nuốt `\n` ⇒ viết script bằng file.
 
+## Train Rush 1aw — 15/10/2026 · 1 ĐIỂM/THÙNG · TỐC ĐỘ +5 %/MÀN · BỎ NGƯỜI TRONG TOA · phiên máy nhà
+**Bối cảnh (thầy):** mỗi hộp rơi trúng đích chỉ tính 1 điểm · sau mỗi màn tốc độ tăng một chút tính từ tốc độ Options ban đầu · bỏ hẳn người chạy trong toa để nhẹ máy. Sửa cả myGame và AWord.
+**Đã làm:** mẫu 1aw (`balloon-pop/mau-1aw-train-rush.html`, lõi `core/bp3d-1aw.js`, trận `core/fight-1aw.js`, toa `core/coach-1aw.js`): điểm thùng 5 → 1 (x2 ⇒ 2);
+`levelBoost` +5 %/màn (trần ×1,75) cho cả tàu lẫn khinh khí cầu, màn 1 = đúng nấc Options (bỏ +4 %/toa và +6 %/màn cũ); không dựng người trong toa, bỏ hoạt cảnh hoảng/chạy,
+rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cảnh mỗi khung). Chi tiết: `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 47. AWord: `tools/chep-train-rush.py` GOC = fight-1aw.js.
+**Quyết định:** tăng tốc theo SỐ MÀN (không theo số toa) để Levels Off cũng đúng nấc Options; rèm đục thay kính mờ vì không còn gì phía sau để làm nhoè.
+**Còn để nguyên, chờ thầy:** thưởng giờ thừa (1 giây = 1 điểm) giờ lớn hơn hẳn điểm thùng; Points off tối đa −10; toa than −2; bonus +10.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **TRAIN RUSH 1aw (= AWord)**: thầy chơi trên TOMKO — +5 %/màn đủ cảm giác chưa (hằng 0,05 và trần 1,75 trong `levelBoost`), rèm toa đục trông ổn không,
+  fps có lên không. Hỏi thầy: thưởng giờ thừa (1 giây = 1 điểm) / Points off / toa than −2 / bonus +10 có cần đổi theo thang 1 điểm/thùng không.
 - ⬜ **RACING WORDS 3q (= AWord Đợt 531)**: thầy chơi trên TOMKO — cảnh xa còn chóng mặt không (nếu còn: giảm `bend` 0,75 hoặc tầm cong 150 m), 35 km/h có quá chậm không, cầu nhảy chậm + rung, Lives / Time delay / Miss wait đúng ý chưa.
 - ⬜ **RACING WORDS 3p (= AWord Đợt 529)**: thầy chơi trên TOMKO trong myActivity — còn lag không (đo fps nếu còn), chạm đúp bỏ intro có tiện không; kính xe (bỏ transmission) trông ổn không.
 - ⬜ **iPad bớt nóng (AWord Đợt 523)**: thầy chơi Rocket Race + Train Rush với iPad thật vài trận ⇒ còn nóng không, 25 khung/giây có bị khó chịu không. Còn nóng ⇒ 20 khung/giây + độ nét 1,25 (hằng PAD_FPS / PR_MAX đầu file).
