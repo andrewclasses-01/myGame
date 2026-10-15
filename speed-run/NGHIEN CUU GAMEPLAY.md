@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3c (mục 13): boost tích trữ (đúng = nạp, sai = xịt + khói đen), tên lửa mới + cánh tay robot nóc xe, va chạm đẩy, slow motion về đích, bảng iPad nhỏ có xác nhận, iPad đồng bộ cả lúc chờ. Trước đó 3b (mục 12), 3 (mục 11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3d (mục 14): bàn đạp bằng nhau không chữ sát vô lăng, cung sáng mờ 2 đầu, nút tên lửa giữa (2 quả song song), nửa xe trên dốc ⇒ lộn trục dọc, trúng tên lửa ⇒ khói đen che kính. Trước đó 3c (mục 13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -451,3 +451,25 @@ nửa phải đặt thấp sau cổng đích 11 m nhìn xe lao tới; FOV 40; kh
 **Đã kiểm (browser pane):** cả trận tự chơi ~32 s về đích + slow motion 2 nửa thấy xe thắng · bệ phóng + 2 quả · bắn ⇒ quả bay từ giá · bảng iPad xác nhận + bấm THẬT OK ⇒ đổi chế độ 3, đóng ·
 iPad (chế độ 3) giữ PHANH + nửa phải vô lăng LÚC CHỜ ⇒ game: nguồn iPAD, vô lăng quay phải, cung phải sáng, phanh lún · không lỗi console.
 ⬜ Thầy thử 3c trên Chrome + nhận xét cảm giác boost tích trữ, va chạm đẩy, slow motion, tên lửa mới.
+
+---
+
+## 14. ✅ MẪU 3d (15/10/2026) — bàn đạp bằng nhau · nút tên lửa giữa · lộn trục dọc khi nửa xe trên dốc · khói đen khi trúng
+Thầy thử 3c rồi dặn: bỏ chữ BOOST/BRAKE để bàn đạp dài ra · 2 bàn đạp rộng bằng nhau, tay đòn bằng nhau · 2 bàn đạp sát vô lăng hơn (phanh đội 1 / ga đội 2 không sát nhau) ·
+phần sáng vô lăng mờ 2 đầu · nút tên lửa ở giữa bảng đáp án, số tên lửa sát mép màn, chấm năng lượng tên lửa phía còn lại · nút tên lửa dài, 2 quả đứng song song ·
+xe lên dốc một nửa ⇒ lộn 1 vòng quanh trục dọc (đầu–đuôi) rồi tiếp đất, hiệu ứng như bay qua dốc, KHÔNG xoay quanh như bị bắn · bị bắn trúng: xoay + chậm + khói đen mù mịt phía trước, không thấy đường một lúc.
+
+Trang: `speed-run/mau-3d-lon-doc.html` + iPad `speed-run/pad-3d.html?t=0|1` (kênh `srpad3d`). 3c giữ nguyên. File: `core/sr3d-3d.js/.css` · `core/sr3d-dash-3d.js` · `core/sr3d-padui-3d.js` ·
+`core/sr3d-padlink-3d.js` (= 3c) · `core/page-3d.js/.css`; dùng lại `sr3d-missile-3c.js`, `sr3d-fx-3c.js`.
+**Bàn đạp:** cả 2 viewBox 76 × 150, mặt đạp rộng 68 BẰNG NHAU, tay đòn + giá giống hệt; ga cao 84 (viền kim loại, lớp boost), phanh cao 60 (viền đỏ). Không chữ ⇒ cao 96 % tap-lô.
+Margin −1,1cqw ⇒ sát vô lăng (vô lăng nằm trên, che nhẹ mép trong); tap-lô chừa 2,4cqw ở mép giữa 2 nửa màn. iPad giống hệt (−2vmin, cao 58vmin).
+**Vô lăng:** cung 1/4 tô bằng dải màu đội trong suốt → đặc → trong suốt dọc theo cung (gradient userSpaceOnUse) + nhoè 6 ⇒ 2 đầu mờ dần.
+**Hàng dưới bảng đáp án:** tên lửa chờ (sát MÉP màn) | NÚT TÊN LỬA dài ở giữa (≤ 62 %) | chấm chuỗi đúng (phía trong); đội 2 đối xứng. Icon 2 quả đứng song song, cách nhau.
+**Nửa xe trên dốc:** `rampContact()` đo phần BỀ NGANG xe nằm trên dốc (cov); cov < 0,85 ⇒ xe nghiêng (bánh bên dốc nâng: ar = side·atan(h/W)), cao h/2; rời mép ⇒ `takeOff(t, side)`:
+vy × 0,7, lộn ép buộc (`forced`) quanh trục DỌC (ar) cùng chiều đang nghiêng, tốc độ tính để xong 1 vòng trước khi chạm đất (`rollW` 4–12 rad/s), phanh không cắt ngang được; đáp ⇒ tính
+như stunt (PERFECT + boost). Máy quay nhảy/nhoè/vệt gió như bay thường. Đo: lên dốc lệch nửa ⇒ ar 0,72 → 6,28 sau ~1,0 s, ay = 0, "PERFECT! BARREL ROLL ×1 +BOOST".
+Bàn thử: nút "Xe 1 lên dốc MỘT NỬA (lộn trục dọc)".
+**Trúng tên lửa:** như 3c (xoay ngẫu nhiên + chậm) + điểm nổ dời 3 m trước mũi (không loá trắng buồng lái) + 70 hạt khói ĐEN to bung phía trước xe + lớp `.sr-smoke` (5 đám khói đen
+nhoè phình ra) phủ kính nửa màn đội bị bắn ~2,3 s. Đo: trúng ⇒ 6 km/h, đang xoay 1,4 s, lớp khói bật. Bàn thử: "Bắn trúng xe 2 (khói đen)".
+**Đã kiểm (browser pane):** lộn trục dọc (ảnh: xe lộn ngửa giữa không) · bố cục tap-lô mới · iPad chế độ đua: bàn đạp bằng nhau, nút 2 quả song song, cung trái sáng mờ 2 đầu · không lỗi console.
+⬜ Thầy thử 3d. Lớp khói CSS chạy theo thời gian thật nên chưa xem được trong khung thử ẩn — cần xem trên Chrome.
