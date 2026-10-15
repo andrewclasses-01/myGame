@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3m (mục 25): game ĐỔI TÊN thành RACING WORDS (thư mục/mã giữ speed-run). Trước đó 3l lửa pô thật (24), 3k (23), 3j (22), 3i (21)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3n (mục 26): INTRO xưởng ANDREW STUDIO + bộ máy âm thanh (chờ thầy chọn tiếng thật). Trước đó 3m đổi tên RACING WORDS (25), 3l lửa pô (24)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -638,3 +638,19 @@ Trang: `speed-run/mau-3m-racing-words.html` + iPad `pad-3m.html?t=0|1` (kênh `s
 Đổi chữ hiển thị: tiêu đề lớn màn chờ, câu báo CHANGE TEMPLATE, màn iPad (chờ kết nối + chọn đội), tiêu đề tab, trang mục lục.
 GIỮ NGUYÊN (không ai thấy, đổi sẽ gãy link/mất lựa chọn đã lưu): thư mục `speed-run/`, tên file `sr3d-*`, hàm `createSpeedRun`, khóa lưu `speedrun.*`, các mẫu cũ (vẫn ghi SPEED RUN).
 Đã kiểm: chữ RACING WORDS rộng 917/1850 px ở màn chờ (vừa khung), iPad tiêu đề đổi.
+
+---
+
+## 26. 🎬 MẪU 3n (15/10/2026) — INTRO XƯỞNG ANDREW STUDIO (+ bộ máy âm thanh, chờ chọn tiếng)
+Thầy: "tạo intro cinematic tương tự như ROCKET RACE" ⇒ chọn **kịch bản A · Xưởng ANDREW STUDIO**; âm thanh: "làm âm thanh cho intro và mọi hiệu ứng trong game, toàn bộ bằng âm thanh THẬT, điện ảnh, xịn, cả nhạc nền".
+Trang: `speed-run/mau-3n-intro.html` + iPad `pad-3n.html` (kênh `srpad3n`). File mới: `core/sr3d-intro-3n.js` + `.css` (intro) · `core/sr3d-sound-3n.js` (âm thanh) · `core/sr3d-3n.js` (= 3m + `hold()` + onEvent "menu") · `core/page-3n.js`.
+**Màn chờ = xưởng:** sàn bê tông mài bóng (phản chiếu bằng CubeCamera chụp lại khi đèn/cửa đổi), tường ốp kim loại, giàn thép, tủ đồ nghề đỏ, chồng lốp, ô đỗ màu đội "TEAM n",
+biển ANDREW STUDIO / RACING WORDS tường sau; tối + 2 đèn rọi (có bóng đổ) + quầng sáng hình nón + bụi lơ lửng; pô thỉnh thoảng nổ; máy quay lượn chậm; ô chọn xe (◀ tên ▶ + danh sách) + START trên cảnh.
+**START ⇒ ~11,75 s:** 0,25–1,45 đèn trần bật từng dãy (5 dãy LED + RectAreaLight ⇒ vệt sáng trên sơn) · 1,6 biển nháy rồi sáng · 2,25 cận ỐNG XẢ xe đội 1 nổ máy phụt lửa + thẻ tên ·
+3,85 cận đầu xe đội 2 · 5,35–7,3 máy quay ngoài cửa, CỬA CUỐN (26 lá thép) kéo lên, nắng hoàng hôn tràn vào · 7,7 hai xe tăng tốc ra (9,5 m/s²) lửa pô, máy quay lia ngang ·
+9,3 chữ RACING WORDS đập vào · 10,7 xe vút qua máy quay thấp · 11,5 CHỚP TRẮNG ⇒ onHandoff: ẩn intro, game.start() (máy quay vào buồng lái, 5 đèn, GO), lớp trắng mờ dần 0,6 s. Nút SKIP.
+Viền đen điện ảnh khi chiếu. Đội 1 đỗ ở +x (máy quay màn chờ nhìn từ cửa vào ⇒ đội 1 nằm BÊN TRÁI khớp ô chọn). Đèn pha xe bật khi nổ máy (để 4 — mạnh hơn ⇒ 2 vệt chói trên sàn bóng).
+Game ngừng vẽ khi intro hiện (2 khung WebGL không chạy cùng lúc); MENU ▸ CHANGE CARS / START AGAIN ⇒ xưởng hiện lại. Bàn thử: "▶ START (intro)" / "Bỏ intro, đua ngay".
+**Âm thanh (sr3d-sound-3n.js):** Web Audio, 2 kênh Effect / Music (nút loa tắt cả 2, nhớ theo máy), tiếng lặp nối không khựng + trượt âm lượng, máy xe đổi cao độ theo tốc độ, lệch trái/phải theo nửa màn;
+gắn sẵn mốc intro (đèn, nổ máy, pô, cửa, lăn bánh, chữ, vút qua) + trận (máy, gió, nhạc, 5 đèn, GO, boost, lốp rít, tên lửa, nổ, cháy, đúng/sai, tiếp đất, va chạm, thắng + khán giả, nhạc kết quả).
+⬜ File tiếng ở `speed-run/sfx/<tên>.mp3` — chưa có (đang tìm âm thanh THẬT, thầy chọn ở trang chọn âm thanh ⇒ tải về).
