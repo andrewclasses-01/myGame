@@ -84,7 +84,8 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   mau-3d-lon-doc.html + pad-3d.html + core/sr3d-3d.js/.css + sr3d-dash-3d.js + sr3d-padlink-3d.js + sr3d-padui-3d.js + page-3d.js/.css   (15/10) MẪU 3d: bàn đạp đều, nút tên lửa giữa, lộn trục dọc, khói đen (mục 14)
   mau-3e-nap-ten-lua.html + pad-3e.html + core/sr3d-3e.js/.css + sr3d-dash-3e.js + sr3d-missile-3e.js + sr3d-padlink-3e.js + sr3d-padui-3e.js + page-3e.js/.css   (15/10) MẪU 3e: nạp tên lửa, vệt sáng vô lăng, vô lăng chỉ nhận trong vòng (mục 15)
   mau-3f-khong-xoay-ngang.html + core/sr3d-3f.js + page-3f.js (CSS/iPad dùng 3e)   (15/10) MẪU 3f: bỏ hẳn xoay ngang trên không (mục 16)
-  mau-3g-vo-lang-day-phang.html + pad-3g.html + core/sr3d-3g.js/.css + sr3d-dash-3g.js + sr3d-padui-3g.js + page-3g.js/.css   (15/10) MẪU 3g MỚI NHẤT: iPad bố cục B + vô lăng đáy phẳng (mục 18); thiet-ke-ipad-dua.html = 4 mẫu iPad (mục 17)
+  mau-3g-vo-lang-day-phang.html + pad-3g.html + core/sr3d-3g.js/.css + sr3d-dash-3g.js + sr3d-padui-3g.js + page-3g.js/.css   (15/10) MẪU 3g: iPad bố cục B + vô lăng đáy phẳng (mục 18)
+  mau-3h-ateam.html + pad-3h.html + core/sr3d-3h.js + sr3d-dash-3h.js + sr3d-padui-3h.js + page-3h.js (CSS dùng 3g)   (15/10) MẪU 3h MỚI NHẤT: chữ ATEAM LED + góc đáy bo tròn (mục 19); thiet-ke-vo-lang-ateam.html = 4 kiểu ATEAM; thiet-ke-ipad-dua.html = 4 mẫu iPad (mục 17)
   mau-1a-cao-vua.html · mau-1b-truc-thang.html   MẪU 1: đường + 2 xe + camera theo khoảng cách (A cao vừa / B + trực thăng); vỏ thử core/page-1.js
   core/sr3d-1.js               lõi khuôn B: createSpeedRun({mount, view, questions, title, options, onEvent}) — luật C lai (đoạn 80 m), vật lý, camera, HUD DOM; bàn thử window.__sr
   core/sr3d-world-1.js         trời/đất/biển/đường 4 làn (mỗi đội 2)/cột đèn/cây/vạch đoạn/cổng đích + CONG THẾ GIỚI (makeBend) + groundH JS khớp GPU (Math.fround)

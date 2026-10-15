@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>SPEED RUN — iPad (mẫu 3h)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="pad"></div>
+<script type="module">
+// Bàn thử myGame: iPad cho SPEED RUN mẫu 3h — 3 chế độ do màn lớn chọn (tắt / trả lời trên iPad / đua trên iPad).
+// Kênh bắt tay CỤC BỘ "srpad3h" (cùng trình duyệt với mau-3h-ateam.html, mở ở tab khác). ?t=0 đội 1 · ?t=1 đội 2 · không có ?t ⇒ chọn đội.
+import { createPadClient, localSignal } from "./core/sr3d-padlink-3e.js";
+import { mountPadApp, mountPadChooser } from "./core/sr3d-padui-3h.js";
+const q = new URLSearchParams(location.search), mount = document.getElementById("pad");
+const goTeam = t => { q.set("t", t); location.href = "?" + q; };
+if (!q.has("t")) mountPadChooser(mount, { onPick: goTeam });
+else {
+  const team = q.get("t") === "1" ? 1 : 0;
+  let ui = null, pend = {};
+  const call = (k, v) => ui ? ui[k](v) : (pend[k] = v);
+  const client = createPadClient({ signal: localSignal("srpad3h"), team,
+    onState: s => call("setState", s), onInfo: i => call("setInfo", i), onMode: m => call("setMode", m), onQ: x => call("setQ", x) });
+  ui = mountPadApp(mount, { team, client, onBack: () => { client.destroy(); q.delete("t"); location.href = "?" + q; } });
+  ui.setState(client.state); Object.entries(pend).forEach(([k, v]) => ui[k](v));
+  window.__padc = client; window.__padui = ui;
+}
+</script>
+</body>
+</html>

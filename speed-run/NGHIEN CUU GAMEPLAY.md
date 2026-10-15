@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3g (mục 18): iPad bố cục B (thầy chọn) + vô lăng đáy phẳng kiểu T248 cả game và iPad. Trước đó 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3h (mục 19): vô lăng có chữ ATEAM LED màu đội (kiểu A) + góc đáy bo tròn, cả game và iPad. Trước đó 3g (18), 3f (16), 3e (15), 3d (14), 3c (13), 3b (12), 3 (11). Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -535,3 +535,16 @@ Game: vô lăng 31cqh (3e: 34), bottom −4,2cqh ⇒ thấy trọn mép dưới 
 **iPad bố cục B (padui-3g):** ga sát mép TRÁI (left 5vw, cao 54vh), phanh sát mép PHẢI (right 5vw, cao 46vh), vô lăng giữa, tên lửa 17vh góc trên phải (top 6vh), tên lửa chờ dưới nó.
 Đã kiểm ở 1180 × 796 (iPad 10/Air 11" trừ thanh trạng thái): bố cục đúng, vô lăng đáy phẳng, chế độ đua trên iPad nối được.
 ⬜ Thầy thử trên iPad thật: link Pages https://andrewclasses-01.github.io/myGame/speed-run/pad-3g.html chỉ nối được với game cùng trình duyệt (kênh cục bộ) ⇒ iPad thật cần ghép AWord.
+
+---
+
+## 19. ✅ MẪU 3h (15/10/2026) — chữ ATEAM LED màu đội trên đáy vô lăng + góc đáy bo tròn
+Thầy (sau 3g): "Ở viền dưới vô lăng (cả iPad, cả game) thêm một dòng ATEAM ở đoạn phẳng dưới vô lăng. Góc phẳng và cong ở điểm giao nhau cần bo cong hơn một chút. Thiết kế lại cho
+tôi xem phần đó. Chữ ATEAM đẹp và ngầu, LED sáng theo màu đội." ⇒ bản phác `speed-run/thiet-ke-vo-lang-ateam.html` (4 kiểu: A LED đặc · B neon viền · C LED chấm · D chữ bạc + 2 vạch
+LED; thanh kéo độ bo góc ngoài/trong) ⇒ thầy chọn **kiểu A, chữ bé hơn một chút**.
+Trang: `speed-run/mau-3h-ateam.html` + iPad `speed-run/pad-3h.html?t=0|1` (kênh `srpad3h`). File mới: `core/sr3d-dash-3h.js` · `core/sr3d-3h.js` (= 3g) · `core/sr3d-padui-3h.js` (= 3g) ·
+`core/page-3h.js`; CSS dùng `sr3d-3g.css` / `page-3g.css`.
+**Vành:** `dRim(R, yf, f)` — cung lớn R + đoạn phẳng + cung bo f tiếp xúc cả hai (tâm bo cách tâm vô lăng R − f); ngoài R 92 / đáy 170 / bo 12, trong R 70 / đáy 146 / bo 8.
+**ATEAM kiểu A:** rãnh tối bo tròn 68 × 14 khắc chìm trên đoạn phẳng; chữ Exo 2 nghiêng 900 cỡ 11 (bản phác 13), giãn 2,3, màu đội + quầng sáng (filter `srwgat`) + lớp lõi trắng nóng 75 %.
+id filter có tiền tố `srwg` ⇒ lõi đổi id theo đội (đã kiểm: srwg0at / srwg1at) — tránh lại lỗi màu đội 2 (mục 15).
+Đã kiểm: game 2 đội (ATEAM xanh / cam), iPad 1180 × 796 (ATEAM cam, góc bo).
