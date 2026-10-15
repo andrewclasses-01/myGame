@@ -4,7 +4,7 @@ Game 3D thứ 4 của kho myGame (sau ROCKET RACE, STAR LOOT, TRAIN RUSH). Đua 
 nhưng thiết kế khác hẳn: có ĐƯỜNG ĐUA thật, camera sau lưng 2 xe nhưng CAO hơn, trả lời đúng = NĂNG LƯỢNG cho xe
 chạy, tên lửa gắn trên thân xe bắn đối phương, cân nhắc LÁI XE bằng iPad. Mục tiêu cuối: ghép vào AWord.
 
-Trạng thái: **15/10/2026 MẪU 3j (mục 22): buồng lái thật theo xe, danh sách xe, biển ANDREW TEAM, MENU kiểu Rocket Race, chậm 30 %, đường dài + đa dạng, tiếp đất chông chênh + vết lốp, cháy khi trúng tên lửa. Trước đó 3i (21), xe 3D (20), 3h (19), 3g (18)… Các mẫu cũ giữ nguyên.**
+Trạng thái: **15/10/2026 MẪU 3k (mục 23): hiệu ứng nút đúng/sai, đúng chỉ nạp boost, START AGAIN về màn chờ, bánh luôn lăn (14/14 xe), xe trước phanh ⇒ xe sau mất lái, pô nổ màn chờ, lực văng khúc cua. Trước đó 3j (22), 3i (21), xe 3D (20), 3h (19)… Các mẫu cũ giữ nguyên.**
 
 Yêu cầu gốc của thầy (11/10/2026):
 > "Game đua ô tô, tương tự như rocket race nhưng thiết kế sẽ khác khá nhiều. Đường đua sẽ nhìn từ phía sau 2 xe nhưng camera
@@ -598,3 +598,23 @@ Thầy (sau 3i), 9 việc ⇒ trang `speed-run/mau-3j-buong-lai-that.html` + iPa
 Sửa thêm: Y3 Centenario có mảnh lạ Object_12 cao 2 m làm xe lơ lửng ⇒ `XE[].hide` (ẩn trước khi đo khung bao).
 ⚠️ Bẫy: lõi chuyển xe sang lớp (layers) riêng của đội ⇒ Raycaster mặc định chỉ quét lớp 0 ⇒ phải `ray.layers.enableAll()`. Bẫy 2: chú thích `//` chèn GIỮA dòng nuốt luôn lệnh phía sau (danh sách mảnh rỗng) — node --check vẫn qua.
 Đã kiểm (bàn thử chạy từng khung): mũi xe 6 xe · danh sách chọn Huayra · Controls mở nguyên khi bấm ra ngoài · MENU dừng game · bắn trúng ⇒ cháy + vết đen trên Jesko · tiếp đất lắc tắt dần · vết lốp.
+
+---
+
+## 23. ✅ MẪU 3k (15/10/2026) — hiệu ứng trả lời, boost chỉ khi đạp, bánh luôn lăn, lực văng khúc cua
+Thầy (sau 3j), 7 việc ⇒ trang `speed-run/mau-3k-hieu-ung.html` + iPad `pad-3k.html?t=0|1` (kênh `srpad3k`). File mới: `core/sr3d-3k.js` · `core/sr3d-car-3k.js` · `core/page-3k.js` · `core/sr3d-3k.css`.
+1. **Nút trả lời**: đúng + nhanh (≤ ~2,5 s) ⇒ nút BÙNG NỔ (chớp trắng-xanh, vòng sóng lan, 16 tia lửa, nút nảy); đúng thường ⇒ toả sáng 1 nhịp; SAI ⇒ 9 cụm KHÓI xịt quanh nút + nút rung,
+   xe GIẬT LẮC + hơi MẤT LÁI (`slip`: văng ngang 1,7 m/s, lò xo xoay thân, lắc nghiêng, rung máy quay). Lớp `.sr-afx` chèn vào nút, tự gỡ sau 1,6 s.
+2. **Đúng chỉ nạp vạch BOOST** — nguyên nhân "đúng là tăng tốc" ở 3j: xe TỰ LÁI tự đạp boost khi đủ 1,4 ô ⇒ 3k: tự lái KHÔNG đạp boost (trừ "Tự chơi" của bàn thử, G.auto).
+   Đã đo: trả lời đúng ⇒ năng lượng 0 → 95 m (1,2 ô), tốc độ giữ 15,4 m/s.
+3. **MENU ▸ START AGAIN** ⇒ về màn chờ START.
+4. **Bánh luôn lăn**: góc bánh CỘNG DỒN theo quãng đường mỗi khung, tối đa 0,42 rad/khung (nhanh vẫn thấy lăn tới, hết "bánh đứng/quay ngược" do mâm 5 chấu trùng nhịp khung hình).
+   4 xe gộp bánh (Centenario, Zonda, P1 GTR, 720S) ⇒ TÁCH tam giác bánh theo 4 góc (trung vị tâm tam giác, nhận trong 0,55 m) thành mảnh riêng, dùng chung bộ đỉnh,
+   KHÔNG sửa hình gốc (các bản sao xe dùng chung) ⇒ 14/14 xe quay bánh; đo lệch tâm khi quay ≤ 1 cm.
+   ⚠️ Đo khung bao mảnh đã tách phải theo CHỈ SỐ tam giác (Box3.setFromObject đọc toàn bộ đỉnh dùng chung ⇒ ra sai cả xe).
+5. **Xe trước phanh gấp** (cách 2–24 m, cùng làn ±2,8 m) ⇒ xe sau slip 0,7 (cách nhau ≥ 2,4 s).
+6. **Màn chờ: pô nổ** — mỗi 2,2–6 s xịt lửa 0,2 s (45 % nổ 2 phát) + khói + tia lửa; lửa pô đặt đúng miệng ống xả thật (dò mảnh/vật liệu exhaust…, không có ⇒ 2 miệng mặc định).
+7. **Lực văng khúc cua** (`cx` = −độ cong bản đồ × tốc độ × DRIFT 3, kẹp 3,5 m/s): người cầm lái được trợ 20 %; tự lái bám làn nhẹ (hệ số 0,25)
+   ⇒ đo 1 trận không ai lái (không cầu nhảy): lệch làn tối đa 1,26 m, trung bình 0,48 m. (Thử DRIFT 4,5 ⇒ lệch 6,5 m đâm mép đường — quá mạnh.)
+⚠️ Bẫy: chèn khối code giữa `if {…}` và `else` của nó ⇒ lỗi cú pháp nhưng `node --check file.js` vẫn qua ⇒ kiểm bằng `node --input-type=module --check < file.js`.
+⬜ Đổi sang Centenario mất ~5,5 s (lốp 97 nghìn tam giác) — thầy thấy chậm thì nén lại riêng xe này.
