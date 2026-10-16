@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nghe thử nén tiếng</title>
+<!-- 17/10/2026: nghe so sánh tiếng RACING WORDS gốc / nén vừa / nén mạnh trước khi thay (AWord templates/racing-words/sfx) -->
+<style>
+:root { --ink:#1f2a44; --mut:#6b7a90; --line:#dde6f0; --on:#2f6fe4; }
+* { box-sizing: border-box; } body { margin:0; background:#eef3f9; color:var(--ink); font-family:system-ui, "Segoe UI", sans-serif; }
+.top { background:#facc15; color:#3b2a00; font-weight:800; padding:8px 16px; }
+main { max-width:900px; margin:0 auto; padding:16px; }
+h1 { font-size:24px; margin:8px 0 4px; } p { color:var(--mut); margin:0 0 14px; }
+.sum { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+.sum div { background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; }
+.sum b { display:block; font-size:22px; } .sum small { color:var(--mut); }
+table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; }
+td, th { padding:9px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:15px; }
+th { background:#f4f7fb; font-size:13px; color:var(--mut); }
+button { font:inherit; font-weight:700; border:1.5px solid var(--line); background:#fff; border-radius:99px; padding:6px 12px; cursor:pointer; min-width:96px; }
+button.on { background:var(--on); color:#fff; border-color:var(--on); }
+button small { font-weight:600; opacity:.7; margin-left:4px; }
+@media (max-width:640px) { .sum { grid-template-columns:1fr; } td, th { padding:7px 5px; font-size:13px; } button { min-width:0; padding:5px 8px; } }
+</style></head>
+<body><div class="top">NGHE THỬ — nén tiếng RACING WORDS (chưa thay vào game)</div>
+<main>
+<h1>Gốc · Vừa · Mạnh</h1>
+<p>Bấm để nghe, bấm lại để dừng. Nên đeo tai nghe hoặc nghe bằng loa máy chiếu. Hiệu ứng nén về 1 kênh (game tự đẩy trái/phải theo đội), nhạc giữ 2 kênh.</p>
+<div class="sum" id="sum"></div>
+<table><thead><tr><th>Tiếng</th><th>Gốc</th><th>Vừa</th><th>Mạnh</th></tr></thead><tbody id="tb"></tbody></table>
+</main>
+<script>
+const ROWS = [{"n": "intro_music", "label": "Nhạc intro xưởng", "sz": {"goc": 311424, "vua": 186872, "manh": 155735}}, {"n": "race_music", "label": "Nhạc lúc đua", "sz": {"goc": 1474604, "vua": 1105965, "manh": 921645}}, {"n": "result_music", "label": "Nhạc kết quả", "sz": {"goc": 302020, "vua": 181230, "manh": 151033}}, {"n": "garage_ambience", "label": "Tiếng nền xưởng", "sz": {"goc": 418055, "vua": 238907, "manh": 179218}}, {"n": "engine_start", "label": "Nổ máy Lamborghini", "sz": {"goc": 75015, "vua": 42884, "manh": 32201}}, {"n": "rev_idle", "label": "Rồ ga chờ", "sz": {"goc": 140844, "vua": 80501, "manh": 60413}}, {"n": "drive_by", "label": "Xe vút qua", "sz": {"goc": 84890, "vua": 48527, "manh": 36432}}, {"n": "explosion", "label": "Nổ tên lửa", "sz": {"goc": 70993, "vua": 40586, "manh": 30477}}, {"n": "correct_answer", "label": "Trả lời đúng", "sz": {"goc": 29667, "vua": 16971, "manh": 12766}}, {"n": "win_stinger", "label": "Thắng cuộc", "sz": {"goc": 100615, "vua": 57513, "manh": 43172}}, {"n": "crowd_cheer", "label": "Khán giả reo", "sz": {"goc": 131335, "vua": 75067, "manh": 56338}}], TOT = {"goc": 3963904, "vua": 2554880, "manh": 2039808};
+const kb = b => Math.round(b / 1024) + " KB", mb = b => (b / 1048576).toFixed(1).replace(".", ",") + " MB";
+const DESC = { goc: "đang dùng: hiệu ứng 112 kbps 2 kênh, nhạc 128–160 kbps", vua: "hiệu ứng 64 kbps 1 kênh · nhạc 96 kbps", manh: "hiệu ứng 48 kbps 1 kênh · nhạc 80 kbps" };
+const NAME = { goc: "Gốc", vua: "Vừa", manh: "Mạnh" };
+document.getElementById("sum").innerHTML = ["goc", "vua", "manh"].map(k => `<div><small>${NAME[k]} — cả 30 tiếng</small><b>${mb(TOT[k])}</b><small>${DESC[k]}</small></div>`).join("");
+const src = (k, n) => k === "goc" ? `../sfx/${n}.mp3` : `${k}/${n}.mp3`;
+const au = new Audio(); let cur = null;
+document.getElementById("tb").innerHTML = ROWS.map(r => `<tr><td>${r.label}</td>` + ["goc", "vua", "manh"].map(k => `<td><button data-k="${k}" data-n="${r.n}">${NAME[k]}<small>${kb(r.sz[k])}</small></button></td>`).join("") + `</tr>`).join("");
+document.getElementById("tb").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (cur === b) { au.pause(); b.classList.remove("on"); cur = null; return; }
+  if (cur) cur.classList.remove("on");
+  au.src = src(b.dataset.k, b.dataset.n); au.currentTime = 0; au.play(); b.classList.add("on"); cur = b;
+});
+au.addEventListener("ended", () => { if (cur) cur.classList.remove("on"); cur = null; });
+</script></body></html>
