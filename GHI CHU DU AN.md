@@ -656,6 +656,8 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Quyết định:** START chỉ mở khi 2 đội nối THẲNG + đã bẻ thử trái/phải; relay không tính; lối thoát = đổi chế độ iPad trong ⚙. Cờ đã thử giữ suốt đời đường nối.
 - **Lỗi & gỡ:** lớp `rw-wait` trùng tên thanh chờ lượt ⇒ màn đen ⇒ `rw-padwait`. Cờ thử bị xoá khi nối lại ⇒ giữ.
 
+- **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
+
 ## VIỆC ĐANG CHỜ
 - ⬜ **RACING WORDS 4f (= AWord Đợt 538)**: thầy thử TOMKO + 2 iPad — cổng iPad ở xưởng (thử trái/phải ⇒ START), Apply Options / Start again / đổi xe không phải nối lại,
   bật nghiêng khi đang cầm lệch vẫn đúng (không LEVEL). Nếu còn "SLOW": chụp dòng chẩn đoán dưới thẻ đội (hoặc ⚙ ▸ iPad) — "iPad: none" = iPad khác mạng / chặn UDP;

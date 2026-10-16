@@ -1062,3 +1062,11 @@ Thầy thử TOMKO + 2 iPad (nguyên ý): (1) "2 iPad kết nối thì 1 cái co
 - Lỗi gặp: lớp `rw-wait` đã có trong game (thanh chờ lượt dưới câu hỏi) ⇒ gắn lên `.rw-root` làm khung cao 5 px (màn đen) ⇒ đổi `rw-padwait`.
   Cờ thử trái/phải bị xoá khi iPad nối lại ⇒ START khoá lại vô lý ⇒ giữ cờ suốt đời đường nối.
 - Hiệu năng: không thêm gì vào vòng vẽ trận. Cổng chỉ chạy ở xưởng (DOM nhỏ, đổi chữ khi khác, xoay 1 svg). iPad: thêm 1 listener orientationchange.
+- **KHOÁ ĐỘI (bổ sung 16/10, = AWord Đợt 539).** Thầy: "iPad 1 chọn Team 1 rồi, iPad 2 vẫn chọn được Team 1 ⇒ 2 máy cùng Connecting… mãi. Một bên đã chọn thì bên kia không chọn được,
+  chỉ khi bên đã chọn thoát ra màn chọn team thì bên kia mới được chọn". Gốc: 2 iPad cùng ghi tài liệu "pad0", mỗi lời chào đè nonce của nhau ⇒ máy chiếu mời bắt tay qua lại không dứt.
+  Sửa (`sr3d-padlink-4f.js` + `sr3d-padui-4f.js`): mỗi iPad có MÃ MÁY cố định (localStorage `rwpad.dev`; bàn thử `?dev=a`) ghi kèm lời chào; máy chiếu giữ CHỦ ĐỘI = máy của lời
+  chào đầu tiên, ghi `u0`/`u1` vào tài liệu host, BỎ QUA lời chào từ máy khác. Nhả chủ khi: chủ thoát ra màn chọn đội (destroy ghi `left`) · chủ mất hẳn > 8 s (tắt iPad / đóng Safari).
+  Cùng máy tải lại trang vẫn là chủ. iPad thấy đội có chủ khác ⇒ không chào, phủ tấm "TEAM 1 already has an iPad" + nút Choose team; chủ nhả ⇒ iPad đang chờ TỰ vào.
+  Màn chọn đội: `mountPadChooser` trả `setBusy([b0, b1])`, `watchTeams(signal, cb)` nghe host ⇒ đội có iPad khác mờ + "iPad already connected", chạm chỉ báo.
+  Bàn thử 3 tab iPad (dev a/b/c): A giữ Team 1 · B chọn Team 1 ⇒ tấm báo, máy chiếu không bắt tay lại (tries giữ 1) · C màn chọn: Team 1 mờ ⇒ A bấm ◀ ⇒ B tự nối (chủ b) ⇒
+  đóng hẳn tab B ⇒ ~12 s sau C tự nối (chủ c) ⇒ C tải lại trang vẫn nối. 0 lỗi.

@@ -12,11 +12,11 @@
 <script type="module">
 // Bàn thử myGame: iPad cho RACING WORDS mẫu 3o (= 3h, kênh srpad3y) — 3 chế độ do màn lớn chọn (tắt / trả lời trên iPad / đua trên iPad).
 // Kênh bắt tay CỤC BỘ "srpad4f" (cùng trình duyệt với mau-3o-aword.html, mở ở tab khác). ?t=0 đội 1 · ?t=1 đội 2 · không có ?t ⇒ chọn đội.
-import { createPadClient, localSignal } from "./core/sr3d-padlink-4f.js";
+import { createPadClient, localSignal, watchTeams } from "./core/sr3d-padlink-4f.js";
 import { mountPadApp, mountPadChooser } from "./core/sr3d-padui-4f.js";
 const q = new URLSearchParams(location.search), mount = document.getElementById("pad");
 const goTeam = t => { q.set("t", t); location.href = "?" + q; };
-if (!q.has("t")) mountPadChooser(mount, { onPick: goTeam });
+if (!q.has("t")) { const ch = mountPadChooser(mount, { onPick: goTeam }); watchTeams(localSignal("srpad4f"), b => ch.setBusy(b)); window.__ch = ch; }   // 4f: đội đã có iPad khác ⇒ mờ, không vào được · nhiều iPad thử: ?dev=a / ?dev=b
 else {
   const team = q.get("t") === "1" ? 1 : 0;
   let ui = null, pend = {};
