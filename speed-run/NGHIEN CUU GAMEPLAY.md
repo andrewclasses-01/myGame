@@ -797,3 +797,12 @@ A1 = 2 nút tên lửa (trên boost + trên phanh) · A2 = cả dải trên cùn
 trong lần nghiêng đầu). Chỉnh: góc hết cỡ (mặc định 25°) · vùng đi thẳng 3° · độ mềm giữa 1,4 · độ mượt 20 % · cảm biến · đảo chiều · đội. Đường thử dùng số liệu game
 (lái ngang 8,5 m/s, 31 / boost 47 / phanh 15) + % thời gian trong đường + đếm bắn. Máy tính không có cảm biến ⇒ giả lập ← → / kéo chuột.
 ⬜ thầy cầm iPad thật thử ⇒ chốt bố cục + thông số ⇒ "ok build" mẫu 3s.
+
+**Thầy chốt A2 (16/10):** "trên iPad vẫn hiển thị tương tự bản gốc, chỉ thay đổi khu vực nhấn tên lửa" · "cả iPad và game đều có PHANH bên TRÁI, GA bên PHẢI" (đảo bố cục B của 3g).
+**Thiết kế `speed-run/thiet-ke-ipad-3s.html`** = màn iPad THẬT `core/sr3d-padui-3s.js` (sinh từ padui-3m bằng script, giữ nguyên hình) chạy với game giả + thanh vàng DESIGN 3s
+(TOUCH/TILT · đội · số tên lửa). Đổi: phanh trái · ga phải · cả dải kính trên vạch tap-lô (30 %) = nút tên lửa (2 quả giữa, kho bên phải, "^ FIRE" 2 đầu chỗ ngón cái với,
+gợn sóng tại chỗ chạm, chữ "TAP ANYWHERE UP HERE TO FIRE" / "NO MISSILES…") · dòng trạng thái dời xuống giữa (dưới dải) · `setSteer({mode:"tilt",max,dead,curve,smooth})`:
+vô lăng không nhận chạm, vẽ đứng yên, sáng bên đang lái theo độ lái, nút "TAP TO TURN ON TILT" (iOS xin quyền) + "⟲ LEVEL", gửi lái ≤ ~30 lần/giây.
+Sửa kèm 2 lỗi cũ của 3m: `.ip-row` đè nút bắn (nay `pointer-events:none`) · luật `.ip-fire span{position:absolute}` làm 2 quả tên lửa CHỒNG lên nhau (3m chỉ thấy 1 quả).
+Đo 1180×820: mọi vùng chạm trúng; 2 cú bấm thật ở 2 đầu dải ⇒ 6 → 4 quả; nghiêng giả 18° ⇒ lái 0,58, vô lăng 0°. ⬜ thầy xem trên iPad thật ⇒ "ok build" (khi build: game đảo bàn đạp
+`.sr-drive` phanh trái/ga phải · Options iPad: kiểu lái + thông số gửi sang iPad · vô lăng màn lớn quay theo · relay gửi "i:" qua kho).
