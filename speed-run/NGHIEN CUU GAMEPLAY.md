@@ -780,3 +780,20 @@ shader) ⇒ **3r: xưởng 60,1 · phim 59,3 · 5 đèn 60,0 · đua 59,7 · k�
 Lần đo trước đó (đếm rAF): xưởng **59,5–60** · phim **60,0 (0 khung trễ)** · 5 đèn **60,0** · đua **59,6** ở độ nét 1,0 (0 lần dịch shader, không
 khung nào > 50 ms cả ván) · kết quả 59,9. Xe nặng Y4 + H7: đổi xe 0,7 s, phim 60,0, đua 59,9 (không khung > 33 ms), chơi lại 59,3.
 ⚠️ Cửa sổ myActivity bị thu nhỏ ⇒ trình duyệt ngừng rAF (trang hidden) — đo lại khi cửa sổ hiện.
+
+## 31. ⬜ CHUẨN BỊ MẪU 3s (16/10/2026) — LÁI BẰNG NGHIÊNG iPAD (thầy: "build phần điều khiển cả ở trong game và trên ipad … tập trung vào lái bằng nghiêng ipad, nghiên cứu tính khả thi trước")
+**Nghiên cứu:** khả thi. Đã có sẵn: kênh WebRTC iPad ⇒ máy chiếu (`sr3d-padlink-3e.js`, gói "s:<-100..100>,boost,brake", nhắc lại 120 ms) ·
+lõi nhận lái liên tục (`vxT = steer · PHYS.LAT`) · vô lăng màn lớn quay theo `t.steer` · nút TILT cũ ở `sr3d-padui-2.js` (devicemotion, chưa từng thử iPad thật, bỏ từ 3m).
+Rủi ro: iOS phải bấm cho phép + https (localhost không thử được trên iPad) · iPad TỰ XOAY màn khi nghiêng quá ~45° ⇒ góc hết cỡ ≤ 35° + nhắc Khoá xoay màn hình ·
+đường dự phòng Firestore (≤ 5 lần/giây, game nhả tay lái sau 0,45 s im) KHÔNG lái nghiêng được ⇒ chỉ nghiêng khi nối thẳng, rớt thì về chạm vô lăng ·
+tự cân trên không dùng `!inp.steer` ⇒ cần vùng đi thẳng.
+**Lỗi tên lửa iPad (thầy báo "chưa bắn được"):** `.ip-row` (hàng bàn đạp + vô lăng) phủ KÍN màn (absolute 100 %) và đứng SAU `.ip-fire` ⇒ chạm nút bắn rơi vào hàng đó
+(đo elementFromPoint giữa nút ở 1180×820). Phụ: lúc "Connected (slow)" máy chiếu chỉ gửi "i:" qua kênh thẳng ⇒ iPad không biết số tên lửa ⇒ nút tự khoá. Sửa ở 3s.
+**Thầy chốt:** cầm kiểu VÔ LĂNG · trong game: chọn kiểu lái + tinh chỉnh ở nút iPad (Options) + vô lăng màn lớn quay theo iPad · iPad: sửa tên lửa + thiết kế lại chỗ
+ga / phanh / tên lửa vì iPad giờ được CẦM · thử cảm giác trước. Bố cục A (2 ngón cái: phanh trái, boost phải) với tên lửa 2 kiểu để so:
+A1 = 2 nút tên lửa (trên boost + trên phanh) · A2 = cả dải trên cùng là nút tên lửa (với ngón cái lên).
+**Trang thử `speed-run/thu-nghieng-3s.html`** (chạy riêng, chưa nối game): góc = trọng lực chiếu lên mặt màn so với lúc "đặt thẳng", tính trong hệ toạ độ CỦA MÁY
+(không phụ thuộc hướng màn, iOS/Android ngược dấu không sao) + con quay `rotationRate.alpha` trộn 5 %/sự kiện, dấu con quay tự dò (đo: đúng dấu bám 18,8/20°; sai dấu tự sửa
+trong lần nghiêng đầu). Chỉnh: góc hết cỡ (mặc định 25°) · vùng đi thẳng 3° · độ mềm giữa 1,4 · độ mượt 20 % · cảm biến · đảo chiều · đội. Đường thử dùng số liệu game
+(lái ngang 8,5 m/s, 31 / boost 47 / phanh 15) + % thời gian trong đường + đếm bắn. Máy tính không có cảm biến ⇒ giả lập ← → / kéo chuột.
+⬜ thầy cầm iPad thật thử ⇒ chốt bố cục + thông số ⇒ "ok build" mẫu 3s.

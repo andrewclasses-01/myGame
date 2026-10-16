@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RACING WORDS · Thử lái nghiêng iPad (3s)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+/* Trang thử RIÊNG (16/10/2026, chuẩn bị mẫu 3s): cầm iPad như vô lăng, nghiêng để lái — chưa nối game, chưa đụng AWord.
+   Hai bố cục thầy chọn: A1 = 2 nút tên lửa (trên boost + trên phanh) · A2 = cả dải trên cùng là nút tên lửa. */
+html,body{margin:0;height:100%;overflow:hidden;background:#05060a;overscroll-behavior:none}
+#app{position:fixed;inset:0;font-family:"Exo 2",system-ui,sans-serif;color:#e2e8f0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;
+  background:radial-gradient(120% 90% at 50% 0%,#18233a 0%,#07090f 60%,#030408 100%);--tc:#3b8cff}
+#app[data-team="1"]{--tc:#ff7a00}
+#road{position:absolute;inset:0;width:100%;height:100%;display:block}
+button{font-family:inherit}
+
+/* vô lăng giữa màn: chỉ để NHÌN (không bấm) — đứng yên trên màn vì chính iPad đang xoay; vạch chân trời luôn nằm ngang theo mặt đất */
+.wheel{position:absolute;left:50%;top:54%;width:min(34vh,26vw);height:min(34vh,26vw);transform:translate(-50%,-50%);pointer-events:none;opacity:.8}
+.wheel svg{width:100%;height:100%;display:block;overflow:visible}
+.hz{position:absolute;left:50%;top:54%;width:62vw;height:0;border-top:2px dashed rgba(148,163,184,.45);transform:translate(-50%,0);transform-origin:50% 0;pointer-events:none}
+.read{position:absolute;left:50%;top:calc(54% - min(17vh,13vw) - 13vh);transform:translateX(-50%);text-align:center;pointer-events:none;white-space:nowrap}
+.read b{display:block;font:italic 900 max(30px,6vh) "Exo 2",sans-serif;color:#fff;letter-spacing:.04em;text-shadow:0 0 2vh var(--tc)}
+.read span{font-weight:700;font-size:max(13px,1.9vh);color:#94a3b8}
+.gauge{position:absolute;left:50%;top:calc(54% + min(17vh,13vw) + 2.5vh);width:min(52vh,40vw);height:max(12px,1.6vh);transform:translateX(-50%);border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;pointer-events:none}
+.gauge i{position:absolute;top:0;bottom:0;left:50%;background:var(--tc)}
+.gauge em{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:#fff}
+
+/* nút: vùng to sát 2 cạnh — chỗ ngón cái tự đặt khi 2 tay cầm 2 cạnh */
+.b{position:absolute;border:2px solid rgba(255,255,255,.18);background:rgba(15,23,42,.55);color:#e2e8f0;border-radius:3vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh;
+  font:italic 900 max(16px,3vh) "Exo 2",sans-serif;letter-spacing:.12em;padding:0;cursor:pointer;touch-action:none}
+.b small{font:700 max(11px,1.6vh) "Exo 2",sans-serif;letter-spacing:.04em;color:#94a3b8;font-style:normal}
+.b-brk{border-color:rgba(255,120,110,.45)}.b-brk.on{background:rgba(220,38,38,.55);border-color:#fca5a5;box-shadow:0 0 4vh rgba(255,80,60,.6)}
+.b-gas{border-color:rgba(110,231,255,.45)}.b-gas.on{background:rgba(8,145,178,.6);border-color:#a5f3fc;box-shadow:0 0 4vh rgba(80,230,255,.6)}
+.b-fire{border-color:rgba(255,150,90,.55);color:#ffd2b8}.b-fire.on{background:rgba(234,88,12,.75);border-color:#fed7aa;box-shadow:0 0 5vh rgba(255,110,40,.8);color:#fff}
+.b-fire svg{width:max(26px,5vh);height:max(26px,5vh);transform:rotate(-45deg)}
+/* A1 */
+#app[data-lay="a1"] .b-brk{left:max(1.5vw,env(safe-area-inset-left));bottom:6vh;width:19vw;height:46vh}
+#app[data-lay="a1"] .b-gas{right:max(1.5vw,env(safe-area-inset-right));bottom:6vh;width:19vw;height:46vh}
+#app[data-lay="a1"] .b-fl{left:max(1.5vw,env(safe-area-inset-left));top:13vh;width:19vw;height:27vh}
+#app[data-lay="a1"] .b-fr{right:max(1.5vw,env(safe-area-inset-right));top:13vh;width:19vw;height:27vh}
+#app[data-lay="a1"] .b-ft{display:none}
+/* A2 */
+#app[data-lay="a2"] .b-brk{left:max(1.5vw,env(safe-area-inset-left));bottom:6vh;width:19vw;height:52vh}
+#app[data-lay="a2"] .b-gas{right:max(1.5vw,env(safe-area-inset-right));bottom:6vh;width:19vw;height:52vh}
+#app[data-lay="a2"] .b-ft{left:max(1.5vw,env(safe-area-inset-left));right:max(1.5vw,env(safe-area-inset-right));top:max(1.5vh,env(safe-area-inset-top));height:27vh;flex-direction:row;gap:3vw}
+#app[data-lay="a2"] .b-fl,#app[data-lay="a2"] .b-fr{display:none}
+#app[data-lay="a2"] .read{top:calc(54% - min(17vh,13vw) - 10vh)}
+#app[data-lay="a2"] .read b{font-size:max(24px,4.6vh)}
+
+/* thanh công cụ: giữa đáy (xa ngón cái) */
+.bar{position:absolute;left:50%;bottom:max(1.6vh,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:1vw;align-items:center}
+.t{height:max(40px,6vh);padding:0 max(12px,1.6vw);border-radius:99px;border:1px solid rgba(140,210,255,.35);background:rgba(255,255,255,.06);color:#cbd5e1;font-weight:800;font-size:max(13px,1.9vh);cursor:pointer;white-space:nowrap}
+.t.sel{background:var(--tc);border-color:var(--tc);color:#fff}
+.seg{display:flex;border-radius:99px;overflow:hidden;border:1px solid rgba(140,210,255,.35)}
+.seg .t{border:0;border-radius:0}
+.stat{position:absolute;left:50%;top:calc(54% + min(17vh,13vw) + 6vh);transform:translateX(-50%);font-weight:700;font-size:max(12px,1.7vh);color:#64748b;white-space:nowrap;pointer-events:none}
+.stat b{color:#cbd5e1}
+#app[data-lay="a1"] .stat{top:max(2vh,env(safe-area-inset-top))}
+
+/* bảng chỉnh */
+.panel{position:absolute;inset:0;background:rgba(2,4,10,.72);display:flex;align-items:center;justify-content:center;z-index:5}
+.panel[hidden],.ov[hidden],.toast[hidden]{display:none}
+.card{width:min(560px,88vw);max-height:86vh;overflow:auto;background:#0d1424;border:1px solid rgba(140,210,255,.3);border-radius:18px;padding:2.4vh 2.6vw;box-shadow:0 2vh 6vh rgba(0,0,0,.6)}
+.card h2{margin:0 0 1.6vh;font:italic 900 max(18px,3vh) "Exo 2",sans-serif;letter-spacing:.08em;color:#fff}
+.row{display:grid;grid-template-columns:1fr auto;gap:.4vh 1.4vw;align-items:center;margin:0 0 1.8vh}
+.row label{font-weight:800;font-size:max(14px,2vh)}
+.row output{font-weight:900;font-size:max(14px,2vh);color:var(--tc);min-width:4.5em;text-align:right}
+.row input[type=range]{grid-column:1/3;width:100%;accent-color:var(--tc);height:max(28px,4vh)}
+.row p{grid-column:1/3;margin:0;font-size:max(12px,1.6vh);color:#94a3b8;line-height:1.4}
+.row .seg{grid-column:1/3;justify-self:start}
+.acts{display:flex;gap:1vw;justify-content:flex-end;margin-top:1vh}
+
+/* màn bắt đầu / xoay ngang */
+.ov{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(120% 90% at 50% 0%,#18233a 0%,#07090f 60%,#030408 100%);padding:4vh 6vw;box-sizing:border-box}
+.ov h1{margin:0 0 1vh;font:italic 900 max(26px,5.4vh) "Exo 2",sans-serif;letter-spacing:.08em;color:#fff}
+.ov p{margin:.6vh auto;max-width:44em;font-size:max(14px,2.1vh);color:#cbd5e1;line-height:1.5}
+.ov .go{margin-top:3vh;height:max(56px,9vh);padding:0 6vw;border-radius:99px;border:0;background:var(--tc);color:#fff;font:italic 900 max(20px,3.6vh) "Exo 2",sans-serif;letter-spacing:.14em;box-shadow:0 0 5vh var(--tc);cursor:pointer}
+.ov .bad{color:#fca5a5;font-weight:800}
+.ov .teams{display:flex;gap:1.4vw;justify-content:center;margin-top:2vh}
+.toast{position:absolute;left:50%;top:30%;transform:translateX(-50%);z-index:6;background:rgba(127,29,29,.92);border:1px solid #fca5a5;color:#fff;font-weight:800;font-size:max(14px,2.2vh);padding:1.4vh 2.4vw;border-radius:14px;text-align:center;max-width:70vw;pointer-events:none}
+#portrait{display:none}
+@media (orientation:portrait){#portrait{display:flex}}
+</style>
+</head>
+<body>
+<div id="app" data-lay="a1" data-team="0">
+  <canvas id="road"></canvas>
+  <div class="hz" id="hz"></div>
+  <div class="read"><b id="rSteer">0 %</b><span id="rAng">góc 0°</span></div>
+  <div class="wheel"><svg viewBox="-100 -100 200 200" aria-hidden="true">
+    <path d="M -86 34 A 92 92 0 1 1 86 34 L 60 70 Q 0 86 -60 70 Z" fill="none" stroke="rgba(226,232,240,.85)" stroke-width="13" stroke-linejoin="round"/>
+    <path d="M -80 6 Q -40 -2 -26 18 L 26 18 Q 40 -2 80 6" fill="none" stroke="rgba(226,232,240,.55)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M -22 22 L -14 64 M 22 22 L 14 64" stroke="rgba(226,232,240,.4)" stroke-width="9" stroke-linecap="round"/>
+    <rect x="-10" y="-100" width="20" height="16" rx="4" fill="var(--tc)"/>
+    <circle r="22" fill="rgba(15,23,42,.9)" stroke="var(--tc)" stroke-width="3"/>
+    <text y="7" text-anchor="middle" font-family="Exo 2" font-weight="900" font-style="italic" font-size="17" fill="var(--tc)">A</text>
+  </svg></div>
+  <div class="gauge"><i id="gBar"></i><em></em></div>
+  <div class="stat" id="stat">—</div>
+
+  <button class="b b-fire b-fl" data-k="f" data-w="trái">FIRE<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 2 3 5 3 9v5l2 3h-3l-1 3h-2l-1-3H7l2-3v-5c0-4 1-7 3-9z"/></svg><small>trên phanh</small></button>
+  <button class="b b-fire b-fr" data-k="f" data-w="phải">FIRE<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 2 3 5 3 9v5l2 3h-3l-1 3h-2l-1-3H7l2-3v-5c0-4 1-7 3-9z"/></svg><small>trên boost</small></button>
+  <button class="b b-fire b-ft" data-k="f" data-w="dải trên"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 2 3 5 3 9v5l2 3h-3l-1 3h-2l-1-3H7l2-3v-5c0-4 1-7 3-9z"/></svg>FIRE<small>cả dải trên — với ngón cái lên</small><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 2 3 5 3 9v5l2 3h-3l-1 3h-2l-1-3H7l2-3v-5c0-4 1-7 3-9z"/></svg></button>
+  <button class="b b-brk" data-k="k">BRAKE<small>giữ = phanh</small></button>
+  <button class="b b-gas" data-k="b">BOOST<small>giữ = tăng tốc</small></button>
+
+  <div class="bar">
+    <div class="seg"><button class="t" data-lay="a1">A1 · 2 nút</button><button class="t" data-lay="a2">A2 · dải trên</button></div>
+    <button class="t" id="zero">⟲ Đặt thẳng</button>
+    <button class="t" id="gear">⚙ Chỉnh</button>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <div class="panel" id="panel" hidden><div class="card">
+    <h2>CHỈNH LÁI NGHIÊNG</h2>
+    <div class="row"><label for="sMax">Góc lái hết cỡ</label><output id="oMax"></output>
+      <input type="range" id="sMax" min="10" max="45" step="1"><p>Nghiêng bao nhiêu độ thì xe đánh lái hết cỡ. iPad tự xoay màn khi nghiêng quá ~45° — nên để dưới 35°.</p></div>
+    <div class="row"><label for="sDead">Vùng đi thẳng</label><output id="oDead"></output>
+      <input type="range" id="sDead" min="0" max="10" step="0.5"><p>Nghiêng nhỏ hơn góc này coi như cầm thẳng (tay run không làm xe lắc).</p></div>
+    <div class="row"><label for="sCurve">Độ mềm giữa</label><output id="oCurve"></output>
+      <input type="range" id="sCurve" min="1" max="2.5" step="0.1"><p>1,0 = nghiêng bao nhiêu lái bấy nhiêu. Lớn hơn = gần giữa lái nhẹ (chỉnh nhỏ chính xác), về cuối mới mạnh.</p></div>
+    <div class="row"><label for="sSmooth">Độ mượt</label><output id="oSmooth"></output>
+      <input type="range" id="sSmooth" min="0" max="90" step="5"><p>Cao = mượt hơn nhưng trễ hơn một chút.</p></div>
+    <div class="row"><label>Cảm biến</label><output></output>
+      <div class="seg"><button class="t" data-sens="fuse">Gia tốc + con quay</button><button class="t" data-sens="acc">Chỉ gia tốc</button></div>
+      <p>"Gia tốc + con quay" nhạy và ít rung hơn. Đổi sang "Chỉ gia tốc" để so cảm giác.</p></div>
+    <div class="row"><label>Đảo chiều lái</label><output></output>
+      <div class="seg"><button class="t" data-inv="0">Bình thường</button><button class="t" data-inv="1">Đảo</button></div>
+      <p>Chỉ dùng nếu nghiêng phải mà xe lại sang trái.</p></div>
+    <div class="row"><label>Đội</label><output></output>
+      <div class="seg"><button class="t" data-team="0">TEAM 1</button><button class="t" data-team="1">TEAM 2</button></div></div>
+    <div class="acts"><button class="t" id="reset">Về mặc định</button><button class="t sel" id="close">Xong</button></div>
+  </div></div>
+
+  <div class="ov" id="start"><div>
+    <h1>THỬ LÁI NGHIÊNG</h1>
+    <p>Cầm iPad <b>nằm ngang</b> bằng 2 tay ở 2 cạnh như cầm vô lăng, màn quay về phía mình.</p>
+    <p>Bật <b>Khoá xoay màn hình</b> (vuốt từ góc trên bên phải xuống ⇒ biểu tượng ổ khoá) để iPad không tự lật màn khi nghiêng.</p>
+    <p>Bấm BẮT ĐẦU ⇒ iPad hỏi quyền <b>"Chuyển động và hướng"</b> ⇒ chọn <b>Cho phép</b>. Lúc bấm, cầm iPad thẳng: tư thế đó là "đi thẳng".</p>
+    <p class="bad" id="startMsg"></p>
+    <button class="go" id="go">BẮT ĐẦU</button>
+  </div></div>
+  <div class="ov" id="portrait"><div><h1>XOAY iPAD NẰM NGANG</h1><p>Trang thử dùng iPad nằm ngang như vô lăng.</p></div></div>
+</div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const app = $("#app"), cv = $("#road"), cx = cv.getContext("2d");
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+// ---------- cài đặt (nhớ trên máy này) ----------
+const DEF = { max: 25, dead: 3, curve: 1.4, smooth: 20, sens: "fuse", inv: 0, lay: "a1", team: 0 };
+let S = { ...DEF };
+try { Object.assign(S, JSON.parse(localStorage.getItem("rw-thu-nghieng-3s") || "{}")); } catch (e) { /* không có bộ nhớ */ }
+const save = () => { try { localStorage.setItem("rw-thu-nghieng-3s", JSON.stringify(S)); } catch (e) { /* */ } };
+const fmt = {
+  max: v => v + "°", dead: v => String(v).replace(".", ",") + "°", curve: v => (+v).toFixed(1).replace(".", ","), smooth: v => v + " %",
+};
+function paintSettings() {
+  [["sMax", "oMax", "max"], ["sDead", "oDead", "dead"], ["sCurve", "oCurve", "curve"], ["sSmooth", "oSmooth", "smooth"]].forEach(([i, o, k]) => { $("#" + i).value = S[k]; $("#" + o).textContent = fmt[k](S[k]); });
+  $$("[data-sens]").forEach(b => b.classList.toggle("sel", b.dataset.sens === S.sens));
+  $$("[data-inv]").forEach(b => b.classList.toggle("sel", +b.dataset.inv === +S.inv));
+  $$(".panel [data-team],.ov [data-team]").forEach(b => b.classList.toggle("sel", +b.dataset.team === +S.team));
+  $$(".bar [data-lay]").forEach(b => b.classList.toggle("sel", b.dataset.lay === S.lay));
+  app.dataset.lay = S.lay; app.dataset.team = String(S.team);
+}
+[["sMax", "max"], ["sDead", "dead"], ["sCurve", "curve"], ["sSmooth", "smooth"]].forEach(([i, k]) => {
+  const el = $("#" + i);
+  el.addEventListener("input", () => { S[k] = +el.value; paintSettings(); save(); });
+  el.addEventListener("wheel", e => e.preventDefault(), { passive: false });   // cuộn chuột KHÔNG đổi số
+});
+$$("[data-sens]").forEach(b => b.addEventListener("click", () => { S.sens = b.dataset.sens; paintSettings(); save(); }));
+$$("[data-inv]").forEach(b => b.addEventListener("click", () => { S.inv = +b.dataset.inv; paintSettings(); save(); }));
+$$("[data-team]").forEach(b => b.addEventListener("click", () => { S.team = +b.dataset.team; paintSettings(); save(); }));
+$$(".bar [data-lay]").forEach(b => b.addEventListener("click", () => { S.lay = b.dataset.lay; paintSettings(); save(); }));
+$("#gear").addEventListener("click", () => { $("#panel").hidden = false; });
+$("#close").addEventListener("click", () => { $("#panel").hidden = true; });
+$("#reset").addEventListener("click", () => { S = { ...DEF, lay: S.lay, team: S.team }; paintSettings(); save(); });
+paintSettings();
+
+// ---------- cảm biến: góc xoay quanh trục vuông góc màn (kiểu vô lăng) ----------
+// Lấy trọng lực chiếu lên mặt màn, so với hướng trọng lực lúc "đặt thẳng" ⇒ góc có dấu (+ = nghiêng phải).
+// Tính trong hệ toạ độ CỦA MÁY nên không phụ thuộc màn đang xoay hướng nào, iOS hay Android ngược dấu cũng không sao.
+// Con quay (rotationRate.alpha, quanh trục vuông góc màn) bù cho nhanh + ít rung; dấu con quay tự dò bằng cách so với gia tốc.
+let gl = null, ref = null, phiAcc = 0, phi = 0, lastEvT = 0, gyroSign = 1, corr = 0, flatT = 0;
+let evN = 0, evRate = 0, evWin = performance.now(), hasMotion = false, gyroSeen = false, sim = false, simPhi = 0;
+function onMotion(e) {
+  const g = e.accelerationIncludingGravity; if (!g || g.x == null || g.y == null) return;
+  hasMotion = true; evN++;
+  const now = performance.now(), dt = lastEvT ? clamp((now - lastEvT) / 1000, 0, 0.1) : 0; lastEvT = now;
+  const k = 0.3;
+  gl = gl ? { x: gl.x + (g.x - gl.x) * k, y: gl.y + (g.y - gl.y) * k } : { x: g.x, y: g.y };
+  const m = Math.hypot(gl.x, gl.y);
+  flatT = m < 4 ? flatT + dt : 0;                                   // iPad gần nằm phẳng ⇒ trọng lực trên mặt màn quá nhỏ, góc không tin được
+  if (!ref && m > 4) ref = { x: gl.x / m, y: gl.y / m };
+  if (!ref) return;
+  const nx = gl.x / (m || 1), ny = gl.y / (m || 1);
+  const prevAcc = phiAcc;
+  phiAcc = Math.atan2(ref.x * ny - ref.y * nx, ref.x * nx + ref.y * ny) * 180 / Math.PI;
+  const rr = e.rotationRate;
+  if (S.sens === "fuse" && rr && rr.alpha != null && dt > 0) {
+    gyroSeen = true;
+    const dG = -rr.alpha * dt;                                      // lý thuyết: máy xoay theo chiều kim đồng hồ ⇒ alpha âm
+    corr = corr * 0.995 + (phiAcc - prevAcc) * dG * gyroSign;       // tự dò dấu: con quay ngược chiều gia tốc lâu ⇒ đảo
+    if (corr < -3) gyroSign = -gyroSign, corr = 0;
+    phi = (phi + gyroSign * dG) * 0.95 + phiAcc * 0.05;
+  } else phi = phiAcc;
+}
+function zero() { if (gl) { const m = Math.hypot(gl.x, gl.y); if (m > 4) ref = { x: gl.x / m, y: gl.y / m }; } phi = phiAcc = 0; simPhi = 0; }
+$("#zero").addEventListener("click", () => { zero(); toast("Đã lấy tư thế đang cầm làm \"đi thẳng\"", 1400, true); });
+
+let steerRaw = 0, steer = 0;
+function curPhi() { return sim ? simPhi : phi; }
+function steerFrom(a) {
+  const s = Math.sign(a), m = clamp((Math.abs(a) - S.dead) / Math.max(1, S.max - S.dead), 0, 1);
+  return s * Math.pow(m, S.curve) * (S.inv ? -1 : 1);
+}
+
+// ---------- bắt đầu: xin quyền (iOS phải từ cú bấm) ----------
+const IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+async function begin() {
+  const msg = $("#startMsg"); msg.textContent = "";
+  try {
+    if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+      const r = await DeviceMotionEvent.requestPermission();
+      if (r !== "granted") {
+        if (IOS) { msg.textContent = "iPad chưa cho phép đọc chuyển động. Đóng tab Safari này, mở lại link rồi chọn Cho phép."; return; }
+        sim = true;                                                 // máy tính (không có cảm biến) ⇒ giả lập bằng chuột / phím
+      }
+    }
+  } catch (e) { msg.textContent = "Không xin được quyền: " + (e && e.message || e) + " — trang phải mở bằng https."; return; }
+  window.addEventListener("devicemotion", onMotion);
+  $("#start").hidden = true; keepAwake();
+  setTimeout(() => {
+    if (!hasMotion) { if (IOS && !sim) { $("#startMsg").textContent = ""; } sim = true; toast("Máy này không có cảm biến nghiêng — dùng ← → hoặc kéo chuột ngang để giả lập", 3500, true); }
+    else if (!ref) toast("Dựng iPad lên (đừng để nằm phẳng) rồi bấm ⟲ Đặt thẳng", 3000);
+  }, 1500);
+}
+$("#go").addEventListener("click", begin);
+
+let lock = null;
+async function keepAwake() { if (lock || !("wakeLock" in navigator) || document.visibilityState !== "visible") return; try { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => { lock = null; }); } catch (e) { /* */ } }
+document.addEventListener("visibilitychange", keepAwake);
+
+// giả lập trên máy tính (để soi bố cục): phím ← → và kéo chuột ngang trên đường
+const keys = new Set();
+addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") { keys.add(e.key); sim = true; } });
+addEventListener("keyup", e => keys.delete(e.key));
+let drag = null;
+cv.addEventListener("pointerdown", e => { drag = { x: e.clientX, p: simPhi }; });
+addEventListener("pointermove", e => { if (drag && sim) simPhi = clamp(drag.p + (e.clientX - drag.x) / 6, -60, 60); });
+addEventListener("pointerup", () => { drag = null; });
+
+// ---------- nút: giữ (phanh / boost) + bấm (tên lửa), nhiều ngón cùng lúc ----------
+const held = new Map();                                           // pointerId ⇒ "b" | "k"
+let fires = 0, lastFireW = "", shots = [];
+$$(".b").forEach(el => {
+  const k = el.dataset.k;
+  el.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    if (k === "f") {
+      fires++; lastFireW = el.dataset.w; shots.push({ y: 0, x: carX, t: 0 });
+      el.classList.add("on"); setTimeout(() => el.classList.remove("on"), 180);
+      return;
+    }
+    try { el.setPointerCapture(e.pointerId); } catch (x) { /* */ }
+    held.set(e.pointerId, k); paintHeld();
+  });
+  const up = e => { if (held.delete(e.pointerId)) paintHeld(); };
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(n => el.addEventListener(n, up));
+});
+const isHeld = k => [...held.values()].includes(k);
+function paintHeld() { $(".b-gas").classList.toggle("on", isHeld("b")); $(".b-brk").classList.toggle("on", isHeld("k")); }
+["gesturestart", "gesturechange", "dblclick", "contextmenu"].forEach(n => document.addEventListener(n, e => e.preventDefault()));
+
+// ---------- báo + xoay màn ----------
+let toastT = 0;
+function toast(t, ms = 2400, ok = false) { const el = $("#toast"); el.textContent = t; el.style.background = ok ? "rgba(20,83,45,.92)" : ""; el.style.borderColor = ok ? "#86efac" : ""; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, ms); }
+let oriKey = "";
+function oriNow() { return (screen.orientation && screen.orientation.type) || String(window.orientation); }
+oriKey = oriNow();
+const onOri = () => { const o = oriNow(); if (o !== oriKey) { oriKey = o; if (!$("#start").hidden) return; toast("iPad vừa TỰ XOAY MÀN — bật Khoá xoay màn hình rồi bấm ⟲ Đặt thẳng", 3500); } };
+addEventListener("orientationchange", onOri); if (screen.orientation) screen.orientation.addEventListener("change", onOri);
+
+// ---------- đường thử: xe chạy, đường uốn — phải lái nhiều/ít mới giữ được trong đường ----------
+// số liệu giống game: lái ngang tối đa 8,5 m/s (PHYS.LAT), xe đi 31 km/h-đơn vị game ≈ 31 m/s chạy thường, boost 47, phanh 15.
+const LAT = 8.5, V = { cruise: 31, boost: 47, brake: 15 }, ROAD_W = 11;
+let s = 0, v = V.cruise, carX = 0, vx = 0, inT = 0, allT = 0, W = 0, H = 0, dpr = 1;
+const roadC = z => 7 * Math.sin(z / 90) + 4 * Math.sin(z / 37 + 1.3) + 2.5 * Math.sin(z / 19 + 0.4);
+function fit() { dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; }
+addEventListener("resize", fit); fit();
+
+let lastT = performance.now();
+function frame(now) {
+  const dt = clamp((now - lastT) / 1000, 0, 0.05); lastT = now;
+  if (sim && keys.size) simPhi = clamp(simPhi + ((keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0)) * 70 * dt, -60, 60);
+  else if (sim && !drag && keys.size === 0) simPhi *= Math.pow(0.02, dt);
+  const a = curPhi();
+  steerRaw = steerFrom(a);
+  const sm = S.smooth / 100, kk = 1 - Math.pow(sm, dt * 60 / 3 + 0.0001);
+  steer += (steerRaw - steer) * (sm <= 0 ? 1 : kk);
+
+  // xe
+  const vT = isHeld("k") ? V.brake : isHeld("b") ? V.boost : V.cruise;
+  v += (vT - v) * Math.min(1, dt * (vT < v ? 3 : 1.4));
+  s += v * dt;
+  const vxT = steer * LAT * clamp(v / 8, 0, 1);
+  vx += (vxT - vx) * Math.min(1, dt * 10);
+  carX += vx * dt;
+  const off = carX - roadC(s), inRoad = Math.abs(off) < ROAD_W / 2 - 1;
+  if (Math.abs(off) > ROAD_W / 2 + 6) carX = roadC(s) + Math.sign(off) * (ROAD_W / 2 + 6);
+  allT += dt; if (inRoad) inT += dt;
+  shots.forEach(sh => { sh.t += dt; sh.y += (40 + v) * dt; }); shots = shots.filter(sh => sh.t < 1.4);
+
+  draw(inRoad);
+  // chữ
+  $("#rSteer").textContent = (steer >= 0 ? "" : "−") + Math.round(Math.abs(steer) * 100) + " %" + (Math.abs(steer) < 0.005 ? "" : steer > 0 ? " ▶" : "");
+  if (steer < -0.005) $("#rSteer").textContent = "◀ " + $("#rSteer").textContent;
+  $("#rAng").textContent = "nghiêng " + (a >= 0 ? "" : "−") + Math.abs(a).toFixed(1).replace(".", ",") + "°  ·  hết cỡ ở " + S.max + "°";
+  const g = $("#gBar"); g.style.left = (steer >= 0 ? 50 : 50 + steer * 50) + "%"; g.style.width = Math.abs(steer) * 50 + "%";
+  $("#hz").style.transform = `translate(-50%,0) rotate(${(-a).toFixed(2)}deg)`;
+  if (now - evWin > 1000) { evRate = Math.round(evN * 1000 / (now - evWin)); evN = 0; evWin = now; }
+  $("#stat").innerHTML = (sim ? "<b>giả lập</b>" : `cảm biến <b>${evRate} lần/giây</b>` + (S.sens === "fuse" ? (gyroSeen ? " · con quay <b>có</b>" : " · con quay <b>không</b>") : " · chỉ gia tốc"))
+    + ` · trong đường <b>${allT > 0 ? Math.round(inT / allT * 100) : 0} %</b> · bắn <b>${fires}</b>${lastFireW ? " (" + lastFireW + ")" : ""}`
+    + (flatT > 0.6 ? " · <b style='color:#fca5a5'>iPad đang nằm phẳng quá</b>" : "");
+  requestAnimationFrame(frame);
+}
+
+function draw(inRoad) {
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cx.clearRect(0, 0, W, H);
+  const ppm = H / 60, carY = H * 0.82, X = wx => W / 2 + (wx - carX) * ppm;
+  // nền cỏ tối + đường
+  const step = 2;
+  for (let d = -12; d < 62; d += step) {
+    const z = s + d, z2 = z + step, y1 = carY - d * ppm, y2 = carY - (d + step) * ppm;
+    const c1 = roadC(z), c2 = roadC(z2);
+    cx.fillStyle = "rgba(148,163,184,.10)";
+    cx.beginPath(); cx.moveTo(X(c1 - ROAD_W / 2), y1); cx.lineTo(X(c2 - ROAD_W / 2), y2); cx.lineTo(X(c2 + ROAD_W / 2), y2); cx.lineTo(X(c1 + ROAD_W / 2), y1); cx.fill();
+    const stripe = Math.floor(z / 4) % 2 === 0;
+    cx.fillStyle = stripe ? "rgba(255,90,80,.55)" : "rgba(255,255,255,.45)";
+    [-1, 1].forEach(sd => { cx.beginPath(); cx.moveTo(X(c1 + sd * ROAD_W / 2), y1); cx.lineTo(X(c2 + sd * ROAD_W / 2), y2); cx.lineTo(X(c2 + sd * (ROAD_W / 2 + 0.6)), y2); cx.lineTo(X(c1 + sd * (ROAD_W / 2 + 0.6)), y1); cx.fill(); });
+    if (Math.floor(z / 3) % 3 === 0) { cx.fillStyle = "rgba(255,255,255,.25)"; cx.fillRect(X(c1) - 0.12 * ppm, y2, 0.24 * ppm, y1 - y2); }
+  }
+  // tên lửa bắn ra
+  cx.fillStyle = "#ffb347";
+  shots.forEach(sh => { const y = carY - 3 * ppm - sh.y * ppm; cx.globalAlpha = 1 - sh.t / 1.4; cx.beginPath(); cx.ellipse(X(sh.x), y, 0.35 * ppm, 1.1 * ppm, 0, 0, 7); cx.fill(); });
+  cx.globalAlpha = 1;
+  // xe (nhìn từ trên), nghiêng theo hướng chạy
+  const tc = getComputedStyle(app).getPropertyValue("--tc").trim() || "#3b8cff";
+  cx.save(); cx.translate(W / 2, carY); cx.rotate(Math.atan2(vx, v));
+  cx.shadowColor = tc; cx.shadowBlur = inRoad ? 18 : 4;
+  cx.fillStyle = inRoad ? tc : "#7f1d1d";
+  const w = 2 * ppm, l = 4.4 * ppm;
+  cx.beginPath(); cx.roundRect ? cx.roundRect(-w / 2, -l / 2, w, l, 0.5 * ppm) : cx.rect(-w / 2, -l / 2, w, l); cx.fill();
+  cx.shadowBlur = 0; cx.fillStyle = "rgba(5,8,15,.75)"; cx.fillRect(-w * 0.36, -l * 0.18, w * 0.72, l * 0.3);
+  if (isHeld("b")) { cx.fillStyle = "rgba(110,231,255,.85)"; cx.fillRect(-w * 0.3, l / 2, w * 0.18, l * 0.25); cx.fillRect(w * 0.12, l / 2, w * 0.18, l * 0.25); }
+  if (isHeld("k")) { cx.fillStyle = "#ff3b30"; cx.fillRect(-w / 2, l / 2 - 0.25 * ppm, w, 0.25 * ppm); }
+  cx.restore();
+}
+requestAnimationFrame(frame);
+window.__thu = { get S() { return S; }, get phi() { return curPhi(); }, get steer() { return steer; }, setSim(p) { sim = true; simPhi = p; }, motion: onMotion };   // để soi
+</script>
+</body>
+</html>
