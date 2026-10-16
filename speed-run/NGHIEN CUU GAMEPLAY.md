@@ -855,3 +855,48 @@ Thầy chốt (AskUserQuestion): vô lăng MÀN LỚN đổi dấu đỉnh sang 
 - padlink-3y: khoá "c" (kiểu lái JSON) + "r" ("<tên lửa>,<pha>", ghi kho khi đổi) ⇒ iPad "Connected (slow)" vẫn bắn được; client `onSteer`; resend m/q/c/r.
 - Thử (2 tab, kênh cục bộ, tab ẩn ⇒ tua `game.step()`): iPad nhận c {tilt,30,2} ⇒ chữ TILT + vô lăng nhẹ; bấm thật Touch wheel trên màn lớn ⇒ iPad về lái chạm (vô lăng đủ);
   iPad drive(0,6) ⇒ src=pad, vô lăng màn lớn 41,9°; bắn từ dải iPad ⇒ ms 2 → 1 + 1 quả bay; 0 lỗi console 2 tab. ⚠️ Đường relay "r" chưa thử được (cục bộ luôn nối thẳng).
+
+---
+
+## 33. ⬜ NGHIÊN CỨU MẪU 3z → 4x (16/10/2026) — 12 việc thầy giao sau khi chốt 3y ("giữ những gì tốt nhất đang có … quan trọng nhất là giữ được độ mượt và hiệu năng")
+Làm trong myGame trước, ok rồi mới lên AWord. Gốc = mẫu 3y (`63a0719`). Ảnh thầy gửi: góc nhìn đuôi xe kiểu Asphalt (xe chiếm ~1/3 dưới, camera thấp sau đuôi, đồng hồ km/h giữa trên).
+
+**Cấu trúc hiện có (đọc code 3y) — quyết định cách làm:**
+- Đường đua THẲNG trên trục z; khúc cua là GIẢ bằng shader `bend` (uBend, kẹp ±0,0024), lấy độ cong từ bản đồ `MAP_PTS` 30–150 m phía trước; lực văng `cx` theo `kapAt`.
+  ⇒ cua NHIỀU hơn = bản đồ nhiều khúc + nới kẹp bend (~0,004) + lực văng mạnh hơn. KHÔNG làm được cua tay áo / chữ U thật nếu không viết lại cả đường (nặng, phá mượt) ⇒ không làm.
+- Dài đường: `FIN = Track × SEG(80 m)`; xe luôn chạy nền 35 km/h ⇒ 12 đoạn ≈ 960 m ≈ 70–100 s. Gấp đôi = `SEG_TRACK` 160 m cho quãng đường, GIỮ đơn vị năng lượng 80 m
+  (boost mỗi câu đúng không đổi) ⇒ đua ~2,5–3 phút, nhiều câu hơn. Cảnh/cây sinh tất định theo khúc ⇒ đường dài không tốn thêm bộ nhớ.
+- Cây = InstancedMesh (thông 220, tròn 120, dừa 110, cột đèn 72), 1 vật liệu, đất là 1 tấm lưới shader. Chi tiết hơn mà không nặng: hình cây nhiều tầng hơn + màu đỉnh/gốc
+  vẽ sẵn vào màu đỉnh (giả bóng, 0 chi phí) + bụi cỏ InstancedMesh CHỈ trong ~150 m quanh xe + cỏ/đá vẽ trong shader đất. CẤM lá trong suốt alphaTest (vẽ chồng ⇒ tụt GPU).
+- Xe CHÌM: đo bánh thấp nhất dưới mặt đường: Y2 Revuelto −0,19 m, H4 Jesko −0,07 m (rig y = 0) ⇒ nâng từng xe theo đáy bánh đo lúc nạp (mỗi xe một số).
+- Bóng xe VUÔNG: tấm `PlaneGeometry(W+0,7, L+0,9)` + vệt tròn mờ ⇒ thay bằng ảnh bóng CHỤP TỪ TRÊN XUỐNG của chính xe (camera trực giao, 1 lần lúc nạp, làm mờ trong canvas)
+  + 4 chấm tối dưới bánh. Chi phí mỗi khung = 0 (vẫn 1 tấm).
+- Camera: đã có máy quay ngoài xe `eyeF` (màn chờ) ⇒ góc nhìn ĐUÔI XE = camera thấp ~1,4 m, sau 5,5 m, nhìn trước 6 m, FOV ~70; ẩn mũi xe buồng lái, hiện xe mình.
+  Bảng lái DOM (vô lăng, bàn đạp, đáp án) giữ nguyên.
+- 2 nửa màn = 2 camera + viewport/scissor. GỘP KHUNG kiểu "liền mạch": khi gộp, 2 camera bay về CÙNG một vị trí trên cao, mỗi camera dùng `setViewOffset` = nửa trái /
+  nửa phải của MỘT ống kính rộng ⇒ 2 nửa ghép thành 1 ảnh liền, vạch giữa mờ dần. Không đổi pass, không dịch shader mới, chi phí ≈ như cũ. Độ cong đường (uBend) của 2 camera
+  phải hoà về chung 1 giá trị khi gộp. Camera trên trời nhìn chếch từ sau 2 xe (không thẳng đứng) ⇒ vẫn lái được.
+- Ramp hiện có: dốc 10 m × 1,7 m; đã có lộn vòng `ar` (bánh 1 bên trên dốc ⇒ nghiêng). Ramp XOẮN ở mép đường = mặt dốc vặn dần quanh trục dọc ⇒ xe lao lên xoay
+  BARREL ROLL 360° theo trục dọc rồi đáp. Dùng lại máy bay/đáp đất sẵn có.
+
+**Chi phí hiệu năng dự tính (ngân sách: giữ ≥ 59 fps TOMKO như 3r):**
+| Việc | Mỗi khung thêm | Rủi ro |
+|---|---|---|
+| Dải câu hỏi xuống dưới | 0 (chỉ CSS) | phải đo lại khung thật AWord + iPad chế độ câu trên iPad |
+| Vạch ANDREW STUDIO giữa đường | +1 draw call (vài tấm decal dùng chung 1 ảnh) | không |
+| Cây/cỏ chi tiết | +2–3 draw call, ~+30–60k tam giác | vừa — đo trước bằng trang mẫu |
+| Đường dài ×2 + nhiều cua | 0 | lái khó hơn ⇒ chỉnh lực văng |
+| Xe không chìm + bóng đúng hình | 0 | không |
+| Ramp xoắn | +1–2 draw call | vừa (cảm giác bay) |
+| Góc nhìn đuôi xe | vẽ xe mình đầy đủ (+1 xe) | nhỏ |
+| Nút ⚙ Cài đặt đa năng | 0 | không |
+| Phần thưởng trên đường | +1 InstancedMesh | không |
+| Xe khác trên đường (traffic) | +1–2 InstancedMesh xe đơn giản (KHÔNG dùng xe 3D thật) | vừa — va chạm, AI tránh |
+| Gộp camera bay lên trời | ≈ 0 (cùng 2 lần vẽ) | cao nhất về cảm giác — làm sau cùng |
+
+**Đề xuất chia đợt (mỗi đợt 1 mẫu tên mới, thầy thử rồi mới sang đợt sau):**
+1. **3z** — bố cục dải câu hỏi + bản đồ xuống dưới · xe không chìm · bóng đúng hình xe · nút ⚙ Cài đặt (tab iPad · Camera) · góc nhìn đuôi xe.
+2. **4a** — đường dài ×2 · nhiều cua hơn · vạch ANDREW STUDIO · cây/cỏ chi tiết (trang mẫu chọn kiểu cây có đo fps trước).
+3. **4b** — ramp xoắn · phần thưởng trên đường (Boost / Tim / Tên lửa, tích trong Options).
+4. **4c** — xe khác cùng chiều / ngược chiều (bật tắt trong ⚙ Cài đặt).
+5. **4d** — gộp 2 camera bay lên trời (gần nhau / tên lửa đang bay / cuối chặng).
