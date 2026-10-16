@@ -829,3 +829,7 @@ khoá nhẹ ở giữa", "có thể bỏ đèn sáng vô lăng hoặc cách báo
 nghiêng ⇒ `WHEEL_LITE` (cắt `.wg` + mọi `<filter>`, ATEAM sáng bằng nét viền; đo: 0 filter, bản đủ 10), không đổi lớp/biến trên khung cha, báo lái = vạch mảnh `.ip-smeter` (scaleX, ghép lớp);
 chạm ⇒ vô lăng đủ như cũ · vùng đi thẳng 0°, độ cong 1,0 · con quay TỰ DÒ TRỤC + CHIỀU (α/β/γ tương quan với góc gia tốc, đủ 25° chuyển động, trục mạnh gấp 2 trục kia) — giả lập Safari báo
 ở β ngược dấu ⇒ dò ra "β−" < 1 s, bám góc lệch 1–2°. Dòng số đo hiện trục con quay (α+/β−…).
+
+**MẪU 3w (16/10) — thầy: "mượt rồi, khá ổn"** + 3 chỉnh không đụng độ mượt (`core/sr3d-padui-3w.js` + `thiet-ke-ipad-3w.html`): dấu đỉnh vô lăng (ô chữ nhật `M93 8.3 h14 v20`)
+⇒ vạch cong r 81 ±8° bo tròn trong rãnh chìm + vệt bóng (WHEEL_FULL / WHEEL_LITE, 0 filter) · vạch báo lái ⇒ lõi sáng ngắn giữa + 2 nhánh scaleX đuôi gradient mờ, quầng = lớp nhạt
+mặt nạ dọc (tĩnh), bỏ vạch dọc + nền · quá góc hết cỡ vẫn lái thêm: tới góc hết cỡ 88 %, quá nữa 0,88 + 0,12·(1 − e^(−Δ/12°)) ⇒ 25° 88 % · 30° 92 % · 35° 95 % · 45° 98 % · 60° 99 %.
