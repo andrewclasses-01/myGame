@@ -993,3 +993,33 @@ Trang thử: `speed-run/mau-4d-camera-troi.html`. File mới: `rw-4d.js` · `sr3
 - ⚙ Settings ▸ Camera thêm **Sky view: Auto | Off** (nhớ `racingwords.sky`).
 - Đo (máy này, 1600×900): đua thường ~96–99 fps / 375 lệnh · gộp hẳn 98–100 fps / 309–348 lệnh · đang chuyển 87–97 fps (trình duyệt giới hạn ~100). ⬜ thầy đo TOMKO.
 - ⬜ CHƯA lên AWord (cả 3z → 4d): cần nạp thêm CSS rw-3z / 4a / 4b / 4c / 4d, Options mới (race · lenK · timeS · twists · pkBoost · pkLife · pkMissile · traffic), chép mô-đun mới.
+
+## 39. ✅ MẪU 4e (16/10/2026) — 8 VIỆC THẦY SAU 4d (= AWord Đợt 537)
+Trang thử: `speed-run/mau-4e-cai-dat-moi-noi.html`. File mới: `rw-4e.js` · `sr3d-4e.js` · `sr3d-intro-4e.js` · `rw-4e.css` (nạp SAU rw-4d.css) · ảnh `speed-run/rw-loading.webp`.
+Thầy giao (nguyên ý): (1) Settings hiện ở MỌI nơi, cả trong intro để thiết lập trước khi chơi · (2) màn load đang dùng ảnh STAR LOOT ⇒ ảnh tĩnh có loading riêng ·
+(3) xưởng intro đã có ANDREW STUDIO trên tường ⇒ bỏ chữ ANDREW STUDIO + RACING WORDS phủ trên màn · (4) bấm Settings ⇒ game tạm dừng ·
+(5) mặc định: Drive on iPad + Tilt, Cockpit, Sky view Off, Traffic Off · (6) bay lên ramp nhờ boost ⇒ đi XA hơn chạy đất (lợi thế) ·
+(7) trên không: vô lăng bên nào xe nghiêng bên đó (đang ngược); đáp perfect có lợi, đáp nghiêng quá ⇒ BAD LANDING chậm hẳn + lệch vô lăng mất kiểm soát một chút ·
+(8) Options: chọn Length / Time / Words ⇒ làm mờ thanh không có tác dụng. Ràng buộc: không ảnh hưởng hiệu năng.
+- (1) Lỗi gốc: bảng `.sr-panel` (z 8) nằm DƯỚI lớp intro `.ri-root` (z 50) cùng khung ⇒ bấm ⚙ trên xưởng không thấy gì. `rw-4e.css`: `.rw-root .sr-panel { z-index: 60 }`
+  (MENU `.sr-pmenu` vốn z 70). Hàng nút nằm ngoài khung nên luôn bấm được.
+- (4) `sr3d-4e.js setPause()`: mở Settings ⇒ `G.paused` + báo `onEvent("pause")` (tiếng dừng) + `onEvent("settings", true)`; đóng ⇒ chỉ chạy lại nếu trước đó KHÔNG dừng sẵn
+  (MENU / Options AWord đang mở thì vẫn dừng). Gói nhúng nghe "settings" ⇒ `intro.pause(v)`: phim intro đứng, vòng vẽ intro KHÔNG vẽ khung mới (nhẹ card hơn).
+  Chạm đúp bỏ phim không tính cú chạm trong bảng Settings.
+- (5) Khoá nhớ máy đổi tên `.v2` (`racingwords.steer.v2 · view.v2 · sky.v2 · traffic.v2 · padMode.v2`) ⇒ máy đã thử bản cũ cũng về mặc định mới đúng 1 lần, sau đó nhớ lựa chọn.
+  Chế độ iPad nay nhớ theo MÁY cả trong AWord (cũ: AWord luôn OFF lúc mở — Đợt 514). Mặc định Drive on iPad ⇒ mở game là AWord claim `ipad_now` (iPad trong lớp tự sang màn lái).
+- (6) `takeOff`: `airK = 1 + 0,5·smooth(40 km/h, VBOOST, v)` — quãng đường mỗi giây trên không ×1 … ×1,5 (bay bằng boost ×1,5); đáp tốt giữ đà `pushT` 0,9 s (PERFECT 1,6 s + Landing Boost cũ).
+  Bàn thử: bay 1,7 s ở ~57–61 m/s đi 145–176 m so với 96–118 m nếu chạy đất cùng tốc độ.
+- (7) Dấu `ar`: rig.rotation.z dương = nhìn từ sau xe quay NGƯỢC kim đồng hồ = sườn phải NHẤC LÊN (nghiêng trái) — cũ `ar += steer·ROLL` ⇒ lái phải nghiêng trái (ngược).
+  Nay `ar += (arW − steer·ROLL)·dt`; lộn vòng phanh+lái cũng đổi dấu (`flipDir = −sign(steer)`). `arW` = nhịp hất nghiêng lúc cất cánh ±0,15–0,32 rad/s (dốc xoắn / rơi chậm không có),
+  bỏ tự cân trục dọc khi có arW ⇒ không chỉnh thì đáp lệch ~15–30° (không PERFECT, bay lâu thì BAD), chỉnh ngược chiều ⇒ PERFECT, giữ hết lái ⇒ BAD.
+  BAD LANDING: ×0,45 tốc độ (cũ) + `ctlT` 1,2 s mất lái: tay lái chỉ còn 30 %, vô lăng tự giật về phía xe nghiêng (`ctlDir`, tắt dần, hiện trên vô lăng qua `wk`), không boost, trần tốc độ nền.
+  Bàn thử (bám `wrapPI(ar)`): chỉnh 4/4 PERFECT · giữ hết lái 4/4 BAD · không chỉnh: lẫn ok/BAD.
+- (3) `sr3d-intro-4e.js`: bỏ `.ri-studio` + `.ri-title` (chữ lớn `.ri-big` lúc xe lao ra giữ nguyên).
+- (2) Ảnh `rw-loading.webp` 1920×1080, 63 KB: chụp CHÍNH xưởng intro (seek 4,8 s — đèn trần + biển sáng, 2 xe dưới đèn rọi) bằng góc máy riêng (0, 0,62, −8,2) nhìn (0, 1,75, 6), fov 42,
+  `toBlob(webp, 0,85)` gửi về máy qua máy chủ nhận POST tạm (scratchpad). AWord: theme `race` của core/loader3d.js (ảnh + thanh chạy, không phủ chữ vì biển đã có chữ).
+- (8) myGame: Options giả có `label[data-for]` mờ theo Race. AWord: `lockRace()` trong racing-words.js (xem Đợt 537).
+- Lỗi gặp: bàn thử bay đầu tiên toàn BAD — vì (a) dịch xe tới dốc qua đích ⇒ pha "end" tự phanh + lái ⇒ lộn vòng mãi; (b) chạy đà 40 m không lái ⇒ đường cong làm xe lệch ⇒ chỉ 1 bên lên dốc ⇒
+  barrel roll bắt buộc. Đo lại ở chế độ Time 600 s, đặt xe cách dốc 12 m. Gói nhúng: game cũ đã huỷ (Apply dựng lại) vẫn nhận "pause" khi bảng Options AWord đóng ⇒
+  lỗi "Cannot resume a closed AudioContext" ⇒ `if (dead) return` đầu onEvent (myGame `3f5f9a6`).
+- Hiệu năng: không thêm lượt vẽ / shader / vật thể. Settings mở = trận + intro ngừng vẽ (nhẹ hơn). Màn chờ ảnh tĩnh nhẹ hơn cảnh động space (chỉ thanh chạy transform).

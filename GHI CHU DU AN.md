@@ -640,7 +640,16 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 **Quyết định:** tăng tốc theo SỐ MÀN (không theo số toa) để Levels Off cũng đúng nấc Options; rèm đục thay kính mờ vì không còn gì phía sau để làm nhoè.
 **Còn để nguyên, chờ thầy:** thưởng giờ thừa (1 giây = 1 điểm) giờ lớn hơn hẳn điểm thùng; Points off tối đa −10; toa than −2; bonus +10.
 
+## Racing Words 4e — 16/10/2026 · SETTINGS MỌI NƠI + TẠM DỪNG · MẶC ĐỊNH MỚI · BAY XA · NGHIÊNG ĐÚNG CHIỀU · ẢNH LOADING RIÊNG (= AWord Đợt 537) · phiên máy nhà
+- **Thầy:** 8 việc sau 4d (Settings cả trong intro, ảnh load riêng thay ảnh STAR LOOT, bỏ chữ phủ xưởng, Settings tạm dừng, mặc định Drive on iPad+Tilt/Cockpit/Sky Off/Traffic Off,
+  bay xa hơn khi lên ramp bằng boost, nghiêng theo vô lăng + đáp nghiêng = BAD mất lái, Options làm mờ thanh không dùng) — "phải đảm bảo hiệu năng không bị ảnh hưởng".
+- **Làm:** mẫu 4e = `rw-4e.js` · `sr3d-4e.js` · `sr3d-intro-4e.js` · `rw-4e.css` · `mau-4e-cai-dat-moi-noi.html` · `rw-loading.webp` (commit `41f798b` + `3f5f9a6`). Chi tiết + số đo: `speed-run/NGHIEN CUU GAMEPLAY.md` mục 39.
+- **Quyết định:** khoá nhớ máy đổi `.v2` để mặc định mới có hiệu lực cả trên máy đã thử; chế độ iPad nhớ theo máy cả trong AWord; ảnh loading chụp từ chính xưởng intro (biển đã có chữ ⇒ màn chờ không phủ chữ).
+- **Lỗi & gỡ:** Settings không hiện trên xưởng = bảng z 8 dưới intro z 50 ⇒ nâng z 60. Bàn thử bay sai vì trận đã "end" và xe lệch dốc ⇒ đo lại chế độ Time. AudioContext đã đóng ⇒ chặn sự kiện sau destroy.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 4e (= AWord Đợt 537)**: thầy thử trên TOMKO + 2 iPad — Settings trên xưởng / giữa trận (dừng đúng chưa), mặc định Drive+Tilt, bay xa ×1,5 có quá lợi không,
+  nhịp hất nghiêng 0,15–0,32 rad/s (không chỉnh thì hay BAD quá không — hằng trong `takeOff`), mất lái 1,2 s sau BAD đủ phạt chưa, ảnh màn chờ mới.
 - ⬜ **TRAIN RUSH 1aw (= AWord)**: thầy chơi trên TOMKO — +5 %/màn đủ cảm giác chưa (hằng 0,05 và trần 1,75 trong `levelBoost`), rèm toa đục trông ổn không,
   fps có lên không. Hỏi thầy: thưởng giờ thừa (1 giây = 1 điểm) / Points off / toa than −2 / bonus +10 có cần đổi theo thang 1 điểm/thùng không.
 - ⬜ **RACING WORDS 3q (= AWord Đợt 531)**: thầy chơi trên TOMKO — cảnh xa còn chóng mặt không (nếu còn: giảm `bend` 0,75 hoặc tầm cong 150 m), 35 km/h có quá chậm không, cầu nhảy chậm + rung, Lives / Time delay / Miss wait đúng ý chưa.

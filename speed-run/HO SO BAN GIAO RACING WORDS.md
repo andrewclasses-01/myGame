@@ -5,8 +5,8 @@
 ## 1. Trạng thái hiện tại
 | Nơi | Bản | Mã commit | Trạng thái |
 |---|---|---|---|
-| myGame (thiết kế) | mẫu **4d** — bản đủ nhất | `8a6c7ce` | ✅ đã push |
-| AWord (bản thật) | **Đợt 535** = myGame 4d | `be9e854` | ✅ LIVE https://aword.andrewclasses.com (Action "Xuat ban AWord (thu gon)" success, live nạp `rw-4d.js`) |
+| myGame (thiết kế) | mẫu **4e** — bản đủ nhất (4d + 8 việc thầy 16/10, mục 39) | `3f5f9a6` | ✅ đã push |
+| AWord (bản thật) | **Đợt 537** = myGame 4e (trước: Đợt 535 = 4d `be9e854`) | xem git log AWord | ✅ LIVE https://aword.andrewclasses.com (Action "Xuat ban AWord (thu gon)" success, live nạp `rw-4d.js`) |
 
 ⬜ **Chưa làm / chờ thầy:**
 - Thầy thử 2 đội thật trên **TOMKO** (máy chiếu 86") + 2 iPad: cảm giác lái tay mới, xe khác ngược chiều, camera gộp, chế độ Time / Words với bộ từ thật.
@@ -17,6 +17,8 @@
 - Giữ những gì tốt nhất; **ưu tiên số 1 là MƯỢT + HIỆU NĂNG**.
 - Bố cục: khung đua TRÊN, dải câu hỏi 2 đội + bản đồ DƯỚI (sát ô đáp án).
 - Phanh TRÁI, ga PHẢI (màn lớn + iPad). Dấu đỉnh vô lăng = máy bay giấy logo Andrew Classes.
+- ⚙ Settings mở được MỌI LÚC (cả trên xưởng intro) và TẠM DỪNG game (cả phim intro). Mặc định (16/10, mẫu 4e): **Drive on iPad + Tilt · Cockpit · Sky view Off · Traffic Off** — khoá máy `.v2`.
+- Trên không: vô lăng bên nào xe nghiêng bên đó; bay bằng boost đi xa hơn (×1,5); đáp nghiêng quá ⇒ BAD mất lái 1,2 s. Màn chờ AWord = ảnh tĩnh riêng `rw-loading.webp`.
 - Nút iPad cũ ⇒ **⚙ Settings đa năng** có tab: **iPad** · **Camera** (Cockpit / Chase + Sky view Auto/Off) · **Race** (Traffic Off / Same way / Both ways). Nhớ theo MÁY (localStorage `racingwords.steer` · `.view` · `.sky` · `.traffic`), không theo act.
 - Độ dài theo chế độ — **mọi kiểu thắng đều phải chạy qua vạch đích**:
   - Length ×1 / ×1,5 / ×2 / ×3 (mặc định ×2) · Time (đồng hồ trong khung bản đồ; hết giờ đội xa hơn được chốt, đích hiện trước 140 m) · Words (còn 2 từ ⇒ đặt đích, cờ đỏ nhấp nháy bản đồ) · hết mạng ⇒ xe cháy đứng lại, đích hiện trước xe còn lại.
@@ -27,6 +29,7 @@
 - Quy trình: làm ở myGame trước (bản mới = tên mới), thầy OK mới đưa AWord.
 
 ## 3. Bản đồ file (myGame `speed-run/core/`)
+⭐ Mới nhất: gói `rw-4e.js` ⇒ lõi `sr3d-4e.js` + intro `sr3d-intro-4e.js` (vẫn xe `sr3d-car-4b.js`), CSS thêm `rw-4e.css`, trang thử `mau-4e-cai-dat-moi-noi.html`, ảnh màn chờ `rw-loading.webp`. Phần dưới (4d) vẫn đúng cho các mô-đun còn lại.
 Gói nhúng `rw-4d.js` ⇒ lõi `sr3d-4d.js` ⇒ nạp:
 - `sr3d-world-4b.js` (thế giới: cong thật bảng `uBendT`, cây/bụi/cỏ, vạch ANDREW STUDIO, mốc dùng lại, cổng đích dời được `setFinish`)
 - `sr3d-car-4b.js` (xe: bánh bám đường, bóng hình xe, lửa pô cong thật) · `sr3d-intro-4b.js` (xưởng — PHẢI cùng mô-đun xe với lõi)
