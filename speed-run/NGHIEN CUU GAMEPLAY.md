@@ -844,3 +844,14 @@ paint-order quanh cánh, nút Kèm sao / Lắc thử ±22° / TEAM 1-2, bấm ô
 **MẪU 3y (16/10) — thầy chọn dấu "S1 nhưng nhỏ hơn khoảng 10 %"** (`core/sr3d-padui-3y.js` + `thiet-ke-ipad-3y.html`): TOP_NEW = máy bay giấy cao 16,2 (S 18 × 0,9), tâm (100,19),
 cánh trái `color-mix(team 50 %, white)`, cánh phải màu đội, viền tối 1,5 paint-order, không sao, 0 filter — cả WHEEL_FULL (chạm) lẫn WHEEL_LITE (nghiêng). Khi build: vô lăng GAME màn lớn
 (sr3d-dash-3h WHEEL_SVG, ô chữ nhật `M93 8.3 h14 v20`) cũng nên đổi cùng dấu — hỏi thầy.
+
+## 32. ✅ MẪU 3y GAME (16/10/2026) — thầy "ok build" lái nghiêng iPad (thiết kế iPad 3s→3y chốt)
+Trang `speed-run/mau-3y-lai-nghieng.html` + iPad `pad-3y.html` (kênh `srpad3y`). Gói `core/rw-3y.js` ⇒ lõi `core/sr3d-3y.js`; iPad `core/sr3d-padui-3y.js`; đường nối `core/sr3d-padlink-3y.js`.
+Thầy chốt (AskUserQuestion): vô lăng MÀN LỚN đổi dấu đỉnh sang máy bay giấy như iPad · nút iPad có Góc lái hết cỡ + Độ mượt.
+- Tap-lô màn lớn: PHANH trái, BOOST phải (đảo markup `.sr-drive`). Vô lăng màn lớn: dấu đỉnh máy bay giấy S1 (thay `M93 8.3 h14 v20` trong WHEEL_SVG lúc nạp).
+- Nút iPad: thêm STEERING (Touch wheel | Tilt the iPad) + Full lock 15–40° (bước 5, mặc định 25) + Smoothing Low 2 / Normal 6 / High 15 %; đổi là gửi ngay "c:" cả 2 iPad,
+  nhớ máy này `racingwords.steer` (có cả khi chạy trong AWord — là thói quen máy chiếu, không phải act); gửi lại khi iPad vừa nối + khi đổi chế độ.
+- Game: iPad nghiêng ⇒ làm mượt tay lái dt·22 (chạm/phím vẫn dt·10). Vô lăng màn lớn quay theo t.steer (đã có): đo 60 % ⇒ 42°.
+- padlink-3y: khoá "c" (kiểu lái JSON) + "r" ("<tên lửa>,<pha>", ghi kho khi đổi) ⇒ iPad "Connected (slow)" vẫn bắn được; client `onSteer`; resend m/q/c/r.
+- Thử (2 tab, kênh cục bộ, tab ẩn ⇒ tua `game.step()`): iPad nhận c {tilt,30,2} ⇒ chữ TILT + vô lăng nhẹ; bấm thật Touch wheel trên màn lớn ⇒ iPad về lái chạm (vô lăng đủ);
+  iPad drive(0,6) ⇒ src=pad, vô lăng màn lớn 41,9°; bắn từ dải iPad ⇒ ms 2 → 1 + 1 quả bay; 0 lỗi console 2 tab. ⚠️ Đường relay "r" chưa thử được (cục bộ luôn nối thẳng).
