@@ -806,3 +806,9 @@ vô lăng không nhận chạm, vẽ đứng yên, sáng bên đang lái theo đ
 Sửa kèm 2 lỗi cũ của 3m: `.ip-row` đè nút bắn (nay `pointer-events:none`) · luật `.ip-fire span{position:absolute}` làm 2 quả tên lửa CHỒNG lên nhau (3m chỉ thấy 1 quả).
 Đo 1180×820: mọi vùng chạm trúng; 2 cú bấm thật ở 2 đầu dải ⇒ 6 → 4 quả; nghiêng giả 18° ⇒ lái 0,58, vô lăng 0°. ⬜ thầy xem trên iPad thật ⇒ "ok build" (khi build: game đảo bàn đạp
 `.sr-drive` phanh trái/ga phải · Options iPad: kiểu lái + thông số gửi sang iPad · vô lăng màn lớn quay theo · relay gửi "i:" qua kho).
+
+**MẪU 3t (16/10) — thầy chỉnh sau khi xem 3s** (`core/sr3d-padui-3t.js` sinh từ 3s bằng script + `speed-run/thiet-ke-ipad-3t.html`; 3s giữ nguyên):
+vô lăng vẽ xoay NHẸ cùng chiều khi nghiêng (steer × 0,22 ⇒ ≈ 15° hết cỡ) · bỏ chữ "TAP ANYWHERE…" — chỗ đó là hàng TÊN LỬA CON, nạp ⇒ quả con cuối hàng BAY LÊN
+đúng chỗ quả to (đo vị trí thật ⇒ --dx/--dy, phóng to 2,6×) rồi quả to hiện lên từ dưới · phím chức năng (đội · trạng thái · chế độ · LEVEL, + cụm nút thiết kế) gom vào
+1 DẢI trên cùng (cao max(50px, 7,6vh)), cách dải tên lửa 2,8vh · boost: đổ đầy trong bàn đạp ga dùng gradient mép mờ (20 % trên) + dịch xuống (translateY) thay vì co giãn,
+trôi 0,5 s; vạch Nitro mép phải mờ + trôi 0,5 s; ánh sáng nitro chuyển 0,6 s. Đo: 1180×820 và 1024×768 dải phím vừa khít (scrollWidth = bề ngang).
