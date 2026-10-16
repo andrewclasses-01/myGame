@@ -900,3 +900,15 @@ Làm trong myGame trước, ok rồi mới lên AWord. Gốc = mẫu 3y (`63a071
 3. **4b** — ramp xoắn · phần thưởng trên đường (Boost / Tim / Tên lửa, tích trong Options).
 4. **4c** — xe khác cùng chiều / ngược chiều (bật tắt trong ⚙ Cài đặt).
 5. **4d** — gộp 2 camera bay lên trời (gần nhau / tên lửa đang bay / cuối chặng).
+
+**Thầy chốt (16/10, qua câu hỏi):**
+- Chia 5 đợt như đề xuất, thử từng đợt. Cây/cỏ: em tự chọn kiểu (không cần trang mẫu), giữ 60 fps.
+- CAMERA GỘP bay lên (TOMKO màn to, không lo xe bé) khi: (1) 2 xe cách nhau 50–100 m · (2) tên lửa phóng ra và đang bay sang xe kia — trúng rồi thì chuyển NHANH
+  về 2 góc xe, mượt + chuyên nghiệp · (3) 150 m cuối gần đích.
+- ĐỘ DÀI theo CHẾ ĐỘ (mọi kiểu thắng đều PHẢI chạy qua vạch đích ⇒ cổng đích phải DỜI được, không cố định ở L×SEG):
+  · Cố định độ dài: ×1 / ×1,5 / ×2 / ×3.
+  · Cố định thời gian: đồng hồ đếm lùi trong khung bản đồ; hết giờ ai xa hơn thắng ⇒ cổng đích hiện trước xe dẫn một đoạn để chạy qua.
+  · Theo số từ: chạy tới khi hết từ; gần những từ cuối thì điểm đỏ vạch đích nhấp nháy trên bản đồ (đích tuỳ diễn biến trận); xe tới trước thắng.
+  · Có mạng (Lives): 1 đội hết mạng ⇒ xe cháy, game over; vạch đích hiện trước xe còn lại (xa hơn chỗ xe kia cháy) để đội đó chạy tới rồi thắng.
+  ⇒ Đề xuất kỹ thuật: hết giờ / hết mạng ⇒ CHỐT đội thắng ngay, xe thua chuyển lái tự động giảm tốc (không vượt được nữa), cổng đích đặt trước xe thắng ~120 m;
+    theo số từ: còn ≤ 3 câu ⇒ đặt cổng ở vị trí xe dẫn + quãng ước cho số câu còn lại, nhấp nháy trên bản đồ, ai qua trước thắng. Chế độ đua làm ở đợt 4a (cùng đường dài).
