@@ -31,7 +31,7 @@ const ROWS = [{"n": "intro_music", "label": "Nhạc intro xưởng", "sz": {"goc
 const kb = b => Math.round(b / 1024) + " KB", mb = b => (b / 1048576).toFixed(1).replace(".", ",") + " MB";
 const DESC = { goc: "đang dùng: hiệu ứng 112 kbps 2 kênh, nhạc 128–160 kbps", vua: "hiệu ứng 64 kbps 1 kênh · nhạc 96 kbps", manh: "hiệu ứng 48 kbps 1 kênh · nhạc 80 kbps" };
 const NAME = { goc: "Gốc", vua: "Vừa", manh: "Mạnh" };
-document.getElementById("sum").innerHTML = ["goc", "vua", "manh"].map(k => `<div><small>${NAME[k]} — cả 30 tiếng</small><b>${mb(TOT[k])}</b><small>${DESC[k]}</small></div>`).join("");
+document.getElementById("sum").innerHTML = ["goc", "vua", "manh"].map(k => `<div><small>${NAME[k]} — cả 29 tiếng</small><b>${mb(TOT[k])}</b><small>${DESC[k]}</small></div>`).join("");
 const src = (k, n) => k === "goc" ? `../sfx/${n}.mp3` : `${k}/${n}.mp3`;
 const au = new Audio(); let cur = null;
 document.getElementById("tb").innerHTML = ROWS.map(r => `<tr><td>${r.label}</td>` + ["goc", "vua", "manh"].map(k => `<td><button data-k="${k}" data-n="${r.n}">${NAME[k]}<small>${kb(r.sz[k])}</small></button></td>`).join("") + `</tr>`).join("");
