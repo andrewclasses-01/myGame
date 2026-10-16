@@ -5,13 +5,14 @@
 ## 1. Trạng thái hiện tại
 | Nơi | Bản | Mã commit | Trạng thái |
 |---|---|---|---|
-| myGame (thiết kế) | mẫu **4f** — bản đủ nhất (4e + iPad nối trước intro / giữ kết nối / tự nối lại / mốc tự lấy, mục 40) | xem git log myGame | ✅ đã push |
-| AWord (bản thật) | **Đợt 538** = myGame 4f (trước: Đợt 537 = 4e `b529ff5`) | xem git log AWord | ✅ LIVE https://aword.andrewclasses.com (live nạp `rw-4f.js`) |
+| myGame (thiết kế) | mẫu **4f** — bản đủ nhất (4e + iPad nối trước intro / giữ kết nối / tự nối lại / mốc tự lấy / khoá đội, mục 40) | `4077f92` | ✅ đã push |
+| AWord (bản thật) | **Đợt 539** = myGame 4f + khoá đội (Đợt 538 `b3c3004` = 4f; Đợt 537 = 4e `b529ff5`) | `13dad6e` | ✅ LIVE https://aword.andrewclasses.com (live nạp `rw-4f.js`, pad.js có `watchTeams`) |
 
 ⬜ **Chưa làm / chờ thầy:**
 - Thầy thử 2 đội thật trên **TOMKO** (máy chiếu 86") + 2 iPad: cảm giác lái tay mới, xe khác ngược chiều, camera gộp, chế độ Time / Words với bộ từ thật.
 - Đo fps trên TOMKO (máy nhà chỉ đo được ~100 fps vì trình duyệt giới hạn). Cách đo cũ: mục 30.
 - 16/10 thầy thử TOMKO: 1 iPad "slow" ⇒ mẫu 4f tự nối lại + chẩn đoán (mục 40). Thầy thử lại; còn slow ⇒ chụp dòng chẩn đoán dưới thẻ đội.
+- Khoá đội iPad (Đợt 539) mới thử bằng iPad giả cùng trình duyệt — thầy thử 2 iPad thật: chọn trùng đội ⇒ tấm "already has an iPad"; bấm ◀ ⇒ iPad kia tự vào.
 
 ## 2. Thầy đã chốt (đừng hỏi lại)
 - Giữ những gì tốt nhất; **ưu tiên số 1 là MƯỢT + HIỆU NĂNG**.
@@ -20,6 +21,7 @@
 - ⚙ Settings mở được MỌI LÚC (cả trên xưởng intro) và TẠM DỪNG game (cả phim intro). Mặc định (16/10, mẫu 4e): **Drive on iPad + Tilt · Cockpit · Sky view Off · Traffic Off** — khoá máy `.v2`.
 - Trên không: vô lăng bên nào xe nghiêng bên đó; bay bằng boost đi xa hơn (×1,5); đáp nghiêng quá ⇒ BAD mất lái 1,2 s. Màn chờ AWord = ảnh tĩnh riêng `rw-loading.webp`.
 - **iPad (4f):** chế độ Drive on iPad ⇒ START chỉ mở khi 2 iPad nối THẲNG + đã bẻ thử trái/phải (thẻ đội ở xưởng). Đường nối sống suốt trang — Apply / Start again / đổi xe KHÔNG nối lại. Mốc nghiêng tự lấy (bỏ LEVEL).
+- **Khoá đội iPad (Đợt 539):** một đội = một iPad (chủ = mã máy `rwpad.dev`). iPad khác chọn trùng ⇒ bị chặn + tấm báo; màn chọn đội làm mờ đội đã có iPad. Chủ bấm ◀ về màn chọn đội / mất > 8 s mới nhả.
 - Nút iPad cũ ⇒ **⚙ Settings đa năng** có tab: **iPad** · **Camera** (Cockpit / Chase + Sky view Auto/Off) · **Race** (Traffic Off / Same way / Both ways). Nhớ theo MÁY (localStorage `racingwords.steer` · `.view` · `.sky` · `.traffic`), không theo act.
 - Độ dài theo chế độ — **mọi kiểu thắng đều phải chạy qua vạch đích**:
   - Length ×1 / ×1,5 / ×2 / ×3 (mặc định ×2) · Time (đồng hồ trong khung bản đồ; hết giờ đội xa hơn được chốt, đích hiện trước 140 m) · Words (còn 2 từ ⇒ đặt đích, cờ đỏ nhấp nháy bản đồ) · hết mạng ⇒ xe cháy đứng lại, đích hiện trước xe còn lại.
@@ -30,7 +32,7 @@
 - Quy trình: làm ở myGame trước (bản mới = tên mới), thầy OK mới đưa AWord.
 
 ## 3. Bản đồ file (myGame `speed-run/core/`)
-⭐⭐ Mới nhất 4f: gói `rw-4f.js` (+ `rw-4f.css`) — vẫn lõi `sr3d-4e.js` + intro `sr3d-intro-4e.js`; iPad `sr3d-padlink-4f.js` + `sr3d-padui-4f.js`; trang thử `mau-4f-ipad-giu-ket-noi.html` + `pad-4f.html?t=0|1`.
+⭐⭐ Mới nhất 4f: gói `rw-4f.js` (+ `rw-4f.css`) — vẫn lõi `sr3d-4e.js` + intro `sr3d-intro-4e.js`; iPad `sr3d-padlink-4f.js` + `sr3d-padui-4f.js`; trang thử `mau-4f-ipad-giu-ket-noi.html` + `pad-4f.html?t=0|1` (nhiều iPad cùng trình duyệt: thêm `&dev=a` / `&dev=b` / `&dev=c` — không có thì các tab chung 1 mã máy ⇒ coi là CÙNG iPad).
   ⚠️ remote 4f phải do CHỦ TRANG giữ suốt đời (AWord: biến cấp mô-đun trong racing-words.js), game chỉ attach/detach; rời hẳn ⇒ `close()`.
 ⭐ Trước đó: gói `rw-4e.js` ⇒ lõi `sr3d-4e.js` + intro `sr3d-intro-4e.js` (vẫn xe `sr3d-car-4b.js`), CSS thêm `rw-4e.css`, trang thử `mau-4e-cai-dat-moi-noi.html`, ảnh màn chờ `rw-loading.webp`. Phần dưới (4d) vẫn đúng cho các mô-đun còn lại.
 Gói nhúng `rw-4d.js` ⇒ lõi `sr3d-4d.js` ⇒ nạp:
