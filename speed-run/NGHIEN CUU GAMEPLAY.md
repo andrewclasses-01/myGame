@@ -947,3 +947,28 @@ Trang thử: `speed-run/mau-4a-duong-dai.html` (Options giả có Race / Length 
 - **Đo (đếm lệnh vẽ thật trong trang, góc Chase, giữa trận):** 3z 452 lệnh / 1,90 triệu đỉnh ⇒ 4a 465 lệnh / 2,44 triệu đỉnh, 57 shader (= 3z). Lần đầu 551 lệnh (mốc 14 chỗ × 5 tấm)
   ⇒ gộp vạch + cột ⇒ 465. fps máy này cùng lúc: 3z ≈ 100, 4a ≈ 99 (trình duyệt đang giới hạn ~100). ⬜ thầy đo TOMKO.
   ⚠️ Bàn thử bấm `game.start()` thẳng (bỏ qua intro) ⇒ KHÔNG chờ dịch sẵn shader ⇒ thấy 1–2 shader dịch giữa trận ở CẢ 3z lẫn 4a — đi đúng đường START (rw chờ prewarm) thì không.
+
+## 36. ✅ MẪU 4b (16/10/2026) — đợt 3/5: dốc xoắn · phần thưởng trên đường + 3 việc thầy thêm (cong đúng vật lý · bỏ lái tự động · vạch mạng mới)
+Trang thử: `speed-run/mau-4b-lai-that.html`. File mới: `rw-4b.js` · `sr3d-4b.js` · `sr3d-world-4b.js` · `sr3d-missile-4b.js` · `sr3d-car-4b.js` · `sr3d-intro-4b.js` ·
+`sr3d-stunt-4b.js` · `rw-4b.css` (nạp SAU rw-4a.css).
+- **Đường cong đúng vật lý** (thầy: "xe đi thẳng nhưng đôi khi đoạn đường phía xa vắt sang trái, vắt sang phải rất nhanh"): cũ = 1 hệ số cong (trung bình 30–150 m) áp
+  cho CẢ đoạn xa ⇒ khúc S mới lọt vào tầm là cả đường xa quẹt ngang. Nay mỗi khung, mỗi máy quay tích phân độ cong bản đồ (làm mượt ±15 mẫu, ×0,22, trần 0,0065 rad/m
+  ≈ bán kính ≥ 154 m) từ chỗ máy quay ra 1.400 m: φ(d) = ∫κ, X(d) = ∫tan φ ⇒ bảng 256 mẫu (DataTexture nổi 1 dòng `uBendT`), shader `bendX` nội suy (texelFetch),
+  ngoài 1.400 m theo tiếp tuyến. Mọi điểm đường đứng yên trong thế giới. Trời xoay theo HƯỚNG TUYỆT ĐỐI của đường tại máy quay (`phiAbs`, `U.uSkyYaw`).
+  Áp đồng bộ: world (mọi vật liệu bend + đất + biển), missile-4b, lửa pô car-4b, nhãn HUD (`bendXjs`).
+- **Bỏ lái tự động:** không ai điều khiển ⇒ src "free" (màn vô lăng "DRIVE"), vô lăng thẳng. Lái = TỐC ĐỘ QUAY ĐẦU (`yawR(v) = min(1,25; 16/v)`), đường cong quay dưới xe
+  (`psi' = steer·yawR − v·κ`) ⇒ vào cua không lái là trôi ra mép, đâm rào (thử: thả tay ⇒ xe ôm rào trái ở các khúc cua). Hết trợ lái 20 %, hết lực văng giả `cx`.
+  AI chỉ còn khi `G.auto` (bàn thử) và lúc về đích (`aiSteer` bù độ cong). Vô lăng chỉ lệch khi không lái lúc VA CHẠM: `t.wk` (va xe, rào, slip) + lệch hướng `psi`.
+  Bám đường 16 m/s² ⇒ boost 47 m/s vẫn ôm được khúc gắt nhất với ~80 % vô lăng (10 m/s² thì không ôm nổi).
+- **Vạch mạng** (thầy: "cân đối vào giữa theo chiều cao … mảnh, racing hơn, ngầu hơn"): lõi đặt `--rw-dashpx` ⇒ vạch ở 21–79 % phần khung nhìn; 0,42cqw, mỗi mạng 1 thanh
+  XIÊN cắt góc (clip-path) neon xanh, ray 1 px, SỐ MẠNG nghiêng ở đỉnh (`data-n`); còn 1 ⇒ đỏ nhấp nháy (opacity). Không filter.
+- **Dốc xoắn** (`createTwists`): mỗi vòng 1 cái ở 0,5 vòng, mép phải/trái xen kẽ, dài 14 m rộng 3,8 m, mặt vặn tới 38° (mép trong sát đường); tâm xe trên mặt ⇒ cao = w·sin θ,
+  nghiêng = góc vặn; bánh sau qua cuối ⇒ `twistLaunch` (luôn phóng, cả 35 km/h): giữ độ cao/góc, hất vào lòng đường, barrel roll trọn vòng. Thử: ar 0 → 0,62 trên dốc ⇒ bay ⇒ 6,28 ⇒ đáp.
+  Options `twists` (dựng lại).
+- **Phần thưởng** (`createPickups`): mỗi ~190 m (tất định theo số thứ tự, né dốc/đích), làn −2,4 … 2,4; BOOST (+1,2 ô boost) · LIFE (+1 mạng, chỉ khi có Lives) ·
+  MISSILE (+1, chỉ khi Missiles max > 0); ăn rồi biến mất cho cả 2 xe; tia lửa + chữ "+BOOST / +1 LIFE / +1 MISSILE". 3 InstancedMesh + 1 vòng sáng. Options `pkBoost` ·
+  `pkLife` · `pkMissile` (áp ngay). Thử: chạy qua tia sét ⇒ E 136 → 232.
+- ⛔ **BẪY (đã trả giá ở đây):** lõi dùng car-4b nhưng intro còn car-3z ⇒ 2 mô-đun xe, bảng số đo xe (SO_DO: chỗ cháy…) KHÔNG dùng chung ⇒ prewarm dò tia lại ⇒
+  "compile" 20,4 s mỗi lần tải (dịch shader thật chỉ 1,7 s — đo bằng bọc linkProgram). Sửa: intro-4b cùng car-4b ⇒ 1,8 s. Đổi mô-đun xe là PHẢI đổi cả intro.
+- ⚠️ Bàn thử: `game.step()` bật `manual` (vòng rAF ngừng vẽ) — xong phải `game.resume()`; `game.drive(i, {...})` giữ tới khi `drive(i, null)`.
+- **Đo (máy này, Chase, giữa trận, chèn <script> bọc gl.draw*):** 448 lệnh vẽ / 2,43 triệu đỉnh (4a: 465 / 2,44), 99 fps (trình duyệt giới hạn ~100), 63 shader cả ván (không dịch giữa trận).
