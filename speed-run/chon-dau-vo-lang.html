@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RACING WORDS · Chọn dấu đỉnh vô lăng (máy bay giấy)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+/* Trang CHỌN (16/10/2026): dấu đỉnh vô lăng = máy bay giấy của logo Andrew Classes (icon "sách bay": 2 cánh tam giác + sao).
+   Nét lấy nguyên từ D:\OTHERS\CLAUDE\Andrew Classes - thiet ke icon app\ban-chinh-thuc-v2\svg\icon-bo-goc.svg. Vô lăng = bản nhẹ (không filter) như iPad 3w. */
+html,body{margin:0;background:#07090f;color:#e2e8f0;font-family:"Exo 2",system-ui,sans-serif}
+body{background:radial-gradient(120% 90% at 50% 0%,#18233a 0%,#07090f 60%,#030408 100%) fixed}
+header{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:center;padding:14px 16px;background:rgba(4,7,14,.86);border-bottom:1px solid rgba(140,210,255,.16)}
+h1{margin:0;font:italic 900 22px "Exo 2",sans-serif;letter-spacing:.08em;color:#fff}
+.seg{display:flex;border-radius:99px;overflow:hidden;border:1px solid rgba(140,210,255,.35)}
+.seg button{height:38px;padding:0 14px;border:0;background:rgba(255,255,255,.05);color:#cbd5e1;font:800 14px "Exo 2",sans-serif;letter-spacing:.06em;cursor:pointer}
+.seg button.sel{background:#3b8cff;color:#fff}
+.hint{font-size:13px;color:#94a3b8;text-align:center;margin:10px 16px 0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:16px;max-width:1240px;margin:0 auto}
+.row-t{grid-column:1/-1;font:italic 900 16px "Exo 2",sans-serif;letter-spacing:.14em;color:#94a3b8;margin:10px 4px -4px}
+.card{background:rgba(255,255,255,.035);border:1px solid rgba(140,210,255,.14);border-radius:16px;padding:26px 10px 12px;cursor:pointer;text-align:center}
+.card.big{grid-column:1/-1}
+.card b{display:block;font:italic 900 20px "Exo 2",sans-serif;letter-spacing:.08em;color:#fff}
+.card span{font-size:12px;color:#94a3b8}
+.wv{width:100%;max-width:300px;aspect-ratio:1;margin:0 auto 4px;overflow:visible}
+.card.big .wv{max-width:560px}
+.wv svg{width:100%;height:100%;display:block;overflow:visible}
+.rock .wv svg{animation:rk 2.6s ease-in-out infinite alternate}
+@keyframes rk{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@media (max-width:820px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+  <h1>DẤU ĐỈNH VÔ LĂNG · MÁY BAY GIẤY</h1>
+  <div class="seg" id="team"><button data-t="0" class="sel">TEAM 1</button><button data-t="1">TEAM 2</button></div>
+  <div class="seg" id="star"><button data-s="0" class="sel">Không sao</button><button data-s="1">Kèm sao</button></div>
+  <div class="seg" id="rock"><button data-r="0" class="sel">Đứng yên</button><button data-r="1">Lắc thử ±22°</button></div>
+</header>
+<p class="hint">Bấm vào một ô để xem cỡ thật như trên iPad (bấm lại để thu nhỏ). Báo em mã ô thầy chọn, ví dụ "M2".</p>
+<div class="grid" id="grid"></div>
+<script type="module">
+import { WHEEL_SVG } from "./core/sr3d-dash-3h.js";
+// vô lăng nhẹ (y như iPad 3w khi nghiêng): bỏ nét sáng + filter, bỏ dấu đỉnh cũ (ô chữ nhật)
+const TOP_OLD = '<path d="M93 8.3 h14 v20 h-14 Z" fill="var(--team)"/>';
+const LITE = WHEEL_SVG
+  .replace(/<g class="wg[^"]*">[\s\S]*?<\/g>/g, "")
+  .replace(/<filter id="srwgb6"[\s\S]*?<\/filter>/, "").replace(/<filter id="srwgb2"[\s\S]*?<\/filter>/, "")
+  .replace(/<defs><filter id="srwgat"[\s\S]*?<\/filter><\/defs>/, "")
+  .replace(/<text ([^>]*) fill="var\(--team\)" filter="url\(#srwgat\)">ATEAM<\/text>/,
+    '<text $1 fill="none" stroke="var(--team)" stroke-width="3.4" stroke-opacity=".4" stroke-linejoin="round">ATEAM</text><text $1 fill="var(--team)">ATEAM</text>');
+if (!LITE.includes(TOP_OLD)) console.warn("không thấy dấu đỉnh cũ");
+// máy bay giấy của logo (hệ toạ độ 512): cánh trái / cánh phải / sao
+const WING_L = "M256 408 L256 120 L86 380 Q174.40 364 256 408Z", WING_R = "M256 408 L256 120 L426 380 Q337.60 364 256 408Z";
+const STAR = "M256.0 24.0 L270.1 56.6 L305.5 59.9 L278.7 83.4 L286.6 118.1 L256.0 99.9 L225.4 118.1 L233.3 83.4 L206.5 59.9 L241.9 56.6Z";
+const SIZES = [{ k: "S", name: "Nhỏ — nằm gọn trong vành", h: 18, cy: 19 }, { k: "M", name: "Vừa — nhô nhẹ khỏi vành", h: 26, cy: 16 }, { k: "L", name: "To — nổi hẳn trên vành", h: 34, cy: 12.5 }];
+const COLORS = [
+  { n: "1", name: "Màu đội", l: "color-mix(in srgb, var(--team) 50%, white)", r: "var(--team)" },
+  { n: "2", name: "Trắng như logo", l: "#FFFFFF", r: "#D5EEE9" },
+  { n: "3", name: "Xanh logo", l: "#62e3cc", r: "#18AE96" },
+  { n: "4", name: "Vàng", l: "#FFE58A", r: "#FFC23A" },
+];
+function plane(sz, c, star) {
+  const k = sz.h / 288, sw = (1.5 / k).toFixed(1);                     // viền tối 1,5 đơn vị vô lăng quanh cánh để tách khỏi vành
+  const st = star ? `<path d="${STAR}" fill="#FFD54A" stroke="#06080b" stroke-width="${sw}" paint-order="stroke" stroke-linejoin="round" transform="translate(256 112) scale(.82) translate(-256 -118)"/>` : "";
+  return `<g transform="translate(100 ${sz.cy}) scale(${k.toFixed(4)}) translate(-256 -264)">`
+    + `<path d="${WING_L}" fill="${c.l}" stroke="#06080b" stroke-width="${sw}" paint-order="stroke" stroke-linejoin="round"/>`
+    + `<path d="${WING_R}" fill="${c.r}" stroke="#06080b" stroke-width="${sw}" paint-order="stroke" stroke-linejoin="round"/>${st}</g>`;
+}
+const TEAM = ["#3b8cff", "#ff7a00"];
+let team = 0, star = 0, big = "";
+function paint() {
+  const g = document.getElementById("grid");
+  g.innerHTML = SIZES.map(sz => `<div class="row-t">CỠ ${sz.k} · ${sz.name.toUpperCase()}</div>` + COLORS.map(c => {
+    const id = sz.k + c.n;
+    return `<div class="card${big === id ? " big" : ""}" data-id="${id}" style="--team:${TEAM[team]}"><div class="wv">${LITE.replace(TOP_OLD, plane(sz, c, star))}</div><b>${id}</b><span>${c.name}</span></div>`;
+  }).join("")).join("");
+  g.querySelectorAll(".card").forEach(el => el.addEventListener("click", () => { big = big === el.dataset.id ? "" : el.dataset.id; paint(); if (big) document.querySelector(`[data-id="${big}"]`).scrollIntoView({ block: "center", behavior: "smooth" }); }));
+}
+const seg = (id, key, set) => document.querySelectorAll(`#${id} button`).forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(`#${id} button`).forEach(x => x.classList.toggle("sel", x === b)); set(+b.dataset[key]); }));
+seg("team", "t", v => { team = v; paint(); });
+seg("star", "s", v => { star = v; paint(); });
+seg("rock", "r", v => document.body.classList.toggle("rock", !!v));
+paint();
+</script>
+</body>
+</html>

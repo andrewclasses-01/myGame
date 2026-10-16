@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>RACING WORDS — iPad 3x (thiết kế A2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+.demo{display:flex;gap:.9vmin;margin-left:1.2vmin;padding-left:1.6vmin;border-left:1px solid rgba(250,204,21,.3);font-family:"Exo 2",system-ui,sans-serif}
+.demo .seg{display:flex;border-radius:99px;overflow:hidden;border:1px solid rgba(250,204,21,.45)}
+.demo button{height:max(30px,3.9vmin);padding:0 1.2vmin;border:0;background:rgba(250,204,21,.08);color:#fde68a;font:800 max(11px,1.4vmin) "Exo 2",sans-serif;letter-spacing:.06em;cursor:pointer}
+.demo button.sel{background:#facc15;color:#1c1400}
+.meter{position:fixed;left:50%;transform:translateX(-50%);top:calc(max(50px,7.6vh) + env(safe-area-inset-top) + .5vh);z-index:6;font:700 11px/1.2 ui-monospace,Consolas,monospace;color:#64748b;white-space:nowrap;pointer-events:none}
+.meter b{color:#cbd5e1;font-weight:700}.meter b.bad{color:#fca5a5}
+.demo i{align-self:center;font:800 max(11px,1.5vmin) "Exo 2",sans-serif;color:#a16207;letter-spacing:.14em;font-style:normal}
+</style>
+</head>
+<body>
+<div id="pad"></div>
+<div class="demo">
+  <i>3x</i>
+  <div class="seg"><button data-s="touch">TOUCH</button><button data-s="tilt">TILT</button></div>
+  <div class="seg"><button data-t="0">TEAM 1</button><button data-t="1">TEAM 2</button></div>
+  <div class="seg"><button data-ms="0">0 ⚡</button><button data-ms="2">2</button><button data-ms="6">6</button></div>
+</div>
+<div class="meter" id="meter"></div>
+<script type="module">
+// Trang THIẾT KẾ mẫu 3x (16/10/2026, = 3w + nhạy hơn, vô lăng xoay tối đa ≈ 22°, con quay tự kiểm lại): màn iPad THẬT (core/sr3d-padui-3x.js) chạy với "game giả" — chưa nối máy chiếu, chưa đụng AWord.
+// Thầy chốt A2: phanh trái · ga phải · cả dải trên là tên lửa. Cụm nút vàng "3t" (gắn vào dải phím trên cùng) chỉ có ở trang thiết kế.
+// Máy tính: ← → giả nghiêng khi ở TILT.
+import { mountPadApp } from "./core/sr3d-padui-3x.js";
+const mount = document.getElementById("pad");
+const q = new URLSearchParams(location.search);
+let team = q.get("t") === "1" ? 1 : 0, mode = q.get("s") === "tilt" ? "tilt" : "touch", msCap = 6;
+const G = { steer: 0, boost: 0, brake: 0, v: 31, E: 2.5, ms: 3, fires: 0, reloadT: 0 };
+const client = {
+  drive(steer, boost, brake) { G.steer = steer; G.boost = boost ? 1 : 0; G.brake = brake ? 1 : 0; },
+  send(k) { if (k === "fire" && G.ms > 0) { G.ms--; G.fires++; return true; } return false; },
+  answer() { return true; },
+};
+let ui = null; const demoEl = document.querySelector(".demo");
+function mountUi() {
+  mount.innerHTML = "";
+  ui = mountPadApp(mount, { team, client, onBack: null, steer: { mode } });
+  ui.setState({ s: "on", rtt: 14 }); ui.setMode(2); push();
+  window.__padui = ui;
+  mount.querySelector(".ip-top").append(demoEl);          // cụm nút thiết kế nằm chung dải phím trên cùng
+  paint();
+}
+function push() { ui && ui.setInfo({ kmh: Math.round(G.v * 3.6), cells: G.E, ms: G.ms, alarm: 0, phase: "race", nitro: Math.min(1, G.E / 4) }); }
+function paint() {
+  document.querySelectorAll("[data-s]").forEach(b => b.classList.toggle("sel", b.dataset.s === mode));
+  document.querySelectorAll("[data-t]").forEach(b => b.classList.toggle("sel", +b.dataset.t === team));
+  document.querySelectorAll("[data-ms]").forEach(b => b.classList.toggle("sel", +b.dataset.ms === msCap));
+}
+document.querySelectorAll("[data-s]").forEach(b => b.addEventListener("click", () => { mode = b.dataset.s; ui.setSteer({ mode }); paint(); }));
+document.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => { team = +b.dataset.t; mountUi(); }));
+document.querySelectorAll("[data-ms]").forEach(b => b.addEventListener("click", () => { msCap = +b.dataset.ms; G.ms = msCap; push(); paint(); }));
+// game giả: tốc độ theo ga/phanh, năng lượng tụt khi boost, tên lửa tự nạp lại tới mức đã chọn
+let last = performance.now();
+setInterval(() => {
+  const now = performance.now(), dt = (now - last) / 1000; last = now;
+  const boosting = G.boost && G.E > 0.05;
+  const vT = G.brake ? 15 : boosting ? 47 : 31;
+  G.v += (vT - G.v) * Math.min(1, dt * 2);
+  G.E = Math.max(0, Math.min(4, G.E + (boosting ? -0.8 : 0.25) * dt));
+  if (G.ms < msCap) { G.reloadT += dt; if (G.reloadT > 2.5) { G.ms++; G.reloadT = 0; } } else G.reloadT = 0;
+  push();
+}, 250);
+// máy tính: ← → giả nghiêng
+let sim = 0; const keys = new Set();
+addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") keys.add(e.key); });
+addEventListener("keyup", e => keys.delete(e.key));
+setInterval(() => {
+  if (mode !== "tilt" || !keys.size) return;
+  sim = Math.max(-40, Math.min(40, sim + ((keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0)) * 2));
+  ui.tiltDebug(sim);
+}, 30);
+mountUi();
+// dòng số đo (chỉ trang thiết kế): khung/giây của màn iPad, khung chậm nhất trong 1 giây, cảm biến nghiêng, số lần gửi lái
+const meter = document.getElementById("meter");
+setInterval(() => {
+  const m = ui.stats(), st = ui.steer;
+  const b = (v, bad) => `<b${bad ? ' class="bad"' : ""}>${v}</b>`;
+  meter.innerHTML = `screen ${b(m.fps + " fps", m.fps < 55)} · slowest frame ${b(m.worst + " ms", m.worst > 34)}`
+    + (mode === "tilt" ? ` · sensor ${b(st.ok ? m.hz + "/s" : "off", st.ok && m.hz < 50)} gap ${b(m.gap + " ms", m.gap > 40)} · gyro ${b(m.gyro)} · tilt ${b((st.phi >= 0 ? "+" : "") + st.phi.toFixed(1) + "°")} → ${b(Math.round(st.value * 100) + " %")}` : "")
+    + ` · sends ${b(m.sends + "/s")}`;
+}, 500);
+</script>
+</body>
+</html>

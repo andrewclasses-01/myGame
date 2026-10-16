@@ -833,3 +833,10 @@ chạm ⇒ vô lăng đủ như cũ · vùng đi thẳng 0°, độ cong 1,0 · 
 **MẪU 3w (16/10) — thầy: "mượt rồi, khá ổn"** + 3 chỉnh không đụng độ mượt (`core/sr3d-padui-3w.js` + `thiet-ke-ipad-3w.html`): dấu đỉnh vô lăng (ô chữ nhật `M93 8.3 h14 v20`)
 ⇒ vạch cong r 81 ±8° bo tròn trong rãnh chìm + vệt bóng (WHEEL_FULL / WHEEL_LITE, 0 filter) · vạch báo lái ⇒ lõi sáng ngắn giữa + 2 nhánh scaleX đuôi gradient mờ, quầng = lớp nhạt
 mặt nạ dọc (tĩnh), bỏ vạch dọc + nền · quá góc hết cỡ vẫn lái thêm: tới góc hết cỡ 88 %, quá nữa 0,88 + 0,12·(1 − e^(−Δ/12°)) ⇒ 25° 88 % · 30° 92 % · 35° 95 % · 45° 98 % · 60° 99 %.
+
+**MẪU 3x (16/10) — thầy: "nghiêng thì vô lăng theo hơi chậm, cần nhạy hơn" + "góc vô lăng tối đa nhiều hơn chút"** (`core/sr3d-padui-3x.js` + `thiet-ke-ipad-3x.html`):
+độ mượt 20 ⇒ 6 % · vô lăng vẽ bám 0,6 ⇒ 0,9/khung · lọc gia tốc 0,3 ⇒ 0,5 · dò trục con quay sau 15° · con quay TỰ KIỂM (lệch góc gia tốc > 6° kéo dài ~1 s ⇒ dò lại, số đo hiện "↻n") ·
+vô lăng vẽ xoay tối đa ≈ 22° (WVIS 0,32; 3w 0,22).
+**Dấu đỉnh vô lăng = máy bay giấy logo Andrew Classes** (thầy muốn xem trước để chọn): `speed-run/chon-dau-vo-lang.html` — nét lấy nguyên `Andrew Classes - thiet ke icon app/ban-chinh-thuc-v2/svg`
+(2 cánh tam giác + sao), 3 cỡ S/M/L (cao 18/26/34 đơn vị vô lăng) × 4 màu (1 màu đội · 2 trắng logo #FFF/#D5EEE9 · 3 xanh logo #62e3cc/#18AE96 · 4 vàng #FFE58A/#FFC23A), viền tối
+paint-order quanh cánh, nút Kèm sao / Lắc thử ±22° / TEAM 1-2, bấm ô = xem cỡ thật. Không filter. ⬜ thầy chọn mã ô (vd "M2").
