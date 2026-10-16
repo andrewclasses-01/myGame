@@ -925,3 +925,25 @@ Trang thử: `speed-run/mau-3z-cai-dat.html` (iPad vẫn pad-3y.html, kênh srpa
 - **Camera Chase:** sau đuôi L/2 + 5,4 m, cao 2,05 m, nhìn trước 11 m, FOV 60 → 69 theo tốc độ, theo HƯỚNG CHẠY (không theo cú xoay xe), thấy xe mình (lớp 1+i — đã dịch sẵn ⇒ 0 shader mới),
   ẩn mũi xe + khung kính; nhớ máy `racingwords.view`; API `setView` / `view` / `openSettings`.
 - **Đo (máy này, 165 Hz, 1600×900):** Cockpit 160 fps · Chase 145 fps (vẽ đủ xe mình ≈ +10 % GPU) ⇒ ⬜ thầy đo TOMKO; nếu tụt, bộ tự chỉnh độ nét sẽ hạ nét.
+
+## 35. ✅ MẪU 4a (16/10/2026) — đợt 2/5: chế độ đua · đường dài · nhiều cua · cây/bụi/cỏ · vạch ANDREW STUDIO · CẦU NHẢY LÊN DỐC MƯỢT
+Trang thử: `speed-run/mau-4a-duong-dai.html` (Options giả có Race / Length / Time; `window.__opts({...})` = bấm Apply). File mới: `rw-4a.js` · `sr3d-4a.js` · `sr3d-world-4a.js` · `rw-4a.css`
+(nạp SAU rw-3z.css); xe / intro giữ 3z.
+- **Thầy thêm (16/10):** "quá trình lên dốc ramp trông cực kỳ giả vì chỉ giật một cái ở đoạn bắt đầu lên dốc" ⇒ nguyên nhân: 3z lấy TÂM xe — tâm vừa tới chân dốc là
+  góc ngóc bật ngay 0 → 9,7°. Nay theo 2 TRỤC BÁNH (`c.ax` đo từ chỗ bánh): bánh trước chạm trước ⇒ ngóc dần, cao dần; trục trước qua mép thì nằm trên đường kéo dài của
+  dốc; cất cánh khi bánh SAU rời mép, giữ độ cao/góc đang có (cũ đặt lại y = 1,7 ⇒ hụt ~0,3 m). Đo: góc tăng đều 0 → 0,168 rad trong ~3 m, mỗi khung ≤ 0,022 rad; độ cao liền mạch lúc cất cánh.
+- **Chế độ đua `opt.race`** (mọi kiểu thắng PHẢI qua vạch đích; cổng đích dời được `world.setFinish`, luôn ở trong cảnh ⇒ shader dịch sẵn):
+  · `len` — Track × 80 m × `lenK` (1 / 1,5 / 2 / 3, mặc định ×2 ⇒ 12 đoạn = 1.920 m, 4 vòng × 480 m).
+  · `time` — `timeS` (mặc định 180 s), đồng hồ trong khung bản đồ (≤ 10 s đỏ nhấp nháy); hết giờ ⇒ CHỐT đội xa hơn (`G.decided`), khoá câu hỏi + tên lửa, xe thua ≤ 25 km/h,
+    hết kéo gần, cổng đích hiện trước 140 m ⇒ xe thắng chạy qua mới thắng. Thử 60 s: chốt đội 2 ở 870 m, đích 1.010 m, qua vạch ⇒ end.
+  · `words` — chạy tới khi hết từ: còn 2 từ ⇒ đặt đích = xe dẫn + max(160 m, quãng TB mỗi từ × (từ còn lại + 0,6)), "FINISH LINE AHEAD!", cờ đỏ nhấp nháy trên bản đồ, ai qua trước thắng.
+  · Hết mạng (mọi chế độ): xe cháy ĐỨNG LẠI (`t.dead`), đội kia được chốt, đích hiện trước 140 m (xa hơn chỗ xe cháy). Thử: xe 1 cháy ở 26 m, đích 166 m, đội 2 qua ⇒ thắng.
+  · Ô đồng hồ bản đồ: TIME m:ss / WORDS còn lại / FINISH còn … m (khi đã có đích động).
+- **Nhiều cua:** bản đồ 46 điểm (chữ S nối nhau 2 bờ), cong 3D ×0,11 trần ±0,0032 (cũ ×0,085 ±0,0024).
+- **Cây/cỏ (em tự chọn kiểu, thầy chốt):** thông 4 tầng tán mép lệch, cây tròn 3 khối lồi lõm + cành, vân tối gốc → sáng ngọn vẽ sẵn vào màu đỉnh (0 chi phí đèn); cây lên tới ~150 m
+  trên sườn núi; + 320 bụi + 1.100 khóm cỏ (chỉ ~430 m quanh xe) — vẫn 1 vật liệu, không lá trong suốt.
+- **Vạch ANDREW STUDIO:** sơn giữa đường mỗi ~420 m (chữ nghiêng đậm viền đỏ, 2 dải đỏ–trắng, chevron vàng, sơn mòn), né cầu nhảy / cổng — 1 InstancedMesh.
+- **Mốc đoạn:** 12 chỗ dùng lại quanh xe (vạch + cột = 2 InstancedMesh, biển số in lúc cần) — đường ×3 không tăng lệnh vẽ.
+- **Đo (đếm lệnh vẽ thật trong trang, góc Chase, giữa trận):** 3z 452 lệnh / 1,90 triệu đỉnh ⇒ 4a 465 lệnh / 2,44 triệu đỉnh, 57 shader (= 3z). Lần đầu 551 lệnh (mốc 14 chỗ × 5 tấm)
+  ⇒ gộp vạch + cột ⇒ 465. fps máy này cùng lúc: 3z ≈ 100, 4a ≈ 99 (trình duyệt đang giới hạn ~100). ⬜ thầy đo TOMKO.
+  ⚠️ Bàn thử bấm `game.start()` thẳng (bỏ qua intro) ⇒ KHÔNG chờ dịch sẵn shader ⇒ thấy 1–2 shader dịch giữa trận ở CẢ 3z lẫn 4a — đi đúng đường START (rw chờ prewarm) thì không.
