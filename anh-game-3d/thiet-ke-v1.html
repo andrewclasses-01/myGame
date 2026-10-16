@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ảnh game 3D — thiết kế v1</title>
+<!-- THIẾT KẾ v1 (17/10/2026): màn chờ (loading) TRAIN RUSH / STAR LOOT / ROCKET RACE theo kiểu RACING WORDS
+     + ô thumbnail 4 game 3D ở màn chọn WORDS của AWord kiểu ĐIỆN ẢNH. Ảnh cắt từ chính cảnh 3D của game (v1/*.webp). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Rye&family=Orbitron:wght@800;900&family=Audiowide&family=Racing+Sans+One&display=block" rel="stylesheet">
+<style>
+:root { --ink: #1f2a44; --mut: #6b7a90; --line: #dde6f0; --blue: #3b82f6; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: #eef3f9; color: var(--ink); font-family: "Baloo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 50; background: #facc15; color: #3b2a00; font-weight: 800; padding: 8px 16px; letter-spacing: .04em; }
+main { max-width: 1320px; margin: 0 auto; padding: 18px 16px 60px; }
+h2 { margin: 26px 0 4px; font-size: 26px; }
+.note { margin: 0 0 14px; color: var(--mut); font-size: 16px; }
+
+/* ================= MÀN CHỜ ================= */
+.ldgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 760px) { .ldgrid { grid-template-columns: 1fr; } }
+.ldbox { cursor: zoom-in; }
+.ldbox b { display: block; font-size: 15px; margin: 6px 2px 0; }
+.ldbox b small { color: var(--mut); font-weight: 600; }
+.ld { position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 14px; background: #0a0b0f; container-type: size;
+  box-shadow: 0 10px 26px rgba(20,30,60,.18); }
+.ld .bg { position: absolute; inset: 0; background: center 38% / cover no-repeat; }
+.ld .shade { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, rgba(5,6,10,0), rgba(5,6,10,.78)); }
+.ld .topshade { position: absolute; left: 0; right: 0; top: 0; height: 42%; background: linear-gradient(180deg, rgba(5,6,10,.42), rgba(5,6,10,0)); }
+/* thanh chạy + LOADING — Y HỆT theme race của core/loader3d.js (dùng cqmin thay vmin để xem thu nhỏ đúng tỉ lệ) */
+.ld .in { position: absolute; left: 0; right: 0; bottom: 7cqh; display: flex; flex-direction: column; align-items: center; gap: 2cqmin; }
+.ld .bar { position: relative; width: clamp(60px, 34cqmin, 420px); height: max(2px, .5cqmin); margin-top: .8cqmin; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,.16); }
+.ld .bar i { position: absolute; top: 0; bottom: 0; left: 0; width: 38%; border-radius: inherit; background: linear-gradient(90deg, #3b8cff, #ff7a00);
+  box-shadow: 0 0 12px rgba(255,170,90,.5); animation: ld-run 1.25s cubic-bezier(.45,.05,.55,.95) infinite; }
+.ld .s { font-weight: 700; font-style: italic; font-size: clamp(6px, 1.6cqmin, 18px); letter-spacing: .5em; padding-left: .5em; color: #e8eefc; text-shadow: 0 1px 3px rgba(0,0,0,.7); }
+@keyframes ld-run { 0% { transform: translateX(-105%); } 100% { transform: translateX(268%); } }
+/* khối chữ trên: ANDREW CLASSES + tên game (đặt ở vùng trời trống, như biển ANDREW STUDIO · RACING WORDS trong ảnh xưởng) */
+.ld .hd { position: absolute; left: 0; right: 0; top: 9cqh; display: flex; flex-direction: column; align-items: center; gap: 1.6cqmin; }
+.ld .ac { display: flex; align-items: center; gap: 1.8cqmin; font-weight: 700; font-size: 2.3cqmin; letter-spacing: .62em; padding-left: .62em; color: #fff; white-space: nowrap;
+  text-shadow: 0 0 1.4cqmin rgba(255,255,255,.55), 0 1px 3px rgba(0,0,0,.6); }
+.ld .ac i { display: block; width: 9cqmin; height: max(1px, .18cqmin); background: linear-gradient(90deg, transparent, #fff); }
+.ld .ac i:last-child { transform: scaleX(-1); }
+.ld .tt { line-height: 1; white-space: nowrap; text-align: center; }
+
+/* TRAIN RUSH — chữ miền Tây (Rye) vàng đồng, khối nâu 3D, hắt nắng */
+.t-train { font-family: Rye, serif; font-size: 11cqmin; letter-spacing: .04em;
+  background: linear-gradient(180deg, #fff6d6 0%, #ffd27a 45%, #e08a2c 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 .5cqmin 0 #5a2a0c) drop-shadow(0 .9cqmin 0 #3a1a06) drop-shadow(0 0 2.6cqmin rgba(255,150,60,.55)); }
+/* STAR LOOT — neon không gian (Audiowide): lõi trắng, viền xanh ngọc, quầng tím */
+.t-loot { font-family: Audiowide, sans-serif; font-size: 10cqmin; letter-spacing: .1em; padding-left: .1em; color: #f4fdff;
+  text-shadow: 0 0 .6cqmin #fff, 0 0 1.6cqmin #3ff3e6, 0 0 3.2cqmin #23c9ff, 0 0 6cqmin #c13cff; }
+/* ROCKET RACE — kim loại tương lai (Orbitron), nghiêng tốc độ, quầng lửa đuôi */
+.t-rocket { font-family: Orbitron, sans-serif; font-weight: 900; font-size: 9.6cqmin; letter-spacing: .06em; transform: skewX(-10deg);
+  background: linear-gradient(180deg, #ffffff 0%, #dfe9ff 42%, #7f9cc9 52%, #e9f0ff 70%, #ffffff 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 .35cqmin 0 #1b2a5a) drop-shadow(0 0 2.4cqmin rgba(255,120,40,.65)); }
+.ld .tt-sub { margin-top: -.6cqmin; font-weight: 800; font-size: 2cqmin; letter-spacing: .5em; padding-left: .5em; color: #ffd27a; text-shadow: 0 1px 3px rgba(0,0,0,.7); }
+
+/* xem to */
+.zoom { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.9); display: none; place-items: center; cursor: zoom-out; }
+.zoom.on { display: grid; }
+.zoom .ld { width: min(100vw, 177.78vh); border-radius: 0; }
+
+/* ================= MÀN CHỌN (khung thật 1280×840) ================= */
+.tabs { display: flex; gap: 8px; margin: 0 0 12px; }
+.tabs button { font: inherit; font-weight: 800; font-size: 15px; padding: 7px 16px; border-radius: 99px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.tabs button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.pkwrap { width: 100%; aspect-ratio: 1280/840; position: relative; container-type: inline-size; }
+.pk { --p: calc(100cqw / 1280); position: absolute; inset: 0; border-radius: calc(18 * var(--p)); overflow: hidden;
+  background: radial-gradient(ellipse at 85% 0%, #fff3e6 0%, rgba(255,243,230,0) 45%), linear-gradient(180deg, #f2f6fb, #eef3f9); box-shadow: 0 10px 30px rgba(20,30,60,.14); }
+.pk .brand { position: absolute; top: calc(30 * var(--p)); left: 0; right: 0; text-align: center; font-weight: 600; font-size: calc(13 * var(--p)); letter-spacing: .35em; color: #8a9ab2; }
+.pk .ttl { position: absolute; top: calc(58 * var(--p)); left: 0; right: 0; text-align: center; font-weight: 800; font-size: calc(44 * var(--p)); color: #1f2a44; letter-spacing: .01em; }
+.pk .ctl { position: absolute; top: calc(146 * var(--p)); left: 0; right: 0; display: flex; justify-content: center; gap: calc(16 * var(--p)); }
+.pk .seg { display: flex; gap: calc(4 * var(--p)); padding: calc(4 * var(--p)); border-radius: calc(14 * var(--p)); background: #e3eaf3; }
+.pk .seg span { padding: calc(10 * var(--p)) calc(30 * var(--p)); border-radius: calc(11 * var(--p)); font-weight: 800; font-size: calc(15 * var(--p)); letter-spacing: .08em; color: #7a879a; }
+.pk .seg span.on { background: #fff; color: #2f6fe4; box-shadow: 0 2px 6px rgba(20,30,60,.1); }
+.pk .z3 { position: absolute; left: calc(80 * var(--p)); right: calc(80 * var(--p)); top: calc(226 * var(--p)); display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(20 * var(--p)); }
+.pk .rule { position: absolute; left: calc(80 * var(--p)); right: calc(80 * var(--p)); top: calc(426 * var(--p)); height: 1px; background: linear-gradient(90deg, transparent, #cfdbea 18%, #cfdbea 82%, transparent); }
+.pk .z2 { position: absolute; left: calc(80 * var(--p)); right: calc(80 * var(--p)); top: calc(452 * var(--p)); display: grid; grid-template-columns: repeat(12, 1fr); gap: calc(14 * var(--p)); }
+.pk .z2 div { grid-column: span 2; height: calc(138 * var(--p)); border-radius: calc(22 * var(--p)); background: #fff; border: 1.5px solid #dde6f0; display: grid; place-items: end center;
+  padding-bottom: calc(20 * var(--p)); font-weight: 700; font-size: calc(16 * var(--p)); color: #2b394b; opacity: .55; }
+.pk .z2 div::before { content: ""; position: absolute; }
+.pk .z2 div:nth-child(7) { grid-column: 2 / span 2; }
+.pk .back { position: absolute; left: calc(40 * var(--p)); bottom: calc(36 * var(--p)); font-size: calc(26 * var(--p)); color: #6b7a90; }
+
+/* ---- Ô game 3D kiểu ĐIỆN ẢNH ---- */
+.cc { position: relative; height: calc(190 * var(--p)); border-radius: calc(22 * var(--p)); overflow: hidden; cursor: pointer; background: #000;
+  transition: transform .22s cubic-bezier(.22,.61,.36,1), box-shadow .22s ease; box-shadow: 0 calc(8 * var(--p)) calc(18 * var(--p)) rgba(20,30,60,.22); }
+.cc .im { position: absolute; inset: 0; background: center / cover no-repeat; transition: transform .6s cubic-bezier(.22,.61,.36,1); }
+/* dải đen trên/dưới (khung phim) + tối góc + tối đáy cho chữ */
+.cc::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.0) 45%, rgba(0,0,0,.72) 100%), radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
+.cc::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  border-top: calc(9 * var(--p)) solid #000; border-bottom: calc(9 * var(--p)) solid #000; opacity: .85; }
+.cc .nm { position: absolute; z-index: 2; left: calc(16 * var(--p)); bottom: calc(18 * var(--p)); line-height: 1; white-space: nowrap; }
+.cc:hover { transform: translateY(calc(-5 * var(--p))); box-shadow: 0 0 0 calc(4 * var(--p)) var(--blue), 0 calc(18 * var(--p)) calc(30 * var(--p)) rgba(31,42,68,.3); }
+.cc:hover .im { transform: scale(1.07); }
+/* 4 kiểu chữ tên game (mỗi game một chất) */
+.n-rocket { font-family: Orbitron, sans-serif; font-weight: 900; font-size: calc(25 * var(--p)); letter-spacing: .04em; transform: skewX(-10deg);
+  background: linear-gradient(180deg, #fff 0%, #dfe9ff 45%, #7f9cc9 55%, #fff 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 calc(2 * var(--p)) 0 #142250) drop-shadow(0 0 calc(10 * var(--p)) rgba(255,110,40,.75)); }
+.n-train { font-family: Rye, serif; font-size: calc(31 * var(--p)); letter-spacing: .02em;
+  background: linear-gradient(180deg, #fff6d6 0%, #ffd27a 45%, #e08a2c 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 calc(2 * var(--p)) 0 #5a2a0c) drop-shadow(0 calc(4 * var(--p)) 0 #2a1204) drop-shadow(0 0 calc(10 * var(--p)) rgba(255,150,60,.6)); }
+.n-loot { font-family: Audiowide, sans-serif; font-size: calc(29 * var(--p)); letter-spacing: .08em; color: #f4fdff;
+  text-shadow: 0 0 calc(3 * var(--p)) #fff, 0 0 calc(8 * var(--p)) #3ff3e6, 0 0 calc(16 * var(--p)) #23c9ff, 0 0 calc(26 * var(--p)) #c13cff; }
+.n-race { font-family: "Racing Sans One", sans-serif; font-style: italic; font-size: calc(33 * var(--p)); letter-spacing: .01em; transform: skewX(-6deg);
+  background: linear-gradient(180deg, #fff3b0 0%, #ffc531 45%, #ff6a00 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 calc(2 * var(--p)) 0 #0f2a6b) drop-shadow(calc(-6 * var(--p)) 0 calc(6 * var(--p)) rgba(59,140,255,.75)); }
+.n-race::before { content: ""; position: absolute; right: 100%; top: 52%; width: calc(40 * var(--p)); height: calc(3 * var(--p)); margin-right: calc(4 * var(--p));
+  background: linear-gradient(90deg, transparent, #ffc531); box-shadow: 0 calc(-7 * var(--p)) 0 -1px rgba(255,197,49,.6), 0 calc(7 * var(--p)) 0 -1px rgba(255,197,49,.6); }
+.n-race { margin-left: calc(10 * var(--p)); }
+
+/* ô CŨ (để so) */
+.old { position: relative; height: calc(190 * var(--p)); border-radius: calc(22 * var(--p)); overflow: hidden; }
+.old img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.q { margin-top: 18px; padding: 12px 16px; background: #fff; border: 1.5px solid var(--line); border-radius: 14px; font-size: 16px; }
+.q li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="top">THIẾT KẾ v1 — ảnh game 3D (loading + ô màn chọn) · chưa đụng AWord</div>
+<main>
+  <h2>1. Màn chờ (loading)</h2>
+  <p class="note">Ảnh tĩnh cắt từ chính cảnh 3D của game · cùng một thanh chạy + chữ LOADING như RACING WORDS · trên cùng: ANDREW CLASSES + tên game. Bấm vào ô để xem to cả màn.</p>
+  <div class="ldgrid">
+    <div class="ldbox"><div class="ld"><div class="bg" style="background-image:url(v1/tr-loading.webp)"></div><div class="topshade"></div><div class="shade"></div>
+      <div class="hd"><div class="ac"><i></i>ANDREW CLASSES<i></i></div><div class="tt t-train">TRAIN RUSH</div></div>
+      <div class="in"><div class="bar"><i></i></div><div class="s">LOADING</div></div></div>
+      <b>TRAIN RUSH <small>— 2 đoàn tàu đỏ/xanh lao tới (phim mở màn Fight)</small></b></div>
+    <div class="ldbox"><div class="ld"><div class="bg" style="background-image:url(v1/sl-loading.webp)"></div><div class="topshade"></div><div class="shade"></div>
+      <div class="hd"><div class="ac"><i></i>ANDREW CLASSES<i></i></div><div class="tt t-loot">STAR LOOT</div></div>
+      <div class="in"><div class="bar"><i></i></div><div class="s">LOADING</div></div></div>
+      <b>STAR LOOT <small>— phi thuyền mẹ lao ra giữa các hành tinh (phim mở màn)</small></b></div>
+    <div class="ldbox"><div class="ld"><div class="bg" style="background-image:url(v1/rr-loading.webp)"></div><div class="topshade"></div><div class="shade"></div>
+      <div class="hd"><div class="ac"><i></i>ANDREW CLASSES<i></i></div><div class="tt t-rocket">ROCKET RACE</div></div>
+      <div class="in"><div class="bar"><i></i></div><div class="s">LOADING</div></div></div>
+      <b>ROCKET RACE <small>— 2 tên lửa rời bệ phóng ANDREW STUDIO</small></b></div>
+    <div class="ldbox"><div class="ld"><div class="bg" style="background-image:url(v1/rw-loading.webp)"></div><div class="shade"></div>
+      <div class="in"><div class="bar"><i></i></div><div class="s">LOADING</div></div></div>
+      <b>RACING WORDS <small>— mẫu gốc đang chạy (giữ nguyên, để so)</small></b></div>
+  </div>
+
+  <h2>2. Màn chọn WORDS — 4 ô game 3D kiểu điện ảnh</h2>
+  <p class="note">Khung thật 1280×840 của AWord. Ảnh cắt từ cảnh 3D · khung phim (dải đen trên/dưới) · tối góc · mỗi tên game một kiểu chữ riêng. Rê chuột lên ô để xem hiệu ứng.</p>
+  <div class="tabs"><button class="on" data-v="new">MỚI (điện ảnh)</button><button data-v="old">CŨ (hình phẳng)</button></div>
+  <div class="pkwrap"><div class="pk">
+    <div class="brand">ANDREW CLASSES</div>
+    <div class="ttl">LSA2-S4.T4.P1-2-3-4-5 / WORDS</div>
+    <div class="ctl"><div class="seg"><span class="on">TEXT</span><span>VOICE</span></div><div class="seg"><span class="on">ENG1</span><span>ENG2</span><span>VI1</span><span>VI2</span></div></div>
+    <div class="z3" id="z3new">
+      <div class="cc"><div class="im" style="background-image:url(v1/rr-thumb.webp)"></div><div class="nm n-rocket">ROCKET RACE</div></div>
+      <div class="cc"><div class="im" style="background-image:url(v1/tr-thumb.webp)"></div><div class="nm n-train">Train Rush</div></div>
+      <div class="cc"><div class="im" style="background-image:url(v1/sl-thumb.webp)"></div><div class="nm n-loot">STAR LOOT</div></div>
+      <div class="cc"><div class="im" style="background-image:url(v1/rw-thumb.webp)"></div><div class="nm n-race">Racing Words</div></div>
+    </div>
+    <div class="z3" id="z3old" hidden>
+      <div class="old"><img src="v1/cu-rocket.png" alt=""></div><div class="old"><img src="v1/cu-train.png" alt=""></div><div class="old"><img src="v1/cu-loot.png" alt=""></div><div class="old"><img src="v1/cu-race.png" alt=""></div>
+    </div>
+    <div class="rule"></div>
+    <div class="z2"><div>Quiz</div><div>Anagram</div><div>Find the match</div><div>Type the answer</div><div>Open the box</div><div>Whack-a-mole</div><div>Crossword</div><div>A Show Speed</div><div>Flying fruit</div><div>Gameshow quiz</div><div>Speaking cards</div></div>
+    <div class="back">←</div>
+  </div></div>
+</main>
+<div class="zoom" id="zoom"></div>
+<script>
+document.querySelectorAll(".ldbox .ld").forEach(ld => ld.addEventListener("click", () => {
+  const z = document.getElementById("zoom"); z.innerHTML = ""; z.append(ld.cloneNode(true)); z.classList.add("on");
+}));
+document.getElementById("zoom").addEventListener("click", e => e.currentTarget.classList.remove("on"));
+document.addEventListener("keydown", e => { if (e.key === "Escape") document.getElementById("zoom").classList.remove("on"); });
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  document.getElementById("z3new").hidden = b.dataset.v !== "new"; document.getElementById("z3old").hidden = b.dataset.v !== "old";
+}));
+</script>
+</body>
+</html>
