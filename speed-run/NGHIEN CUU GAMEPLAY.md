@@ -822,3 +822,10 @@ góc đổi MỖI khung (bước lớn nhất 1,1°), gửi 27 lần/giây khi �
 **Độ trễ ước tính nghiêng ⇒ xe:** cảm biến 10–20 ms · lọc + nhịp gửi 30–45 ms · WebRTC cùng Wi-Fi 5–30 ms (đông máy 50–80) · game làm mượt `t.steer` dt·10 ≈ 100 ms (+ vx dt·7) ·
 máy chiếu 16 ms + trễ máy chiếu. ⇒ xe bắt đầu đổi hướng ~0,1–0,15 s. Khi build: giảm làm mượt game cho riêng iPad nghiêng (tín hiệu đã mượt) ⇒ bớt ~50 ms. Máy chiếu chỉ nhận ~30 tin
 nhỏ/giây ⇒ không nặng thêm; rủi ro duy nhất: iPad khựng > 0,45 s ⇒ game nhả lái.
+
+**MẪU 3v (16/10) — thầy đo 3u trên iPad thật:** đứng yên 60 fps, NGHIÊNG ⇒ screen 20 fps, khung chậm 50 ms; sensor 61/s gap 18 ms (tốt); gyro "locked (flipped)"; thầy "không thích bị
+khoá nhẹ ở giữa", "có thể bỏ đèn sáng vô lăng hoặc cách báo khác nhẹ hơn". ⛔ Gốc nặng: WHEEL_SVG có 2 nhóm `.wg` = 6 path feGaussianBlur (vệt sáng vành, vẫn tốn khi opacity 0)
++ chữ ATEAM lọc srwgat ⇒ vô lăng xoay = Safari vẽ lại bộ lọc mỗi khung; thêm `--sa` + lớp l/r trên `.ip-wbox` đổi ~30 lần/giây. Sửa (`core/sr3d-padui-3v.js` + `thiet-ke-ipad-3v.html`):
+nghiêng ⇒ `WHEEL_LITE` (cắt `.wg` + mọi `<filter>`, ATEAM sáng bằng nét viền; đo: 0 filter, bản đủ 10), không đổi lớp/biến trên khung cha, báo lái = vạch mảnh `.ip-smeter` (scaleX, ghép lớp);
+chạm ⇒ vô lăng đủ như cũ · vùng đi thẳng 0°, độ cong 1,0 · con quay TỰ DÒ TRỤC + CHIỀU (α/β/γ tương quan với góc gia tốc, đủ 25° chuyển động, trục mạnh gấp 2 trục kia) — giả lập Safari báo
+ở β ngược dấu ⇒ dò ra "β−" < 1 s, bám góc lệch 1–2°. Dòng số đo hiện trục con quay (α+/β−…).
