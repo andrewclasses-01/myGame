@@ -840,3 +840,7 @@ vô lăng vẽ xoay tối đa ≈ 22° (WVIS 0,32; 3w 0,22).
 **Dấu đỉnh vô lăng = máy bay giấy logo Andrew Classes** (thầy muốn xem trước để chọn): `speed-run/chon-dau-vo-lang.html` — nét lấy nguyên `Andrew Classes - thiet ke icon app/ban-chinh-thuc-v2/svg`
 (2 cánh tam giác + sao), 3 cỡ S/M/L (cao 18/26/34 đơn vị vô lăng) × 4 màu (1 màu đội · 2 trắng logo #FFF/#D5EEE9 · 3 xanh logo #62e3cc/#18AE96 · 4 vàng #FFE58A/#FFC23A), viền tối
 paint-order quanh cánh, nút Kèm sao / Lắc thử ±22° / TEAM 1-2, bấm ô = xem cỡ thật. Không filter. ⬜ thầy chọn mã ô (vd "M2").
+
+**MẪU 3y (16/10) — thầy chọn dấu "S1 nhưng nhỏ hơn khoảng 10 %"** (`core/sr3d-padui-3y.js` + `thiet-ke-ipad-3y.html`): TOP_NEW = máy bay giấy cao 16,2 (S 18 × 0,9), tâm (100,19),
+cánh trái `color-mix(team 50 %, white)`, cánh phải màu đội, viền tối 1,5 paint-order, không sao, 0 filter — cả WHEEL_FULL (chạm) lẫn WHEEL_LITE (nghiêng). Khi build: vô lăng GAME màn lớn
+(sr3d-dash-3h WHEEL_SVG, ô chữ nhật `M93 8.3 h14 v20`) cũng nên đổi cùng dấu — hỏi thầy.
