@@ -1023,3 +1023,42 @@ Thầy giao (nguyên ý): (1) Settings hiện ở MỌI nơi, cả trong intro �
   barrel roll bắt buộc. Đo lại ở chế độ Time 600 s, đặt xe cách dốc 12 m. Gói nhúng: game cũ đã huỷ (Apply dựng lại) vẫn nhận "pause" khi bảng Options AWord đóng ⇒
   lỗi "Cannot resume a closed AudioContext" ⇒ `if (dead) return` đầu onEvent (myGame `3f5f9a6`).
 - Hiệu năng: không thêm lượt vẽ / shader / vật thể. Settings mở = trận + intro ngừng vẽ (nhẹ hơn). Màn chờ ảnh tĩnh nhẹ hơn cảnh động space (chỉ thanh chạy transform).
+
+## 40. ✅ MẪU 4f (16/10/2026) — iPad NỐI TRƯỚC INTRO + GIỮ KẾT NỐI + MỐC CÂN BẰNG TỰ LẤY (= AWord Đợt 538)
+Trang thử: `speed-run/mau-4f-ipad-giu-ket-noi.html` + iPad `pad-4f.html?t=0|1` (kênh cục bộ srpad4f). File mới: `rw-4f.js` · `rw-4f.css` (nạp SAU rw-4e.css) ·
+`sr3d-padlink-4f.js` · `sr3d-padui-4f.js`. Lõi vẫn `sr3d-4e.js`, intro `sr3d-intro-4e.js`.
+Thầy thử TOMKO + 2 iPad (nguyên ý): (1) "2 iPad kết nối thì 1 cái connect ngon, còn 1 cái bị slow connect nên không thể điều khiển nổi — điều tra để lần sau cả 2 đều ngon" ·
+(2) "luôn lấy mốc cân bằng của iPad mà không cần reset level" · (3) "kết nối với iPad ngay từ trước khi có intro; cài đặt là iPad thì phải kết nối rồi, test ok rồi mới cho start" ·
+(4) "đã start thì giữ kết nối đó, dù chỉnh options, start again, change car… iPad vẫn hiện vô lăng đầy đủ, vào chơi là chơi luôn".
+- **(1) Điều tra "slow":** "Connected (slow)" = kênh WebRTC thẳng iPad ⇄ máy chiếu KHÔNG mở được ⇒ lái đi đường dự phòng qua kho Firestore (≤ 5 lần/giây,
+  mỗi lượt 0,3–1 s ⇒ không lái nổi). Hai lỗi của đường nối 3y làm việc này xảy ra và KẸT LẠI:
+  (a) **không bao giờ thử lại**: lần bắt tay đầu trượt (ICE không thông — chỉ có STUN, không TURN; trình duyệt giấu IP LAN sau tên mDNS `.local`, mạng chặn multicast / tách
+  máy giữa 2 băng Wi-Fi / iPad ở SSID khác thì 2 máy không thấy nhau; đôi khi chỉ do thời điểm) là đứng "slow" tới khi tải lại trang; ICE "failed" cũng không ai xử lý.
+  (b) **mỗi lần Apply Options AWord dựng lại game ⇒ dựng lại cả đường nối** (detach ghi sid "" ⇒ iPad về "Waiting for the game", gỡ claim ipad_now; game mới ⇒ sid mới ⇒
+  bắt tay lại từ đầu) ⇒ cơ hội trượt nhân lên theo số lần Apply, và chính là chỗ "kết nối lại lằng nhằng".
+  Đường kho còn không có nhịp tim: iPad để yên tay ⇒ không ghi ⇒ 4 s sau máy chiếu tưởng mất iPad.
+  ⇒ Sửa ở `sr3d-padlink-4f.js`: iPad tự bắt tay lại theo nấc 5 · 6 · 8 · 12 · 20 s (rồi cứ 20 s) khi kênh thẳng chưa mở 6 s sau trả lời / ICE "failed" / "disconnected" > 3 s;
+  trong lúc thử lại vẫn lái qua kho (không rớt về "Connecting"; máy chiếu không về "wait" khi đang relay mà mời bắt tay lại); nút **Reconnect** ở màn lớn (khoá `k0`/`k1`
+  trong tài liệu host ⇒ iPad bắt tay lại); đường kho nhịp tim 1,5 s; thêm STUN dự phòng (Google ×2 + Cloudflare).
+  **Chẩn đoán cho lần sau**: mỗi đội hiện 1 dòng — `direct host→host · 6 ms` (nối thẳng, cặp ứng viên được chọn từ getStats) hoặc `ICE failed · PC: mDNS 1 STUN 2 · iPad: none · try 3`
+  (đếm ứng viên trong SDP 2 phía: LAN = IP thật, mDNS = tên .local, STUN = IP ngoài). Đọc: iPad "none" ⇒ iPad không có đường mạng nào tới máy chiếu (khác Wi-Fi / chặn UDP);
+  cả 2 có mDNS mà vẫn failed ⇒ mạng chặn multicast mDNS (router tách băng / IGMP) ⇒ cho iPad cùng băng Wi-Fi với TOMKO hoặc cân nhắc máy TURN.
+  Hiện ở thẻ iPad trên xưởng + ⚙ Settings ▸ iPad ⇒ thầy chụp lại nếu còn slow.
+- **(4) Nối bền qua nhiều ván:** `createPadHost` 4f: `attach(ctl)` lần đầu mở phiên; lần sau (game dựng lại) chỉ gắn game mới + báo lại trạng thái + gửi lại chế độ / câu hỏi;
+  `detach(ctl)` chỉ gỡ game (không đổi sid, không đóng kênh); `close()` mới đóng thật. Gói nhúng bọc remote (`Object.create`) để mỗi game chỉ gỡ CHÍNH NÓ (game cũ huỷ sau
+  game mới cũng không gỡ nhầm). Start again / đổi xe vốn cùng game ⇒ không đụng đường nối. Bàn thử: Apply đổi Track length ⇒ game dựng lại, số lần bắt tay không tăng,
+  iPad vẫn `on` + vô lăng (m=2), START sáng ngay.
+- **(3) Cổng iPad ở xưởng** (`rw-4f.js` + `rw-4f.css`, chỉ khi chế độ Drive on iPad): 2 thẻ đội góc dưới — chấm trạng thái (xanh READY / vàng nháy Connecting / đỏ SLOW),
+  QR khi chưa nối, vô lăng nhỏ quay theo iPad (transform 10 lần/giây, chỉ ở xưởng), ô ◀ LEFT / RIGHT ▶ sáng ✓ khi bẻ quá 35 %, nút Reconnect, dòng chẩn đoán.
+  START mờ "WAITING FOR iPADS…" + bấm vào thì thẻ đội còn thiếu lắc — mở khi CẢ 2 đội nối THẲNG (relay không tính) và đã thử trái + phải.
+  Cờ "đã thử" nằm trong đường nối ⇒ dựng lại game / iPad nối lại không phải thử lại. Đổi chế độ khác Drive (⚙ ▸ iPad) ⇒ không chặn (lối thoát khi iPad hỏng).
+  AWord: đường nối mở ngay lúc màn chờ tải game (xem Đợt 538) ⇒ iPad bắt tay song song lúc 3D đang nạp.
+- **(2) Mốc cân bằng tuyệt đối** (`sr3d-padui-4f.js`): cầm iPad ngang như vô lăng thì "thẳng" = trọng lực nằm dọc trục x của máy (dọc: trục y) ⇒ mốc = đúng trục đó theo
+  `screen.orientation`, chỉ lấy CHIỀU ± từ cảm biến (3y lấy hướng trọng lực lúc bật ⇒ bật khi đang cầm lệch là lệch mãi, phải LEVEL). Xoay màn ⇒ lấy lại mốc + dò lại trục con quay.
+  Bỏ nút LEVEL. Tự bật nghiêng nếu Safari đã cho phép cảm biến (có sự kiện devicemotion ⇒ khỏi chạm "TAP TO TURN ON TILT"). iPad báo "SLOW link — reconnecting…".
+  Bàn thử (sự kiện DeviceMotionEvent giả): bật khi cầm lệch 20° ⇒ đọc 20° (3y đọc 0°), đặt thẳng ⇒ 0°, −25° ⇒ −25°.
+- **Bàn thử đường chậm:** tab iPad 2 bọc `RTCPeerConnection` với `iceTransportPolicy: "relay"` (không có TURN ⇒ ICE trượt y như mạng chặn) ⇒ 7 s "relay" (vẫn lái được, thẻ đỏ
+  SLOW, START chặn, chẩn đoán "iPad: none") ⇒ trả lại hàm thật ⇒ lần thử kế (15 s, 27 s) tự về "on" KHÔNG tải lại trang.
+- Lỗi gặp: lớp `rw-wait` đã có trong game (thanh chờ lượt dưới câu hỏi) ⇒ gắn lên `.rw-root` làm khung cao 5 px (màn đen) ⇒ đổi `rw-padwait`.
+  Cờ thử trái/phải bị xoá khi iPad nối lại ⇒ START khoá lại vô lý ⇒ giữ cờ suốt đời đường nối.
+- Hiệu năng: không thêm gì vào vòng vẽ trận. Cổng chỉ chạy ở xưởng (DOM nhỏ, đổi chữ khi khác, xoay 1 svg). iPad: thêm 1 listener orientationchange.

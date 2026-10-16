@@ -647,7 +647,19 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Quyết định:** khoá nhớ máy đổi `.v2` để mặc định mới có hiệu lực cả trên máy đã thử; chế độ iPad nhớ theo máy cả trong AWord; ảnh loading chụp từ chính xưởng intro (biển đã có chữ ⇒ màn chờ không phủ chữ).
 - **Lỗi & gỡ:** Settings không hiện trên xưởng = bảng z 8 dưới intro z 50 ⇒ nâng z 60. Bàn thử bay sai vì trận đã "end" và xe lệch dốc ⇒ đo lại chế độ Time. AudioContext đã đóng ⇒ chặn sự kiện sau destroy.
 
+## Racing Words 4f — 16/10/2026 · iPad NỐI TRƯỚC INTRO + GIỮ KẾT NỐI + TỰ NỐI LẠI + MỐC CÂN BẰNG TỰ LẤY (= AWord Đợt 538) · phiên máy nhà
+- **Thầy (sau khi thử TOMKO + 2 iPad):** 1 iPad nối ngon, 1 iPad "slow" không lái nổi — điều tra; mốc cân bằng tự lấy, không cần LEVEL; nối iPad từ trước intro, test ok mới cho START;
+  đã nối thì giữ qua Options / Start again / đổi xe.
+- **Nguyên nhân slow:** kênh WebRTC thẳng trượt ⇒ đường kho Firestore; đường nối 3y không bao giờ thử lại + mỗi Apply dựng lại cả đường nối (bắt tay lại từ đầu). Chi tiết `speed-run/NGHIEN CUU GAMEPLAY.md` mục 40.
+- **Làm:** mẫu 4f = `sr3d-padlink-4f.js` (nối bền attach/detach/close · tự bắt tay lại 5→20 s · Reconnect · nhịp tim đường kho · chẩn đoán ICE · live/onChange) ·
+  `sr3d-padui-4f.js` (mốc tuyệt đối theo hướng màn, bỏ LEVEL, tự bật nghiêng) · `rw-4f.js` + `rw-4f.css` (cổng iPad ở xưởng chặn START) · `mau-4f-ipad-giu-ket-noi.html` · `pad-4f.html`.
+- **Quyết định:** START chỉ mở khi 2 đội nối THẲNG + đã bẻ thử trái/phải; relay không tính; lối thoát = đổi chế độ iPad trong ⚙. Cờ đã thử giữ suốt đời đường nối.
+- **Lỗi & gỡ:** lớp `rw-wait` trùng tên thanh chờ lượt ⇒ màn đen ⇒ `rw-padwait`. Cờ thử bị xoá khi nối lại ⇒ giữ.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 4f (= AWord Đợt 538)**: thầy thử TOMKO + 2 iPad — cổng iPad ở xưởng (thử trái/phải ⇒ START), Apply Options / Start again / đổi xe không phải nối lại,
+  bật nghiêng khi đang cầm lệch vẫn đúng (không LEVEL). Nếu còn "SLOW": chụp dòng chẩn đoán dưới thẻ đội (hoặc ⚙ ▸ iPad) — "iPad: none" = iPad khác mạng / chặn UDP;
+  có mDNS mà ICE failed = mạng chặn multicast ⇒ cho 2 iPad cùng băng Wi-Fi với TOMKO hoặc thêm máy TURN.
 - ⬜ **RACING WORDS 4e (= AWord Đợt 537)**: thầy thử trên TOMKO + 2 iPad — Settings trên xưởng / giữa trận (dừng đúng chưa), mặc định Drive+Tilt, bay xa ×1,5 có quá lợi không,
   nhịp hất nghiêng 0,15–0,32 rad/s (không chỉnh thì hay BAD quá không — hằng trong `takeOff`), mất lái 1,2 s sau BAD đủ phạt chưa, ảnh màn chờ mới.
 - ⬜ **TRAIN RUSH 1aw (= AWord)**: thầy chơi trên TOMKO — +5 %/màn đủ cảm giác chưa (hằng 0,05 và trần 1,75 trong `levelBoost`), rèm toa đục trông ổn không,
