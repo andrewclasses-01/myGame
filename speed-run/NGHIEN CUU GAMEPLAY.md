@@ -812,3 +812,13 @@ vô lăng vẽ xoay NHẸ cùng chiều khi nghiêng (steer × 0,22 ⇒ ≈ 15°
 đúng chỗ quả to (đo vị trí thật ⇒ --dx/--dy, phóng to 2,6×) rồi quả to hiện lên từ dưới · phím chức năng (đội · trạng thái · chế độ · LEVEL, + cụm nút thiết kế) gom vào
 1 DẢI trên cùng (cao max(50px, 7,6vh)), cách dải tên lửa 2,8vh · boost: đổ đầy trong bàn đạp ga dùng gradient mép mờ (20 % trên) + dịch xuống (translateY) thay vì co giãn,
 trôi 0,5 s; vạch Nitro mép phải mờ + trôi 0,5 s; ánh sáng nitro chuyển 0,6 s. Đo: 1180×820 và 1024×768 dải phím vừa khít (scrollWidth = bề ngang).
+
+**MẪU 3u (16/10) — vô lăng iPad mượt** (thầy: "xoay vô lăng khi nghiêng hơi giật nhẹ" + hỏi ảnh hưởng game / độ trễ). Gốc giật (phía iPad, KHÔNG phải đường truyền):
+`.ip-wheel{transition:transform .05s}` (3m) bị cắt-chạy-lại khi đặt góc mỗi khung · `filter:drop-shadow` trên khối XOAY ⇒ iPad vẽ lại bóng mờ mỗi khung · 3t góc chỉ đổi theo nhịp
+gửi (~30/giây) ⇒ bậc thang · gia tốc kéo 5 %/sự kiện ⇒ tay run lọt vào · chiều con quay có thể đổi nhầm giữa chừng. Sửa (`core/sr3d-padui-3u.js` + `thiet-ke-ipad-3u.html`):
+bỏ transition + filter trên vô lăng, bóng = lớp tròn đứng yên `.ip-wshadow`, will-change; góc = độ lái nghiêng đã lọc mỗi khung; quầng sáng bỏ mix-blend; gia tốc 2 %;
+chiều con quay chốt (đổi ≤ 1 lần); `stats()` + dòng số đo dưới dải phím (fps, khung chậm nhất, cảm biến/giây + khoảng hở, gửi/giây). Đo PC: 83 fps, khung chậm nhất 12 ms,
+góc đổi MỖI khung (bước lớn nhất 1,1°), gửi 27 lần/giây khi đang nghiêng, 8 lần/giây khi giữ yên.
+**Độ trễ ước tính nghiêng ⇒ xe:** cảm biến 10–20 ms · lọc + nhịp gửi 30–45 ms · WebRTC cùng Wi-Fi 5–30 ms (đông máy 50–80) · game làm mượt `t.steer` dt·10 ≈ 100 ms (+ vx dt·7) ·
+máy chiếu 16 ms + trễ máy chiếu. ⇒ xe bắt đầu đổi hướng ~0,1–0,15 s. Khi build: giảm làm mượt game cho riêng iPad nghiêng (tín hiệu đã mượt) ⇒ bớt ~50 ms. Máy chiếu chỉ nhận ~30 tin
+nhỏ/giây ⇒ không nặng thêm; rủi ro duy nhất: iPad khựng > 0,45 s ⇒ game nhả lái.
