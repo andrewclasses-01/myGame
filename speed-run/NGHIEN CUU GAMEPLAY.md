@@ -912,3 +912,16 @@ Làm trong myGame trước, ok rồi mới lên AWord. Gốc = mẫu 3y (`63a071
   · Có mạng (Lives): 1 đội hết mạng ⇒ xe cháy, game over; vạch đích hiện trước xe còn lại (xa hơn chỗ xe kia cháy) để đội đó chạy tới rồi thắng.
   ⇒ Đề xuất kỹ thuật: hết giờ / hết mạng ⇒ CHỐT đội thắng ngay, xe thua chuyển lái tự động giảm tốc (không vượt được nữa), cổng đích đặt trước xe thắng ~120 m;
     theo số từ: còn ≤ 3 câu ⇒ đặt cổng ở vị trí xe dẫn + quãng ước cho số câu còn lại, nhấp nháy trên bản đồ, ai qua trước thắng. Chế độ đua làm ở đợt 4a (cùng đường dài).
+
+## 34. ✅ MẪU 3z (16/10/2026) — đợt 1/5: câu hỏi xuống dưới · xe không chìm · bóng đúng hình xe · ⚙ Cài đặt · góc nhìn đuôi xe
+Trang thử: `speed-run/mau-3z-cai-dat.html` (iPad vẫn pad-3y.html, kênh srpad3y). File mới: `rw-3z.js` · `sr3d-3z.js` · `sr3d-intro-3z.js` · `sr3d-car-3z.js` · `rw-3z.css` (nạp SAU rw-3r.css).
+- **Bố cục:** `.sr-strip` (2 ô câu hỏi + bản đồ) nằm SAU `.sr-stage`, lưới `.sr3z` = `1fr 10cqh` ⇒ khung đua trên cùng, câu hỏi ngay dưới ô đáp án.
+- **Xe chìm — nguyên nhân thật:** đứng yên bánh chạm đúng 0; lúc đua thân xe nghiêng (dọc ±0,05, ngang ±0,12 rad) quanh điểm SÁT ĐẤT kéo cả 4 bánh ⇒ cắm tới −19 cm;
+  thêm rig chông chênh (wobble / trúng tên lửa) −3…−5 cm. Sửa: bánh BÁM ĐƯỜNG (mỗi khung đặt lại trục bánh về chỗ đứng yên trong rig, bù ngược góc thân), thân nghiêng quanh
+  tâm cao 0,45 m với biên độ ×0,5 / ×0,42 (như giảm xóc); camera buồng lái vẫn dùng góc nghiêng đầy đủ (`car.tilt`); rig nghiêng trên đường phẳng ⇒ nâng bù
+  `|sin rz|·W·0,45 + |sin rx|·L·0,32`. Đo 330 khung đua: đáy bánh −0,001 … +0,012 m (3y: tới −0,19).
+- **Bóng:** chiếu MỌI tam giác xe từ trên xuống canvas 40 px/m (đổi cùng chiều ⇒ tô 1 lần = phần hợp), mờ 2 lớp + 4 vệt dưới bánh, nhớ theo id xe ⇒ mỗi khung vẫn 1 tấm.
+- **⚙ Cài đặt:** nút iPad ⇒ nút bánh răng (luôn có), bảng có tab iPad (như 3y, chỉ khi có remote) · Camera; nhớ tab. Sửa luôn lỗi cũ: Full lock / Smoothing hiện cả khi Touch wheel (`[hidden]` bị đè).
+- **Camera Chase:** sau đuôi L/2 + 5,4 m, cao 2,05 m, nhìn trước 11 m, FOV 60 → 69 theo tốc độ, theo HƯỚNG CHẠY (không theo cú xoay xe), thấy xe mình (lớp 1+i — đã dịch sẵn ⇒ 0 shader mới),
+  ẩn mũi xe + khung kính; nhớ máy `racingwords.view`; API `setView` / `view` / `openSettings`.
+- **Đo (máy này, 165 Hz, 1600×900):** Cockpit 160 fps · Chase 145 fps (vẽ đủ xe mình ≈ +10 % GPU) ⇒ ⬜ thầy đo TOMKO; nếu tụt, bộ tự chỉnh độ nét sẽ hạ nét.
