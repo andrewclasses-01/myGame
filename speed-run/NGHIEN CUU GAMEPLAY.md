@@ -972,3 +972,24 @@ Trang thử: `speed-run/mau-4b-lai-that.html`. File mới: `rw-4b.js` · `sr3d-4
   "compile" 20,4 s mỗi lần tải (dịch shader thật chỉ 1,7 s — đo bằng bọc linkProgram). Sửa: intro-4b cùng car-4b ⇒ 1,8 s. Đổi mô-đun xe là PHẢI đổi cả intro.
 - ⚠️ Bàn thử: `game.step()` bật `manual` (vòng rAF ngừng vẽ) — xong phải `game.resume()`; `game.drive(i, {...})` giữ tới khi `drive(i, null)`.
 - **Đo (máy này, Chase, giữa trận, chèn <script> bọc gl.draw*):** 448 lệnh vẽ / 2,43 triệu đỉnh (4a: 465 / 2,44), 99 fps (trình duyệt giới hạn ~100), 63 shader cả ván (không dịch giữa trận).
+
+## 37. ✅ MẪU 4c (16/10/2026) — đợt 4/5: XE KHÁC TRÊN ĐƯỜNG
+Trang thử: `speed-run/mau-4c-xe-khac.html`. File mới: `rw-4c.js` · `sr3d-4c.js` · `sr3d-traffic-4c.js` · `rw-4c.css` (nạp SAU rw-4b.css).
+- ⚙ Settings thêm tab **RACE ▸ Traffic**: Off · Same way (cùng chiều, mọi làn, chậm 16–25 km/h ⇒ phải vượt) · Both ways (cùng chiều làn ngoài ±6, NGƯỢC chiều làn trong ±2,4,
+  27–40 km/h ⇒ lách tránh đầu xe lao tới). Áp ngay giữa trận, nhớ máy `racingwords.traffic` (mặc định Both ways); Options `traffic` ghi đè được.
+- Xe khác = hình khối đơn giản (sedan + xe tải nhỏ, màu từng xe = instanceColor) — 2 InstancedMesh + 1 bóng chung; vòng đệm 14 xe quanh 2 xe đua, ra khỏi cửa sổ thì sinh lại
+  phía trước; không đâm đuôi nhau; làn có cầu nhảy / dốc xoắn phía trước ⇒ đổi làn. Luôn có trong cảnh (đếm 0 khi tắt) ⇒ shader dịch sẵn (65 program, không dịch giữa trận).
+- Đâm: đầu xe ×0,3 tốc độ · đuôi ×0,62; bị hất ngang, vô lăng giật (t.wk), lệch hướng; xe kia văng xoay 1,6 s rồi biến mất; "HEAD-ON!" / "CRASH!". Thử: lao vào xe ngược chiều
+  35 → 12 km/h, xe kia văng. Tự lái (bàn thử) lách xe phía trước.
+
+## 38. ✅ MẪU 4d (16/10/2026) — đợt 5/5: GỘP 2 CAMERA BAY LÊN TRỜI
+Trang thử: `speed-run/mau-4d-camera-troi.html`. File mới: `rw-4d.js` · `sr3d-4d.js` · `rw-4d.css` (nạp SAU rw-4c.css).
+- Khi (1) 2 xe cách 50–100 m (trễ 8 m 2 đầu: vào 50–100, ra < 42 / > 108) · (2) có tên lửa đang bay · (3) xe dẫn còn < 150 m tới vạch đích ⇒ độ gộp `mergeK` lên 1 (~0,7 s),
+  hết điều kiện về 0 (~0,6 s); vừa trúng tên lửa xong ⇒ về NHANH (~0,22 s). Lúc về đích (phim chậm) không gộp.
+- Cách ghép: cả 2 camera bay về CÙNG một chỗ (sau xe đi sau `b0 + gap·b1` = 22 + 0,25·gap m, cao 11 + 0,22·gap m, nhìn tới xe sau + 4 + 0,45·gap m — `game.mtune` chỉnh thử được);
+  `lens(cam, i)`: ống kính rộng ×(1 + m), camera 0 lấy nửa TRÁI, camera 1 nửa PHẢI ⇒ gộp hẳn là 1 ảnh liền (ảnh chụp: không thấy đường nối). Vạch giữa + khung kính mờ
+  (lớp `is-merge`, opacity), nhoè boost dùng chung 1 tâm giữa màn. Không thêm lượt vẽ, không shader mới; gộp hẳn còn ÍT lệnh vẽ hơn (309 so với ~375–445).
+  Lần 1 nhìn quá xa ⇒ xe sau bị tap-lô che; lần 2 quá cao ⇒ thẳng từ trên xuống; lần 3 (số trên): xe sau ~60 % chiều cao, xe trước gần chân trời.
+- ⚙ Settings ▸ Camera thêm **Sky view: Auto | Off** (nhớ `racingwords.sky`).
+- Đo (máy này, 1600×900): đua thường ~96–99 fps / 375 lệnh · gộp hẳn 98–100 fps / 309–348 lệnh · đang chuyển 87–97 fps (trình duyệt giới hạn ~100). ⬜ thầy đo TOMKO.
+- ⬜ CHƯA lên AWord (cả 3z → 4d): cần nạp thêm CSS rw-3z / 4a / 4b / 4c / 4d, Options mới (race · lenK · timeS · twists · pkBoost · pkLife · pkMissile · traffic), chép mô-đun mới.
