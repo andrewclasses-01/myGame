@@ -55,6 +55,7 @@ export function parseDrive(m) {                     // "s:-100,1,0" ⇒ { steer:
 // ctl = { press(team, "fire"), drive(team, {steer, boost, brake}), status(team, "on"|"relay"|"wait"|""), answer(team, k, n) }
 export function createPadHost({ signal, padUrl }) {
   let ctl = null, sid = "", unsubs = [], tick = 0, panelEl = null, failMsg = "", note = "", closed = false;
+  const ctls = [];                                            // 4f: các bên đang gắn (mới nhất nhận iPad) — gỡ 1 bên thì bên trước nhận lại
   const cache = [{}, {}];                                     // chế độ + câu hỏi mới nhất mỗi đội (gửi lại khi iPad vừa nối)
   const st = [0, 1].map(() => ({ pc: null, dc: null, served: "", offered: "", hc: 0, last: 0, rs: 0, sn: 0, s: "",
     tries: 0, kick: 0, mine: null, theirs: null, pair: "", rtt: 0, ice: "", steer: 0, at: 0, tl: 0, tr: 0, via: "" }));
@@ -164,8 +165,8 @@ export function createPadHost({ signal, padUrl }) {
   return {
     // 4f: gắn game vào đường nối. Lần đầu mới mở phiên (sid); các lần sau (game dựng lại) chỉ báo lại trạng thái + gửi lại chế độ / câu hỏi
     attach(c) {
-      if (closed) return;
-      ctl = c;
+      if (closed || !c) return;
+      const k = ctls.indexOf(c); if (k >= 0) ctls.splice(k, 1); ctls.push(c); ctl = c;
       if (sid) { [0, 1].forEach(t => { if (st[t].s) ctl.status(t, st[t].s); resend(t); }); return; }
       sid = rid();
       signal.write("host", { sid, n0: "", o0: "", n1: "", o1: "", m0: cache[0].m ?? "", m1: cache[1].m ?? "", q0: cache[0].q ?? "", q1: cache[1].q ?? "" }).catch(e => { failMsg = (e && e.message) || "iPad link unavailable"; paintPanel(); console.warn("iPad link", e); });
@@ -176,10 +177,14 @@ export function createPadHost({ signal, padUrl }) {
       }, 1000);
     },
     /** 4f: gỡ GAME khỏi đường nối (game bị huỷ / dựng lại) — đường nối vẫn sống */
-    detach(c) { if (!c || c === ctl) ctl = null; },
+    detach(c) {
+      const k = ctls.indexOf(c || ctl); if (k >= 0) ctls.splice(k, 1);
+      const top = ctls[ctls.length - 1] || null; if (top === ctl) return;
+      ctl = top; if (ctl) [0, 1].forEach(t => { if (st[t].s) ctl.status(t, st[t].s); });
+    },
     /** đóng thật: rời hẳn game */
     close() {
-      if (closed) return; closed = true; ctl = null; clearInterval(tick);
+      if (closed) return; closed = true; ctl = null; ctls.length = 0; clearInterval(tick);
       unsubs.splice(0).forEach(f => { try { f(); } catch (e) { /* */ } });
       [0, 1].forEach(closePc); subs.clear();
       const old = sid; sid = "";
