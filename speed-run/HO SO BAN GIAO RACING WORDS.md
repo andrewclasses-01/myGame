@@ -51,6 +51,7 @@ Gói nhúng `rw-4d.js` ⇒ lõi `sr3d-4d.js` ⇒ nạp:
 4. Đổi iPad thì sửa cả `pad.js` (rwMods) + `rw-pad-signal.js`.
 5. Bàn thử: `scratch/dotNNN-rw.html?padsig=local` (chép từ dot535, thư mục scratch bị git bỏ qua) + `pad.html?padsig=local`; thêm launch config `aword-dotNNN` vào `D:/OTHERS/CLAUDE/.claude/launch.json`.
 6. Ghi `APP_MASTER.md` (dòng ✏️ đầu) · `GHI CHU DU AN.md` (mục Đợt) · `GHI CHU RACING-WORDS.md` ⇒ commit ⇒ `git push origin HEAD:main` ⇒ `gh run watch` ⇒ curl live kiểm `racing-words.js` nạp gói mới.
+7. ⭐ (từ Đợt 544, 17/10) Màn chờ AWord đếm % theo `templates/racing-words/load-files.js` ⇒ chép bản mới xong PHẢI đo lại `scratch/dot543-rec.html?t=racing-words` + `python -I tools/tao-load-files.py <thư mục rec>`; đổi/thêm tiếng thì nén bằng myGame `tools/nen-tieng-3d.py`.
 - Khác biệt dòng (LF/CRLF) ở các file cũ khi chép là bình thường (autocrlf), không phải sửa nội dung.
 
 ## 5. Bẫy đã trả giá ở đợt này (nhớ!)

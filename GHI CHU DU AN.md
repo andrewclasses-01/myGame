@@ -691,3 +691,15 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - ⏸ TẠM CHỐT intro ở mẫu 4c (26/9/2026) — thầy sẽ build tiếp + ghép vào AWord sau; kế hoạch ghép ở Chặng 4.
 - ⬜ Thầy xem mẫu 4c trên máy thật / TOMKO: nhấp nháy còn không, nhịp nhảy tốc độ, bố cục nhà xưởng / khu phóng.
 - ⬜ Âm thanh intro.
+
+## Chặng 17/10/2026 · ẢNH + % LOAD + NÉN TIẾNG cho 4 game 3D (= AWord Đợt 540 · 541 · 544)
+- **Kiểm khớp (đầu + cuối phiên):** TRAIN RUSH `balloon-pop/core` (1aw `f32004b`) · STAR LOOT `maze-chase/core` (2r `1fd3173`) · RACING WORDS `speed-run/core` (4f `4077f92`) = AWord `templates/*/3d/`
+  — chỉ khác dòng import three, CSS trang thử bị bỏ ở bản nhúng, URL phông tự host (cố ý); ROCKET RACE gốc ở AWord, `rocket-race/game10` là bản tra Đợt 511 (AWord hơn 1 chỗ Đợt 514 bắn đúng ô iPad).
+  Tiếng (sound-1ah, am-thanh, game10/sfx + sfx-intro, speed-run/sfx) + 13 xe xe3d: GIỐNG HỆT từng byte hai bên.
+- **Thiết kế ảnh:** `anh-game-3d/thiet-ke-v1.html` (`3a0a84f`) — ảnh chụp CHÍNH cảnh 3D 1920×1080 (renderer + toBlob gửi máy chủ tạm). Thầy chọn chữ ANDREW STUDIO;
+  ô màn chọn: thầy KHÔNG thích khung phim (dải đen) ⇒ dùng đúng ảnh màn chờ (Đợt 541).
+- **Nén tiếng mức Vừa:** `tools/nen-tieng-3d.py [--thu] [--aw <kho AWord>]` thay cùng lúc AWord + bản chép myGame giống hệt: trái/phải rõ (S/M ≥ 0,08) ⇒ 96k 2 kênh, còn lại 64k 1 kênh,
+  nhẹ < 10 % giữ gốc ⇒ 30,8 → 19,0 MB (`57ab464`). Trang nghe `speed-run/nghe-nen-tieng/` (⚠️ nút "Gốc" nay phát bản đã nén vì sfx gốc đã thay).
+- **% load thật** chỉ ở AWord (`core/loader3d.js` + `templates/<game>/load-files.js`). ⛔ Sửa game ở đây rồi chép sang AWord mà đổi tiếng / xe / module ⇒ ở AWord phải đo lại
+  (`scratch/dot543-rec.html?t=<game>`) + `python -I tools/tao-load-files.py <thư mục rec-*.json>`, không thì % lệch (game không hỏng).
+- ⬜ Thầy thử TOMKO: màn chờ % ở mạng trường, nghe lại tiếng đã nén (nhạc đua RACING WORDS thành 1 kênh — kém thì giữ 2 kênh riêng bài này).
