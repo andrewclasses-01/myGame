@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>Đo bóng xe 4h</title>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script></head>
+<body style="background:#111;color:#ddd;font:14px system-ui">
+<pre id="out">đang đo…</pre>
+<script type="module">
+// Bàn đo 4h (18/10): thời gian dựng xe lần đầu (makeCar3d) bản 4b (closePath) vs 4h (tô theo lô) + so từng điểm ảnh BÓNG xe. ?ids=H4,Y2 &old=0 (bỏ đo bản cũ)
+import { prepXe } from "./core/sr3d-xe3d-3o.js";
+import * as C4b from "./core/sr3d-car-4b.js";
+import * as C4h from "./core/sr3d-car-4h.js";
+const q = new URLSearchParams(location.search), ids = (q.get("ids") || "H4,Y2").split(","), old = q.get("old") !== "0";
+const U = { uBend: { value: 0 }, uBendT: { value: null }, uTime: { value: 0 } };
+const shadowPx = car => { let img = null; car.traverse?.(o => { if (o.isMesh && o.renderOrder === -1 && o.material.map?.image) img = o.material.map.image; });
+  if (!img) return null; const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; const g = c.getContext("2d"); g.drawImage(img, 0, 0); return g.getImageData(0, 0, c.width, c.height).data; };
+const R = { ids, rows: [] };
+for (const id of ids) {
+  await prepXe(id);
+  let t = performance.now(); const b = C4h.makeCar3d({ id, U }); const tNew = performance.now() - t;
+  const row = { id, newMs: Math.round(tNew) };
+  if (old) { t = performance.now(); const a = C4b.makeCar3d({ id, U }); row.oldMs = Math.round(performance.now() - t);
+    const pa = shadowPx(a.rig), pb = shadowPx(b.rig);
+    if (pa && pb && pa.length === pb.length) { let diff = 0, max = 0; for (let i = 3; i < pa.length; i += 4) { const d = Math.abs(pa[i] - pb[i]); if (d > 2) diff++; if (d > max) max = d; } row.pxDiff = diff; row.pxMax = max; row.px = pa.length / 4; }
+    else row.px = "không lấy được ảnh bóng"; }
+  R.rows.push(row);
+}
+window.__R = R; document.getElementById("out").textContent = JSON.stringify(R, null, 1);
+</script></body></html>
