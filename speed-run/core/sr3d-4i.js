@@ -1944,7 +1944,7 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
     infoT -= dt; if (infoT <= 0 && remote && remote.send) {
       infoT = 0.25;
       T.forEach((t, i) => { if (t.padOn && remote.share) remote.share(i, "r", `${t.ms},${G.phase}`); });   // 3y: chỉ ghi kho khi ĐỔI (share tự bỏ trùng)
-      T.forEach((t, i) => { if (t.padOn) remote.send(i, `i:${Math.round(t.v * 3.6)},${(t.E / SEG).toFixed(1)},${t.ms},${t.inc ? (t.inc.locked ? 2 : 1) : 0},${G.phase},${clamp(t.E / (PHYS.CAP * SEG), 0, 1).toFixed(2)}`); });
+      T.forEach((t, i) => { if (t.padOn) remote.send(i, `i:${Math.round(t.v * 3.6)},${(t.E / SEG).toFixed(1)},${t.ms},${t.inc ? (t.inc.locked ? 2 : 1) : 0},${G.phase},${clamp(t.E / (PHYS.CAP * SEG), 0, 1).toFixed(2)},${t.stallT > 0 && t.dmgT0 ? t.stallT.toFixed(2) : 0},${t.dmgT0 || 0},${T[1 - i].s - t.s < AIM_MIN ? 1 : 0}`); });   // 4i: + DAMAGE, không mục tiêu
     }
   }
 
