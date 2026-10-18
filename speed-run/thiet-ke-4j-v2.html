@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Nút bắn v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ 4j — bản 2 (18/10/2026): thầy "chưa thấy loại nào đẹp" ⇒ 5 kiểu MỚI D–H + tên lửa vẽ lại chi tiết.
+   Mỗi kiểu xem trên MÀN LỚN (hàng nút dưới ô trả lời) và iPAD (dải bắn trên cùng). Chỉ transform/opacity khi chạy hiệu ứng (TOMKO). */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140,200,255,.14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa; --red: #ff3b2a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: #f5c542; color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; } h1 small { font: 600 15px "Exo 2"; color: var(--mut); margin-left: 8px; }
+h3 { font: italic 900 20px "Exo 2"; margin: 0 0 4px; } h3 b { color: #f5c542; margin-right: 6px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); } .ask { background: rgba(245,197,66,.08); border: 1px dashed rgba(245,197,66,.5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; } .ask b { color: #f5c542; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--ac); color: #06101f; border-color: var(--ac); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+.ctl { position: sticky; top: 30px; z-index: 8; background: rgba(11,14,19,.95); border-bottom: 1px solid var(--line); padding: 4px 0 8px; }
+.grid2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; align-items: start; } @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+.cap { font: 800 13px "Exo 2"; color: var(--mut); margin: 8px 0 4px; }
+
+/* ===== khung giả ===== */
+.dash { container-type: inline-size; --u: 1.1cqw; position: relative; width: 100%; aspect-ratio: 16 / 6.6; border-radius: 12px; overflow: hidden; background: linear-gradient(180deg, #151b25, #0b0f16);
+  display: grid; grid-template-columns: 58% 1fr; gap: 2%; padding: 2.4% 2.2%; --team: #3b8cff; }
+.ansP { display: flex; flex-direction: column; gap: calc(1 * var(--u)); padding: calc(1.4 * var(--u)); border-radius: calc(2.4 * var(--u)); background: rgba(6,10,18,.85); border: calc(.3 * var(--u)) solid rgba(255,255,255,.08); }
+.ans { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: calc(.8 * var(--u)); }
+.ans i { border-radius: calc(1.2 * var(--u)); border: calc(.3 * var(--u)) solid color-mix(in srgb, var(--team) 45%, rgba(255,255,255,.2)); background: linear-gradient(180deg, rgba(26,42,72,.95), rgba(12,20,38,.97));
+  display: grid; place-items: center; font: 800 calc(3 * var(--u)) "Exo 2"; color: #fff; font-style: normal; }
+.arms { height: calc(7.4 * var(--u)); display: flex; align-items: center; gap: calc(1 * var(--u)); }
+.wheelStub { border-radius: calc(3 * var(--u)); background: radial-gradient(80% 90% at 50% 100%, #1b222d, #0d1118); display: grid; place-items: center; color: #3b4658; font: 800 calc(2.4 * var(--u)) "Exo 2"; letter-spacing: .2em; }
+.ipad { container-type: size; position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 22px; overflow: hidden; background: #0a0d13; border: 10px solid #1a1d22; --team: #3b8cff; }
+.ipad .itop { position: absolute; left: 0; right: 0; top: 0; height: 7.6cqh; display: flex; align-items: center; justify-content: center; gap: 2cqmin; background: rgba(4,7,14,.82); border-bottom: 1px solid rgba(140,210,255,.16); font: italic 900 2.8cqmin "Exo 2"; color: var(--team); letter-spacing: .14em; }
+.ipad .itop span { font: 700 1.8cqmin "Exo 2"; color: #4ade80; font-style: normal; letter-spacing: 0; }
+.ipad .band { --u: 1.6cqmin; position: absolute; left: 3cqmin; right: 3cqmin; top: 10.4cqh; bottom: 70%; display: flex; align-items: center; justify-content: center; }
+.ipad .low { position: absolute; left: 0; right: 0; bottom: 0; top: 34%; display: flex; justify-content: center; align-items: flex-end; gap: 6cqmin; padding-bottom: 3cqmin; color: #3b4658; font: 800 2.4cqmin "Exo 2"; letter-spacing: .2em; }
+.ipad .low i { width: 12cqmin; height: 30cqmin; border-radius: 3cqmin; background: #151a22; border: .5cqmin solid #2a313c; }
+.ipad .low b { width: 50cqmin; height: 34cqmin; border-radius: 50% 50% 0 0; background: radial-gradient(80% 100% at 50% 100%, #1b222d, #0d1118); display: grid; place-items: center; }
+
+/* ===== tên lửa chi tiết (SVG) ===== */
+.mis { display: block; overflow: visible; width: 100%; height: 100%; }
+.mis .fl { opacity: 0; transform-origin: 50% 0; transition: opacity .3s; }
+.ready .mis .fl { opacity: .9; animation: flk .12s steps(2) infinite; }
+@keyframes flk { 50% { transform: scaleY(.82); } }
+
+/* ===== chung: streak + kho ===== */
+.stk { display: flex; gap: calc(.5 * var(--u)); } .stk i { width: calc(1.2 * var(--u)); height: calc(1.2 * var(--u)); border-radius: 50%; background: #2a3140; }
+.stk i.on { background: #ffd36a; box-shadow: 0 0 calc(1 * var(--u)) #ffb13a; }
+
+/* ---------- D · THẺ VŨ KHÍ (nghiêng, kiểu game đua hiện đại) ---------- */
+.wD { position: relative; flex: 1; height: 100%; max-width: 100%; transform: skewX(-12deg); border-radius: calc(1 * var(--u)); overflow: hidden;
+  background: linear-gradient(135deg, rgba(26,34,52,.97), rgba(8,12,20,.97)); border: calc(.25 * var(--u)) solid rgba(140,190,255,.22); }
+.wD > * { transform: skewX(12deg); }
+.wD .edge { position: absolute; left: 0; top: 0; bottom: 0; width: calc(1 * var(--u)); background: var(--team); transform: none; }
+.wD .art { position: absolute; left: 7%; top: 4%; bottom: 4%; aspect-ratio: 1; }
+.wD .art svg { transform: rotate(45deg); }
+.wD .num { position: absolute; left: 34%; top: 50%; translate: 0 -50%; display: flex; align-items: baseline; gap: calc(.6 * var(--u)); }
+.wD .num b { font: italic 900 calc(4.4 * var(--u)) "Exo 2"; color: #fff; line-height: 1; }
+.wD .num small { font: italic 800 calc(1.5 * var(--u)) "Exo 2"; letter-spacing: .22em; color: #8fa3bf; }
+.wD .res { position: absolute; right: 6%; top: 18%; font: italic 800 calc(1.6 * var(--u)) "Exo 2"; color: #ffb08f; }
+.wD .stk { position: absolute; right: 6%; bottom: 20%; }
+.wD .shine { position: absolute; top: -20%; bottom: -20%; left: -30%; width: 18%; transform: skewX(-12deg) translateX(0); background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); opacity: 0; }
+.wD.ready { border-color: #ff7a4a; box-shadow: 0 0 calc(2 * var(--u)) rgba(255,80,40,.55), inset 0 0 calc(3 * var(--u)) rgba(255,60,30,.18); }
+.wD.ready .shine { opacity: 1; animation: shineD 2.2s ease-in-out infinite; }
+@keyframes shineD { 0% { transform: skewX(-12deg) translateX(0); } 55%, 100% { transform: skewX(-12deg) translateX(900%); } }
+.wD.empty { filter: none; } .wD.empty .art, .wD.empty .num { opacity: .35; }
+.wD .hint { position: absolute; left: 34%; bottom: 14%; font: 800 calc(1.2 * var(--u)) "Exo 2"; letter-spacing: .14em; color: #f5c542; display: none; }
+.wD.empty .hint, .wD.noaim .hint { display: block; }
+.wD.noaim { opacity: .55; }
+.wD.shot .art svg { animation: shotD .45s cubic-bezier(.4,0,.8,.4); } @keyframes shotD { to { transform: rotate(45deg) translateY(-160%); opacity: 0; } }
+
+/* ---------- E · NGẮM BẮN HUD (tròn, vòng đạn neon) ---------- */
+.wE { position: relative; flex: none; height: 118%; aspect-ratio: 1; display: grid; place-items: center; }
+.wE .glass { position: absolute; inset: 9%; border-radius: 50%; background: radial-gradient(circle at 50% 35%, rgba(40,52,74,.95), rgba(8,12,20,.98) 70%); border: calc(.25 * var(--u)) solid rgba(140,190,255,.3); }
+.wE svg.ret { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.wE .ret .seg { fill: none; stroke-width: 5; stroke-linecap: round; }
+.wE .ret .spin { transform-origin: 0 0; }
+.wE .ret .x { stroke: #4b5568; stroke-width: 3.2; fill: none; stroke-linecap: round; transition: stroke .3s; }
+.wE .lbl { position: relative; margin-top: 38%; font: italic 900 calc(1.4 * var(--u)) "Exo 2"; letter-spacing: .26em; color: #6b7480; }
+.wE.ready .ret .x { stroke: var(--red); }
+.wE.ready .ret .spin { animation: spinE 3s linear infinite; } @keyframes spinE { to { transform: rotate(360deg); } }
+.wE.ready .glass { box-shadow: 0 0 calc(2.2 * var(--u)) rgba(255,60,40,.6), inset 0 0 calc(2 * var(--u)) rgba(255,60,40,.3); border-color: #ff7a4a; }
+.wE.ready .lbl { color: #fff; }
+.wE.noaim { opacity: .45; } .wE.shot .glass { animation: pushE .3s; } @keyframes pushE { 40% { transform: scale(.9); } }
+.side { flex: 1; display: flex; align-items: center; gap: calc(.6 * var(--u)); font: italic 900 calc(2 * var(--u)) "Exo 2"; color: #ffb08f; } .side.r { justify-content: flex-end; }
+
+/* ---------- F · Ô VẬT PHẨM (kiểu item box) ---------- */
+.wF { position: relative; flex: none; height: 118%; aspect-ratio: 1.15; border-radius: calc(1.8 * var(--u)); display: grid; place-items: center;
+  background: linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.02) 40%), linear-gradient(180deg, #1c2638, #0a0f19); border: calc(.35 * var(--u)) solid #8fa3bf;
+  box-shadow: inset 0 0 0 calc(.2 * var(--u)) rgba(0,0,0,.5), 0 calc(.4 * var(--u)) calc(1 * var(--u)) rgba(0,0,0,.5); }
+.wF .art { position: absolute; inset: 8% 18%; }
+.wF .art svg { transform: rotate(45deg); }
+.wF .cnt { position: absolute; right: -6%; bottom: -10%; min-width: calc(3.2 * var(--u)); height: calc(3.2 * var(--u)); padding: 0 calc(.6 * var(--u)); border-radius: calc(1.6 * var(--u));
+  display: grid; place-items: center; background: #ff3b2a; color: #fff; font: italic 900 calc(2 * var(--u)) "Exo 2"; border: calc(.25 * var(--u)) solid #fff; }
+.wF .res { position: absolute; left: -4%; top: -12%; padding: 0 calc(.6 * var(--u)); border-radius: calc(1 * var(--u)); background: #0b0f16; border: calc(.2 * var(--u)) solid #8fa3bf; font: italic 800 calc(1.4 * var(--u)) "Exo 2"; color: #ffb08f; }
+.wF.ready { border-color: #ffd36a; box-shadow: 0 0 calc(2.2 * var(--u)) rgba(255,200,80,.55), inset 0 0 calc(2.6 * var(--u)) rgba(255,190,70,.25); }
+.wF.ready .art { animation: bobF 1.2s ease-in-out infinite alternate; } @keyframes bobF { to { transform: translateY(-6%) scale(1.04); } }
+.wF.empty .art { opacity: .2; } .wF.empty .cnt { background: #3a4150; }
+.wF.noaim { opacity: .45; } .wF.noaim .art { animation: none; }
+.wF.shot .art { animation: shotF .4s cubic-bezier(.4,0,.8,.4); } @keyframes shotF { to { transform: translate(60%, -80%) scale(.6); opacity: 0; } }
+
+/* ---------- G · BĂNG ĐẠN (mỗi ô 1 quả, ô đầu = buồng bắn) ---------- */
+.wG { position: relative; flex: 1; height: 100%; display: flex; align-items: center; gap: calc(.5 * var(--u)); padding: calc(.6 * var(--u)); border-radius: calc(1.2 * var(--u));
+  background: linear-gradient(180deg, #2b3037, #12161b); border: calc(.25 * var(--u)) solid #59626e; }
+.wG .ch { position: relative; flex: none; height: 100%; aspect-ratio: 1.5; border-radius: calc(.9 * var(--u)); display: grid; place-items: center; background: #0b0e12; box-shadow: inset 0 0 calc(.8 * var(--u)) #000; overflow: hidden; }
+.wG .ch svg { width: 88%; height: 70%; opacity: .15; transition: opacity .3s, transform .3s; }
+.wG .ch.on svg { opacity: 1; }
+.wG .ch.k0 { aspect-ratio: 2.2; border: calc(.2 * var(--u)) solid #3a2a2a; }
+.wG .ch.k0::after { content: "FIRE"; position: absolute; right: 6%; font: italic 900 calc(1.4 * var(--u)) "Exo 2"; letter-spacing: .14em; color: #6b7480; }
+.wG .ch.k0 svg { width: 60%; translate: -26% 0; }
+.wG.ready .ch.k0 { border-color: #ff7a4a; background: radial-gradient(80% 120% at 30% 50%, rgba(255,70,40,.35), #0b0e12 70%); box-shadow: 0 0 calc(1.8 * var(--u)) rgba(255,70,40,.6); }
+.wG.ready .ch.k0::after { color: #fff; }
+.wG .ch.chg { background: linear-gradient(90deg, rgba(255,211,106,.35) var(--p), #0b0e12 var(--p)); }
+.wG.noaim { opacity: .45; }
+.wG.shot .ch.k0 svg { animation: shotG .4s cubic-bezier(.4,0,.8,.4); } @keyframes shotG { to { transform: translateX(160%); opacity: 0; } }
+
+/* ---------- H · MŨI NHỌN (đồng bộ mũi tên đối thủ kiểu 2 thầy đã chọn) ---------- */
+.wH { position: relative; flex: none; height: 128%; aspect-ratio: 1; display: grid; place-items: center; }
+.wH svg.sh { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.wH .sh .o { fill: rgba(10,14,22,.9); stroke-width: 3.2; stroke-linejoin: round; }
+.wH .sh .core { fill: #3a2626; transition: fill .3s; }
+.wH .art { position: relative; height: 44%; width: 20%; margin-top: 18%; }
+.wH .cnt { position: absolute; bottom: -2%; left: 50%; translate: -50% 0; font: italic 900 calc(1.8 * var(--u)) "Exo 2"; color: #fff; text-shadow: 0 0 calc(.6 * var(--u)) #000; }
+.wH.ready .sh .core { fill: url(#hCore); }
+.wH.ready { animation: glowH 1s ease-in-out infinite alternate; } @keyframes glowH { from { transform: translateY(0); } to { transform: translateY(-3%); } }
+.wH.noaim { opacity: .45; animation: none; } .wH.empty .art { opacity: .25; }
+.wH.shot .art { animation: shotH .4s cubic-bezier(.4,0,.8,.4); } @keyframes shotH { to { transform: translateY(-200%); opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="top">THIẾT KẾ 4j — NÚT BẮN bản 2 · CHƯA BUILD — chờ thầy chọn</div>
+<main>
+<h1>Nút bắn tên lửa — 5 kiểu mới <small>tên lửa vẽ lại chi tiết · màn lớn + iPad</small></h1>
+<div class="mut">Bản 1 (A–C) thầy chưa ưng ⇒ 5 hướng khác hẳn. Tên lửa mới: thân bạc bóng, mũi đỏ, đai màu đội, cánh đen, lửa đuôi cháy khi sẵn sàng. Thông tin giữ đủ: số quả · kho dự trữ · chuỗi đúng (3 chấm) · sẵn sàng / hết / không có mục tiêu.</div>
+<div class="ctl"><div class="row"><b>Trạng thái:</b> <button class="b" data-st="empty">Hết đạn</button><button class="b on" data-st="ready">Sẵn sàng (2 trên giá + 3 kho)</button><button class="b" data-st="one">Còn 1 quả</button><button class="b" data-st="noaim">Không có mục tiêu</button>
+  <button class="b" id="shoot">🚀 Bấm bắn</button> <b style="margin-left:8px">Đội:</b> <button class="b on" data-tm="#3b8cff">Xanh</button><button class="b" data-tm="#ff7a00">Cam</button></div></div>
+<div id="styles"></div>
+<div class="ask"><b>Thầy chọn:</b> D, E, F, G hay H — hoặc ghép (ví dụ "hình F + vòng đạn của E").</div>
+</main>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="hCore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb08f"/><stop offset=".5" stop-color="#ff3b2a"/><stop offset="1" stop-color="#a3170c"/></linearGradient></defs></svg>
+<script>
+let gid = 0;
+// tên lửa chi tiết, mũi chĩa LÊN (viewBox 40 × 130); id gradient riêng mỗi bản (tránh trùng id SVG)
+function MIS(hz) {   // hz = nằm ngang, mũi chĩa sang PHẢI (băng đạn G)
+  const k = ++gid;
+  return `<svg class="mis" viewBox="${hz ? "0 0 130 40" : "0 0 40 130"}" preserveAspectRatio="xMidYMid meet"><defs>
+    <linearGradient id="mb${k}" x1="0" x2="1"><stop offset="0" stop-color="#7f8892"/><stop offset=".45" stop-color="#f6f8fa"/><stop offset=".7" stop-color="#c9cfd6"/><stop offset="1" stop-color="#6d757f"/></linearGradient>
+    <linearGradient id="mn${k}" x1="0" x2="1"><stop offset="0" stop-color="#a3170c"/><stop offset=".45" stop-color="#ff6a4a"/><stop offset="1" stop-color="#8e140a"/></linearGradient>
+    <radialGradient id="mf${k}" cx=".5" cy="0" r="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".35" stop-color="#ffb347"/><stop offset=".75" stop-color="#ff5a1f" stop-opacity=".7"/><stop offset="1" stop-color="#ff3b00" stop-opacity="0"/></radialGradient></defs>
+    <g${hz ? ' transform="translate(130 0) rotate(90)"' : ""}>
+    <path class="fl" d="M14 104 Q20 132 26 104 Z" fill="url(#mf${k})" transform="translate(0 0)"/>
+    <path d="M10 82 L4 100 L14 98 Z M30 82 L36 100 L26 98 Z" fill="#2a2f36"/><path d="M10 82 L4 100 L7 100 L12 86 Z M30 82 L36 100 L33 100 L28 86 Z" fill="#59626e"/>
+    <rect x="13" y="32" width="14" height="70" rx="3" fill="url(#mb${k})"/>
+    <rect x="13" y="38" width="14" height="5" fill="var(--team)"/>
+    <path d="M13 32 Q13 12 20 4 Q27 12 27 32 Z" fill="url(#mn${k})"/>
+    <path d="M17.5 14 Q19 9 20.5 7 Q19.5 14 19.5 24 Z" fill="rgba(255,255,255,.55)"/>
+    <rect x="15" y="100" width="10" height="5" rx="1.5" fill="#3a3f46"/>
+    <path d="M18 82 L20 98 L22 82 Z" fill="#2a2f36"/></g></svg>`;
+}
+const RES = n => `<span class="side-r" style="display:inline-flex;align-items:center;gap:calc(.3*var(--u))"><span style="display:inline-block;height:calc(2.6*var(--u));width:calc(.8*var(--u))">${MIS().replace('class="mis"', 'class="mis" style="height:100%;width:auto;transform:rotate(45deg)"')}</span>×${n}</span>`;
+const STK = () => `<span class="stk"><i class="on"></i><i></i><i></i></span>`;
+const STY = [
+  { k: "D", n: "Thẻ vũ khí nghiêng", d: "Thẻ kính nghiêng như HUD game đua hiện đại: mép màu đội, tên lửa lớn chéo, số quả to ×2, kho dự trữ + chuỗi đúng gọn trong thẻ. Sẵn sàng ⇒ viền đỏ cam phát sáng + vệt sáng lướt qua.",
+    g: () => `<div class="wD"><i class="edge"></i><div class="art">${MIS()}</div><div class="num"><b class="n">×2</b><small>MISSILE</small></div><span class="res">+3</span>${STK()}<span class="hint">ANSWER 3 IN A ROW</span><i class="shine"></i></div>`, row: "full" },
+  { k: "E", n: "Ngắm bắn HUD", d: "Nút tròn kính tối, ở giữa là tâm ngắm (cùng ý quầng đỏ trên đường); vòng ngoài = số tên lửa (mỗi vạch 1 quả); sẵn sàng ⇒ tâm ngắm đỏ, vòng ngoài quay chậm như đang khoá mục tiêu.",
+    g: () => `<div class="wE"><i class="glass"></i><svg class="ret" viewBox="-60 -60 120 120"><g class="segs"></g><g class="spin"><circle r="40" fill="none" stroke="rgba(255,90,60,.5)" stroke-width="1.5" stroke-dasharray="6 9"/></g>
+      <circle class="x" r="16"/><path class="x" d="M0 -30 V-20 M0 20 V30 M-30 0 H-20 M20 0 H30"/><circle r="3" fill="#ff3b2a" class="dot"/></svg><span class="lbl">FIRE</span></div>`, row: "center" },
+  { k: "F", n: "Ô vật phẩm", d: "Ô kính vuông bo như ô vật phẩm game đua vui: tên lửa lớn nhún nhẹ khi sẵn sàng, số quả ở huy hiệu đỏ góc dưới, kho dự trữ góc trên. Bắn ⇒ quả lao chéo ra khỏi ô.",
+    g: () => `<div class="wF"><div class="art">${MIS()}</div><span class="cnt">2</span><span class="res">+3</span></div>`, row: "center" },
+  { k: "G", n: "Băng đạn", d: "Băng kim loại xếp từng quả nằm ngang như băng đạn: ô đầu to = BUỒNG BẮN (đỏ rực khi sẵn sàng), các ô sau = kho; ô cuối mờ vàng đầy dần theo chuỗi trả lời đúng. Nhìn một phát là biết còn bao nhiêu.",
+    g: () => `<div class="wG"><i class="ch k0">${MIS(1)}</i>${Array.from({ length: 4 }, () => `<i class="ch">${MIS(1)}</i>`).join("")}<i class="ch chg" style="--p:33%"></i></div>`, row: "full" },
+  { k: "H", n: "Mũi nhọn kim loại", d: "Cùng hình mũi tên đối thủ kiểu 2 thầy đã chọn (viền kim loại trắng → màu đội) ⇒ đồng bộ nhất với game; lõi đỏ khi sẵn sàng, tên lửa đứng giữa, số quả dưới đáy; nhún nhẹ khi sẵn sàng.",
+    g: () => `<div class="wH"><svg class="sh" viewBox="0 0 60 60"><defs><linearGradient id="hs${++gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="var(--team)"/></linearGradient></defs>
+      <path class="o" d="M30 3 L56 52 Q30 42 4 52 Z" stroke="url(#hs${gid})"/><path class="core" d="M30 15 L46 45 Q30 39 14 45 Z" opacity=".9"/></svg><div class="art">${MIS()}</div><span class="cnt">×2</span></div>`, row: "center" }
+];
+const host = document.getElementById("styles"), units = [];
+STY.forEach(s => {
+  const w = document.createElement("div"); w.className = "sec";
+  const arms = s.row === "center" ? `<div class="arms"><span class="side">${RES(3)}</span>${s.g()}<span class="side r">${STK()}</span></div>` : `<div class="arms">${s.g()}</div>`;
+  const band = s.row === "center" ? `<span class="side" style="position:absolute;left:0">${RES(3)}</span>${s.g()}<span class="side r" style="position:absolute;right:0">${STK()}</span>` : s.g();
+  w.innerHTML = `<h3><b>${s.k}</b>${s.n}</h3><div class="mut" style="margin-bottom:6px">${s.d}</div>
+    <div class="grid2"><div><div class="cap">MÀN LỚN — bảng điều khiển</div><div class="dash"><div class="ansP"><div class="ans"><i>Gagarin</i><i>Newton</i><i>Armstrong</i><i>Curie</i></div>${arms}</div><div class="wheelStub">WHEEL</div></div></div>
+    <div><div class="cap">iPAD — dải bắn trên cùng (cả dải là vùng bấm)</div><div class="ipad"><div class="itop">TEAM 1 <span>● Connected</span></div><div class="band">${band}</div><div class="low"><i></i><b>WHEEL</b><i></i></div></div></div></div>`;
+  host.appendChild(w); units.push(...w.querySelectorAll(".wD, .wE, .wF, .wG, .wH"));
+});
+// tâm ngắm E: vòng vạch = số quả (tối đa 5)
+function ringE(u, total) { const g = u.querySelector(".segs"); if (!g) return; const N = 5, r = 52, c = 2 * Math.PI * r, seg = 360 / N;
+  g.innerHTML = Array.from({ length: N }, (_, j) => `<circle class="seg" r="${r}" stroke="${j < total ? "#ff5a3c" : "#2a3140"}" stroke-dasharray="${((seg - 10) / 360 * c).toFixed(1)} ${c.toFixed(1)}" transform="rotate(${-90 + j * seg + 5})"/>`).join(""); }
+let st = "ready";
+function paint() {
+  const rack = st === "empty" ? 0 : st === "one" ? 1 : 2, total = st === "empty" ? 0 : st === "one" ? 1 : 5;
+  units.forEach(u => {
+    const ready = rack > 0 && st !== "noaim";
+    u.classList.toggle("ready", ready); u.classList.toggle("noaim", st === "noaim"); u.classList.toggle("empty", rack === 0);
+    u.querySelectorAll(".n").forEach(e => e.textContent = "×" + rack);
+    u.querySelectorAll(".cnt").forEach(e => e.textContent = u.classList.contains("wH") ? "×" + rack : rack);
+    u.querySelectorAll(".res").forEach(e => { e.textContent = total - rack > 0 ? "+" + (total - rack) : ""; e.style.display = total - rack > 0 ? "" : "none"; });
+    u.querySelectorAll(".hint").forEach(e => e.textContent = st === "noaim" ? "NO TARGET AHEAD" : "ANSWER 3 IN A ROW");
+    u.querySelectorAll(".wG .ch:not(.chg)").forEach((c, j) => c.classList.toggle("on", j < total));
+    ringE(u, total);
+  });
+}
+document.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-st]").forEach(x => x.classList.toggle("on", x === b)); st = b.dataset.st; paint(); });
+document.querySelectorAll("[data-tm]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-tm]").forEach(x => x.classList.toggle("on", x === b)); document.querySelectorAll(".dash, .ipad").forEach(e => e.style.setProperty("--team", b.dataset.tm)); });
+document.getElementById("shoot").onclick = () => { units.forEach(u => { if (!u.classList.contains("ready")) return; u.classList.remove("shot"); void u.offsetWidth; u.classList.add("shot"); }); setTimeout(() => units.forEach(u => u.classList.remove("shot")), 450); };
+paint();
+</script>
+</body>
+</html>
