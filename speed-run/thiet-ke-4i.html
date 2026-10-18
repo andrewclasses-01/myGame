@@ -336,9 +336,9 @@ const OC = "#ff7a00";
 const ARW = [
   { n: "1 · Chevron kính", d: "Hình tròn kính mờ, chevron kép màu đội, số mét bên dưới.",
     h: () => `<div style="width:7.2cqh;height:7.2cqh;border-radius:50%;background:rgba(8,12,20,.55);border:.35cqh solid ${OC};box-shadow:0 0 2.4cqh ${OC}66, inset 0 0 1.6cqh ${OC}44;display:grid;place-items:center"><svg class="rot" viewBox="0 0 24 24" style="width:4.2cqh;height:4.2cqh"><path d="M6 14l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="${OC}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b class="dist" style="display:block;text-align:center;margin-top:.6cqh;font:italic 800 2.2cqh 'Exo 2';color:#fff;text-shadow:0 .2cqh .6cqh #000"></b>` },
-  { n: "2 · Mũi nhọn kim loại ✅", d: "Tam giác bo góc viền sáng màu đội (lõi đặc màu đội). Số mét LUÔN nằm SAU ĐUÔI mũi tên (phía trong khung) — mũi tên xoay tới đâu, số đi theo phía đuôi tới đó, chữ luôn đứng thẳng.", tail: true,
+  { n: "2 · Mũi nhọn kim loại ✅", d: "Tam giác bo góc viền sáng màu đội (lõi đặc màu đội). Số mét LUÔN nằm SAU ĐUÔI mũi tên (phía trong khung), KHÔNG nền — chữ trắng có bóng mờ cho dễ đọc; khoảng cách tới đuôi luôn đều, trượt mượt theo mũi tên, chữ luôn đứng thẳng.", tail: true,
     h: () => `<div style="position:relative;width:8.4cqh;height:8.4cqh"><svg class="rot" viewBox="0 0 60 60" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="${OC}"/></linearGradient></defs>
-      <path d="M30 4 L54 50 Q30 40 6 50 Z" fill="rgba(10,14,22,.82)" stroke="url(#g2)" stroke-width="3.2" stroke-linejoin="round"/><path d="M30 14 L44 42 Q30 36 16 42 Z" fill="${OC}" opacity=".85"/></svg><b class="dist" style="position:absolute;left:50%;top:50%;white-space:nowrap;padding:.25cqh 1cqh;border-radius:1.2cqh;background:rgba(8,12,20,.72);border:.2cqh solid ${OC}99;font:italic 800 2.1cqh 'Exo 2';color:#fff;will-change:transform"></b></div>` },
+      <path d="M30 4 L54 50 Q30 40 6 50 Z" fill="rgba(10,14,22,.82)" stroke="url(#g2)" stroke-width="3.2" stroke-linejoin="round"/><path d="M30 14 L44 42 Q30 36 16 42 Z" fill="${OC}" opacity=".85"/></svg><b class="dist" style="position:absolute;left:50%;top:50%;width:7cqh;text-align:center;white-space:nowrap;font:italic 900 2.3cqh/1 'Exo 2';font-variant-numeric:tabular-nums;color:#fff;text-shadow:0 0 .5cqh rgba(0,0,0,.95),0 .15cqh .35cqh rgba(0,0,0,.9),0 0 1.4cqh ${OC}88;will-change:transform"></b></div>` },
   { n: "3 · Thẻ xe ở mép", d: "Thẻ nhỏ: icon xe (nhìn trên) màu đội + mét; đầu nhọn chỉ hướng. Kiểu game đua hiện đại.",
     h: () => `<div style="position:relative;display:flex;align-items:center;gap:.8cqh;padding:.8cqh 1.4cqh;border-radius:1.4cqh;background:rgba(8,12,20,.78);border:.3cqh solid ${OC};box-shadow:0 0 2cqh ${OC}55">
       <svg viewBox="0 0 20 34" style="width:2.2cqh;height:3.8cqh"><rect x="2" y="1" width="16" height="32" rx="6" fill="${OC}"/><rect x="5" y="10" width="10" height="9" rx="2" fill="#0b1220"/></svg><b class="dist" style="font:italic 900 2.4cqh 'Exo 2';color:#fff"></b>
@@ -367,9 +367,11 @@ function arrowFrame(now) {
     a.el.style.transform = `translate(${a.x.toFixed(1)}px, ${a.y.toFixed(1)}px)`;
     if (a.rot) a.rot.style.transform = `rotate(${(th * 180 / Math.PI + 90).toFixed(1)}deg)`;
     if (a.dist) a.dist.textContent = dist + " m";
-    if (a.tail && a.dist) {   // số mét SAU ĐUÔI: đặt ngược hướng mũi tên, cách tâm = nửa mũi tên + nửa bề dài nhãn theo hướng đó + khe nhỏ
-      const lw = a.dist.offsetWidth, lh = a.dist.offsetHeight, R = ew * 0.42 + Math.abs(dxv) * lw / 2 + Math.abs(dyv) * lh / 2 + ew * 0.06;
-      a.dist.style.transform = `translate(calc(-50% + ${(-dxv * R).toFixed(1)}px), calc(-50% + ${(-dyv * R).toFixed(1)}px))`;
+    if (a.tail && a.dist) {   // số mét SAU ĐUÔI: ngược hướng mũi tên. Ô chữ BỀ RỘNG CỐ ĐỊNH (số đổi không xô vị trí) ⇒ khe đuôi↔chữ luôn bằng nhau;
+      //   bán kính đổi liên tục theo góc (hình elip ôm ô chữ) + lọc mượt cùng nhịp với mũi tên ⇒ không giật
+      const lw = a.dist.offsetWidth * 0.62, lh = a.dist.offsetHeight, R = ew * 0.40 + Math.abs(dxv) * lw / 2 + Math.abs(dyv) * lh / 2 + ew * 0.05;
+      const kx = -dxv * R, ky = -dyv * R; a.lx = a.lx == null ? kx : a.lx + (kx - a.lx) * k; a.ly = a.ly == null ? ky : a.ly + (ky - a.ly) * k;
+      a.dist.style.transform = `translate(calc(-50% + ${a.lx.toFixed(1)}px), calc(-50% + ${a.ly.toFixed(1)}px))`;
     }
   });
   requestAnimationFrame(arrowFrame);
