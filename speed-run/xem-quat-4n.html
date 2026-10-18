@@ -6,7 +6,7 @@
 <script type="module">
 // Bàn soi 4n: ?id=A1&w=1 (tốc độ quay rad/s) — cánh quạt quay CHẬM để thấy có quay đúng mặt phẳng / còn sót mảnh không.
 import * as THREE from "three";
-import { loadDrone } from "./core/sr3d-drone3d-4o.js";
+import { loadDrone } from "./core/sr3d-drone3d-4p.js";
 const q = new URLSearchParams(location.search), id = q.get("id") || "A1", w = +(q.get("w") || 1);
 const r = new THREE.WebGLRenderer({ canvas: document.getElementById("c"), antialias: true }); r.setSize(innerWidth, innerHeight, false); r.outputColorSpace = THREE.SRGBColorSpace;
 const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight("#fff", "#556", 2.4)); const d = new THREE.DirectionalLight("#fff", 2); d.position.set(3, 6, 2); sc.add(d);
