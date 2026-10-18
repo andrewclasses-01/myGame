@@ -732,6 +732,20 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Bẫy bàn thử:** khung Browser ẩn ⇒ rAF đứng + ảnh chụp chậm 1 nhịp ⇒ chạy bằng `game.step(n)`, chụp canvas bằng `toDataURL` ngay sau step rồi gắn `<img>` mới, chụp màn 2 lần (lần 1 để trang vẽ lại).
   Kịch bản drift: Time, ramps Off, `auto(true)`, `G.timeLeft = 0.001`. Kịch bản bay: `place` xe trước cầu nhảy + `drive(boost)` tới khi `air` rồi hết giờ.
 
+## Racing Words 4h → 4j — 18/10/2026 tối/đêm · ✅ LÊN AWord Đợt 551 `27825a2` · phiên máy nhà
+- **4h** (`e1efecd`): GỐC "LOADING đứng 99 %" = `silhouette()` (bóng xe 3z) gom ~60k tam giác + closePath mỗi tam giác ⇒ Skia chậm theo cấp số ⇒ ĐƠ 10–50 s / xe lần đầu mỗi trang
+  (đo bằng bọc CanvasRenderingContext2D: closePath 10,3 s/60k lần). Sửa: bỏ closePath + tô theo lô 1.500 (H4 10,8 s → 0,07 s, Y4 50 s → 0,15 s; bàn đo `do-bong-4h.html`).
+  `rw-loadpace-4h.js` % theo THỜI GIAN 5 chặng, nhớ theo máy, "chạy trước" bằng CSS transition (luồng chính bị khoá 1,1–1,7 s lúc dựng trận / vẽ khung đầu — JS không vẽ được).
+  Chờ 3 s trước câu mới (qGap, lớp .rw-qfill đầy dần từ giữa ra ngoài, tiếng R3 + B1 Web Audio), chữ ô trả lời fitAns, bàn đạp BOOST phát sáng không filter (quầng gradient tĩnh).
+- **4i** (`7914045`, + iPad DAMAGE `c214797`): bộ quản lý cửa sổ winOpen/winClose (Menu / Switch activity — trước KHÔNG tạm dừng / Options AWord / Settings), góc dưới phải theo cqh,
+  Settings kiểu C (tab DRIVER / CAMERA / RACE), đèn 3-2-1 (.rw-rs) khi đóng hết lúc đua; padMix (Drive on iPad màn lớn lái cùng); fire() chỉ khi đối thủ trước ≥ 5 m;
+  tên lửa H 4,6 + quầng đỏ mờ + trôi ngang ≤ 2,5 m/s khoá 1,4 s; trúng = lệch 8+3L°, mất lái L s, khói gầm, cháy, thanh .rw-dmg (+ iPad qua tin "i:"); mũi tên .rw-oa2 dính mép;
+  bảng đếm .rw-cb đầu vạch (Length m LEFT / Words / Time + số to 10 s cuối). ⚠️ Ghi chú cũ "đỉnh tên lửa 11 m" SAI: H cũ 3,6–8,1 (đỉnh ~3–6,7 m).
+- **4j** (`a24e266`): nút bắn kiểu thẻ (qua 8 vòng thiết kế; thầy thích PHẲNG, gọn, ít động) — 2 ô tên lửa phẳng màu đội cố định, "+x" = KHO (tổng = icon + x),
+  thanh chuỗi trắng mảnh, bắn = mờ dần / nạp = hiện dần, không mục tiêu = xanh lá nhạt + bấm hiện NO TARGET AHEAD; giá tên lửa nóc xe luôn gập. iPad: thẻ là lớp phủ .ip-fbw.
+- ⛔ BẪY lặp 3 lần trong phiên: vá chuỗi có "// chú thích" chèn GIỮA dòng ⇒ nuốt phần code sau (lần 3 làm object H mất tag/msHold). Dùng /* */ hoặc kiểm phần đuôi dòng gốc.
+- AWord Đợt 551: worktree web-wt-dot551, GOC rw-4j.js, `core/loader3d.js` + `pace` / `h.mark`, pad.js padui-4j + rw-4j-fb.css, load-files.js đo lại. ⬜ thầy thử TOMKO + 2 iPad.
+
 ## Train Rush 1ax — 18/10/2026 · MÀN iPAD MƯỢT (30 khung, nền cam trơn, hết thùng "nảy") · phiên máy MSI
 **Bối cảnh (thầy):** iPad vẫn giật (cần tăng fps) · khinh khí cầu ("máy bay") và hộp chuyển động rất giật · có hộp rơi xuống đường rồi lại nảy lên trên iPad (màn lớn rơi chuẩn) ·
 đồ hoạ iPad không cần đẹp, cảnh sau một màu cam trơn. Điều kiện: không sai tính năng khác, không ảnh hưởng hiệu năng game đã tối ưu. Đầu phiên đã kiểm: AWord (Đợt 532 `8018252`)

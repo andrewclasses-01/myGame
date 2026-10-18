@@ -96,7 +96,11 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   mau-3p-muot.html + core/rw-3p.js + sr3d-3p.js + sr3d-car-3p.js + sr3d-intro-3p.js + sr3d-carmeta-3p.js   (15/10) MẪU 3p (= AWord Đợt 529): mượt (gộp lưới xe, số đo xe sẵn, dịch sẵn shader) + chạm đúp bỏ intro (mục 28)
   mau-3q-fight.html + core/rw-3q.js + sr3d-3q.js + sr3d-car-3q.js + sr3d-intro-3q.js + sr3d-world-3q.js + sr3d-missile-3q.js + rw-3q.css   (15/10) MẪU 3q (= AWord Đợt 531): Fight (theo lượt, Lives, Missile damages, Time delay, Miss wait) + cảnh xa đúng vật lý + 35 km/h (mục 29)
   mau-3r-muot.html + core/rw-3r.js + sr3d-3r.js + sr3d-intro-3r.js + sr3d-car-3r.js + sr3d-world-3r.js + sr3d-missile-3r.js + sr3d-autores-3r.js + rw-3r.css   (16/10) MẪU 3r MỚI NHẤT: = 3q tối ưu MƯỢT trên TOMKO (đo act 572 trong myActivity: xưởng 37⇒60, phim 18⇒60, đua hết dịch shader; nén vật liệu xe; HUD bỏ filter đắt) (mục 30)
-  ⭐ RACING WORDS MỚI NHẤT = mẫu 4g (18/10, CHƯA lên AWord — chờ thầy duyệt): mau-4g-ket-slow-motion.html + core/rw-4g.js/.css + lõi sr3d-4g.js
+  ⭐⭐ RACING WORDS MỚI NHẤT = mẫu 4j (18/10, ✅ ĐÃ LÊN AWord Đợt 551 `27825a2`): mau-4j-nut-ban.html + pad-4j.html · core/rw-4j.js · sr3d-4j.js · sr3d-intro-4h.js + sr3d-car-4h.js (cùng mô-đun xe)
+    · sr3d-missile-4i.js · iPad sr3d-padui-4j.js + sr3d-padlink-4j.js · CSS rw-4g · rw-4h · rw-4i · rw-4j-fb (thẻ nút bắn dùng chung game + iPad) · rw-4j · màn chờ rw-loadpace-4h.js.
+    Chuỗi 4h (chờ câu mới, loading đều, sửa đơ bóng xe) → 4i (cửa sổ góc, tạm dừng chung + 3-2-1, lái đồng thời, tên lửa mới, DAMAGE, mũi tên dính mép, bảng đếm đầu vạch)
+    → 4j (nút bắn kiểu thẻ, giá tên lửa thấp) — NGHIEN CUU mục 42–44; trang thiết kế thiet-ke-4h / 4i / 4j-v1…v8 (v8 = bản chốt). ĐỌC TRƯỚC: speed-run/HO SO BAN GIAO RACING WORDS.md.
+  (cũ) RACING WORDS mẫu 4g (18/10): mau-4g-ket-slow-motion.html + core/rw-4g.js/.css + lõi sr3d-4g.js
     (kết trận điện ảnh slow motion · số đếm 10 s · barrel roll tự chỉnh · lật chậm dốc xoắn · nảy khi đáp · đèn chậm · vạch boost mép mờ · mũi tên đối thủ — NGHIEN CUU mục 41).
     iPad giữ nguyên 4f (pad-4f.html + sr3d-padlink-4f.js + sr3d-padui-4f.js), intro sr3d-intro-4e.js. AWord hiện = 4f (Đợt 538–539); 3z…4f là các mẫu trung gian. ĐỌC TRƯỚC: speed-run/HO SO BAN GIAO RACING WORDS.md (trạng thái, bản đồ file, quy trình đưa AWord, bẫy).
   XE 3D THẬT (mục 20): chon-xe-3d.html (27 xe Sketchfab) → phong-xe-3d.html (garage 14 xe) + core/sr3d-xe3d.js + xe3d/<id>.glb (nén meshopt/webp; ghi công tác giả CC-BY); thiet-ke-ipad-dua.html = 4 mẫu iPad (mục 17)

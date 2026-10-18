@@ -1106,3 +1106,12 @@ máy quay chỉ thấy đầu xe); (b) slow cú bay co giãn theo thời gian ba
 (d) sửa luôn vết lốp (từ 3j `O.updateMatrix()` bị nuốt vào chú thích ⇒ vết lốp chưa từng hiện) + thêm lớp vết CHÁY `burnSk`; thầy bảo bật lại 2 dòng cùng bẫy: rung/chông chênh khi sai (`slip`, từ 4b) + bật nảy sau BAD LANDING (từ 4e).
 Đo step máy nhà: giữa trận 540 lệnh vẽ, màn kết 430–490, shader 65 ⇒ 65. Chi tiết + bẫy bàn thử: myGame `GHI CHU DU AN.md` chặng "Racing Words 4g".
 ✅ đã push myGame 18/10 · ⬜ thầy thử TOMKO ⇒ chép AWord theo HO SO BAN GIAO mục 4 (GOC rw-4g.js, CSS + rw-4g.css, đo lại load-files).
+
+## 42. ✅ MẪU 4h (18/10/2026) — chờ câu mới · loading đều · hết đơ bóng xe · boost phát sáng
+Trang thiết kế `thiet-ke-4h.html`, trang thử `mau-4h-cho-cau-moi.html`. Chi tiết + số đo: `GHI CHU DU AN.md` chặng "Racing Words 4h → 4j".
+
+## 43. ✅ MẪU 4i (18/10/2026) — cửa sổ góc + tạm dừng chung + 3-2-1 · lái đồng thời · tên lửa mới · DAMAGE · mũi tên dính mép · bảng đếm đầu vạch
+Trang thiết kế `thiet-ke-4i.html` (mục 1–7 thầy chốt), trang thử `mau-4i-goc-man-hinh.html` + `pad-4i.html`.
+
+## 44. ✅ MẪU 4j (18/10/2026) — nút bắn kiểu thẻ · giá tên lửa thấp · ĐÃ LÊN AWord Đợt 551
+Thiết kế qua 8 bản `thiet-ke-4j.html` → `thiet-ke-4j-v8.html` (v8 = chốt). Trang thử `mau-4j-nut-ban.html` + `pad-4j.html`. CSS thẻ dùng chung `core/rw-4j-fb.css`.
