@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế 4h</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ mẫu 4h (18/10/2026) — 3 việc thầy giao: bàn đạp BOOST phát sáng · LOADING chia đều % · khoảng chờ giữa 2 câu hỏi.
+   Chỉ là trang xem / nghe thử: CHƯA đụng code game. Bàn đạp dùng ĐÚNG hình GAS_SVG của game (core/sr3d-dash-3h.js). */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140, 200, 255, .14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa; --t0: #3b8cff; --t1: #ff7a00; --cy: #46e6ff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: #f5c542; color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1180px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; letter-spacing: .02em; }
+h1 small { font: 600 15px "Exo 2"; color: var(--mut); font-style: normal; margin-left: 8px; }
+h2 { font: italic 900 21px "Exo 2"; margin: 0 0 6px; }
+h2 b { color: var(--ac); margin-right: 8px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); }
+.note { background: rgba(96, 165, 250, .08); border-left: 3px solid var(--ac); padding: 8px 12px; border-radius: 0 10px 10px 0; margin: 10px 0; }
+.warn { background: rgba(255, 122, 0, .1); border-left-color: var(--t1); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+td, th { border-bottom: 1px solid var(--line); padding: 7px 8px; text-align: left; vertical-align: top; }
+th { color: var(--mut); font-weight: 700; }
+.ok { color: #6ee7a0; font-weight: 800; } .no { color: #ffb36b; font-weight: 800; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140, 200, 255, .3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--ac); color: #06101f; border-color: var(--ac); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+label.r { display: inline-flex; gap: 6px; align-items: center; margin-right: 12px; cursor: pointer; }
+
+/* ---------- 1. BÀN ĐẠP ---------- */
+.peds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.pcol { background: #0e1219; border: 1px solid var(--line); border-radius: 14px; padding: 10px 8px 12px; display: flex; flex-direction: column; align-items: center; }
+.pcol h3 { margin: 0; font: italic 900 16px "Exo 2"; } .pcol p { margin: 2px 0 6px; font-size: 12.5px; color: var(--mut); text-align: center; min-height: 38px; }
+.pstage { position: relative; height: 250px; width: 100%; display: flex; align-items: flex-end; justify-content: center; background: radial-gradient(120% 90% at 50% 100%, #1a2029, #0c0f14 70%); border-radius: 10px; overflow: hidden; }
+.ped { position: relative; height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; transform-origin: 50% 100%; transition: transform .07s; }
+.ped svg.sr-pedal-svg { display: block; height: 196px; width: auto; position: relative; z-index: 1; filter: drop-shadow(0 7px 9px rgba(0, 0, 0, .6)); }
+.ped span { font: italic 900 15px/22px "Exo 2"; letter-spacing: .14em; color: #7fe9ff; position: relative; z-index: 1; }
+.ped.down { transform: perspective(300px) rotateX(16deg) scaleY(.95); }
+.ped .nf, .ped .nf2 { transition: transform .5s cubic-bezier(.25, .8, .35, 1); }
+/* iPad gốc: filter drop-shadow (iPad chịu được vì chỉ 1 bàn đạp, màn nhỏ) */
+.v-ipad.nitro svg.sr-pedal-svg { filter: drop-shadow(0 0 16px rgba(80, 230, 255, .85)); transition: filter .6s; }
+.v-ipad.down svg.sr-pedal-svg { filter: drop-shadow(0 0 22px #3b8cff) drop-shadow(0 0 7px #3b8cff) brightness(1.25); }
+/* B / C: quầng sáng = lớp gradient TĨNH sau bàn đạp, chỉ đổi opacity / transform ⇒ không filter, không blur thật (TOMKO mượt) */
+.halo { position: absolute; left: 50%; bottom: 14px; width: 230px; height: 250px; margin-left: -115px; border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(closest-side, rgba(90, 240, 255, .62), rgba(70, 230, 255, .30) 45%, rgba(70, 230, 255, .08) 72%, rgba(70, 230, 255, 0));
+  opacity: 0; transform: scale(.9); transition: opacity .6s ease, transform .6s ease; will-change: opacity, transform; }
+.halo2 { position: absolute; left: 50%; bottom: 22px; width: 90px; margin-left: -45px; border-radius: 45px; pointer-events: none; z-index: 2; mix-blend-mode: screen;
+  background: linear-gradient(180deg, rgba(140, 250, 255, 0), rgba(140, 250, 255, .28) 30%, rgba(140, 250, 255, .1)); opacity: 0; transition: opacity .3s; }
+.down .halo { transform: scale(1.08); }
+.v-c .scan { position: absolute; left: 50%; width: 70px; margin-left: -35px; height: 26px; bottom: 30px; border-radius: 50%; z-index: 2; pointer-events: none; opacity: 0;
+  background: radial-gradient(closest-side, rgba(220, 255, 255, .85), rgba(120, 240, 255, .35) 55%, transparent); mix-blend-mode: screen; }
+.v-c.down .scan { animation: scan .55s linear infinite; }
+@keyframes scan { 0% { transform: translateY(0) scaleX(.7); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(calc(-1 * var(--h, 120px))) scaleX(1); opacity: 0; } }
+.v-c.full .halo { animation: breathe 1.6s ease-in-out infinite alternate; }
+@keyframes breathe { from { transform: scale(.94); } to { transform: scale(1.06); } }
+.ctl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+.ctl input[type=range] { width: 220px; }
+
+/* ---------- 2. LOADING ---------- */
+.chart { position: relative; height: 210px; margin: 12px 0 4px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.chart svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.lg { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--mut); }
+.lg i { display: inline-block; width: 18px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.sims { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+.sim { background: #07090d; border-radius: 12px; padding: 18px 16px 14px; text-align: center; border: 1px solid var(--line); }
+.sim h4 { margin: 0 0 12px; font: 800 14px "Exo 2"; color: var(--mut); }
+.lbar { width: 72%; height: 5px; margin: 0 auto; border-radius: 9px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.lbar i { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, #3b8cff, #ff7a00); }
+.lpct { margin-top: 10px; font: italic 800 12px "Exo 2"; letter-spacing: .5em; color: #fff; }
+.lt { margin-top: 6px; font-size: 12px; color: var(--mut); }
+.steps { font-size: 12px; color: var(--mut); margin-top: 6px; min-height: 18px; }
+
+/* ---------- 3. CHUYỂN CÂU ---------- */
+.band { container-type: size; position: relative; width: 100%; aspect-ratio: 16 / 3.1; background: #05070b; border-radius: 12px; padding: 1.2% 1%; display: grid; grid-template-columns: 1fr .62fr 1fr; gap: 1%; margin-top: 12px; }
+.qb { position: relative; border-radius: 3cqh; background: linear-gradient(180deg, rgba(20, 28, 40, .95), rgba(10, 14, 22, .95)); border: .5cqh solid color-mix(in srgb, var(--team) 55%, transparent);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2cqh 3%; overflow: hidden; }
+.qb .q { color: #fff; font: 700 9.5cqh/1.15 "Exo 2"; text-align: center; transition: opacity .25s; }
+.qb .tag { position: absolute; top: 2.5cqh; font: italic 900 6cqh "Exo 2"; letter-spacing: .16em; color: var(--team); }
+.qb0 .tag { left: 4%; } .qb1 .tag { right: 4%; }
+.qb .ans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2%; width: 100%; margin-top: 4cqh; }
+.qb .ans b { font: 700 6.4cqh "Exo 2"; text-align: center; padding: 2.4cqh 0; border-radius: 2cqh; background: #1b2433; color: #dbe7f7; transition: background .2s, opacity .2s; }
+.qb.lock .ans b { opacity: .45; } .qb .ans b.ok { background: #1f8f53; color: #fff; opacity: 1; } .qb .ans b.bad { background: #b2342c; color: #fff; opacity: 1; }
+.mapm { border-radius: 3cqh; background: #0b1018; border: .4cqh solid rgba(140, 200, 255, .15); display: grid; place-items: center; color: #4c5a6e; font: 800 6cqh "Exo 2"; letter-spacing: .2em; }
+/* dải sáng chờ câu mới — chỉ transform (scaleX) + opacity */
+.gap { position: absolute; left: 0; right: 0; height: 2.2cqh; pointer-events: none; opacity: 0; transform-origin: var(--og) 50%; will-change: transform, opacity; z-index: 3; }
+.qb0 .gap { --og: 0%; } .qb1 .gap { --og: 100%; }
+.gap::before { content: ""; position: absolute; inset: 0; border-radius: 9px; background: linear-gradient(var(--dir), #fff 0, #fff 6%, color-mix(in srgb, var(--team) 70%, white) 30%, var(--team) 100%); }
+.gap::after { content: ""; position: absolute; left: 0; right: 0; top: -2.4cqh; bottom: -2.4cqh; border-radius: 50%;
+  background: linear-gradient(var(--dir), rgba(255, 255, 255, .55), color-mix(in srgb, var(--team) 40%, transparent) 40%, transparent); opacity: .7; }
+.qb0 .gap { --dir: 270deg; } .qb1 .gap { --dir: 90deg; }      /* đầu SÁNG TRẮNG ở phía GIỮA màn hình — đầu đó rút dần ra mép ngoài */
+.pos-bot .gap { bottom: 0; } .pos-top .gap { top: 0; }
+.pos-frame .gap { top: 0; bottom: 0; height: auto; }
+.pos-frame .gap::before { background: none; border: .7cqh solid color-mix(in srgb, var(--team) 60%, white); border-radius: 3cqh; box-shadow: inset 0 0 4cqh color-mix(in srgb, var(--team) 55%, transparent); }
+.pos-frame .gap::after { display: none; }
+.gap.run { opacity: 1; animation: gapRun var(--gs, 3s) linear forwards; }
+@keyframes gapRun { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.qb .flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; border-radius: inherit; background: radial-gradient(closest-side, rgba(255, 255, 255, .55), color-mix(in srgb, var(--team) 35%, transparent) 60%, transparent); }
+.qb.boom .flash { animation: fl .55s ease-out; }
+.qb.boom .q { animation: qin .45s cubic-bezier(.2, .9, .3, 1.2); }
+@keyframes fl { 0% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.25); } }
+@keyframes qin { 0% { transform: scale(.82); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.timeline { display: flex; height: 26px; border-radius: 8px; overflow: hidden; font: 700 12px/26px "Exo 2"; margin-top: 10px; }
+.timeline div { text-align: center; color: #06101f; white-space: nowrap; overflow: hidden; }
+.ask { background: rgba(245, 197, 66, .08); border: 1px dashed rgba(245, 197, 66, .5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; }
+.ask b { color: #f5c542; }
+@media (max-width: 760px) { .peds { grid-template-columns: 1fr 1fr; } .sims { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="top">THIẾT KẾ 4h · CHƯA BUILD — chỉ xem / nghe thử · chờ thầy chọn rồi "ok build"</div>
+<main>
+<h1>RACING WORDS — mẫu 4h <small>18/10/2026 · 3 việc: bàn đạp BOOST · LOADING · khoảng chờ câu mới</small></h1>
+
+<!-- ============ 0. ĐỒNG BỘ ============ -->
+<section class="sec">
+  <h2><b>0</b>Kiểm khớp myGame ↔ AWord</h2>
+  <table>
+    <tr><th>Nơi</th><th>Bản</th><th>Tình trạng</th></tr>
+    <tr><td>AWord (đang chạy thật)</td><td>Đợt 539 = myGame mẫu <b>4f</b> (+ màn chờ % Đợt 544)</td><td><span class="ok">KHỚP</span> — 26/26 file 3D giống hệt myGame 4f, chỉ khác dòng <code>import</code> (công cụ chép tự đổi đường).</td></tr>
+    <tr><td>myGame</td><td>mẫu <b>4g</b> (18/10 chiều): kết trận slow motion + 8 việc (số đếm 10 s, lật chậm dốc xoắn, nảy khi đáp, đèn chậm, <b>vạch boost mép mờ</b>, mũi tên đối thủ…)</td><td><span class="no">CHƯA LÊN AWord</span> — hồ sơ ghi "thầy thử TOMKO rồi mới lên".</td></tr>
+  </table>
+  <div class="note">⇒ Làm tiếp ở myGame <b>mẫu 4h = 4g + 3 việc dưới</b>. Thầy OK 4h thì đưa <b>cả 4g + 4h</b> lên AWord một lần (Đợt mới), đo lại % load.</div>
+</section>
+
+<!-- ============ 1. BÀN ĐẠP ============ -->
+<section class="sec">
+  <h2><b>1</b>Bàn đạp BOOST phát sáng như iPad</h2>
+  <div class="mut">Màn lớn đã TẮT hết hiệu ứng mờ/sáng (filter) từ mẫu 3r để TOMKO mượt ⇒ bàn đạp trông "phẳng". iPad vẫn dùng filter (1 bàn đạp, màn nhỏ nên chịu được).
+  Cách mới: <b>quầng sáng vẽ sẵn bằng dải màu tĩnh</b> đặt sau bàn đạp, chỉ đổi độ đậm — nhìn giống blur + phát sáng nhưng KHÔNG tốn máy.</div>
+  <div class="peds" id="peds"></div>
+  <div class="ctl">
+    <span>Năng lượng boost:</span><input type="range" id="eng" min="0" max="100" value="45"><b id="engv">45%</b>
+    <button class="b" id="hold">Giữ để BOOST (bấm giữ)</button>
+    <button class="b" id="ok">Trả lời ĐÚNG (+nạp)</button>
+    <button class="b" id="auto">▶ Tự chạy</button>
+  </div>
+  <div class="ask"><b>Thầy chọn:</b> B hay C (A = màn lớn hiện tại, cột đầu = iPad để so).</div>
+</section>
+
+<!-- ============ 2. LOADING ============ -->
+<section class="sec">
+  <h2><b>2</b>LOADING: đứng ở 99 % — đã tìm ra gốc</h2>
+  <div>Em đo thật bằng bàn thử AWord (mạng chậm giả lập 3,2 Mbps, máy nhà RTX 5060 Ti):</div>
+  <div class="chart"><svg id="chart" viewBox="0 0 320 100" preserveAspectRatio="none"></svg></div>
+  <div class="lg"><span><i style="background:#ff7a00"></i>Hiện tại: số % hiện trên màn</span><span><i style="background:#3b8cff"></i>Tải file thật (xong ở giây 9,7)</span><span><i style="background:#ff4a4a;height:12px;opacity:.35"></i>Trình duyệt ĐƠ HẲN 22,4 giây</span><span><i style="background:#6ee7a0"></i>Sau khi sửa (dự kiến)</span></div>
+  <div class="note warn"><b>Gốc lỗi:</b> lúc dựng xe, game vẽ <b>bóng xe</b> (hình chiếu từ trên, có từ mẫu 3z) bằng cách gom ~60.000 tam giác vào MỘT nét vẽ — lệnh <code>closePath</code> mỗi tam giác làm trình duyệt chậm dần theo cấp số
+  ⇒ <b>mỗi xe đơ ~10 giây</b> (đo: H4 10,3 s · Y2 10,9 s), 2 xe = 21 s. Trong lúc đơ mọi thứ đứng (cả thanh %), nên nó kẹt ở 99 %.
+  Mạng nhà nhanh thì tải xong trong 2–3 giây ⇒ thầy thấy đúng như mô tả: "đầu nhanh, 99 % rất lâu". TOMKO chip yếu hơn ⇒ còn lâu hơn.</div>
+  <div class="note"><b>Sửa 2 bước:</b><br>
+  ① <b>Bỏ chỗ đơ</b>: vẽ bóng không dùng <code>closePath</code> (tô tam giác như cũ — hình bóng y hệt) ⇒ đo lại, dự kiến 10 s → dưới 0,1 s mỗi xe. Đây là phần lợi lớn nhất: thầy chờ ít đi ~20 giây mỗi lần mở game.<br>
+  ② <b>% chia đều theo THỜI GIAN</b>, không theo byte: thanh chia 3 chặng — <i>Tải file</i> · <i>Dựng xe + xưởng</i> · <i>Chuẩn bị hình</i>; game báo từng bước thật (xe 1 xong, xe 2 xong, xưởng xong…).
+  Máy nhớ lần mở trước mất bao lâu (nhớ theo máy) ⇒ thanh chạy <b>đều tay</b> tới đúng lúc xong; xong sớm thì tăng tốc mượt tới 100 %, chậm hơn dự kiến thì bò chậm lại chứ không đứng hình ở 99.</div>
+  <div class="sims">
+    <div class="sim"><h4>HIỆN TẠI (số đo thật)</h4><div class="lbar"><i id="b0"></i></div><div class="lpct" id="p0">LOADING 0%</div><div class="lt" id="t0">0,0 s</div></div>
+    <div class="sim"><h4>SAU KHI SỬA (dự kiến)</h4><div class="lbar"><i id="b1"></i></div><div class="lpct" id="p1">LOADING 0%</div><div class="lt" id="t1">0,0 s</div><div class="steps" id="s1"></div></div>
+  </div>
+  <div class="row"><button class="b" id="simgo">▶ Chạy so sánh (thời gian thật)</button><span class="mut">Bên phải giả định cùng mạng chậm; mạng nhà thầy thì cả hai ngắn hơn nhiều.</span></div>
+</section>
+
+<!-- ============ 3. CHUYỂN CÂU ============ -->
+<section class="sec">
+  <h2><b>3</b>Khoảng chờ trước câu mới: dải sáng rút từ GIỮA ra NGOÀI + tiếng tăng dần + "bùm"</h2>
+  <div class="mut">Hiện tại: cả 2 đội trả lời xong ⇒ sang câu mới sau 0,55 s (đúng) / 1,3 s (sai) / 0,9 s (hết giờ) — nhanh, chưa kịp nhìn đáp án.
+  Mới: chờ <b>3 giây</b> cho CẢ 2 ĐỘI — câu cũ vẫn hiện (đáp án đúng sáng xanh để HS xem lại), dải sáng ở 2 khung câu hỏi rút dần từ phía giữa màn hình ra 2 mép ngoài, đều 2 bên;
+  tiếng tăng dần suốt 3 s; câu mới hiện ra kèm tiếng "bùm" nhẹ + chớp sáng khung.</div>
+  <div class="band pos-bot" id="band">
+    <div class="qb qb0" style="--team:var(--t0)"><b class="tag">TEAM 1</b><div class="q">She ___ to school every day.</div><div class="ans"><b>go</b><b>goes</b><b>going</b><b>gone</b></div><i class="gap"></i><i class="flash"></i></div>
+    <div class="mapm">MAP</div>
+    <div class="qb qb1" style="--team:var(--t1)"><b class="tag">TEAM 2</b><div class="q">She ___ to school every day.</div><div class="ans"><b>go</b><b>goes</b><b>going</b><b>gone</b></div><i class="gap"></i><i class="flash"></i></div>
+  </div>
+  <div class="timeline" id="tl"></div>
+  <div class="row"><b>Vị trí dải sáng:</b>
+    <label class="r"><input type="radio" name="pos" value="pos-bot" checked> Mép DƯỚI khung</label>
+    <label class="r"><input type="radio" name="pos" value="pos-top"> Mép TRÊN khung</label>
+    <label class="r"><input type="radio" name="pos" value="pos-frame"> Cả VIỀN khung</label></div>
+  <div class="row"><b>Tiếng chờ (3 s):</b>
+    <label class="r"><input type="radio" name="rs" value="1" checked> R1 Máy rú lên dần</label>
+    <label class="r"><input type="radio" name="rs" value="2"> R2 Tích tắc nhanh dần</label>
+    <label class="r"><input type="radio" name="rs" value="3"> R3 Gió hút + trầm dâng</label></div>
+  <div class="row"><b>Tiếng câu mới:</b>
+    <label class="r"><input type="radio" name="bm" value="1" checked> B1 Bùm trầm nhẹ</label>
+    <label class="r"><input type="radio" name="bm" value="2"> B2 Bùm + leng keng sáng</label></div>
+  <div class="row"><button class="b" id="qgo">▶ Chạy thử 1 lượt (có tiếng)</button><button class="b" id="qloop">⟳ Chạy liên tục</button>
+    <span class="mut">Tiếng tạo ngay trong trình duyệt (không tải file). Thầy thích kiểu nào em sẽ làm bản "thật" như các tiếng khác của game.</span></div>
+  <div class="ask"><b>Thầy chọn:</b> vị trí dải · tiếng chờ · tiếng bùm · và chế độ <i>Different</i> (mỗi đội câu riêng) có chờ 3 s không.</div>
+</section>
+</main>
+
+<script type="module">
+import { GAS_SVG } from "./core/sr3d-dash-3h.js";
+
+/* ===================== 1. BÀN ĐẠP ===================== */
+const V = [
+  { k: "ipad", h: "iPad (để so)", p: "Bàn đạp ga trên iPad: viền sáng xanh bằng filter." },
+  { k: "a", h: "A · hiện tại", p: "Màn lớn mẫu 4g: vạch năng lượng mép mờ, KHÔNG phát sáng." },
+  { k: "b", h: "B · phát sáng", p: "Quầng sáng sau bàn đạp đậm theo năng lượng + mép trên sáng mờ + gân bàn đạp bắt sáng." },
+  { k: "c", h: "C · B + chạy sáng", p: "Như B; GIỮ boost ⇒ vệt sáng chạy lên liên tục; đầy năng lượng ⇒ quầng 'thở'." }
+];
+const uniq = (svg, n) => svg.replace(/id="(\w+)"/g, `id="$1_${n}"`).replace(/url\(#(\w+)\)/g, `url(#$1_${n})`);
+function pedalSvg(k, n) {
+  let s = uniq(GAS_SVG, n);
+  const grad = `<linearGradient id="nf_${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46e6ff" stop-opacity="0"/><stop offset=".2" stop-color="#46e6ff" stop-opacity=".42"/><stop offset="1" stop-color="#46e6ff" stop-opacity=".6"/></linearGradient>
+    <linearGradient id="ed_${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8ffff" stop-opacity="0"/><stop offset=".5" stop-color="#d8ffff" stop-opacity=".75"/><stop offset="1" stop-color="#7ff3ff" stop-opacity="0"/></linearGradient>`;
+  s = s.replace("<defs>", "<defs>" + grad);
+  const glow = k === "b" || k === "c";
+  const fill = `<g class="nf"><rect x="0" y="30" width="60" height="120" fill="url(#nf_${n})"/>${glow ? `<rect x="0" y="27" width="60" height="9" fill="url(#ed_${n})"/>` : ""}</g>`;
+  s = s.replace(/<rect class="sr-nfill"[^>]*\/>/, fill);
+  if (glow) s = s.replace(`<circle cx="10" cy="37"`, `<g clip-path="url(#srgasclip_${n})"><g class="nf2"><rect x="0" y="30" width="60" height="120" fill="#7ff3ff" opacity=".2"/></g></g><circle cx="10" cy="37"`);
+  return s;
+}
+const peds = document.getElementById("peds");
+V.forEach((v, n) => {
+  const c = document.createElement("div"); c.className = "pcol";
+  const glow = v.k === "b" || v.k === "c";
+  c.innerHTML = `<h3>${v.h}</h3><p>${v.p}</p><div class="pstage"><div class="ped v-${v.k}">${glow ? `<i class="halo"></i>` : ""}${v.k === "c" ? `<i class="scan"></i>` : ""}${pedalSvg(v.k, n)}<span>BOOST</span></div></div>`;
+  peds.appendChild(c);
+});
+const P = [...peds.querySelectorAll(".ped")];
+let E = 0.45, holding = false;
+function paintPed() {
+  P.forEach(p => {
+    const ty = ((1 - E) * 120).toFixed(1) + "px";
+    p.querySelectorAll(".nf, .nf2").forEach(g => { g.style.transform = `translateY(${ty})`; });
+    p.classList.toggle("nitro", E > 0.01); p.classList.toggle("down", holding); p.classList.toggle("full", E > 0.98);
+    const h = p.querySelector(".halo"); if (h) h.style.opacity = (E > 0.01 ? 0.25 + 0.75 * E : 0) * (holding ? 1 : 0.8) + (holding && E > 0.01 ? 0.2 : 0);
+    p.style.setProperty("--h", Math.max(20, E * 170) + "px");
+  });
+  document.getElementById("eng").value = Math.round(E * 100); document.getElementById("engv").textContent = Math.round(E * 100) + "%";
+}
+document.getElementById("eng").oninput = e => { E = e.target.value / 100; paintPed(); };
+const hold = document.getElementById("hold");
+let drainT = 0;
+const drain = () => { if (!holding) return; E = Math.max(0, E - 0.02); paintPed(); if (E > 0) drainT = setTimeout(drain, 90); else { holding = false; paintPed(); } };
+hold.onpointerdown = () => { if (E <= 0) return; holding = true; paintPed(); drainT = setTimeout(drain, 90); };
+const up = () => { holding = false; clearTimeout(drainT); paintPed(); };
+hold.onpointerup = up; hold.onpointerleave = up;
+document.getElementById("ok").onclick = () => { E = Math.min(1, E + 0.2); paintPed(); };
+let autoT = 0;
+document.getElementById("auto").onclick = e => {
+  const on = e.target.classList.toggle("on");
+  clearInterval(autoT); if (!on) { holding = false; paintPed(); return; }
+  let k = 0;
+  autoT = setInterval(() => {
+    k++;
+    if (k % 12 < 5) { holding = false; E = Math.min(1, E + 0.2); }
+    else if (k % 12 < 10) { holding = E > 0; E = Math.max(0, E - 0.12); }
+    else holding = false;
+    paintPed();
+  }, 500);
+};
+paintPed();
+
+/* ===================== 2. LOADING ===================== */
+const OLD = [[0, 0], [2.9, 0], [3.0, .12], [3.1, .44], [3.2, .57], [3.3, .69], [3.4, .77], [3.5, .84], [3.6, .85], [8.2, .99], [30.6, 1]];
+const FILES = [[0, 0], [3.0, .1], [3.6, .5], [6, .75], [8.2, .9], [9.7, 1]];
+// sau khi sửa: tải 0–9,7 s (cùng mạng) + dựng xe/xưởng ~0,9 s + chuẩn bị hình ~0,6 s ⇒ ~11,2 s, thanh chạy ĐỀU
+const NEW_T = 11.2, STEPS = [[0, "Tải file…"], [9.7, "Dựng xe đội 1…"], [10.1, "Dựng xe đội 2…"], [10.5, "Dựng xưởng…"], [10.8, "Chuẩn bị hình…"], [11.2, "Xong"]];
+const lerp = (pts, t) => { for (let i = 1; i < pts.length; i++) if (t <= pts[i][0]) { const [a, pa] = pts[i - 1], [b, pb] = pts[i]; return pa + (pb - pa) * ((t - a) / Math.max(1e-6, b - a)); } return pts.at(-1)[1]; };
+const stepAt = t => { let s = STEPS[0]; for (const x of STEPS) if (t >= x[0]) s = x; return s[1]; };
+(function chart() {
+  const X = t => t / 32 * 320, Y = p => 100 - p * 100;
+  const path = pts => pts.map((q, i) => (i ? "L" : "M") + X(q[0]).toFixed(1) + " " + Y(q[1]).toFixed(1)).join(" ");
+  const oldStep = OLD.flatMap((q, i) => i ? [[q[0] - 0.0001, OLD[i - 1][1]], q] : [q]);
+  let s = `<rect x="${X(9.7)}" y="0" width="${X(32.1) - X(9.7)}" height="100" fill="#ff4a4a" opacity=".13"/>`;
+  s += `<text x="${X(20)}" y="55" fill="#ff8a8a" font-size="5" text-anchor="middle" font-family="Exo 2">trình duyệt đơ 22,4 s (vẽ bóng 2 xe)</text>`;
+  for (let t = 0; t <= 30; t += 5) s += `<text x="${X(t)}" y="107" fill="#8d9bb0" font-size="4.2" text-anchor="middle">${t}s</text>`;
+  s += `<path d="${path(FILES)}" fill="none" stroke="#3b8cff" stroke-width="1.2" vector-effect="non-scaling-stroke" stroke-dasharray="4 3"/>`;
+  s += `<path d="${path(oldStep)}" fill="none" stroke="#ff7a00" stroke-width="2.4" vector-effect="non-scaling-stroke"/>`;
+  s += `<path d="M0 100 L${X(NEW_T)} 0" fill="none" stroke="#6ee7a0" stroke-width="2.4" vector-effect="non-scaling-stroke"/>`;
+  s += `<text x="${X(8.2)}" y="-2" fill="#ffb36b" font-size="4.4" text-anchor="middle">99% từ giây 8,2</text><text x="${X(NEW_T) + 2}" y="4" fill="#6ee7a0" font-size="4.4">xong ~11 s</text>`;
+  document.getElementById("chart").innerHTML = s;
+})();
+let simRaf = 0;
+document.getElementById("simgo").onclick = () => {
+  cancelAnimationFrame(simRaf); const t0 = performance.now();
+  const f = () => {
+    const t = (performance.now() - t0) / 1000;
+    const p0 = Math.min(1, lerp(OLD, t)), p1 = Math.min(1, t / NEW_T);
+    document.getElementById("b0").style.transform = `scaleX(${p0})`; document.getElementById("p0").textContent = "LOADING " + Math.floor(p0 * 100) + "%";
+    document.getElementById("b1").style.transform = `scaleX(${p1})`; document.getElementById("p1").textContent = "LOADING " + Math.floor(p1 * 100) + "%";
+    document.getElementById("t0").textContent = Math.min(t, 30.6).toFixed(1).replace(".", ",") + " s" + (t >= 30.6 ? " — VÀO GAME" : "");
+    document.getElementById("t1").textContent = Math.min(t, NEW_T).toFixed(1).replace(".", ",") + " s" + (t >= NEW_T ? " — VÀO GAME" : "");
+    document.getElementById("s1").textContent = stepAt(t);
+    if (t < 31) simRaf = requestAnimationFrame(f);
+  };
+  f();
+};
+
+/* ===================== 3. CHUYỂN CÂU ===================== */
+let AC = null;
+const ac = () => (AC ||= new (window.AudioContext || window.webkitAudioContext)());
+function noiseBuf(c, sec) { const b = c.createBuffer(1, c.sampleRate * sec, c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; }
+function riser(kind, T) {
+  const c = ac(), t = c.currentTime + 0.02, out = c.createGain(); out.gain.value = 0.9; out.connect(c.destination);
+  if (kind === 1) {                       // R1: 2 sóng răng cưa lệch nhau, cao dần, bộ lọc mở dần + gió
+    const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.Q.value = 6; lp.frequency.setValueAtTime(300, t); lp.frequency.exponentialRampToValueAtTime(5200, t + T);
+    const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + T * 0.9); g.gain.linearRampToValueAtTime(0, t + T);
+    lp.connect(g).connect(out);
+    [0, 7].forEach(dt => { const o = c.createOscillator(); o.type = "sawtooth"; o.detune.value = dt; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(420, t + T); o.connect(lp); o.start(t); o.stop(t + T); });
+    const n = c.createBufferSource(); n.buffer = noiseBuf(c, T); const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 1.4;
+    bp.frequency.setValueAtTime(500, t); bp.frequency.exponentialRampToValueAtTime(6000, t + T);
+    const ng = c.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.12, t + T * 0.95); ng.gain.linearRampToValueAtTime(0, t + T);
+    n.connect(bp).connect(ng).connect(out); n.start(t);
+  } else if (kind === 2) {               // R2: tích tắc dày dần + cao dần
+    let x = 0, k = 0;
+    while (x < T - 0.03) {
+      const f = 0.32 - 0.27 * (x / T), o = c.createOscillator(), g = c.createGain();
+      o.type = "square"; o.frequency.value = 700 + 1100 * (x / T);
+      g.gain.setValueAtTime(0.0001, t + x); g.gain.exponentialRampToValueAtTime(0.05 + 0.08 * (x / T), t + x + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + x + 0.045);
+      o.connect(g).connect(out); o.start(t + x); o.stop(t + x + 0.05); x += f; k++;
+    }
+  } else {                               // R3: gió hút qua bộ lọc + sóng trầm dâng
+    const n = c.createBufferSource(); n.buffer = noiseBuf(c, T); const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 2.2;
+    bp.frequency.setValueAtTime(260, t); bp.frequency.exponentialRampToValueAtTime(3600, t + T);
+    const ng = c.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.32, t + T * 0.92); ng.gain.linearRampToValueAtTime(0, t + T);
+    n.connect(bp).connect(ng).connect(out); n.start(t);
+    const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.setValueAtTime(48, t); o.frequency.exponentialRampToValueAtTime(130, t + T);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + T * 0.9); g.gain.linearRampToValueAtTime(0, t + T);
+    o.connect(g).connect(out); o.start(t); o.stop(t + T);
+  }
+}
+function boom(kind) {
+  const c = ac(), t = c.currentTime + 0.005, out = c.createGain(); out.gain.value = 0.9; out.connect(c.destination);
+  const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.32);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.55, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+  o.connect(g).connect(out); o.start(t); o.stop(t + 0.6);
+  const n = c.createBufferSource(); n.buffer = noiseBuf(c, 0.2); const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1400;
+  const ng = c.createGain(); ng.gain.setValueAtTime(0.25, t); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+  n.connect(lp).connect(ng).connect(out); n.start(t);
+  if (kind === 2) [1318.5, 1975.5].forEach((f, i) => { const b = c.createOscillator(), bg = c.createGain(); b.type = "triangle"; b.frequency.value = f;
+    bg.gain.setValueAtTime(0.0001, t + 0.02 + i * 0.05); bg.gain.exponentialRampToValueAtTime(0.07, t + 0.03 + i * 0.05); bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.7 + i * 0.05);
+    b.connect(bg).connect(out); b.start(t + 0.02 + i * 0.05); b.stop(t + 0.8 + i * 0.05); });
+}
+const QS = [["She ___ to school every day.", ["go", "goes", "going", "gone"], 1], ["They ___ football yesterday.", ["play", "plays", "played", "playing"], 2],
+  ["I have lived here ___ 2020.", ["for", "since", "from", "at"], 1], ["Which word is a noun?", ["quickly", "happy", "teacher", "run"], 2]];
+let qi = 0, busy = false, looping = false;
+const band = document.getElementById("band"), qbs = [...band.querySelectorAll(".qb")];
+const val = n => +document.querySelector(`input[name=${n}]:checked`).value;
+document.querySelectorAll("input[name=pos]").forEach(r => r.onchange = () => { band.classList.remove("pos-bot", "pos-top", "pos-frame"); band.classList.add(r.value); });
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function showQ(k) { const [q, a, ok] = QS[k]; qbs.forEach(b => { b.classList.remove("lock"); b.querySelector(".q").textContent = q; b.querySelector(".ans").innerHTML = a.map(x => `<b>${x}</b>`).join(""); }); }
+(function tl() {
+  const parts = [["Đội 1 trả lời", 1.3, "#3b8cff"], ["Đội 2 trả lời", 1.0, "#ff7a00"], ["CHỜ 3 s — dải sáng rút + tiếng tăng dần", 3, "#f5c542"], ["BÙM · câu mới", 0.8, "#6ee7a0"]];
+  document.getElementById("tl").innerHTML = parts.map(([n, s, c]) => `<div style="flex:${s};background:${c}">${n}</div>`).join("");
+})();
+async function round() {
+  if (busy) return; busy = true;
+  const [, a, ok] = QS[qi];
+  // đội 1 đúng, đội 2 sai (cho thấy cả 2 kiểu)
+  await sleep(500); let bs = qbs[0].querySelectorAll(".ans b"); qbs[0].classList.add("lock"); bs[ok].classList.add("ok");
+  await sleep(800); bs = qbs[1].querySelectorAll(".ans b"); qbs[1].classList.add("lock"); bs[(ok + 1) % 4].classList.add("bad"); bs[ok].classList.add("ok");
+  await sleep(350);
+  const T = 3;
+  qbs.forEach(b => { const g = b.querySelector(".gap"); g.style.setProperty("--gs", T + "s"); g.classList.remove("run"); void g.offsetWidth; g.classList.add("run"); });
+  try { riser(val("rs"), T); } catch (e) { /* chưa bấm trang ⇒ chưa có tiếng */ }
+  await sleep(T * 1000);
+  qi = (qi + 1) % QS.length; showQ(qi);
+  qbs.forEach(b => { b.querySelector(".gap").classList.remove("run"); b.classList.remove("boom"); void b.offsetWidth; b.classList.add("boom"); });
+  try { boom(val("bm")); } catch (e) { /* */ }
+  await sleep(900); qbs.forEach(b => b.classList.remove("boom"));
+  busy = false;
+  if (looping) { await sleep(600); round(); }
+}
+document.getElementById("qgo").onclick = () => { ac().resume(); round(); };
+document.getElementById("qloop").onclick = e => { ac().resume(); looping = e.target.classList.toggle("on"); if (looping) round(); };
+</script>
+</body>
+</html>

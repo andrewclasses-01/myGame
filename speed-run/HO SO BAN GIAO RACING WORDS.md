@@ -6,6 +6,7 @@
 | Nơi | Bản | Mã commit | Trạng thái |
 |---|---|---|---|
 | myGame (thiết kế) | mẫu **4g** (18/10) — 4f + KẾT TRẬN SLOW MOTION (drift / bay) · số đếm 10 s · barrel roll tự chỉnh · lật chậm dốc xoắn · nảy khi đáp · đèn chậm · vạch boost mép mờ · mũi tên đối thủ (NGHIEN CUU mục 41) | (commit 18/10) | ✅ đã push myGame · ⬜ thầy thử TOMKO rồi mới lên AWord |
+| myGame (THIẾT KẾ, chưa build) | **4h** (18/10 tối) — trang `thiet-ke-4h.html`: bàn đạp BOOST phát sáng không filter (B/C) · LOADING: gốc đứng 99 % = `silhouette()` (bóng xe, sr3d-car-4b) gọi `closePath` 60k lần ⇒ mỗi xe đơ ~10 s (đo H4 10,3 s, Y2 10,9 s), sửa + % chia theo thời gian · khoảng chờ 3 s trước câu mới (dải sáng rút giữa→ngoài + tiếng tăng dần + bùm) | (commit 18/10) | ⬜ thầy chọn ⇒ "ok build" 4h ⇒ lên AWord cả 4g+4h |
 | myGame (thiết kế) | mẫu **4f** — bản đủ nhất (4e + iPad nối trước intro / giữ kết nối / tự nối lại / mốc tự lấy / khoá đội, mục 40) | `4077f92` | ✅ đã push |
 | AWord (bản thật) | **Đợt 539** = myGame 4f + khoá đội (Đợt 538 `b3c3004` = 4f; Đợt 537 = 4e `b529ff5`) | `13dad6e` | ✅ LIVE https://aword.andrewclasses.com (live nạp `rw-4f.js`, pad.js có `watchTeams`) |
 
