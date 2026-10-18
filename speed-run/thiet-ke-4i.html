@@ -61,7 +61,7 @@ table { border-collapse: collapse; width: 100%; font-size: 14px; } td, th { bord
 .spB .tip { right: 6.1cqh; bottom: -.85cqh; background: rgba(9,14,26,.94); border-right: .15cqh solid rgba(140,210,255,.3); border-bottom: .15cqh solid rgba(140,210,255,.3); }
 /* kiểu C — 2 cột: tab icon dọc bên trái + nội dung (rộng ngang, thấp — che ít đường đua nhất) */
 .spC { width: 56cqh; display: grid; grid-template-columns: 9cqh 1fr; border-radius: 1.6cqh; overflow: hidden; background: rgba(9,14,26,.94); border: .15cqh solid rgba(140,210,255,.3); box-shadow: 0 1.6cqh 4cqh rgba(0,0,0,.55); }
-.spC nav { background: rgba(255,255,255,.04); display: flex; flex-direction: column; gap: .5cqh; padding: 1.2cqh .8cqh; }
+.spC nav { border-radius: 1.6cqh 0 0 1.6cqh; background: rgba(255,255,255,.04); display: flex; flex-direction: column; gap: .5cqh; padding: 1.2cqh .8cqh; }
 .spC nav span { display: flex; flex-direction: column; align-items: center; gap: .3cqh; padding: .9cqh 0; border-radius: 1cqh; font: 800 1.15cqh "Exo 2"; letter-spacing: .08em; color: #8d9bb0; cursor: pointer; }
 .spC nav span svg { width: 2.6cqh; height: 2.6cqh; } .spC nav span.on { background: rgba(245,197,66,.14); color: #f5c542; }
 .spC .body { padding: 1.4cqh 1.6cqh 1.6cqh; position: relative; min-height: 30cqh; }
@@ -82,12 +82,37 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
 .ah .car { position: absolute; left: 50%; bottom: 6%; width: 22%; height: 16%; transform: translateX(-50%); border-radius: 30% 30% 12% 12%; background: linear-gradient(180deg, #4b8cff, #1d4fb3); z-index: 1; }
 .oa { position: absolute; left: 0; top: 0; z-index: 3; will-change: transform; pointer-events: none; }
 .ahcap { font: 800 14px "Exo 2"; margin: 8px 0 2px; }
+
+/* ================= 5–7 (18/10 tối): MENU chung góc · đếm 3-2-1 · bảng đếm giữa ================= */
+.mm { width: 30cqh; }
+.mm .mbtn { display: block; width: 100%; margin-top: .7cqh; padding: 1.1cqh 1.2cqh; border-radius: 1cqh; border: .15cqh solid rgba(140,200,255,.2); background: rgba(255,255,255,.04);
+  color: #e2e8f0; font: italic 900 1.7cqh "Exo 2"; letter-spacing: .1em; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 1cqh; }
+.mm .mbtn svg { width: 2.2cqh; height: 2.2cqh; flex: none; } .mm .mbtn.is-resume { background: #f5c542; color: #1b1300; border-color: #f5c542; }
+.mm .tip, .spC .tip { position: absolute; width: 1.6cqh; height: 1.6cqh; transform: rotate(45deg); bottom: -.85cqh; background: rgba(9,14,26,.94); border-right: .15cqh solid rgba(140,210,255,.3); border-bottom: .15cqh solid rgba(140,210,255,.3); }
+.pausedTag { position: absolute; left: 50%; top: 3cqh; transform: translateX(-50%); z-index: 2; font: italic 900 2cqh "Exo 2"; letter-spacing: .3em; color: #fff; padding: .6cqh 1.6cqh; border-radius: 1cqh; background: rgba(0,0,0,.45); }
+/* đếm 3-2-1 khi quay lại game */
+.rs { position: absolute; left: 50%; top: 22cqh; transform: translateX(-50%); z-index: 4; display: none; gap: 1.8cqh; padding: 1.6cqh 2.4cqh; border-radius: 3cqh; background: rgba(10,10,14,.85); border: .3cqh solid rgba(255,255,255,.12); }
+.rs.on { display: flex; }
+.rs i { width: 6.4cqh; height: 6.4cqh; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #4a1416, #1e0708); box-shadow: inset 0 0 1cqh rgba(0,0,0,.8); transition: background .08s, box-shadow .08s; display: grid; place-items: center; font: italic 900 3cqh "Exo 2"; color: rgba(255,255,255,.0); }
+.rs i.on { background: radial-gradient(circle at 40% 35%, #ffd0c8, #ff2a1f 45%, #b00c06); box-shadow: 0 0 4cqh #ff2a1f, inset 0 0 1cqh rgba(255,255,255,.4); color: #fff; }
+.rs.go i { background: radial-gradient(circle at 40% 35%, #e6ffd0, #4bd84b 45%, #138a1a); box-shadow: 0 0 4cqh #4bd84b, inset 0 0 1cqh rgba(255,255,255,.4); color: #fff; }
+/* bảng đếm giữa — trên VẠCH CHIA 2 khung nhìn */
+.cb { position: absolute; left: 50%; z-index: 3; transform: translate(-50%, 0); display: flex; flex-direction: column; align-items: center; pointer-events: none; transition: color .3s; }
+.cb.posA { top: 1.4cqh; } .cb.posB { top: 30cqh; }
+.cb .pill { display: flex; align-items: baseline; gap: .8cqh; padding: .7cqh 1.8cqh; border-radius: 1.6cqh; background: rgba(6,9,15,.78); border: .3cqh solid var(--lc); box-shadow: 0 0 2.2cqh color-mix(in srgb, var(--lc) 45%, transparent);
+  font: italic 900 3.4cqh/1 "Exo 2"; color: #fff; font-variant-numeric: tabular-nums; transition: border-color .35s, box-shadow .35s; }
+.cb .pill small { font: italic 800 1.5cqh "Exo 2"; letter-spacing: .2em; color: var(--lc); transition: color .35s; }
+.cb .big { display: none; font: italic 900 15cqh/1 "Exo 2"; color: var(--lc); -webkit-text-stroke: .35cqh #fff; text-shadow: 0 .8cqh 2.4cqh rgba(0,0,0,.6); transition: color .35s; }
+.cb.final .pill { display: none; } .cb.final .big { display: block; animation: cbBeat 1s cubic-bezier(.2,.8,.3,1) infinite; }
+@keyframes cbBeat { 0% { transform: scale(1.35); opacity: .2; } 14% { transform: scale(1); opacity: 1; } 80% { opacity: 1; } 100% { transform: scale(.9); opacity: .35; } }
+.vline { position: absolute; left: 50%; top: 0; bottom: 6.7cqh; width: .4cqh; margin-left: -.2cqh; background: #05070b; z-index: 1; }
+.sky .vline { display: none; } .sky .scene { grid-template-columns: 1fr; }
 </style>
 </head>
 <body>
 <div class="top">THIẾT KẾ 4i · CHƯA BUILD — xem / bấm thử · chờ thầy chọn rồi "ok build"</div>
 <main>
-<h1>RACING WORDS — mẫu 4i <small>18/10/2026 · 5 việc sau khi thử 4h</small></h1>
+<h1>RACING WORDS — mẫu 4i <small>18/10/2026 · việc sau khi thử 4h (mục 1–4 đã chốt · 5–7 mới)</small></h1>
 
 <!-- ================= 1. SETTINGS ================= -->
 <section class="sec">
@@ -171,6 +196,62 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
   Demo dưới đây cho xe đối thủ chạy vòng quanh ngoài khung để thấy mũi tên trượt theo.</div>
   <div class="grid2" id="arrows"></div>
   <div class="ask"><b>✅ Thầy chọn kiểu 2 · Mũi nhọn kim loại</b> (dính mép, trượt mượt, không tiến lùi).</div>
+</section>
+
+<!-- ================= 5. MENU + TẠM DỪNG ================= -->
+<section class="sec">
+  <h2><b>5</b>MENU cùng góc với Settings · chỉ MỘT cửa sổ mở · cửa sổ nào cũng TẠM DỪNG game</h2>
+  <div class="mut">MENU (RESUME · START AGAIN · CHANGE CARS · CHANGE TEMPLATE) đang hiện giữa màn ⇒ dời về <b>đúng góc dưới phải, cùng chỗ với Settings</b>, cùng kiểu (mũi nhọn chỉ vào nút ☰).
+  Các nút trên hàng: ☰ Menu · 📁 Switch activity · ⇅ Options · ⚙ Settings — <b>mở cái này là cái kia tự đóng</b>; bấm lại nút đang mở = đóng.</div>
+  <table style="margin-top:8px">
+    <tr><th>Cửa sổ</th><th>Hiện tại</th><th>Mới</th></tr>
+    <tr><td>☰ Menu</td><td>Giữa màn · tạm dừng</td><td>Góc dưới phải · tạm dừng</td></tr>
+    <tr><td>⚙ Settings</td><td>Giữa màn · tạm dừng</td><td>Góc dưới phải (kiểu C) · tạm dừng</td></tr>
+    <tr><td>📁 Switch activity</td><td>Giữa màn · <b style="color:#ffb36b">KHÔNG tạm dừng (lỗi)</b></td><td>Góc dưới phải · tạm dừng</td></tr>
+    <tr><td>⇅ Options (bảng của AWord)</td><td>Bảng AWord trên hàng nút · tạm dừng</td><td>Giữ bảng AWord · tạm dừng · cũng đóng các cửa sổ kia</td></tr>
+  </table>
+  <div class="note">Gom về <b>MỘT bộ quản lý cửa sổ</b>: còn ≥ 1 cửa sổ mở ⇒ dừng (cả âm thanh, phim intro, đồng hồ Time, tên lửa đang bay, thanh chờ câu mới); đóng hết ⇒ <b>đếm 3-2-1</b> (mục 6) rồi mới chạy.
+  Trước đây mỗi cửa sổ tự giữ cờ dừng riêng nên lệch nhau (ví dụ đóng Settings khi Menu còn mở).</div>
+  <div class="row"><b>Bấm thử:</b> <button class="b" data-ov="menu">☰ Menu</button><button class="b" data-ov="folder">📁 Switch activity</button><button class="b" data-ov="set">⚙ Settings</button></div>
+  <div class="frameWrap" style="width:78%"><div class="gframe" id="gf5">
+    <div class="scene"><i></i><i></i></div><i class="vline"></i>
+    <div class="pausedTag" id="pz5" hidden>PAUSED</div>
+    <div class="rs" id="rs5"><i></i><i></i><i></i></div>
+    <div class="gbar"><u data-ov="menu">☰</u><u>🔊</u><u data-ov="folder">📁</u><u>⇅</u><u data-ov="set">⚙</u><u>▦</u></div>
+    <div id="ov5"></div>
+  </div></div>
+</section>
+
+<!-- ================= 6. ĐẾM 3-2-1 ================= -->
+<section class="sec">
+  <h2><b>6</b>Quay lại game: 3 đèn đếm 3-2-1 rồi mới chạy tiếp</h2>
+  <div class="mut">Đóng hết cửa sổ ⇒ 3 đèn đỏ (kiểu 5 đèn xuất phát, thu nhỏ) giữa màn, mỗi giây sáng thêm 1 đèn kèm tiếng bíp (3 · 2 · 1), cả 3 chuyển XANH + bíp cao ⇒ GO, game chạy tiếp.
+  Trong 3 giây đó game vẫn đứng; bấm mở cửa sổ khác thì huỷ đếm, đóng lại đếm lại từ 3.
+  Chỉ đếm khi đang ĐUA — ở xưởng / màn chờ START / màn kết quả thì đóng là chạy ngay (không có gì để "chuẩn bị").</div>
+  <div class="row"><button class="b" id="rsGo">▶ Thử đếm 3-2-1 (có tiếng)</button><span class="mut">Cũng chạy khi đóng cửa sổ ở mục 5.</span></div>
+</section>
+
+<!-- ================= 7. BẢNG ĐẾM GIỮA ================= -->
+<section class="sec">
+  <h2><b>7</b>Bảng đếm trên VẠCH GIỮA 2 khung nhìn — Length / Words / Time · màu đội gần đích hơn</h2>
+  <div class="mut">Một chỗ DUY NHẤT trên vạch chia 2 đội, mọi góc máy (Cockpit, Chase, gộp Sky view — khi gộp không còn vạch thì vẫn đúng chỗ đó, giữa màn).
+  Màu viền + chữ = màu đội đang <b>dẫn</b> (gần đích hơn); 2 xe sát nhau (&lt; 1 m) ⇒ trắng.</div>
+  <table style="margin-top:8px">
+    <tr><th>Chế độ</th><th>Bảng hiện</th><th>Khi nào</th></tr>
+    <tr><td>Length</td><td><b>1000 m LEFT</b> → giảm dần (quãng còn lại của xe dẫn tới đích)</td><td>Suốt trận tới khi có đội thắng</td></tr>
+    <tr><td>Words</td><td><b>12 WORDS LEFT</b> → giảm dần</td><td>Suốt trận; hết từ (đích đã đặt) ⇒ đổi sang <b>FINISH 140 m</b> tới khi có đội thắng (em đề xuất — vì lúc đó không còn từ để đếm)</td></tr>
+    <tr><td>Time</td><td>Đồng hồ <b>2:15</b> nhỏ · <b>10 giây cuối: số to 10 · 9 · 8 …</b> NGAY CHỖ ĐÓ</td><td>Suốt trận; số to thay số đếm cũ (bỏ kiểu chữ 2 nửa 2 màu)</td></tr>
+  </table>
+  <div class="row"><b>Chế độ:</b> <button class="b on" data-cm="len">Length</button><button class="b" data-cm="words">Words</button><button class="b" data-cm="time">Time</button>
+    <b style="margin-left:10px">Vị trí:</b> <button class="b on" data-cp="posA">A · Đầu vạch (trên cùng)</button><button class="b" data-cp="posB">B · Giữa vạch (ngang tầm mắt)</button>
+    <b style="margin-left:10px">Góc máy:</b> <button class="b on" data-sky="0">2 khung</button><button class="b" data-sky="1">Sky view gộp</button></div>
+  <div class="frameWrap" style="width:78%"><div class="gframe" id="gf7">
+    <div class="scene"><i></i><i></i></div><i class="vline"></i>
+    <div class="cb posA" id="cb7"><div class="pill"><span id="cbV">1000 m</span><small id="cbS">LEFT</small></div><div class="big" id="cbBig">10</div></div>
+    <div class="gbar"><u>☰</u><u>🔊</u><u>📁</u><u>⇅</u><u>⚙</u><u>▦</u></div>
+  </div></div>
+  <div class="legend">Demo chạy nhanh: 2 xe thay nhau dẫn ⇒ màu bảng đổi xanh / cam; Time về 10 giây cuối thì hiện số to.</div>
+  <div class="ask"><b>Thầy chọn:</b> vị trí A (đầu vạch — không che đường) hay B (giữa vạch — ngang tầm mắt, số to dễ thấy hơn nhưng che giữa màn).</div>
 </section>
 </main>
 
@@ -377,6 +458,71 @@ function arrowFrame(now) {
   requestAnimationFrame(arrowFrame);
 }
 requestAnimationFrame(arrowFrame);
+
+/* ===================== 5–7 ===================== */
+let AC5 = null;
+function beep5(f = 660, dur = 0.2, gain = 0.25) {
+  try { AC5 ||= new (window.AudioContext || window.webkitAudioContext)(); const c = AC5, t0 = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = "square"; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(gain, t0 + 0.006); g.gain.setValueAtTime(gain, t0 + dur * 0.7); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 4200; o.connect(lp); lp.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + dur + 0.02); } catch (e) { /* */ }
+}
+const MIC = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>',
+  again: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5"/></svg>',
+  car: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 15l2-6h14l2 6v4H3z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg>',
+  tpl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>'
+};
+// mũi nhọn của bảng = ngay trên nút đã bấm (vị trí nút trong hàng tính theo cqh: phải 1,4 + mỗi nút 4 + khe 0,9)
+const tipRight = idxFromRight => `right:${(1.4 + idxFromRight * 4.9 + 2 - 0.8 - 1.4).toFixed(2)}cqh`;
+const OV = {
+  menu: () => `<div class="sp spA mm"><button class="x">✕</button><h4>MENU</h4>
+      <button class="mbtn is-resume">${MIC.play}RESUME</button><button class="mbtn">${MIC.again}START AGAIN</button><button class="mbtn">${MIC.car}CHANGE CARS</button><button class="mbtn">${MIC.tpl}CHANGE TEMPLATE</button>
+      <i class="tip" style="${tipRight(5)}"></i></div>`,
+  folder: () => `<div class="sp spA mm" style="width:36cqh"><button class="x">✕</button><h4>SWITCH ACTIVITY</h4>
+      ${["Unit 3 · Words 1", "Unit 3 · Words 2", "Unit 3 · Reading", "Unit 4 · Words 1"].map((n, k) => `<button class="mbtn" style="font-style:normal;font-weight:700;letter-spacing:0${k === 1 ? ";border-color:#f5c542" : ""}">${n}</button>`).join("")}
+      <i class="tip" style="${tipRight(3)}"></i></div>`,
+  set: () => { const h = SP.C(0).replace('class="sp spC"', 'class="sp spC" style="overflow:visible"'), i = h.lastIndexOf("</div>"); return h.slice(0, i) + `<i class="tip" style="${tipRight(1)}"></i>` + h.slice(i); }
+};
+let ov5 = null, rsTimer = [];
+const ovHost = document.getElementById("ov5"), pz5 = document.getElementById("pz5"), rs5 = document.getElementById("rs5");
+function resume321(rs) {
+  rsTimer.forEach(clearTimeout); rsTimer = [];
+  const L = [...rs.querySelectorAll("i")]; rs.classList.remove("go"); L.forEach(i => { i.classList.remove("on"); i.textContent = ""; }); rs.classList.add("on");
+  [0, 1, 2].forEach(k => rsTimer.push(setTimeout(() => { L[k].classList.add("on"); L[k].textContent = 3 - k; beep5(660, 0.2); }, 150 + k * 1000)));
+  rsTimer.push(setTimeout(() => { rs.classList.add("go"); L.forEach(i => i.textContent = ""); beep5(1320, 0.35, 0.3); }, 3150));
+  rsTimer.push(setTimeout(() => { rs.classList.remove("on", "go"); if (rs === rs5) pz5.hidden = true; }, 3800));
+}
+function setOv(k) {
+  const was = ov5; ov5 = ov5 === k ? null : k;
+  ovHost.innerHTML = ov5 ? OV[ov5]() : "";
+  document.querySelectorAll("#gf5 .gbar u").forEach(u => u.classList.toggle("on", !!ov5 && u.dataset.ov === ov5));
+  if (ov5) { rsTimer.forEach(clearTimeout); rs5.classList.remove("on", "go"); pz5.hidden = false; }
+  else if (was) resume321(rs5);
+}
+document.querySelectorAll("[data-ov]").forEach(b => b.addEventListener("click", () => setOv(b.dataset.ov)));
+ovHost.addEventListener("click", e => { if (e.target.closest(".x") || e.target.closest(".is-resume")) setOv(ov5); });
+document.getElementById("rsGo").onclick = () => { document.getElementById("gf5").scrollIntoView({ block: "center" }); pz5.hidden = false; resume321(rs5); };
+
+// bảng đếm giữa
+let cm = "len", sky = false, cbT0 = performance.now();
+const cb7 = document.getElementById("cb7"), gf7 = document.getElementById("gf7"), cbV = document.getElementById("cbV"), cbS = document.getElementById("cbS"), cbBig = document.getElementById("cbBig");
+document.querySelectorAll("[data-cm]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-cm]").forEach(x => x.classList.toggle("on", x === b)); cm = b.dataset.cm; cbT0 = performance.now(); });
+document.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-cp]").forEach(x => x.classList.toggle("on", x === b)); cb7.classList.remove("posA", "posB"); cb7.classList.add(b.dataset.cp); });
+document.querySelectorAll("[data-sky]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-sky]").forEach(x => x.classList.toggle("on", x === b)); sky = b.dataset.sky === "1"; gf7.classList.toggle("sky", sky); });
+let lastBig = -1;
+function cbFrame(now) {
+  const t = (now - cbT0) / 1000;
+  const lead = Math.sin(t * 0.9) > 0.15 ? 0 : Math.sin(t * 0.9) < -0.15 ? 1 : -1;   // −1 = sát nhau
+  cb7.style.setProperty("--lc", lead < 0 ? "#ffffff" : lead === 0 ? "#3b8cff" : "#ff7a00");
+  let fin = false;
+  if (cm === "len") { const m = Math.max(0, Math.round(1000 - t * 70)); cbV.textContent = m + " m"; cbS.textContent = "LEFT"; if (m === 0) cbT0 = now; }
+  else if (cm === "words") { const w = Math.max(0, 12 - Math.floor(t / 1.2)); if (w > 0) { cbV.textContent = w; cbS.textContent = w === 1 ? "WORD LEFT" : "WORDS LEFT"; } else { const m = Math.max(0, Math.round(140 - (t - 14.4) * 40)); cbV.textContent = m + " m"; cbS.textContent = "FINISH"; if (m === 0) cbT0 = now; } }
+  else { const s = Math.max(0, 25 - t); if (s <= 10 && s > 0) { fin = true; const n = Math.ceil(s); if (n !== lastBig) { lastBig = n; cbBig.textContent = n; cbBig.style.animation = "none"; void cbBig.offsetWidth; cbBig.style.animation = ""; } }
+    else { cbV.textContent = Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0"); cbS.textContent = "TIME"; } if (s <= 0) cbT0 = now + 1500; }
+  cb7.classList.toggle("final", fin);
+  requestAnimationFrame(cbFrame);
+}
+requestAnimationFrame(cbFrame);
 </script>
 </body>
 </html>
