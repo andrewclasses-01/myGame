@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>Soi cánh quạt drone</title>
+<style>html,body{margin:0;background:#1a1f27;color:#ddd;font:13px system-ui;overflow:hidden}canvas{width:100vw;height:100vh;display:block}#t{position:fixed;left:8px;top:8px}</style>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+</head><body><div id="t"></div><canvas id="c"></canvas>
+<script type="module">
+// Bàn soi 4n: ?id=A1&w=1 (tốc độ quay rad/s) — cánh quạt quay CHẬM để thấy có quay đúng mặt phẳng / còn sót mảnh không.
+import * as THREE from "three";
+import { loadDrone } from "./core/sr3d-drone3d-4o.js";
+const q = new URLSearchParams(location.search), id = q.get("id") || "A1", w = +(q.get("w") || 1);
+const r = new THREE.WebGLRenderer({ canvas: document.getElementById("c"), antialias: true }); r.setSize(innerWidth, innerHeight, false); r.outputColorSpace = THREE.SRGBColorSpace;
+const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight("#fff", "#556", 2.4)); const d = new THREE.DirectionalLight("#fff", 2); d.position.set(3, 6, 2); sc.add(d);
+const cam = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.05, 100); cam.position.set(0, 3.2, 3.6); cam.lookAt(0, 0, 0);
+const m = await loadDrone(id, x => x); sc.add(m.obj);
+document.getElementById("t").textContent = id + " · props " + m.props.length + " · " + m.props.map(p => p.o.name + " axis " + p.axis.toArray().map(v => v.toFixed(2))).join(" | ");
+window.__m = m; let last = performance.now();
+(function loop(now) { requestAnimationFrame(loop); const dt = (now - last) / 1000; last = now; m.props.forEach(p => p.o.rotateOnAxis(p.axis, p.dir * w * dt)); if (m.mixer) m.mixer.update(dt); r.render(sc, cam); })(last);
+</script></body></html>
