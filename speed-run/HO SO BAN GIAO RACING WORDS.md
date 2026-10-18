@@ -5,6 +5,7 @@
 ## 1. Trạng thái hiện tại
 | Nơi | Bản | Mã commit | Trạng thái |
 |---|---|---|---|
+| myGame (thiết kế) | mẫu **4g** (18/10) — 4f + KẾT TRẬN SLOW MOTION (drift / bay) · số đếm 10 s · barrel roll tự chỉnh · lật chậm dốc xoắn · nảy khi đáp · đèn chậm · vạch boost mép mờ · mũi tên đối thủ (NGHIEN CUU mục 41) | (commit 18/10) | ✅ đã push myGame · ⬜ thầy thử TOMKO rồi mới lên AWord |
 | myGame (thiết kế) | mẫu **4f** — bản đủ nhất (4e + iPad nối trước intro / giữ kết nối / tự nối lại / mốc tự lấy / khoá đội, mục 40) | `4077f92` | ✅ đã push |
 | AWord (bản thật) | **Đợt 539** = myGame 4f + khoá đội (Đợt 538 `b3c3004` = 4f; Đợt 537 = 4e `b529ff5`) | `13dad6e` | ✅ LIVE https://aword.andrewclasses.com (live nạp `rw-4f.js`, pad.js có `watchTeams`) |
 

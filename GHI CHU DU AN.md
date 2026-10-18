@@ -659,6 +659,8 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 4g** (18/10, đã push myGame, CHƯA lên AWord): thầy chạy `speed-run/mau-4g-ket-slow-motion.html` (máy nhà + TOMKO) ⇒ duyệt màn kết slow motion (drift / bay), số đếm 10 s,
+  barrel roll tự chỉnh, lật chậm dốc xoắn không ga, nảy khi đáp, 5 đèn chậm + bíp, vạch boost mép mờ, mũi tên đối thủ ⇒ OK thì chép AWord (HO SO BAN GIAO mục 4: GOC = "rw-4g.js", CSS thêm rw-4g.css, đo lại load-files).
 - ⬜ **RACING WORDS 4f (= AWord Đợt 538)**: thầy thử TOMKO + 2 iPad — cổng iPad ở xưởng (thử trái/phải ⇒ START), Apply Options / Start again / đổi xe không phải nối lại,
   bật nghiêng khi đang cầm lệch vẫn đúng (không LEVEL). Nếu còn "SLOW": chụp dòng chẩn đoán dưới thẻ đội (hoặc ⚙ ▸ iPad) — "iPad: none" = iPad khác mạng / chặn UDP;
   có mDNS mà ICE failed = mạng chặn multicast ⇒ cho 2 iPad cùng băng Wi-Fi với TOMKO hoặc thêm máy TURN.
@@ -703,3 +705,27 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **% load thật** chỉ ở AWord (`core/loader3d.js` + `templates/<game>/load-files.js`). ⛔ Sửa game ở đây rồi chép sang AWord mà đổi tiếng / xe / module ⇒ ở AWord phải đo lại
   (`scratch/dot543-rec.html?t=<game>`) + `python -I tools/tao-load-files.py <thư mục rec-*.json>`, không thì % lệch (game không hỏng).
 - ⬜ Thầy thử TOMKO: màn chờ % ở mạng trường, nghe lại tiếng đã nén (nhạc đua RACING WORDS thành 1 kênh — kém thì giữ 2 kênh riêng bài này).
+
+## Racing Words 4g — 18/10/2026 · KẾT TRẬN ĐIỆN ẢNH SLOW MOTION + 8 việc thầy (chưa lên AWord) · phiên máy nhà
+- **Đầu phiên:** myGame `d0b310b`, AWord `c092b4d` = origin, sạch; AWord `racing-words/3d` = myGame 4f `4077f92` khớp từng file (16 JS + 11 CSS + 30 tiếng). Kế hoạch: NGHIEN CUU mục 41.
+- **Thầy giao 9 việc** + chốt: Time / hết mạng (KO) ⇒ chốt NGAY lúc 0 s; Length / Words vẫn chạy qua vạch đích rồi mới diễn cú kết mới.
+- **File mới** (4f giữ nguyên): `core/sr3d-4g.js` (từ sr3d-4e.js) · `core/rw-4g.js` (từ rw-4f.js) · `core/rw-4g.css` · `mau-4g-ket-slow-motion.html`. iPad / intro không đổi.
+- **Kết trận** (`finish` · `finTick` · `startDrift` · `finCam` · `finInput`): G.ts = hệ số thời gian (dt game = dt thật × ts). Nhịp "lose" 1,05 s thật: mỗi nửa màn quay ngoài xe của mình —
+  xe thua phanh + drift ngắn (đang bay thì chạm đất mới drift), xe thắng vụt ga (lửa pô, finGas) hoặc đang bay thì "treo" ×0,12. Nhịp "win": cắt sang 1 khung rộng (máy quay gộp 4d,
+  không thêm lượt vẽ) quay quanh xe thắng — chạy đất ⇒ DRIFT (góc ~67° rồi ~49°, mũi quay ra mép gần, thân trượt vào lòng đường, máy quay phía lòng đường thấy sườn + khói),
+  slow ×0,14 ~2,3 s; đang bay ⇒ slow co giãn theo thời gian bay còn lại (~3 s thật, ×0,12–0,45), tự cân thân ⇒ PERFECT + nảy ⇒ trượt dừng. Chữ thắng (+ win/reo) rồi 3,2 s sau bảng kết quả.
+  Cắt cảnh ⇒ dọn tên lửa còn bay. Kết quả ghi quãng đường lúc chốt (sEnd).
+- **Khói + vết lốp cháy:** khói 2 bánh sau từ bể `missiles.smoke` có sẵn (bùng 1 đám lúc vào drift); vết cháy = InstancedMesh thứ 2 (`burnSk`, cùng kiểu vật liệu ⇒ cùng shader).
+  ⚠️ PHÁT HIỆN: từ 3j, `O.updateMatrix()` của vết lốp bị nuốt vào chú thích ⇒ vết lốp chưa từng hiện đúng chỗ (mọi đoạn nằm ở gốc toạ độ). 4g sửa luôn (`makeSkids`).
+  Cùng kiểu bẫy còn 2 chỗ CHƯA sửa (giữ nguyên hành vi đang chạy, chờ thầy): `slip()` mất dòng rung máy quay/chông chênh khi trả lời sai; `land()` BAD mất dòng bật nảy (4g thay bằng nảy hình hopV 2,6).
+- **Số đếm 10 s** (Time): `.rw-cd` giữa vạch chia, chữ nửa xanh nửa cam viền trắng + vòng 2 màu, đỏ ở 3 giây cuối, "đập" mỗi giây; onEvent("tick", n) ⇒ bíp 880 / 1.320 Hz.
+- **Barrel roll** (dốc 1 bên + dốc xoắn có ga): lộn xong lệch ±0,18–0,42 rad (`rollErr`), dốc xoắn thêm hất arW, 0,45 s cuối chông chênh (nearW + lắc) — bàn thử: buông tay 3/3 OK (18–28°), chỉnh 3/3 PERFECT.
+- **Dốc xoắn không ga** (nitroK < 0,35 hoặc < 40 km/h): `tumbleStart/tumbleStep` lật chậm 1 vòng ~1,55 s quanh mép thân (nâng rig theo điểm thấp nhất của hộp xe), còn ~5 km/h,
+  tia lửa khi nóc cạ đường, xong mất lái 1 s + chông chênh; máy quay ngoài phía lòng đường cao 2,3 m.
+- **Nảy khi đáp:** `bounce()` hopV theo vận tốc rơi (≤ 2,1) + nảy lần 2 ×0,38 + chúc mũi nodA; chông chênh wobA +40 %.
+- **5 đèn:** 0,8 + k·0,75 s (GO ~4,85 s, cũ ~3,55); lõi báo onEvent("light", k) ⇒ rw phát start_lights ×1,6 + bíp tổng hợp 660 Hz (sóng vuông + sin, lọc 5,2 kHz); nhạc đua 35 % lúc đếm.
+- **Bàn đạp BOOST màn lớn:** gradient `#rw4gNit` mép mờ y như iPad, translateY + transition 0,5 s (HUD chỉ ghi khi đổi).
+- **Mũi tên đối thủ** (`oppArrow`): chỉ khi xe kia NGOÀI khung nhìn — phía trước ⇒ đường chân trời (xiên về phía xe) · phía sau ⇒ mép dưới khung nhìn chĩa xuống · ngang hàng ⇒ mép bên; chevron đôi màu đội kia + số mét.
+- **Đo (máy nhà, step):** giữa trận 540 lệnh vẽ (4f 563), màn kết 430–490, shader 65 ⇒ 65 (không dịch thêm). Lỗi console `checkMaterialsReady … isReady` khi Apply dựng lại game lúc đang dịch shader — CÓ SẴN ở 4f, không do 4g.
+- **Bẫy bàn thử:** khung Browser ẩn ⇒ rAF đứng + ảnh chụp chậm 1 nhịp ⇒ chạy bằng `game.step(n)`, chụp canvas bằng `toDataURL` ngay sau step rồi gắn `<img>` mới, chụp màn 2 lần (lần 1 để trang vẽ lại).
+  Kịch bản drift: Time, ramps Off, `auto(true)`, `G.timeLeft = 0.001`. Kịch bản bay: `place` xe trước cầu nhảy + `drive(boost)` tới khi `air` rồi hết giờ.

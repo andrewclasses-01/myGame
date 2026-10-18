@@ -1070,3 +1070,39 @@ Thầy thử TOMKO + 2 iPad (nguyên ý): (1) "2 iPad kết nối thì 1 cái co
   Màn chọn đội: `mountPadChooser` trả `setBusy([b0, b1])`, `watchTeams(signal, cb)` nghe host ⇒ đội có iPad khác mờ + "iPad already connected", chạm chỉ báo.
   Bàn thử 3 tab iPad (dev a/b/c): A giữ Team 1 · B chọn Team 1 ⇒ tấm báo, máy chiếu không bắt tay lại (tries giữ 1) · C màn chọn: Team 1 mờ ⇒ A bấm ◀ ⇒ B tự nối (chủ b) ⇒
   đóng hẳn tab B ⇒ ~12 s sau C tự nối (chủ c) ⇒ C tải lại trang vẫn nối. 0 lỗi.
+
+## 41. ✅ MẪU 4g (18/10/2026) — KẾT TRẬN SLOW MOTION + 8 việc thầy (ĐÃ BUILD, chưa lên AWord; dưới là kế hoạch gốc + phần đã làm ở cuối mục)
+Kiểm đồng bộ đầu phiên: myGame `d0b310b` = origin, AWord `c092b4d` = origin, cả 2 sạch. AWord `templates/racing-words/3d/NGUON.json` = myGame 4f `4077f92`;
+so từng file (bỏ khác biệt đường import three) 16 JS + 11 CSS + 30 tiếng: KHỚP 100 %. Live AWord là bản build nén của cùng nội dung.
+Nguyên tắc: làm ở myGame mẫu MỚI 4g (lõi `sr3d-4g.js` chép từ `sr3d-4e.js`, gói `rw-4g.js`, CSS `rw-4g.css`, trang thử `mau-4g-*.html`), không thêm lượt vẽ /
+shader mới giữa trận (mọi thứ mới có mặt trong cảnh lúc prewarm), HUD mới chỉ đổi transform / opacity.
+
+1. Kết thúc slow motion đẹp (`finish()` + `cine()` + `frame()` slow) — 2 kịch bản theo trạng thái xe thắng lúc chốt:
+   · ĐANG BAY: tự lái trên không (arW = 0, kéo ar/ap/ay về vòng trọn gần nhất), camera điện ảnh quay quanh xe (máy quay GỘP 1 khung rộng như 4d — không thêm lượt vẽ),
+     slow ×0,15–0,2 ở đỉnh, về tốc độ thật ngay trước khi chạm ⇒ PERFECT + tia lửa + khói + nảy (việc 6) + `cinematic_hit`.
+   · ĐANG CHẠY ĐẤT: vụt ga (boost tự động ~0,6 s, lửa pô) ⇒ DRIFT (trạng thái mới t.drift: góc thân 35–55° giữ bằng mục tiêu, không dùng lò xo yk) ⇒ khói lốp 2 bánh sau
+     (bể `missiles.smoke` 900 hạt có sẵn) + vết lốp cháy đậm/rộng (InstancedMesh skids có sẵn; nếu cần màu riêng thì thêm 1 mesh vết cháy NẰM SẴN trong cảnh để prewarm dịch)
+     ⇒ slow motion ở giữa cú drift, camera hạ thấp quét ngang mũi xe ⇒ dừng hẳn.
+   Ca biên: đang trên dốc ⇒ đợi cất cánh rồi vào kịch bản bay · đang bị bắn xoay ⇒ đợi hết xoay · xe cháy (KO) ⇒ chỉ đội thắng diễn.
+2. Time: 10 giây cuối số 10…1 to giữa vạch chia 2 đội (`.sr-divider`), font "Exo 2" italic 900 như chữ GO, viền màu 2 đội 2 nửa, mỗi giây 1 cú "đập" (CSS keyframe scale/opacity),
+   1 phần tử DOM, chỉ đổi khi số đổi (không mỗi khung). Kèm tiếng tick (dùng lightsBeep cao độ khác). Gộp camera ⇒ vẫn ở giữa.
+3. Hết giờ = chốt NGAY (bỏ `setFin(+140)` của `decide(…,"time")`): t=0 xe thua phanh gấp + drift ngắn ~1 s (nửa màn của nó, camera ngoài), rồi CẮT sang xe thắng với kịch bản việc 1.
+   Kết quả ghi quãng đường thật lúc 0 s. (Hỏi thầy: chế độ Length/Words vẫn chạy qua vạch đích rồi mới diễn việc 1? KO hết mạng cũng chốt ngay?)
+4. Barrel roll (dốc 1 bên `rampPart` + dốc xoắn `twistLaunch`): hiện `rollW` tự tính để lộn xong ở 78 % thời gian bay + `arW = 0` ⇒ tự cân về 0 ⇒ luôn đáp đẹp.
+   Sửa: lộn xong lệch ngẫu nhiên ±0,2–0,45 rad + 0,35 s cuối trước khi chạm có lắc chông chênh (sin tắt dần) + BỎ tự cân ⇒ phải bẻ vô lăng chỉnh mới PERFECT.
+5. Dốc xoắn KHÔNG ga (không giữ boost lúc rời mép, hoặc < ~40 km/h): không phóng — lật chậm tại chỗ quanh mép bánh (y = |sin ar|·W/2), tốc độ còn ~40 %,
+   mất lái `ctlT` ~1 s, chông chênh nhẹ rồi đứng lại 4 bánh. Có ga ⇒ giữ như cũ.
+6. Mọi cú tiếp đất (trừ BAD đã có nảy riêng): nảy thêm theo vận tốc rơi (dùng hy/hopV có sẵn — chỉ là hình, không đụng va chạm) + nảy lần 2 nhỏ hơn + chúc mũi + wobA lớn hơn ~40 %.
+7. 5 đèn xuất phát chậm hơn: 0,6 + k·0,55 ⇒ ~0,8 + k·0,75 (GO lùi tương ứng, camera vào theo countT giãn ra). Tiếng đèn: phát theo sự kiện lõi (không dò 50 ms nữa) +
+   lớp bíp tổng hợp WebAudio (sóng vuông/sin ~880 Hz, cắt gọn 0,18 s) chồng lên `start_lights` (bản nén 64k đục) + hạ nhạc mRace lúc đếm.
+8. Bàn đạp boost màn lớn: `.sr-nfill` đang tô phẳng + scaleY (mép cứng) ⇒ dùng gradient mép mờ như iPad (`ip3tNit`: 0 ⇒ 0,42 ở 20 % ⇒ 0,6) + translateY + transition;
+   gradient đặt 1 lần trong gốc (id riêng mỗi game), KHÔNG dùng filter blur (3r đã bỏ filter vì TOMKO).
+9. Mũi tên đối thủ khuất: `updateHUD` đã chiếu xe kia (PJ) để đặt `.sr-tag`; khi tag ẩn ⇒ hiện mũi tên màu đội kia: ở phía trước ⇒ nằm trên ĐƯỜNG CHÂN TRỜI (y = HORIZON), x kẹp trong nửa màn,
+   chĩa về hướng xe; ở phía sau ⇒ nằm sát MÉP DƯỚI khung nhìn (ngay trên tap-lô), chĩa xuống/ra sau, kèm "… m". SVG chevron có viền + quầng bằng box-shadow tĩnh, chỉ đổi transform.
+
+**ĐÃ LÀM (18/10, thầy chốt: Time + hết mạng ⇒ chốt NGAY; Length / Words vẫn qua vạch đích rồi diễn cú kết mới).** Trang thử `mau-4g-ket-slow-motion.html`, lõi `core/sr3d-4g.js`,
+gói `core/rw-4g.js` + `core/rw-4g.css`. Khác kế hoạch: (a) drift — mũi xe quay RA mép gần, thân trượt vào lòng đường, máy quay phía lòng đường ⇒ thấy sườn + khói (quay mũi vào giữa thì
+máy quay chỉ thấy đầu xe); (b) slow cú bay co giãn theo thời gian bay còn lại (~3 s thật); (c) nhịp "lose" 1,05 s mỗi nửa màn máy quay ngoài xe của mình rồi mới cắt sang khung rộng;
+(d) sửa luôn vết lốp (từ 3j `O.updateMatrix()` bị nuốt vào chú thích ⇒ vết lốp chưa từng hiện) + thêm lớp vết CHÁY `burnSk`.
+Đo step máy nhà: giữa trận 540 lệnh vẽ, màn kết 430–490, shader 65 ⇒ 65. Chi tiết + bẫy bàn thử: myGame `GHI CHU DU AN.md` chặng "Racing Words 4g".
+✅ đã push myGame 18/10 · ⬜ thầy thử TOMKO ⇒ chép AWord theo HO SO BAN GIAO mục 4 (GOC rw-4g.js, CSS + rw-4g.css, đo lại load-files).
