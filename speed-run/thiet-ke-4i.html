@@ -96,7 +96,7 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
   Mới: bảng mọc ra <b>ngay trên nút ⚙</b> (góc dưới phải), có mũi nhọn chỉ vào nút; chữ nhỏ hơn ~40 %.
   ⭐ <b>Mọi cỡ tính theo chiều cao khung game</b> (không theo điểm ảnh) ⇒ máy 1280×720, 1920×1080 hay TOMKO 4K đều thấy bảng <b>đúng một tỉ lệ, đúng một chỗ</b>.
   Bảng không làm tối màn nữa, game vẫn TẠM DỪNG như cũ; bấm ra ngoài bảng là đóng.</div>
-  <div class="row"><b>Kiểu:</b> <button class="b on" data-sp="A">A · Thẻ có tab</button><button class="b" data-sp="B">B · Dải dọc không tab</button><button class="b" data-sp="C">C · Tab icon bên trái</button></div>
+  <div class="row"><b>Kiểu:</b> <button class="b" data-sp="A">A · Thẻ có tab</button><button class="b" data-sp="B">B · Dải dọc không tab</button><button class="b on" data-sp="C">C · Tab icon bên trái ✅</button></div>
   <div class="row sizes"><b>Giả lập màn:</b> <button class="b" data-w="52">1280×720 (nhỏ)</button><button class="b on" data-w="78">1920×1080</button><button class="b" data-w="100">TOMKO 4K</button>
     <span class="mut">— bảng phải giữ y nguyên tỉ lệ + góc ở cả 3 cỡ.</span></div>
   <div class="frameWrap" id="fw" style="width:78%"><div class="gframe" id="gf">
@@ -106,7 +106,8 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
   </div></div>
   <div class="note"><b>Kiểu A</b> — giữ 3 tab iPad / Camera / Race như cũ, chỉ thu nhỏ + dời góc. <b>Kiểu B</b> — bỏ tab, mọi mục xếp dọc một dải hẹp (ít bấm nhất, hơi dài).
   <b>Kiểu C</b> — tab bằng icon dọc bên trái, bảng thấp và rộng ngang (che ít phần đường đua nhất).</div>
-  <div class="ask"><b>Thầy chọn:</b> A, B hay C.</div>
+  <div class="ask"><b>✅ Thầy chọn C</b> + tab iPAD đổi tên <b>DRIVER</b>, thứ tự: <b>1. Drive on iPad · 2. Answer on iPad · 3. Drive on game</b> (= iPad OFF cũ; chỉ đổi chữ + thứ tự hiển thị, máy đã lưu chế độ nào vẫn giữ nguyên).</div>
+  <div class="note"><b>Thêm (thầy 18/10): Drive on iPad ⇒ màn lớn VẪN LÁI ĐƯỢC cùng lúc</b> — vô lăng, BOOST, phanh, nút tên lửa trên màn lớn bấm được như chế độ Drive on game.<br>  Cách gộp 2 nguồn điều khiển của MỘT đội: <b>BOOST / phanh / bắn</b> = bên nào bấm cũng nhận (iPad HOẶC màn lớn) · <b>vô lăng</b> = ai đang chạm vô lăng màn lớn thì màn lớn thắng, buông ra (0,3 s) thì trả lại iPad (không giật).<br>  Cổng iPad ở xưởng (START chỉ mở khi 2 iPad nối + bẻ thử) giữ nguyên; iPad mất nối giữa trận thì màn lớn vẫn lái tiếp được.</div>
 </section>
 
 <!-- ================= 2. TRÚNG TÊN LỬA ================= -->
@@ -134,7 +135,7 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
   <h3 style="margin-top:14px">Thanh DAMAGE (chạy thật theo thời gian)</h3>
   <div id="dmgBars"></div>
   <div class="row"><button class="b" id="dmgGo">▶ Chạy cả 5 mức</button><span class="mut">Thanh rút từ phải sang trái; màu chuyển từng nấc đỏ → cam → vàng → xanh lá; hết thanh = "GO!" lái tiếp.</span></div>
-  <div class="ask"><b>Thầy xem:</b> mức lệch hướng / thời gian mất lái theo bảng đã ổn chưa (L2 = mặc định).</div>
+  <div class="ask"><b>✅ Thầy chốt:</b> giữ đúng bảng L1–L5 (L2 mặc định).</div>
 </section>
 
 <!-- ================= 3. QUỸ ĐẠO + CHỈ BẮN PHÍA TRƯỚC ================= -->
@@ -160,7 +161,7 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
       khi tên lửa còn xa, quầng trôi về phía xe tối đa 2,5 m/giây (ngang) — khoá hẳn khi còn 1,4 s ⇒ đổi làn kịp là né được.</div>
     </div>
   </div>
-  <div class="ask"><b>Thầy thử né</b> ở chế độ Mới: độ khó vừa chưa? (có thể chỉnh tốc độ bám 2,5 m/s và lúc khoá 1,4 s).</div>
+  <div class="ask"><b>✅ Thầy chốt:</b> bám 2,5 m/s · khoá khi còn 1,4 s · chỉ bắn phía trước · đỉnh vồng 4 m · quầng đỏ ~2,4 m mờ mép.</div>
 </section>
 
 <!-- ================= 4. MŨI TÊN ĐỐI THỦ ================= -->
@@ -169,7 +170,7 @@ svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; 
   <div class="mut">Bỏ hiệu ứng tiến lùi. Mũi tên <b>dính mép khung nhìn</b>, trượt <b>mượt</b> dọc mép theo hướng xe đối thủ (cả 4 mép + góc), xoay chỉ đúng hướng; kèm khoảng cách.
   Demo dưới đây cho xe đối thủ chạy vòng quanh ngoài khung để thấy mũi tên trượt theo.</div>
   <div class="grid2" id="arrows"></div>
-  <div class="ask"><b>Thầy chọn:</b> kiểu 1, 2, 3 hay 4.</div>
+  <div class="ask"><b>✅ Thầy chọn kiểu 2 · Mũi nhọn kim loại</b> (dính mép, trượt mượt, không tiến lùi).</div>
 </section>
 </main>
 
@@ -180,7 +181,7 @@ const IC = {
   cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>',
   race: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></svg>'
 };
-const padBody = `<div class="modes"><div>1. iPad OFF <small>all on the big screen</small></div><div>2. Answer on iPad <small>questions on iPad</small></div><div class="on">3. Drive on iPad <small>wheel + pedals + missile</small></div></div>
+const padBody = `<div class="modes"><div class="on">1. Drive on iPad <small>iPad + big screen both drive</small></div><div>2. Answer on iPad <small>questions on iPad</small></div><div>3. Drive on game <small>all on the big screen</small></div></div>
   <div class="lab"><b>Steering</b><div class="seg"><span>Touch wheel</span><span class="on">Tilt the iPad</span></div></div>
   <div class="lab"><b>Full lock</b><div class="stepper"><i>−</i><span>25°</span><i>+</i></div></div>
   <div class="lab"><b>Smoothing</b><div class="seg"><span>Low</span><span class="on">Normal</span><span>High</span></div></div>`;
@@ -193,10 +194,10 @@ const SP = {
     ${[padBody, camBody, raceBody][tab]}<i class="tip"></i></div>`,
   B: () => `<div class="sp spB"><button class="x">✕</button><h4>SETTINGS</h4>
     <div class="grp"><em>iPAD</em>${padBody}</div><div class="grp"><em>CAMERA</em>${camBody}</div><div class="grp"><em>RACE</em>${raceBody}</div><i class="tip"></i></div>`,
-  C: tab => `<div class="sp spC"><nav>${[["pad", "iPAD"], ["cam", "CAMERA"], ["race", "RACE"]].map(([i, n], k) => `<span class="${k === tab ? "on" : ""}" data-tab="${k}">${IC[i]}${n}</span>`).join("")}</nav>
-    <div class="body"><button class="x">✕</button><h4>${["iPAD", "CAMERA", "RACE"][tab]}</h4>${[padBody, camBody, raceBody][tab]}</div></div>`
+  C: tab => `<div class="sp spC"><nav>${[["pad", "DRIVER"], ["cam", "CAMERA"], ["race", "RACE"]].map(([i, n], k) => `<span class="${k === tab ? "on" : ""}" data-tab="${k}">${IC[i]}${n}</span>`).join("")}</nav>
+    <div class="body"><button class="x">✕</button><h4>${["DRIVER", "CAMERA", "RACE"][tab]}</h4>${[padBody, camBody, raceBody][tab]}</div></div>`
 };
-let spKind = "A", spTab = 0;
+let spKind = "C", spTab = 0;
 const spHost = document.getElementById("spHost");
 function drawSP() { spHost.innerHTML = SP[spKind](spTab); }
 spHost.addEventListener("click", e => { const t = e.target.closest("[data-tab]"); if (t) { spTab = +t.dataset.tab; drawSP(); return; } const s = e.target.closest(".seg span, .modes div"); if (s) { s.parentElement.querySelectorAll(".on").forEach(x => x.classList.remove("on")); s.classList.add("on"); } });
