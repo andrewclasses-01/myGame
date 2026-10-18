@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>bench 1ax</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Exo+2:ital,wght@1,800;1,900&family=Rye&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/balloon-pop/core/bp3d.css"><link rel="stylesheet" href="/balloon-pop/core/bp3d-1j.css"><link rel="stylesheet" href="/balloon-pop/core/bp3d-1p.css">
+<link rel="stylesheet" href="/balloon-pop/core/bp3d-1q.css"><link rel="stylesheet" href="/balloon-pop/core/bp3d-1r.css"><link rel="stylesheet" href="/balloon-pop/core/bp3d-1ab.css">
+<link rel="stylesheet" href="/balloon-pop/core/fight-cine-1ae.css"><link rel="stylesheet" href="/balloon-pop/core/fight-1al.css"><link rel="stylesheet" href="/balloon-pop/core/bp3d-1al.css">
+<link rel="stylesheet" href="/balloon-pop/core/fight-1ao.css"><link rel="stylesheet" href="/balloon-pop/core/fight-1ap.css">
+<style>html,body{margin:0;background:#111;overflow:hidden} #fight{position:fixed;left:0;top:400px;width:560px;height:360px} #f{position:fixed;left:0;top:0;width:1024px;height:768px;border:0;transform:scale(.5);transform-origin:0 0}</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/", "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js" } }
+</script></head>
+<body><div id="fight"></div><iframe id="f"></iframe>
+<script type="module">
+import { createTrainRushFight } from "/balloon-pop/core/fight-1ax.js";
+import { localSignal } from "/balloon-pop/core/tr-padlink-1ax.js";
+import { WORDS, WORDS_TITLE } from "/balloon-pop/core/words-lsa2-s4-t4.js";
+const q = new URLSearchParams(location.search), room = "trb" + Date.now();
+window.__f = await createTrainRushFight({ mount: document.getElementById("fight"), words: WORDS, wordsTitle: WORDS_TITLE, options: { levelCount: 0, roundMin: 11 }, onSingle: null, padSignal: localSignal(room) });
+document.getElementById("f").src = `/bench/pad.html?mod=${q.get("mod") || "1ax"}&room=${room}&lag=${q.get("lag") || 0}`;
+// tự chơi: mỗi 0,9 s nổ ngẫu nhiên 1 khinh khí cầu của TEAM 1 (thùng rơi trúng / trượt / rơi đất đủ kiểu)
+window.__auto = () => { let lastPop = 0, lastRand = performance.now();
+  setInterval(() => { const c = __f.core; if (!c || __f.G.phase !== "play") return; const R = c.rigs[0], now = performance.now(); if (!R.train || now - lastPop < 700) return;
+    const bs = R.blimps.filter(b => !b.leaving && b.word), n = w => String(w).trim().toLowerCase();
+    for (const b of bs) for (const k of R.carts) if (!k.filled && !k.pruned && k.key === n(b.word) && Math.abs(b.x - (R.train.position.x + k.localX * 0.86)) < 0.35) { c.popById(0, b.id); lastPop = now; return; }
+    if (q.get("lost") && now - lastPop > 1100) { const minX = Math.min(...R.cars.map(k => k.localX - k.len / 2)); c.dropCrate("road", R.train.position.x + minX * 0.86 - 2.5 - Math.random() * 3, 7.2, R.trainVel * 0.5, 0); lastPop = now; return; }
+    if (now - lastPop > 1500) { const k = R.carts.find(k => !k.filled && !k.pruned && R.train.position.x + k.localX * 0.86 > c.SH.camX - 6); if (k) { c.dropCrate(k.item.keyword, R.train.position.x + k.localX * 0.86 + (Math.random() - 0.5) * 0.8, 7.2, R.trainVel, 0); lastPop = now; return; } }
+    if (now - lastRand > 2600 && bs.length) { c.popById(0, bs[Math.floor(Math.random() * bs.length)].id); lastPop = lastRand = now; }
+  }, 40); };
+</script></body></html>

@@ -659,6 +659,10 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **TRAIN RUSH 1ax — màn iPad mượt** (18/10, myGame, CHƯA lên AWord): thầy mở `balloon-pop/xem-1ax.html` (màn lớn + iPad cạnh nhau) hoặc `mau-1ax-train-rush.html` + `pad-1ax.html?t=0`
+  ⇒ duyệt nền cam trơn (màu `BG` đầu `tr-padui-1ax.js`), độ mượt, thùng rơi đất mờ dần ⇒ OK thì chép AWord: `tools/chep-train-rush.py` GOC = "fight-1ax.js", GOC_THEM = ["tr-padui-1ax.js"],
+  sửa tay `pad.js` dòng nạp `tr-padui-1av.js` ⇒ `1ax`, kênh bắt tay `templates/balloon-pop/tr-pad-signal.js` đổi import `tr-padlink-1ap.js` ⇒ `1ax` (localSignal), đo lại load-files nếu cần;
+  rồi thầy chơi TOMKO + 2 iPad thật (chạm 3 lần góc phải dưới iPad = bảng đo: FPS 30, dòng 3 có `st`).
 - ⬜ **RACING WORDS 4g** (18/10, đã push myGame, CHƯA lên AWord): thầy chạy `speed-run/mau-4g-ket-slow-motion.html` (máy nhà + TOMKO) ⇒ duyệt màn kết slow motion (drift / bay), số đếm 10 s,
   barrel roll tự chỉnh, lật chậm dốc xoắn không ga, nảy khi đáp, 5 đèn chậm + bíp, vạch boost mép mờ, mũi tên đối thủ ⇒ OK thì chép AWord (HO SO BAN GIAO mục 4: GOC = "rw-4g.js", CSS thêm rw-4g.css, đo lại load-files).
 - ⬜ **RACING WORDS 4f (= AWord Đợt 538)**: thầy thử TOMKO + 2 iPad — cổng iPad ở xưởng (thử trái/phải ⇒ START), Apply Options / Start again / đổi xe không phải nối lại,
@@ -729,3 +733,17 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Đo (máy nhà, step):** giữa trận 540 lệnh vẽ (4f 563), màn kết 430–490, shader 65 ⇒ 65 (không dịch thêm). Lỗi console `checkMaterialsReady … isReady` khi Apply dựng lại game lúc đang dịch shader — CÓ SẴN ở 4f, không do 4g.
 - **Bẫy bàn thử:** khung Browser ẩn ⇒ rAF đứng + ảnh chụp chậm 1 nhịp ⇒ chạy bằng `game.step(n)`, chụp canvas bằng `toDataURL` ngay sau step rồi gắn `<img>` mới, chụp màn 2 lần (lần 1 để trang vẽ lại).
   Kịch bản drift: Time, ramps Off, `auto(true)`, `G.timeLeft = 0.001`. Kịch bản bay: `place` xe trước cầu nhảy + `drive(boost)` tới khi `air` rồi hết giờ.
+
+## Train Rush 1ax — 18/10/2026 · MÀN iPAD MƯỢT (30 khung, nền cam trơn, hết thùng "nảy") · phiên máy MSI
+**Bối cảnh (thầy):** iPad vẫn giật (cần tăng fps) · khinh khí cầu ("máy bay") và hộp chuyển động rất giật · có hộp rơi xuống đường rồi lại nảy lên trên iPad (màn lớn rơi chuẩn) ·
+đồ hoạ iPad không cần đẹp, cảnh sau một màu cam trơn. Điều kiện: không sai tính năng khác, không ảnh hưởng hiệu năng game đã tối ưu. Đầu phiên đã kiểm: AWord (Đợt 532 `8018252`)
+= myGame 1aw `f32004b` + iPad 1av, từng file khớp, live khớp HEAD. Thầy chốt phương án: 30 khung, nền cam trơn, giữ ray + tà vẹt, bỏ khói, thùng rơi đất mờ dần; làm myGame trước, đo xong báo thầy rồi mới chép AWord.
+**Đã làm:** mẫu 1ax — `core/tr-padui-1ax.js` (30 khung theo mốc, canvas đục + nền cam một `fillRect`, chỉ ray + tà vẹt, bỏ khói, khinh khí cầu tự bập bềnh + đà riêng,
+thùng nội suy theo đầu máy trễ 0,08 s, thùng lạc ghim mặt ray + mờ dần, nhớ bố cục chữ, nhận lại khi giờ game lùi), `core/tr-padlink-1ax.js` (kênh "st" không xếp hàng cho tin
+trạng thái, bắt tay tương thích bằng nonce "2."), `core/bp3d-1ax.js` (chỉ thêm trường vào `padState`: khinh khí cầu baseY/pha/boost, thùng cờ g), `core/fight-1ax.js` (import 1ax,
+gửi iPad đều 30 tin/giây). Trang `mau-1ax-train-rush.html`, `pad-1ax.html`, `xem-1ax.html`. Bàn đo `tools/do-ipad-train-rush/` (`node server.mjs` rồi `node run.mjs 1av|1ax <lag ms> <giây> [1 = thả thùng xuống đường]`).
+Chi tiết nguyên nhân + bảng số đo: `balloon-pop/NGHIEN CUU GAMEPLAY.md` mục 48. Kết quả chính: 22 → 30 khung/giây, vẽ 1 khung 9,6 → 2,9 ms (tải mỗi giây −60 %),
+thùng lún rồi bật lên (Wi-Fi trễ 0–150 ms) 15/17 → 0/16, khinh khí cầu giật dọc 0,37 → 0,03 px, thùng dưới đất hết lơ lửng.
+**Quyết định:** nội suy CHỈ cho thùng (vật lý không tuyến tính); tàu / máy quay / khinh khí cầu vẫn đoán tiếp tới "bây giờ" để canh thả trên iPad vẫn khớp màn lớn (trễ thêm sẽ lệch chỗ thả);
+thùng tính theo đầu máy để thùng trên tàu không trễ so với tàu; không thêm trường mới vào kho Firestore (cờ phiên bản nằm trong nonce).
+**Lỗi gặp:** bàn đo treo vì gắn `ws.onopen` sau khi đã ngủ (sự kiện open bắn trước) ⇒ chờ open ngay khi tạo; màn máy soạn rAF 83 Hz ⇒ ngưỡng "≥ 31 ms" chỉ ra 26 khung ⇒ đổi sang lịch theo mốc.

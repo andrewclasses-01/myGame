@@ -570,3 +570,45 @@ Thầy: "chơi Rocket Race với iPad thấy khá nóng — nghiên cứu, đo �
 **Kiểm:** Single — thùng đúng ⇒ điểm 1, 3 màn liền tốc độ đúng +5 %, `S.coaches` không còn người; Fight — 2 tàu chơi, thùng đúng ⇒ đội 1 = 1 điểm, máy quay 3,9 ở màn 1; console sạch.
 **Còn để nguyên (chưa hỏi thầy):** thưởng giờ thừa khi qua màn vẫn 1 giây = 1 điểm (Single cộng thẳng vào điểm; Fight cộng vào tổng đội) ⇒ nay lấn át điểm thùng;
 Points off 0–10/thùng sai; toa than trừ tối thiểu 2; quả khinh khí cầu thưởng điểm +10.
+
+## 48. Mẫu 1ax (18/10/2026) — màn iPad MƯỢT: 30 khung đúng nhịp · nền cam trơn · khinh khí cầu tự bập bềnh · thùng nội suy (hết "nảy") · kênh trạng thái không xếp hàng
+Thầy: "hiển thị trên iPad vẫn giật, có thể cần tăng fps · máy bay (khinh khí cầu) và các hộp chuyển động rất giật · có hộp rơi xuống đường rồi lại nảy lên trên iPad
+(trên game thì rơi chuẩn) · đồ hoạ iPad không cần đẹp, cảnh sau một màu cam trơn để dành hiệu năng cho tàu / khinh khí cầu / hộp". Thầy chốt phương án:
+30 khung, nền cam trơn, GIỮ ray + tà vẹt, bỏ khói, thùng rơi đất mờ dần. Đổi: `core/tr-padui-1ax.js` (màn iPad), `core/tr-padlink-1ax.js` (kênh),
+`core/bp3d-1ax.js` (CHỈ thêm trường vào `padState`), `core/fight-1ax.js` (nhịp gửi). Trang: `mau-1ax-train-rush.html`, `pad-1ax.html`, `xem-1ax.html`.
+**Nguyên nhân (soi code 1av):**
+- Khung: `PAD_FPS 25` với ngưỡng "cách khung trước ≥ 38 ms" ⇒ màn 60 Hz chỉ vẽ mỗi 3 khung = **20 khung/giây** (Chế độ nguồn điện thấp rAF 30 Hz ⇒ 15).
+- Khinh khí cầu: iPad không biết bập bềnh (y nhảy bậc theo từng tin) và không biết đà đầu màn `boost` (2 quả đầu mỗi màn bay nhanh hơn dự đoán ⇒ răng cưa).
+- Thùng "nảy": iPad ĐOÁN TIẾP theo vận tốc + trọng lực (7,5·dt²) mà không biết mặt đỡ ⇒ giữa 2 tin (nhất là Wi-Fi khựng) thùng lún qua nóc toa / xuống dưới
+  chỗ nó thật sự dừng, tin mới tới kéo NGƯỢC LÊN (bù tan dần 0,12 s = thấy bật lên). Thùng nằm yên mà vy rung ±0,0x vẫn bị cộng trọng lực ⇒ sụt rồi bật.
+  Thùng dưới đất bị kẹp ở `nóc − 2` (y 1,82) ⇒ lơ lửng trên ray ~0,55 đơn vị. Game còn hất thùng nằm trên ray sang lề (vy 2,4 + đi theo chiều sâu z) — màn lớn thấy
+  trượt ra lề, iPad 2D chỉ thấy phần NẢY LÊN.
+- Kênh: DataChannel `ordered` gửi lại tới khi tới ⇒ Wi-Fi rơi 1 gói là cả hàng tin sau đứng chờ ⇒ iPad nhận dồn cục. Máy chủ gửi khi `ts − padTick > 33,33 ms`
+  ⇒ màn 60 Hz lúc 2 khung lúc 3 (20–30 tin/giây lộn xộn).
+- Giá vẽ: nền (trời chuyển màu, mặt trời, 2 lớp núi, bụi, xương rồng, đất chuyển màu, nền đá, ~210 nét cỏ) + khói + dò lại cỡ chữ (wrapFit) cho mọi toa / thùng / quả MỖI khung.
+**Đã làm:** (1) 30 khung/giây theo MỐC (`nextAt += 1000/30`; màn 60/120/30 Hz ra đúng 30 đều, màn tần số lẻ vẫn đủ 30/giây); (2) canvas `{ alpha: false }` +
+một `fillRect` cam `#ec9a5c` cả màn — bỏ hết nền, chỉ còn ray + tà vẹt; bỏ khói; (3) game gửi thêm khinh khí cầu `[.., baseY, phase, boost]` ⇒ iPad tính
+`x = x0 + (cv − bv)·dt − boost·(1 − e^(−0,55 dt))/0,55`, `y = baseY + sin(1,3·giờ game + pha)·0,22` (y hệt game); (4) thùng NỘI SUY giữa 2 tin kẹp
+"giờ game − 0,08 s", toạ độ x tính THEO ĐẦU MÁY (cộng vị trí tàu đang vẽ ⇒ thùng trên tàu dính tàu, không trễ); hết tin ⇒ giữ tin cuối, chỉ trôi ngang ≤ 0,1 s,
+KHÔNG đoán theo trọng lực; (5) game gửi cờ thùng `g` (0 rơi · 1 trên tàu · 2 lạc = không trên tàu và thấp hơn nóc − 0,35) ⇒ thùng lạc chỉ được đi xuống, ghim mặt
+ray (`rail + CR/2`), chạm đất ⇒ mờ dần 0,5 s rồi ẩn; (6) wrapFit nhớ theo (chữ, khung, cỡ) — xoá khi `document.fonts` nạp xong, vẫn đặt `ctx.font` như cũ;
+(7) kênh `st` { ordered: false, maxRetransmits: 0 } chỉ cho tin "i:"; lệnh chạm / bố cục / sự kiện vẫn kênh `pad`. Tương thích: iPad mới chào nonce đầu `2.` ⇒
+máy chủ mới mới mở `st`; iPad cũ ⇒ 1 kênh như cũ; iPad mới + máy chủ cũ ⇒ nhận "i:" qua `pad`. (8) Giờ game lùi > 2 s (trận / trang game mới) ⇒ iPad nhận lại từ
+đầu (1av bỏ mọi tin tới khi giờ vượt mốc cũ). (9) Máy chủ gửi khi `≥ 1000/30 − 4 ms` ⇒ đều 30 tin/giây. Game KHÔNG đổi luật / hình / vật lý.
+**Đo** (`tools/do-ipad-train-rush/`: Chrome riêng có cửa sổ qua CDP, game thật + iPad trong iframe ở khổ 1024×768 ×2 ⇒ canvas 1536×1152; tự chơi: thả thùng vào toa
+mở + nổ ngẫu nhiên; ghi MỖI LẦN VẼ THẬT; "lag 150" = mỗi tin trễ ngẫu nhiên 0–150 ms như Wi-Fi lớp; px = px màn iPad):
+| | 1av | 1ax |
+|---|---|---|
+| khung/giây thật (màn máy soạn rAF 83 Hz) | 22,4 | **30,0** |
+| giá vẽ 1 khung (ép tô xong, trung vị) | 9,6–10,1 ms | **2,8–2,9 ms** |
+| tải vẽ mỗi giây (ms × khung) | ~220 ms | **~87 ms (−60 %)** dù nhiều khung hơn |
+| khinh khí cầu giật dọc p95 (không trễ / lag 150) | 0,21 / 0,37 px | **0,02 / 0,03 px** |
+| khinh khí cầu giật ngang p95 | 0,20 / 0,24 px | **0,10 / 0,13 px** |
+| thùng trên tàu giật dọc p95 (không trễ / lag 150) | 0,28 / 0,99 px (max 6,4) | **0,12 / 0,26 px (max 2,7)** |
+| thùng LÚN sâu hơn chỗ thật (rồi bật lên) — lag 150 | **15/17 thùng, sâu tới 1,23 đv (~31 px)** | **0/16** |
+| như trên — không trễ | 9/17 thùng, tới 0,22 đv | 0/17 |
+| thùng lạc dừng ở độ cao | 1,82 (lơ lửng trên ray) | 1,27 (= mặt ray) |
+Kiểm thêm: chạm khinh khí cầu trên iPad ⇒ quả nổ trên màn lớn; iPad 1ax ⇒ kênh `st` open, iPad 1av với máy chủ 1ax ⇒ chỉ `pad` (vẫn chạy); ảnh chụp: nền cam, ray + tà vẹt,
+toa / thùng / quả / thanh đầu y như 1av. Thùng giật NGANG trên tàu p95 0,27 px (1av 0,12) — dưới 1 px, do nội suy theo đầu máy.
+**Số tuyệt đối** là của máy soạn (mạnh hơn iPad nhiều) — tỉ lệ mới mang sang iPad. Còn nóng / còn giật trên iPad thật ⇒ chạm 3 lần góc phải dưới xem bảng đo
+(dòng 3 có `st` = kênh không xếp hàng đang chạy).

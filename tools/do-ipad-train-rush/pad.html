@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>bench pad</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Rye&display=swap" rel="stylesheet">
+<style>html,body{margin:0;height:100%;background:#120c07;overflow:hidden}#pad{position:fixed;inset:0}</style></head>
+<body><div id="pad"></div>
+<script>
+// giả iPad Retina ×2 · ghi lại MỖI LẦN VẼ THẬT (mảng hits đổi = vừa vẽ): giờ, vị trí màn hình từng khinh khí cầu, vị trí thùng (theo tàu)
+const q = new URLSearchParams(location.search);
+Object.defineProperty(window, "devicePixelRatio", { get: () => 2 });
+window.__trpadLag = +q.get("lag") || 0;
+window.__rec = [];
+const raw = window.requestAnimationFrame.bind(window);
+let lastHits = null;
+window.__raf = []; window.requestAnimationFrame = cb => raw(ts => { if (window.__recOn) __raf.push(ts); cb(ts); const p = window.__pad; if (!p || !window.__recOn) return; const h = p.hits; if (h === lastHits) return; lastHits = h; window.__rec.push(window.__snap()); });
+</script>
+<script type="module">
+const MOD = new URLSearchParams(location.search).get("mod");
+const { mountTrainPad } = await import(`/balloon-pop/core/tr-padui-${MOD}.js`);
+const { localSignal } = await import("/balloon-pop/core/tr-padlink-1ax.js");
+window.__pad = mountTrainPad(document.getElementById("pad"), { signal: localSignal(new URLSearchParams(location.search).get("room")), team: 0 });
+// thùng như MÀN ĐANG VẼ: 1ax đọc thẳng crateView; 1av tính lại đúng công thức trong draw() của nó
+window.__snap = () => {
+  const s = __pad.state, St = s.St, now = performance.now();
+  const r = { t: now, b: __pad.hits.map(h => [h.id, h.x, h.y]), c: [], ppu: null };
+  if (!St || St.x == null) return r;
+  const dt = Math.max(0, Math.min(0.6, St.t != null && s.clk != null ? now / 1000 + s.clk - St.t : (now - St.at) / 1000)) * (St.ps ? 0 : 1);
+  const tr = St.x + St.tv * dt + ((s.sm.get("tr") || [0, 0])[0]);
+  if (MOD === "1ax") r.c = s.crates.map(v => [v.x - tr, v.y, v.a, v.word, v.id]);
+  else for (const [x, y, word, kicked, rot, vx = 0, vy = 0, id] of St.c || []) if (!kicked) { const o = s.sm.get("c" + id) || [0, 0];
+    r.c.push([x + vx * dt + o[0] - tr, Math.max((s.L ? s.L.roof : 3.82) - 2, y + vy * dt - 7.5 * dt * dt * (vy !== 0 ? 1 : 0) + o[1]), 1, word, id]); }
+  // cờ g của tin cuối cho từng thùng (theo chữ — đủ phân biệt trong bàn đo)
+  r.g = Object.fromEntries((St.c || []).map(e => [e[7], e[8]]));
+  try { r.truth = Object.fromEntries(window.parent.__f.core.rigs[0].crates.filter(c => c.body && !c.removed).map(c => [c.id, c.body.position.y])); } catch (e) { r.truth = {}; }
+  return r;
+};
+// đo giá vẽ: n khung liền, mỗi khung ép tô xong (getImageData 1 điểm)
+window.__bench = (n = 120) => { const c = document.querySelector("canvas"), x = c.getContext("2d"); const ms = [];
+  for (let i = 0; i < n; i++) { const a = performance.now(); __pad.step(1, 1 / 30); x.getImageData(0, 0, 1, 1); ms.push(performance.now() - a); }
+  ms.sort((p, q) => p - q); return { med: +ms[n >> 1].toFixed(2), p90: +ms[Math.floor(n * 0.9)].toFixed(2), w: c.width, h: c.height }; };
+</script></body></html>
