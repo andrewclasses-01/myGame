@@ -1103,6 +1103,6 @@ shader mới giữa trận (mọi thứ mới có mặt trong cảnh lúc prewar
 **ĐÃ LÀM (18/10, thầy chốt: Time + hết mạng ⇒ chốt NGAY; Length / Words vẫn qua vạch đích rồi diễn cú kết mới).** Trang thử `mau-4g-ket-slow-motion.html`, lõi `core/sr3d-4g.js`,
 gói `core/rw-4g.js` + `core/rw-4g.css`. Khác kế hoạch: (a) drift — mũi xe quay RA mép gần, thân trượt vào lòng đường, máy quay phía lòng đường ⇒ thấy sườn + khói (quay mũi vào giữa thì
 máy quay chỉ thấy đầu xe); (b) slow cú bay co giãn theo thời gian bay còn lại (~3 s thật); (c) nhịp "lose" 1,05 s mỗi nửa màn máy quay ngoài xe của mình rồi mới cắt sang khung rộng;
-(d) sửa luôn vết lốp (từ 3j `O.updateMatrix()` bị nuốt vào chú thích ⇒ vết lốp chưa từng hiện) + thêm lớp vết CHÁY `burnSk`.
+(d) sửa luôn vết lốp (từ 3j `O.updateMatrix()` bị nuốt vào chú thích ⇒ vết lốp chưa từng hiện) + thêm lớp vết CHÁY `burnSk`; thầy bảo bật lại 2 dòng cùng bẫy: rung/chông chênh khi sai (`slip`, từ 4b) + bật nảy sau BAD LANDING (từ 4e).
 Đo step máy nhà: giữa trận 540 lệnh vẽ, màn kết 430–490, shader 65 ⇒ 65. Chi tiết + bẫy bàn thử: myGame `GHI CHU DU AN.md` chặng "Racing Words 4g".
 ✅ đã push myGame 18/10 · ⬜ thầy thử TOMKO ⇒ chép AWord theo HO SO BAN GIAO mục 4 (GOC rw-4g.js, CSS + rw-4g.css, đo lại load-files).

@@ -747,7 +747,8 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
   function slip(t, k = 1) {
     if (t.air || t.done) return;
     const dir = Math.random() < 0.5 ? -1 : 1;
-    t.px += dir * 1.7 * k; t.ykV += dir * 2.4 * k; t.wk = clamp(t.wk + dir * 0.6 * k, -1.2, 1.2); t.psi = clamp(t.psi - dir * 0.05 * k, -0.7, 0.7);   // 4b t.wobA = 0.05 * k * -dir; t.wobT = 0; t.shake = Math.max(t.shake, 0.45 * k);
+    t.px += dir * 1.7 * k; t.ykV += dir * 2.4 * k; t.wk = clamp(t.wk + dir * 0.6 * k, -1.2, 1.2); t.psi = clamp(t.psi - dir * 0.05 * k, -0.7, 0.7);   // 4b
+    t.wobA = 0.05 * k * -dir; t.wobT = 0; t.shake = Math.max(t.shake, 0.45 * k);   // 4g: BẬT LẠI (từ 4b dòng này bị nuốt vào chú thích) — thân chông chênh + rung máy quay khi sai
   }
   const toastAt = [-9, -9];
   function toast(i, text, kind) { const el = H[i].toast; el.textContent = text; el.className = "sr-toast"; void el.offsetWidth; el.className = "sr-toast on k-" + kind; toastAt[i] = G.t; }
@@ -1481,8 +1482,8 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
       t.ap = 0; t.ar = 0; t.ay = 0; t.pushT = Math.max(t.pushT, perfect ? 1.6 : 0.9);   // 4e: đáp tốt ⇒ giữ đà bay thêm một quãng (hãm nhẹ)
       onEvent("land", { team: t.i, kind: perfect ? "perfect" : "ok", rots, err: +(err * 180 / Math.PI).toFixed(1) });
     } else {                                                                                                // đáp nghiêng / lật ⇒ mất đà, nảy, nổ nhỏ, văng đuôi
-      t.hopV = Math.max(t.hopV, 2.6); t.bnc = 1;            // 4g: đáp xấu ⇒ nảy bật mạnh (dòng nảy cũ của 3j bị nuốt vào chú thích từ 4e)
-      t.v *= 0.45; t.ctlT = 1.2; t.ctlDir = Math.sign(wrapPI(t.ar)) || (Math.random() < 0.5 ? -1 : 1); t.pushT = 0; t.lbT = 0; t.bad = true;   // 4e: + mất lái 1,2 s t.air = true; t.vy = 3.4; t.y = 0.02; t.airT = AIR.LIFT_T;
+      t.v *= 0.45; t.ctlT = 1.2; t.ctlDir = Math.sign(wrapPI(t.ar)) || (Math.random() < 0.5 ? -1 : 1); t.pushT = 0; t.lbT = 0; t.bad = true;   // 4e: + mất lái 1,2 s
+      t.air = true; t.vy = 3.4; t.y = 0.02; t.airT = AIR.LIFT_T;   // 4g: BẬT LẠI cú bật nảy sau đáp xấu (từ 4e dòng này bị nuốt vào chú thích) — lần chạm sau đi nhánh wasBad
       t.yk = clamp(wrapPI(t.ay), -1.2, 1.2) || (Math.random() < 0.5 ? -0.7 : 0.7); t.ykV = 0; t.ay = 0; t.ar = 0; t.ap = 0.12;
       t.shake = 1; t.blurB = 0.7; missiles.boom(X, Z, "miss");
       for (let k = 0; k < 30; k++) missiles.sparks.emit(X + (Math.random() - 0.5) * 2, 0.3, Z + (Math.random() - 0.5) * 3, (Math.random() - 0.5) * 10, 2 + Math.random() * 6, (Math.random() - 0.5) * 10, 0.5, 0.15, 1, 0, 1);

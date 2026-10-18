@@ -717,7 +717,7 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
   Cắt cảnh ⇒ dọn tên lửa còn bay. Kết quả ghi quãng đường lúc chốt (sEnd).
 - **Khói + vết lốp cháy:** khói 2 bánh sau từ bể `missiles.smoke` có sẵn (bùng 1 đám lúc vào drift); vết cháy = InstancedMesh thứ 2 (`burnSk`, cùng kiểu vật liệu ⇒ cùng shader).
   ⚠️ PHÁT HIỆN: từ 3j, `O.updateMatrix()` của vết lốp bị nuốt vào chú thích ⇒ vết lốp chưa từng hiện đúng chỗ (mọi đoạn nằm ở gốc toạ độ). 4g sửa luôn (`makeSkids`).
-  Cùng kiểu bẫy còn 2 chỗ CHƯA sửa (giữ nguyên hành vi đang chạy, chờ thầy): `slip()` mất dòng rung máy quay/chông chênh khi trả lời sai; `land()` BAD mất dòng bật nảy (4g thay bằng nảy hình hopV 2,6).
+  Cùng kiểu bẫy 2 chỗ nữa — thầy bảo BẬT LẠI (commit sau): `slip()` (từ 4b) rung máy quay + thân chông chênh khi trả lời sai / xe trước phanh gấp; `land()` BAD (từ 4e) bật nảy lên lại (vy 3,4) rồi chạm lần 2 đi nhánh wasBad. Bàn thử: sai ⇒ wobA 0,05 · shake 0,42; đáp xấu ⇒ bay lại ~0,5 m rồi chạm.
 - **Số đếm 10 s** (Time): `.rw-cd` giữa vạch chia, chữ nửa xanh nửa cam viền trắng + vòng 2 màu, đỏ ở 3 giây cuối, "đập" mỗi giây; onEvent("tick", n) ⇒ bíp 880 / 1.320 Hz.
 - **Barrel roll** (dốc 1 bên + dốc xoắn có ga): lộn xong lệch ±0,18–0,42 rad (`rollErr`), dốc xoắn thêm hất arW, 0,45 s cuối chông chênh (nearW + lắc) — bàn thử: buông tay 3/3 OK (18–28°), chỉnh 3/3 PERFECT.
 - **Dốc xoắn không ga** (nitroK < 0,35 hoặc < 40 km/h): `tumbleStart/tumbleStep` lật chậm 1 vòng ~1,55 s quanh mép thân (nâng rig theo điểm thấp nhất của hộp xe), còn ~5 km/h,
