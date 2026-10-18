@@ -74,40 +74,59 @@ label.r { display: inline-flex; gap: 6px; align-items: center; margin-right: 12p
 .lt { margin-top: 6px; font-size: 12px; color: var(--mut); }
 .steps { font-size: 12px; color: var(--mut); margin-top: 6px; min-height: 18px; }
 
-/* ---------- 3. CHUYỂN CÂU ---------- */
-.band { container-type: size; position: relative; width: 100%; aspect-ratio: 16 / 3.1; background: #05070b; border-radius: 12px; padding: 1.2% 1%; display: grid; grid-template-columns: 1fr .62fr 1fr; gap: 1%; margin-top: 12px; }
-.qb { position: relative; border-radius: 3cqh; background: linear-gradient(180deg, rgba(20, 28, 40, .95), rgba(10, 14, 22, .95)); border: .5cqh solid color-mix(in srgb, var(--team) 55%, transparent);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2cqh 3%; overflow: hidden; }
-.qb .q { color: #fff; font: 700 9.5cqh/1.15 "Exo 2"; text-align: center; transition: opacity .25s; }
-.qb .tag { position: absolute; top: 2.5cqh; font: italic 900 6cqh "Exo 2"; letter-spacing: .16em; color: var(--team); }
-.qb0 .tag { left: 4%; } .qb1 .tag { right: 4%; }
-.qb .ans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2%; width: 100%; margin-top: 4cqh; }
-.qb .ans b { font: 700 6.4cqh "Exo 2"; text-align: center; padding: 2.4cqh 0; border-radius: 2cqh; background: #1b2433; color: #dbe7f7; transition: background .2s, opacity .2s; }
-.qb.lock .ans b { opacity: .45; } .qb .ans b.ok { background: #1f8f53; color: #fff; opacity: 1; } .qb .ans b.bad { background: #b2342c; color: #fff; opacity: 1; }
-.mapm { border-radius: 3cqh; background: #0b1018; border: .4cqh solid rgba(140, 200, 255, .15); display: grid; place-items: center; color: #4c5a6e; font: 800 6cqh "Exo 2"; letter-spacing: .2em; }
-/* dải sáng chờ câu mới — chỉ transform (scaleX) + opacity */
-.gap { position: absolute; left: 0; right: 0; height: 2.2cqh; pointer-events: none; opacity: 0; transform-origin: var(--og) 50%; will-change: transform, opacity; z-index: 3; }
-.qb0 .gap { --og: 0%; } .qb1 .gap { --og: 100%; }
-.gap::before { content: ""; position: absolute; inset: 0; border-radius: 9px; background: linear-gradient(var(--dir), #fff 0, #fff 6%, color-mix(in srgb, var(--team) 70%, white) 30%, var(--team) 100%); }
-.gap::after { content: ""; position: absolute; left: 0; right: 0; top: -2.4cqh; bottom: -2.4cqh; border-radius: 50%;
-  background: linear-gradient(var(--dir), rgba(255, 255, 255, .55), color-mix(in srgb, var(--team) 40%, transparent) 40%, transparent); opacity: .7; }
-.qb0 .gap { --dir: 270deg; } .qb1 .gap { --dir: 90deg; }      /* đầu SÁNG TRẮNG ở phía GIỮA màn hình — đầu đó rút dần ra mép ngoài */
-.pos-bot .gap { bottom: 0; } .pos-top .gap { top: 0; }
-.pos-frame .gap { top: 0; bottom: 0; height: auto; }
-.pos-frame .gap::before { background: none; border: .7cqh solid color-mix(in srgb, var(--team) 60%, white); border-radius: 3cqh; box-shadow: inset 0 0 4cqh color-mix(in srgb, var(--team) 55%, transparent); }
-.pos-frame .gap::after { display: none; }
-.gap.run { opacity: 1; animation: gapRun var(--gs, 3s) linear forwards; }
-@keyframes gapRun { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-.qb .flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; border-radius: inherit; background: radial-gradient(closest-side, rgba(255, 255, 255, .55), color-mix(in srgb, var(--team) 35%, transparent) 60%, transparent); }
-.qb.boom .flash { animation: fl .55s ease-out; }
-.qb.boom .q { animation: qin .45s cubic-bezier(.2, .9, .3, 1.2); }
-@keyframes fl { 0% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.25); } }
-@keyframes qin { 0% { transform: scale(.82); opacity: 0; } 100% { transform: none; opacity: 1; } }
+/* ---------- 3. CHUYỂN CÂU (vẽ lại 18/10 theo ảnh thầy: ô trả lời ở BẢNG ĐIỀU KHIỂN, dải câu hỏi riêng phía DƯỚI) ---------- */
+/* --k = 1 "cqh của game thật" quy ra khung mẫu (theo bề ngang để tỉ lệ chữ / ô giống ảnh thầy) */
+.gm { container-type: size; position: relative; width: 100%; aspect-ratio: 16 / 6.2; margin-top: 12px; border-radius: 12px; overflow: hidden; background: #070a10; --k: .62cqw; display: grid; grid-template-rows: 1fr 27cqh; }
+.dash { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 0; background: linear-gradient(180deg, #151b25, #0b0f16); border-top: .3cqh solid rgba(255, 255, 255, .06); }
+.half { display: flex; align-items: stretch; gap: 1.2cqw; padding: 2cqh 1.2cqw; min-width: 0; --team: var(--t0); }
+.half1 { flex-direction: row-reverse; --team: var(--t1); }
+.ansP { flex: 0 0 62%; display: flex; flex-direction: column; padding: 1.6cqh 1cqw; border-radius: 3cqh; background: rgba(6, 10, 18, .85); border: .4cqh solid rgba(255, 255, 255, .08); min-width: 0; }
+.sr-ans { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: calc(.8 * var(--k)) .5cqw; }
+.sr-ans button { min-height: 0; min-width: 0; border-radius: calc(1.2 * var(--k)); border: calc(.3 * var(--k)) solid color-mix(in srgb, var(--team) 45%, rgba(255,255,255,.2)); padding: 0 .5cqw;
+  background: linear-gradient(180deg, rgba(26,42,72,.95), rgba(12,20,38,.97)); color: #fff; font: 800 calc(3.4 * var(--k)) "Exo 2", sans-serif; text-transform: uppercase; cursor: default; }
+.sr-ans button span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.1; }
+.old .sr-ans[data-len="m"] button { font-size: calc(2.9 * var(--k)); } .old .sr-ans[data-len="l"] button { font-size: calc(2.35 * var(--k)); }
+.new .sr-ans button span { overflow-wrap: normal; word-break: keep-all; }
+.sr-ans button.is-ok { background: linear-gradient(180deg, #2cc06d, #178a49); border-color: #9dffc6; }
+.sr-ans button.is-bad { background: linear-gradient(180deg, #e0413f, #a3201f); border-color: #ffb0a8; }
+.sr-ans button.is-reveal { border-color: #7dffb0; box-shadow: inset 0 0 0 calc(.45 * var(--k)) #3fd884; }
+.half.lock .sr-ans button:not(.is-ok):not(.is-bad):not(.is-reveal) { opacity: .4; }
+.stub { flex: 1; border-radius: 3cqh; background: radial-gradient(80% 90% at 50% 100%, #1b222d, #0d1118); display: grid; place-items: center; color: #3b4658; font: 800 4cqh "Exo 2"; letter-spacing: .2em; }
+.strip { display: grid; grid-template-columns: 1fr 31cqw 1fr; gap: .7cqw; padding: 1.6cqh .8cqw 2cqh; background: linear-gradient(180deg, #0d1322, #070a12); min-height: 0; }
+.qbox { position: relative; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 1.4cqh 1.4cqw; border-radius: 3.6cqh; overflow: hidden;
+  background: linear-gradient(180deg, rgba(20,30,52,.95), rgba(10,15,28,.95)); border: .6cqh solid color-mix(in srgb, var(--team) 55%, transparent); box-shadow: inset 0 0 6cqh color-mix(in srgb, var(--team) 14%, transparent); }
+.qbox .q { position: relative; z-index: 1; color: #fff; text-align: center; font: 700 calc(3.1 * var(--k))/1.12 "Exo 2"; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mapm { border-radius: 3.6cqh; background: #0b1018; border: .5cqh solid rgba(140, 200, 255, .15); display: grid; place-items: center; color: #4c5a6e; font: 800 5cqh "Exo 2"; letter-spacing: .2em; }
+/* dải sáng ĐẦY DẦN: lớp màu đội trượt vào từ mép GIỮA màn hình (translateX — không co chữ, không filter), mép đầu là vạch trắng phát sáng; đầy ⇒ chớp trắng + mờ đi, lộ câu mới */
+.qfill { position: absolute; inset: 0; z-index: 2; overflow: hidden; border-radius: inherit; pointer-events: none; opacity: 0; }
+.qfill i { position: absolute; inset: 0; transform: translateX(var(--from)); will-change: transform;
+  background: linear-gradient(var(--dir), color-mix(in srgb, var(--team) 30%, #070b14) 0%, color-mix(in srgb, var(--team) 62%, #0b1222) 70%, color-mix(in srgb, var(--team) 85%, #fff) 100%); }
+.qfill i::before { content: ""; position: absolute; top: 0; bottom: 0; width: 7cqh; background: linear-gradient(var(--dir), rgba(255,255,255,0), rgba(255,255,255,.95)); }
+.qfill i::after { content: ""; position: absolute; top: -20%; bottom: -20%; width: 16cqh; background: radial-gradient(closest-side, rgba(255,255,255,.6), color-mix(in srgb, var(--team) 45%, transparent) 55%, transparent); }
+.qbox0 { --team: var(--t0); --from: 101%; --dir: 270deg; } .qbox1 { --team: var(--t1); --from: -101%; --dir: 90deg; }
+.qbox0 .qfill i::before { left: 0; } .qbox0 .qfill i::after { left: -8cqh; }
+.qbox1 .qfill i::before { right: 0; } .qbox1 .qfill i::after { right: -8cqh; }
+.qfill b { position: absolute; inset: 0; display: grid; place-items: center; font: italic 900 calc(2.6 * var(--k)) "Exo 2"; letter-spacing: .3em; color: rgba(255,255,255,.0); }
+.qfill.run { opacity: 1; } .qfill.run i { animation: qFill var(--gs, 3s) linear forwards; }
+.qfill.run b { animation: qNext var(--gs, 3s) linear forwards; }
+@keyframes qFill { from { transform: translateX(var(--from)); } to { transform: translateX(0); } }
+@keyframes qNext { 0%, 55% { color: rgba(255,255,255,0); } 85%, 100% { color: rgba(255,255,255,.85); } }
+.qfill.pop { opacity: 0; transition: opacity .35s ease-out; } .qfill.pop i { transform: none; }
+.qbox .flash { position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; border-radius: inherit; background: radial-gradient(closest-side, rgba(255,255,255,.95), color-mix(in srgb, var(--team) 55%, transparent) 70%, transparent); }
+.qbox.boom .flash { animation: fl .5s ease-out; }
+.qbox.boom .q { animation: qin .45s cubic-bezier(.2, .9, .3, 1.25); }
+@keyframes fl { 0% { opacity: 1; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.3); } }
+@keyframes qin { 0% { transform: scale(.8); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.fitcmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.fitcmp > div { container-type: inline-size; }
+.fitbox { width: 100%; aspect-ratio: 16 / 7.2; container-type: size; --k: 2.15cqw; display: flex; padding: 1.6cqw; border-radius: 12px; background: #0b0f16; --team: var(--t0); }
+.fitbox .ansP { flex: 1; }
+.fitcmp h4 { margin: 0 0 6px; font: 800 14px "Exo 2"; }
 .timeline { display: flex; height: 26px; border-radius: 8px; overflow: hidden; font: 700 12px/26px "Exo 2"; margin-top: 10px; }
 .timeline div { text-align: center; color: #06101f; white-space: nowrap; overflow: hidden; }
 .ask { background: rgba(245, 197, 66, .08); border: 1px dashed rgba(245, 197, 66, .5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; }
 .ask b { color: #f5c542; }
-@media (max-width: 760px) { .peds { grid-template-columns: 1fr 1fr; } .sims { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .fitcmp { grid-template-columns: 1fr; } .peds { grid-template-columns: 1fr 1fr; } .sims { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -138,7 +157,7 @@ label.r { display: inline-flex; gap: 6px; align-items: center; margin-right: 12p
     <button class="b" id="ok">Trả lời ĐÚNG (+nạp)</button>
     <button class="b" id="auto">▶ Tự chạy</button>
   </div>
-  <div class="ask"><b>Thầy chọn:</b> B hay C (A = màn lớn hiện tại, cột đầu = iPad để so).</div>
+  <div class="ask"><b>✅ Thầy đã chọn C</b> (18/10).</div>
 </section>
 
 <!-- ============ 2. LOADING ============ -->
@@ -163,30 +182,37 @@ label.r { display: inline-flex; gap: 6px; align-items: center; margin-right: 12p
 
 <!-- ============ 3. CHUYỂN CÂU ============ -->
 <section class="sec">
-  <h2><b>3</b>Khoảng chờ trước câu mới: dải sáng rút từ GIỮA ra NGOÀI + tiếng tăng dần + "bùm"</h2>
-  <div class="mut">Hiện tại: cả 2 đội trả lời xong ⇒ sang câu mới sau 0,55 s (đúng) / 1,3 s (sai) / 0,9 s (hết giờ) — nhanh, chưa kịp nhìn đáp án.
-  Mới: chờ <b>3 giây</b> cho CẢ 2 ĐỘI — câu cũ vẫn hiện (đáp án đúng sáng xanh để HS xem lại), dải sáng ở 2 khung câu hỏi rút dần từ phía giữa màn hình ra 2 mép ngoài, đều 2 bên;
-  tiếng tăng dần suốt 3 s; câu mới hiện ra kèm tiếng "bùm" nhẹ + chớp sáng khung.</div>
-  <div class="band pos-bot" id="band">
-    <div class="qb qb0" style="--team:var(--t0)"><b class="tag">TEAM 1</b><div class="q">She ___ to school every day.</div><div class="ans"><b>go</b><b>goes</b><b>going</b><b>gone</b></div><i class="gap"></i><i class="flash"></i></div>
-    <div class="mapm">MAP</div>
-    <div class="qb qb1" style="--team:var(--t1)"><b class="tag">TEAM 2</b><div class="q">She ___ to school every day.</div><div class="ans"><b>go</b><b>goes</b><b>going</b><b>gone</b></div><i class="gap"></i><i class="flash"></i></div>
+  <h2><b>3</b>Chờ câu mới: dải sáng ĐẦY DẦN che câu cũ → "bùm" câu mới · chữ ô trả lời tự thu nhỏ</h2>
+  <div class="mut">Vẽ lại theo ảnh thầy gửi: ô trả lời nằm ở bảng điều khiển (trên), dải câu hỏi riêng ở dưới.
+  Cả 2 đội xong câu ⇒ <b>3 giây chờ</b>: ô trả lời giữ kết quả (đáp án đúng viền xanh để HS xem lại); trong khung câu hỏi, lớp sáng màu đội
+  <b>trượt vào từ phía GIỮA màn hình ra mép ngoài</b> (đều 2 bên), mép đầu là vạch trắng phát sáng, <b>che dần câu cũ</b>; đầy khung ⇒ chớp trắng + tiếng bùm ⇒ câu mới bật ra.
+  Tiếng chờ = <b>R3 gió hút + trầm dâng</b>, tiếng câu mới = <b>B1 bùm trầm nhẹ</b> (thầy đã chọn).</div>
+  <div class="gm new" id="gm">
+    <div class="dash">
+      <div class="half half0"><div class="ansP"><div class="sr-ans"></div></div><div class="stub">PEDALS · WHEEL</div></div>
+      <div class="half half1"><div class="ansP"><div class="sr-ans"></div></div><div class="stub">PEDALS · WHEEL</div></div>
+    </div>
+    <div class="strip">
+      <div class="qbox qbox0"><div class="q"></div><div class="qfill"><i></i><b>NEXT</b></div><i class="flash"></i></div>
+      <div class="mapm">MAP</div>
+      <div class="qbox qbox1"><div class="q"></div><div class="qfill"><i></i><b>NEXT</b></div><i class="flash"></i></div>
+    </div>
   </div>
   <div class="timeline" id="tl"></div>
-  <div class="row"><b>Vị trí dải sáng:</b>
-    <label class="r"><input type="radio" name="pos" value="pos-bot" checked> Mép DƯỚI khung</label>
-    <label class="r"><input type="radio" name="pos" value="pos-top"> Mép TRÊN khung</label>
-    <label class="r"><input type="radio" name="pos" value="pos-frame"> Cả VIỀN khung</label></div>
-  <div class="row"><b>Tiếng chờ (3 s):</b>
-    <label class="r"><input type="radio" name="rs" value="1" checked> R1 Máy rú lên dần</label>
-    <label class="r"><input type="radio" name="rs" value="2"> R2 Tích tắc nhanh dần</label>
-    <label class="r"><input type="radio" name="rs" value="3"> R3 Gió hút + trầm dâng</label></div>
-  <div class="row"><b>Tiếng câu mới:</b>
-    <label class="r"><input type="radio" name="bm" value="1" checked> B1 Bùm trầm nhẹ</label>
-    <label class="r"><input type="radio" name="bm" value="2"> B2 Bùm + leng keng sáng</label></div>
+  <div class="row"><b>Chế độ:</b>
+    <label class="r"><input type="radio" name="md" value="same" checked> Same — 2 đội cùng câu, cùng chờ</label>
+    <label class="r"><input type="radio" name="md" value="diff"> Different — đội nào xong thì đội đó tự chờ 3 s</label></div>
   <div class="row"><button class="b" id="qgo">▶ Chạy thử 1 lượt (có tiếng)</button><button class="b" id="qloop">⟳ Chạy liên tục</button>
-    <span class="mut">Tiếng tạo ngay trong trình duyệt (không tải file). Thầy thích kiểu nào em sẽ làm bản "thật" như các tiếng khác của game.</span></div>
-  <div class="ask"><b>Thầy chọn:</b> vị trí dải · tiếng chờ · tiếng bùm · và chế độ <i>Different</i> (mỗi đội câu riêng) có chờ 3 s không.</div>
+    <button class="b" id="fitT">Chữ ô trả lời: MỚI (tự thu nhỏ)</button></div>
+
+  <h3 style="margin:18px 0 4px;font:italic 900 17px 'Exo 2'">Chữ trong ô trả lời bị tràn (ảnh thầy: FREQUENTL… / DISAPPOIN…)</h3>
+  <div class="mut">Hiện tại cỡ chữ chỉ chọn theo SỐ KÝ TỰ dài nhất (≤ 12 ký tự = chữ to nhất) ⇒ từ dài 10–12 chữ cái như FREQUENTLY, DISAPPOINT vẫn to quá ô, bị cắt.
+  Mới: mỗi câu mới, game <b>đo thật</b> từng ô (1 lần lúc hiện câu, không đo mỗi khung hình) ⇒ thu nhỏ dần tới khi <b>mọi ô vừa khít</b>: không cắt từ, không ngắt giữa từ, tối đa 2 dòng; 4 ô của một đội dùng <b>cùng một cỡ</b> cho đều mắt. Câu ngắn vẫn giữ chữ to như cũ.</div>
+  <div class="fitcmp">
+    <div><h4 style="color:#ffb36b">HIỆN TẠI</h4><div class="fitbox old"><div class="ansP"><div class="sr-ans" id="fitOld"></div></div></div></div>
+    <div><h4 style="color:#6ee7a0">MỚI — tự thu nhỏ vừa ô</h4><div class="fitbox new"><div class="ansP"><div class="sr-ans" id="fitNew"></div></div></div></div>
+  </div>
+  <div class="row"><button class="b" id="fitNext">Bộ đáp án khác ▸</button><span class="mut" id="fitInfo"></span></div>
 </section>
 </main>
 
@@ -294,36 +320,17 @@ document.getElementById("simgo").onclick = () => {
 let AC = null;
 const ac = () => (AC ||= new (window.AudioContext || window.webkitAudioContext)());
 function noiseBuf(c, sec) { const b = c.createBuffer(1, c.sampleRate * sec, c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; }
-function riser(kind, T) {
+function riserR3(T) {                    // R3 (thầy chọn): gió hút qua bộ lọc + sóng trầm dâng
   const c = ac(), t = c.currentTime + 0.02, out = c.createGain(); out.gain.value = 0.9; out.connect(c.destination);
-  if (kind === 1) {                       // R1: 2 sóng răng cưa lệch nhau, cao dần, bộ lọc mở dần + gió
-    const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.Q.value = 6; lp.frequency.setValueAtTime(300, t); lp.frequency.exponentialRampToValueAtTime(5200, t + T);
-    const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + T * 0.9); g.gain.linearRampToValueAtTime(0, t + T);
-    lp.connect(g).connect(out);
-    [0, 7].forEach(dt => { const o = c.createOscillator(); o.type = "sawtooth"; o.detune.value = dt; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(420, t + T); o.connect(lp); o.start(t); o.stop(t + T); });
-    const n = c.createBufferSource(); n.buffer = noiseBuf(c, T); const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 1.4;
-    bp.frequency.setValueAtTime(500, t); bp.frequency.exponentialRampToValueAtTime(6000, t + T);
-    const ng = c.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.12, t + T * 0.95); ng.gain.linearRampToValueAtTime(0, t + T);
-    n.connect(bp).connect(ng).connect(out); n.start(t);
-  } else if (kind === 2) {               // R2: tích tắc dày dần + cao dần
-    let x = 0, k = 0;
-    while (x < T - 0.03) {
-      const f = 0.32 - 0.27 * (x / T), o = c.createOscillator(), g = c.createGain();
-      o.type = "square"; o.frequency.value = 700 + 1100 * (x / T);
-      g.gain.setValueAtTime(0.0001, t + x); g.gain.exponentialRampToValueAtTime(0.05 + 0.08 * (x / T), t + x + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + x + 0.045);
-      o.connect(g).connect(out); o.start(t + x); o.stop(t + x + 0.05); x += f; k++;
-    }
-  } else {                               // R3: gió hút qua bộ lọc + sóng trầm dâng
-    const n = c.createBufferSource(); n.buffer = noiseBuf(c, T); const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 2.2;
-    bp.frequency.setValueAtTime(260, t); bp.frequency.exponentialRampToValueAtTime(3600, t + T);
-    const ng = c.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.32, t + T * 0.92); ng.gain.linearRampToValueAtTime(0, t + T);
-    n.connect(bp).connect(ng).connect(out); n.start(t);
-    const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.setValueAtTime(48, t); o.frequency.exponentialRampToValueAtTime(130, t + T);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + T * 0.9); g.gain.linearRampToValueAtTime(0, t + T);
-    o.connect(g).connect(out); o.start(t); o.stop(t + T);
-  }
+  const n = c.createBufferSource(); n.buffer = noiseBuf(c, T); const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 2.2;
+  bp.frequency.setValueAtTime(260, t); bp.frequency.exponentialRampToValueAtTime(3600, t + T);
+  const ng = c.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.32, t + T * 0.92); ng.gain.linearRampToValueAtTime(0, t + T);
+  n.connect(bp).connect(ng).connect(out); n.start(t);
+  const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.setValueAtTime(48, t); o.frequency.exponentialRampToValueAtTime(130, t + T);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + T * 0.9); g.gain.linearRampToValueAtTime(0, t + T);
+  o.connect(g).connect(out); o.start(t); o.stop(t + T);
 }
-function boom(kind) {
+function boomB1() {                      // B1 (thầy chọn): bùm trầm nhẹ
   const c = ac(), t = c.currentTime + 0.005, out = c.createGain(); out.gain.value = 0.9; out.connect(c.destination);
   const o = c.createOscillator(), g = c.createGain(); o.type = "sine"; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.32);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.55, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
@@ -331,42 +338,89 @@ function boom(kind) {
   const n = c.createBufferSource(); n.buffer = noiseBuf(c, 0.2); const lp = c.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1400;
   const ng = c.createGain(); ng.gain.setValueAtTime(0.25, t); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
   n.connect(lp).connect(ng).connect(out); n.start(t);
-  if (kind === 2) [1318.5, 1975.5].forEach((f, i) => { const b = c.createOscillator(), bg = c.createGain(); b.type = "triangle"; b.frequency.value = f;
-    bg.gain.setValueAtTime(0.0001, t + 0.02 + i * 0.05); bg.gain.exponentialRampToValueAtTime(0.07, t + 0.03 + i * 0.05); bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.7 + i * 0.05);
-    b.connect(bg).connect(out); b.start(t + 0.02 + i * 0.05); b.stop(t + 0.8 + i * 0.05); });
 }
-const QS = [["She ___ to school every day.", ["go", "goes", "going", "gone"], 1], ["They ___ football yesterday.", ["play", "plays", "played", "playing"], 2],
-  ["I have lived here ___ 2020.", ["for", "since", "from", "at"], 1], ["Which word is a noun?", ["quickly", "happy", "teacher", "run"], 2]];
-let qi = 0, busy = false, looping = false;
-const band = document.getElementById("band"), qbs = [...band.querySelectorAll(".qb")];
-const val = n => +document.querySelector(`input[name=${n}]:checked`).value;
-document.querySelectorAll("input[name=pos]").forEach(r => r.onchange = () => { band.classList.remove("pos-bot", "pos-top", "pos-frame"); band.classList.add(r.value); });
+// ---- tự thu nhỏ chữ ô trả lời: đo 1 lần mỗi câu, cả 4 ô một cỡ ----
+function fitAns(box) {
+  const bs = [...box.querySelectorAll("button")]; if (!bs.length) return 1;
+  bs.forEach(b => { b.style.fontSize = ""; });
+  const base = parseFloat(getComputedStyle(bs[0]).fontSize);
+  const over = () => bs.some(b => { const s = b.firstElementChild; return s.scrollWidth > s.clientWidth + 1 || s.scrollHeight > s.clientHeight + 2 || s.clientWidth > b.clientWidth; });
+  let k = 1;
+  for (let n = 0; n < 14 && over(); n++) { k *= 0.92; bs.forEach(b => { b.style.fontSize = (base * k).toFixed(1) + "px"; }); }
+  return k;
+}
+const lenCls = ml => ml > 22 ? "l" : ml > 12 ? "m" : "s";
+function fillAns(box, list, fit) {
+  box.dataset.n = list.length; box.dataset.len = lenCls(Math.max(...list.map(a => a.length)));
+  box.innerHTML = list.map(a => `<button type="button"><span>${a}</span></button>`).join("");
+  return fit ? fitAns(box) : 1;
+}
+const QS = [
+  ["To feel bad inside because you think a problem may come", ["frequently", "think about", "worry about", "disappointed"], 2],
+  ["She ___ to school every day.", ["go", "goes", "going", "gone"], 1],
+  ["Something that makes you feel unhappy because it was not as good as you hoped", ["responsibility", "disappointment", "uncomfortable", "embarrassed"], 1],
+  ["I have lived here ___ 2020.", ["for", "since", "from", "at"], 1]
+];
+const gm = document.getElementById("gm"), halves = [...gm.querySelectorAll(".half")], qboxes = [...gm.querySelectorAll(".qbox")];
+let fitOn = true, qn = [0, 0], busy = false, looping = false;
+function showQ(i, k) {
+  const [q, a] = QS[k]; qboxes[i].querySelector(".q").textContent = q; halves[i].classList.remove("lock");
+  fillAns(halves[i].querySelector(".sr-ans"), a, fitOn);
+}
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-function showQ(k) { const [q, a, ok] = QS[k]; qbs.forEach(b => { b.classList.remove("lock"); b.querySelector(".q").textContent = q; b.querySelector(".ans").innerHTML = a.map(x => `<b>${x}</b>`).join(""); }); }
+function answer(i, right) {
+  const [, , ok] = QS[qn[i]], bs = halves[i].querySelectorAll(".sr-ans button");
+  halves[i].classList.add("lock");
+  if (right) bs[ok].classList.add("is-ok"); else { bs[(ok + 1) % bs.length].classList.add("is-bad"); bs[ok].classList.add("is-reveal"); }
+}
+async function gap(list, T = 3) {          // list = các đội cùng chờ
+  list.forEach(i => { const f = qboxes[i].querySelector(".qfill"); f.style.setProperty("--gs", T + "s"); f.classList.remove("run", "pop"); void f.offsetWidth; f.classList.add("run"); });
+  try { riserR3(T); } catch (e) { /* */ }
+  await sleep(T * 1000);
+  list.forEach(i => { qn[i] = (qn[i] + 1) % QS.length; showQ(i, qn[i]); });
+  list.forEach(i => { const f = qboxes[i].querySelector(".qfill"), b = qboxes[i]; f.classList.add("pop"); b.classList.remove("boom"); void b.offsetWidth; b.classList.add("boom"); });
+  try { boomB1(); } catch (e) { /* */ }
+  await sleep(450); list.forEach(i => { const f = qboxes[i].querySelector(".qfill"); f.classList.remove("run", "pop"); qboxes[i].classList.remove("boom"); });
+}
 (function tl() {
-  const parts = [["Đội 1 trả lời", 1.3, "#3b8cff"], ["Đội 2 trả lời", 1.0, "#ff7a00"], ["CHỜ 3 s — dải sáng rút + tiếng tăng dần", 3, "#f5c542"], ["BÙM · câu mới", 0.8, "#6ee7a0"]];
+  const parts = [["Đội 1 trả lời", 1.3, "#3b8cff"], ["Đội 2 trả lời", 1.0, "#ff7a00"], ["CHỜ 3 s — lớp sáng đầy dần, che câu cũ + tiếng gió hút", 3, "#f5c542"], ["BÙM · câu mới", 0.8, "#6ee7a0"]];
   document.getElementById("tl").innerHTML = parts.map(([n, s, c]) => `<div style="flex:${s};background:${c}">${n}</div>`).join("");
 })();
 async function round() {
   if (busy) return; busy = true;
-  const [, a, ok] = QS[qi];
-  // đội 1 đúng, đội 2 sai (cho thấy cả 2 kiểu)
-  await sleep(500); let bs = qbs[0].querySelectorAll(".ans b"); qbs[0].classList.add("lock"); bs[ok].classList.add("ok");
-  await sleep(800); bs = qbs[1].querySelectorAll(".ans b"); qbs[1].classList.add("lock"); bs[(ok + 1) % 4].classList.add("bad"); bs[ok].classList.add("ok");
-  await sleep(350);
-  const T = 3;
-  qbs.forEach(b => { const g = b.querySelector(".gap"); g.style.setProperty("--gs", T + "s"); g.classList.remove("run"); void g.offsetWidth; g.classList.add("run"); });
-  try { riser(val("rs"), T); } catch (e) { /* chưa bấm trang ⇒ chưa có tiếng */ }
-  await sleep(T * 1000);
-  qi = (qi + 1) % QS.length; showQ(qi);
-  qbs.forEach(b => { b.querySelector(".gap").classList.remove("run"); b.classList.remove("boom"); void b.offsetWidth; b.classList.add("boom"); });
-  try { boom(val("bm")); } catch (e) { /* */ }
-  await sleep(900); qbs.forEach(b => b.classList.remove("boom"));
+  const diff = document.querySelector("input[name=md]:checked").value === "diff";
+  if (!diff) {
+    await sleep(500); answer(0, true); await sleep(900); answer(1, false); await sleep(350);
+    await gap([0, 1]);
+  } else {                                 // Different: đội 1 xong trước ⇒ chờ riêng; đội 2 xong sau ⇒ chờ riêng
+    await sleep(500); answer(0, true); await sleep(250);
+    const g0 = gap([0]);
+    await sleep(1400); answer(1, false); await sleep(250);
+    const g1 = gap([1]);
+    await Promise.all([g0, g1]);
+  }
   busy = false;
-  if (looping) { await sleep(600); round(); }
+  if (looping) { await sleep(700); round(); }
 }
+showQ(0, 0); showQ(1, 0);
 document.getElementById("qgo").onclick = () => { ac().resume(); round(); };
 document.getElementById("qloop").onclick = e => { ac().resume(); looping = e.target.classList.toggle("on"); if (looping) round(); };
+document.getElementById("fitT").onclick = e => {
+  fitOn = !fitOn; gm.classList.toggle("new", fitOn); gm.classList.toggle("old", !fitOn);
+  e.target.textContent = "Chữ ô trả lời: " + (fitOn ? "MỚI (tự thu nhỏ)" : "CŨ (bị tràn)");
+  [0, 1].forEach(i => { const box = halves[i].querySelector(".sr-ans"), keep = [...box.querySelectorAll("button")].map(b => b.className); showQ(i, qn[i]); box.querySelectorAll("button").forEach((b, j) => { b.className = keep[j] || ""; }); });
+};
+// so sánh chữ cũ / mới
+const SETS = [["frequently", "think about", "worry about", "disappointed"], ["responsibility", "disappointment", "uncomfortable", "embarrassed"],
+  ["go", "goes", "going", "gone"], ["in front of", "next to", "between", "opposite"], ["a person who teaches at a school", "a place where you buy food", "an animal that lives in water", "a tool for writing"]];
+let si = 0;
+function fitDemo() {
+  fillAns(document.getElementById("fitOld"), SETS[si], false);
+  const k = fillAns(document.getElementById("fitNew"), SETS[si], true);
+  document.getElementById("fitInfo").textContent = k < 0.999 ? `Bộ này: chữ thu còn ${Math.round(k * 100)} % để vừa ô.` : "Bộ này: vừa sẵn — giữ cỡ chữ to như cũ.";
+}
+document.getElementById("fitNext").onclick = () => { si = (si + 1) % SETS.length; fitDemo(); };
+document.fonts.ready.then(() => { fitDemo(); showQ(0, qn[0]); showQ(1, qn[1]); });
 </script>
 </body>
 </html>
