@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế 4i</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ mẫu 4i (18/10/2026) — 5 việc thầy giao sau khi thử 4h: khung Settings góc dưới phải · trúng tên lửa kiểu mới + thanh DAMAGE ·
+   tên lửa chỉ bắn phía TRƯỚC · quỹ đạo thấp + quầng đỏ nhỏ + bám mục tiêu có giới hạn · mũi tên đối thủ mới. CHƯA đụng code game. */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140, 200, 255, .14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa; --t0: #3b8cff; --t1: #ff7a00; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: #f5c542; color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1240px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; } h1 small { font: 600 15px "Exo 2"; color: var(--mut); margin-left: 8px; }
+h2 { font: italic 900 21px "Exo 2"; margin: 0 0 6px; } h2 b { color: var(--ac); margin-right: 8px; }
+h3 { font: italic 900 16px "Exo 2"; margin: 0 0 4px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); } .note { background: rgba(96,165,250,.08); border-left: 3px solid var(--ac); padding: 8px 12px; border-radius: 0 10px 10px 0; margin: 10px 0; }
+.warn { background: rgba(255,122,0,.1); border-left-color: var(--t1); }
+.ask { background: rgba(245,197,66,.08); border: 1px dashed rgba(245,197,66,.5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; } .ask b { color: #f5c542; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--ac); color: #06101f; border-color: var(--ac); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } td, th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; } th { color: var(--mut); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+/* ================= 1. SETTINGS ================= */
+/* KHUNG GAME GIẢ: mọi cỡ trong bảng theo cqh của khung ⇒ đổi độ phân giải, bảng giữ ĐÚNG TỈ LỆ và đúng góc */
+.gframe { container-type: size; position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; margin: 0 auto;
+  background: radial-gradient(120% 80% at 50% 10%, #2a3442, #10151d 60%, #07090d); }
+.gframe .scene { position: absolute; inset: 0 0 6.7cqh 0; display: grid; grid-template-columns: 1fr 1fr; gap: .3cqh; }
+.gframe .scene i { background: linear-gradient(180deg, #4d6a84 0, #27384a 42%, #232a33 43%, #15191f 100%); }
+.gframe .gbar { position: absolute; left: 0; right: 0; bottom: 0; height: 6.7cqh; background: #070a10; display: flex; justify-content: flex-end; align-items: center; gap: .9cqh; padding-right: 1.4cqh; }
+.gframe .gbar u { width: 4cqh; height: 4cqh; border-radius: 1cqh; background: #18202c; border: .15cqh solid rgba(140,200,255,.25); display: grid; place-items: center; color: #9fb2c8; font: 700 2cqh "Exo 2"; text-decoration: none; }
+.gframe .gbar u.on { background: #2f6fe0; color: #fff; border-color: #8fc1ff; }
+.sp { position: absolute; right: 1.4cqh; bottom: calc(6.7cqh + 1.2cqh); z-index: 3; color: #e2e8f0; font-family: "Exo 2", sans-serif; }
+.sp .x { position: absolute; top: 1cqh; right: 1cqh; width: 3.2cqh; height: 3.2cqh; border-radius: 50%; border: 0; background: rgba(255,255,255,.08); color: #cfe3ff; font-size: 1.6cqh; cursor: pointer; display: grid; place-items: center; }
+.sp h4 { margin: 0; font: italic 900 2.1cqh "Exo 2"; letter-spacing: .08em; color: #cdeaff; }
+.seg { display: flex; gap: .4cqh; background: rgba(255,255,255,.05); border-radius: 1cqh; padding: .35cqh; }
+.seg span { flex: 1; text-align: center; font: 800 1.45cqh "Exo 2"; padding: .7cqh .6cqh; border-radius: .8cqh; color: #9fb2c8; cursor: pointer; white-space: nowrap; }
+.seg span.on { background: #f5c542; color: #1b1300; }
+.lab { display: flex; align-items: center; justify-content: space-between; gap: 1.2cqh; font: 700 1.55cqh "Exo 2"; margin-top: 1cqh; }
+.lab > b { font-weight: 700; color: #c9d6e6; white-space: nowrap; }
+.modes { display: grid; gap: .6cqh; margin-top: 1cqh; }
+.modes div { padding: .8cqh 1.1cqh; border-radius: 1cqh; border: .15cqh solid rgba(140,200,255,.18); font: 800 1.55cqh "Exo 2"; display: flex; gap: 1cqh; align-items: baseline; cursor: pointer; }
+.modes div small { font: 600 1.2cqh "Exo 2"; color: #8d9bb0; }
+.modes div.on { border-color: #f5c542; box-shadow: inset 0 0 0 .1cqh #f5c542; background: rgba(245,197,66,.08); }
+.stepper { display: flex; align-items: center; gap: .6cqh; } .stepper i { width: 2.8cqh; height: 2.8cqh; border-radius: .7cqh; background: rgba(255,255,255,.08); display: grid; place-items: center; font-style: normal; }
+.tip { position: absolute; width: 1.6cqh; height: 1.6cqh; transform: rotate(45deg); }
+/* kiểu A — thẻ có TAB (giữ 3 tab như cũ, nhỏ gọn) */
+.spA { width: 44cqh; padding: 1.6cqh 1.6cqh 1.8cqh; border-radius: 1.8cqh; background: rgba(9,14,26,.94); border: .15cqh solid rgba(140,210,255,.3); box-shadow: 0 1.6cqh 4cqh rgba(0,0,0,.55); }
+.spA .tabs { margin: 1.2cqh 0 .4cqh; }
+.spA .tip { right: 6.1cqh; bottom: -.85cqh; background: rgba(9,14,26,.94); border-right: .15cqh solid rgba(140,210,255,.3); border-bottom: .15cqh solid rgba(140,210,255,.3); }
+/* kiểu B — dải dọc KHÔNG tab (cuộn), mọi mục một chỗ, gọn nhất */
+.spB { width: 34cqh; max-height: 70cqh; overflow: auto; padding: 1.4cqh 1.4cqh 1.6cqh; border-radius: 1.6cqh; background: rgba(9,14,26,.94); border: .15cqh solid rgba(140,210,255,.3); box-shadow: 0 1.6cqh 4cqh rgba(0,0,0,.55); }
+.spB .grp { margin-top: 1.3cqh; padding-top: 1cqh; border-top: .12cqh solid rgba(140,200,255,.12); }
+.spB .grp > em { font: italic 900 1.3cqh "Exo 2"; letter-spacing: .14em; color: #7aa5d8; font-style: italic; }
+.spB .tip { right: 6.1cqh; bottom: -.85cqh; background: rgba(9,14,26,.94); border-right: .15cqh solid rgba(140,210,255,.3); border-bottom: .15cqh solid rgba(140,210,255,.3); }
+/* kiểu C — 2 cột: tab icon dọc bên trái + nội dung (rộng ngang, thấp — che ít đường đua nhất) */
+.spC { width: 56cqh; display: grid; grid-template-columns: 9cqh 1fr; border-radius: 1.6cqh; overflow: hidden; background: rgba(9,14,26,.94); border: .15cqh solid rgba(140,210,255,.3); box-shadow: 0 1.6cqh 4cqh rgba(0,0,0,.55); }
+.spC nav { background: rgba(255,255,255,.04); display: flex; flex-direction: column; gap: .5cqh; padding: 1.2cqh .8cqh; }
+.spC nav span { display: flex; flex-direction: column; align-items: center; gap: .3cqh; padding: .9cqh 0; border-radius: 1cqh; font: 800 1.15cqh "Exo 2"; letter-spacing: .08em; color: #8d9bb0; cursor: pointer; }
+.spC nav span svg { width: 2.6cqh; height: 2.6cqh; } .spC nav span.on { background: rgba(245,197,66,.14); color: #f5c542; }
+.spC .body { padding: 1.4cqh 1.6cqh 1.6cqh; position: relative; min-height: 30cqh; }
+.sizes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.frameWrap { margin-top: 10px; transition: width .4s; }
+
+/* ================= 2. TRÚNG TÊN LỬA + 3. QUỸ ĐẠO ================= */
+canvas { display: block; width: 100%; border-radius: 12px; background: #11161d; }
+.legend { font-size: 13px; color: var(--mut); }
+.dmg { position: relative; width: 100%; height: 14px; border-radius: 8px; background: rgba(255,255,255,.08); overflow: hidden; }
+.dmg i { position: absolute; inset: 0; transform-origin: 0 50%; }
+.dmgRow { display: grid; grid-template-columns: 110px 1fr 70px; gap: 10px; align-items: center; margin: 6px 0; font-size: 14px; }
+svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; }
+
+/* ================= 4. MŨI TÊN ================= */
+.ah { container-type: size; position: relative; aspect-ratio: 8 / 5; border-radius: 10px; overflow: hidden; background: linear-gradient(180deg, #5b7a95 0, #304659 40%, #2a3038 41%, #171b21 100%); }
+.ah::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 46%; height: 59%; transform: translateX(-50%); clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%); background: #2c3138; }
+.ah .car { position: absolute; left: 50%; bottom: 6%; width: 22%; height: 16%; transform: translateX(-50%); border-radius: 30% 30% 12% 12%; background: linear-gradient(180deg, #4b8cff, #1d4fb3); z-index: 1; }
+.oa { position: absolute; left: 0; top: 0; z-index: 3; will-change: transform; pointer-events: none; }
+.ahcap { font: 800 14px "Exo 2"; margin: 8px 0 2px; }
+</style>
+</head>
+<body>
+<div class="top">THIẾT KẾ 4i · CHƯA BUILD — xem / bấm thử · chờ thầy chọn rồi "ok build"</div>
+<main>
+<h1>RACING WORDS — mẫu 4i <small>18/10/2026 · 5 việc sau khi thử 4h</small></h1>
+
+<!-- ================= 1. SETTINGS ================= -->
+<section class="sec">
+  <h2><b>1</b>Khung Settings nhỏ gọn ở GÓC DƯỚI PHẢI, ngay trên hàng nút</h2>
+  <div class="mut">Hiện tại: hộp to giữa màn (rộng ~46 % màn), che cả xưởng / đường đua, thầy phải đi ra giữa màn TOMKO mới bấm được.
+  Mới: bảng mọc ra <b>ngay trên nút ⚙</b> (góc dưới phải), có mũi nhọn chỉ vào nút; chữ nhỏ hơn ~40 %.
+  ⭐ <b>Mọi cỡ tính theo chiều cao khung game</b> (không theo điểm ảnh) ⇒ máy 1280×720, 1920×1080 hay TOMKO 4K đều thấy bảng <b>đúng một tỉ lệ, đúng một chỗ</b>.
+  Bảng không làm tối màn nữa, game vẫn TẠM DỪNG như cũ; bấm ra ngoài bảng là đóng.</div>
+  <div class="row"><b>Kiểu:</b> <button class="b on" data-sp="A">A · Thẻ có tab</button><button class="b" data-sp="B">B · Dải dọc không tab</button><button class="b" data-sp="C">C · Tab icon bên trái</button></div>
+  <div class="row sizes"><b>Giả lập màn:</b> <button class="b" data-w="52">1280×720 (nhỏ)</button><button class="b on" data-w="78">1920×1080</button><button class="b" data-w="100">TOMKO 4K</button>
+    <span class="mut">— bảng phải giữ y nguyên tỉ lệ + góc ở cả 3 cỡ.</span></div>
+  <div class="frameWrap" id="fw" style="width:78%"><div class="gframe" id="gf">
+    <div class="scene"><i></i><i></i></div>
+    <div class="gbar"><u>☰</u><u>🔊</u><u>📁</u><u>⇅</u><u class="on">⚙</u><u>▦</u></div>
+    <div id="spHost"></div>
+  </div></div>
+  <div class="note"><b>Kiểu A</b> — giữ 3 tab iPad / Camera / Race như cũ, chỉ thu nhỏ + dời góc. <b>Kiểu B</b> — bỏ tab, mọi mục xếp dọc một dải hẹp (ít bấm nhất, hơi dài).
+  <b>Kiểu C</b> — tab bằng icon dọc bên trái, bảng thấp và rộng ngang (che ít phần đường đua nhất).</div>
+  <div class="ask"><b>Thầy chọn:</b> A, B hay C.</div>
+</section>
+
+<!-- ================= 2. TRÚNG TÊN LỬA ================= -->
+<section class="sec">
+  <h2><b>2</b>Bị trúng tên lửa: lệch hướng nhẹ + khói đen từ gầm + cháy chỗ trúng + THANH DAMAGE</h2>
+  <div class="grid2">
+    <div>
+      <table>
+        <tr><th></th><th>Hiện tại</th><th>Mới</th></tr>
+        <tr><td>Xe</td><td>Xoay tròn tại chỗ rồi đứng yên</td><td><b>Lệch hướng 8–20°</b> (theo phía bị trúng), trượt nhẹ, giảm tốc mạnh, tự dừng lại — KHÔNG xoay vòng</td></tr>
+        <tr><td>Khói</td><td>Khói đen che kín kính lái</td><td><b>Khói đen phụt từ GẦM quanh 4 phía xe</b>, bay lên + tạt ra sau; nhiều / nhanh theo Missile damages. Bỏ lớp khói che kính (chỉ còn một lớp mờ nhẹ 0,5 s lúc nổ)</td></tr>
+        <tr><td>Lửa</td><td>Cháy 2,2 s rồi để vết đen</td><td><b>Cháy ngay CHỖ BỊ TRÚNG</b> (mũi / hông / đuôi theo hướng tên lửa tới), cháy suốt thời gian mất lái, nhỏ dần</td></tr>
+        <tr><td>Thanh DAMAGE</td><td>—</td><td>Thanh trên đầu xe (màn lớn + iPad), <b>rút dần</b>, màu <b>đỏ → cam → vàng → xanh lá</b>; hết thanh mới lái tiếp</td></tr>
+      </table>
+      <h3 style="margin-top:14px">Theo Missile damages (L = 1–5)</h3>
+      <table id="dmgTable"><tr><th>L</th><th>Mất lái</th><th>Lệch hướng</th><th>Khói gầm</th><th>Lửa</th></tr></table>
+    </div>
+    <div>
+      <canvas id="hitCv" width="640" height="420"></canvas>
+      <div class="row"><b>Missile damages:</b> <button class="b" data-l="1">1</button><button class="b on" data-l="2">2</button><button class="b" data-l="3">3</button><button class="b" data-l="4">4</button><button class="b" data-l="5">5</button>
+        <button class="b" id="hitGo">💥 Bắn trúng</button></div>
+      <div class="legend">Nhìn từ trên xuống (minh hoạ). Game thật: khói + lửa 3D như hiện có, chỉ đổi chỗ phát + cách xe phản ứng.</div>
+    </div>
+  </div>
+  <h3 style="margin-top:14px">Thanh DAMAGE (chạy thật theo thời gian)</h3>
+  <div id="dmgBars"></div>
+  <div class="row"><button class="b" id="dmgGo">▶ Chạy cả 5 mức</button><span class="mut">Thanh rút từ phải sang trái; màu chuyển từng nấc đỏ → cam → vàng → xanh lá; hết thanh = "GO!" lái tiếp.</span></div>
+  <div class="ask"><b>Thầy xem:</b> mức lệch hướng / thời gian mất lái theo bảng đã ổn chưa (L2 = mặc định).</div>
+</section>
+
+<!-- ================= 3. QUỸ ĐẠO + CHỈ BẮN PHÍA TRƯỚC ================= -->
+<section class="sec">
+  <h2><b>3</b>Tên lửa: chỉ bắn PHÍA TRƯỚC · bay THẤP · quầng đỏ nhỏ · bám mục tiêu CÓ GIỚI HẠN</h2>
+  <div class="note warn"><b>Vì sao bị bắn "không thoát được":</b> (1) xe dẫn đầu vẫn bắn NGƯỢC về sau được; (2) điểm rơi bám theo xe tới tận 1 giây cuối ⇒ gần như trúng chắc;
+  (3) vòng ngắm to 5,4 m + cột sáng ⇒ khó biết chỗ an toàn.</div>
+  <div class="grid2">
+    <div>
+      <h3>Chỉ bắn phía trước</h3>
+      <div>Chỉ bắn được khi xe đối thủ đang <b>ở PHÍA TRƯỚC</b> mình (xa hơn ≥ 5 m). Đang dẫn đầu ⇒ nút bắn mờ đi, bấm thì báo <i>"NO TARGET AHEAD"</i>, không mất tên lửa.
+      ⇒ Xe dẫn đầu không thể bắn rát xe sau nữa; xe bị bỏ lại mới có vũ khí đuổi theo.</div>
+      <h3 style="margin-top:12px">Quỹ đạo thấp hơn</h3>
+      <svg class="side" viewBox="0 0 600 220" id="sideSvg"></svg>
+      <div class="legend">Nhìn ngang: đỉnh vồng <span style="color:#ff8a8a">11 m (cũ)</span> → <span style="color:#6ee7a0">4 m (mới)</span> ⇒ tên lửa nằm trong tầm nhìn buồng lái suốt đường bay, thấy rõ nó lao tới.</div>
+    </div>
+    <div>
+      <h3>Thử né (nhìn từ trên) — dùng phím ← → hoặc giữ nút</h3>
+      <canvas id="dodgeCv" width="640" height="460"></canvas>
+      <div class="row"><button class="b" id="dL">◀ Trái (giữ)</button><button class="b" id="dR">Phải (giữ) ▶</button><button class="b" id="dGo">🚀 Bắn 1 quả</button>
+        <b style="margin-left:8px">Bám mục tiêu:</b> <button class="b" data-hm="old">Cũ (bám tới 1 s cuối)</button><button class="b on" data-hm="new">Mới (bám chậm, khoá sớm)</button></div>
+      <div class="legend" id="dodgeInfo">Quầng đỏ = chỗ tên lửa sẽ rơi. Mới: quầng đường kính ~2,4 m (bằng ¾ bề ngang xe… nhỏ hơn hẳn vòng 5,4 m), mờ mép + nhấp nháy nhanh dần;
+      khi tên lửa còn xa, quầng trôi về phía xe tối đa 2,5 m/giây (ngang) — khoá hẳn khi còn 1,4 s ⇒ đổi làn kịp là né được.</div>
+    </div>
+  </div>
+  <div class="ask"><b>Thầy thử né</b> ở chế độ Mới: độ khó vừa chưa? (có thể chỉnh tốc độ bám 2,5 m/s và lúc khoá 1,4 s).</div>
+</section>
+
+<!-- ================= 4. MŨI TÊN ĐỐI THỦ ================= -->
+<section class="sec">
+  <h2><b>4</b>Mũi tên chỉ xe đối thủ khi KHUẤT tầm nhìn — kiểu mới</h2>
+  <div class="mut">Bỏ hiệu ứng tiến lùi. Mũi tên <b>dính mép khung nhìn</b>, trượt <b>mượt</b> dọc mép theo hướng xe đối thủ (cả 4 mép + góc), xoay chỉ đúng hướng; kèm khoảng cách.
+  Demo dưới đây cho xe đối thủ chạy vòng quanh ngoài khung để thấy mũi tên trượt theo.</div>
+  <div class="grid2" id="arrows"></div>
+  <div class="ask"><b>Thầy chọn:</b> kiểu 1, 2, 3 hay 4.</div>
+</section>
+</main>
+
+<script>
+/* ===================== 1. SETTINGS ===================== */
+const IC = {
+  pad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  race: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></svg>'
+};
+const padBody = `<div class="modes"><div>1. iPad OFF <small>all on the big screen</small></div><div>2. Answer on iPad <small>questions on iPad</small></div><div class="on">3. Drive on iPad <small>wheel + pedals + missile</small></div></div>
+  <div class="lab"><b>Steering</b><div class="seg"><span>Touch wheel</span><span class="on">Tilt the iPad</span></div></div>
+  <div class="lab"><b>Full lock</b><div class="stepper"><i>−</i><span>25°</span><i>+</i></div></div>
+  <div class="lab"><b>Smoothing</b><div class="seg"><span>Low</span><span class="on">Normal</span><span>High</span></div></div>`;
+const camBody = `<div class="lab"><b>View</b><div class="seg"><span class="on">Cockpit</span><span>Chase</span></div></div>
+  <div class="lab"><b>Sky view</b><div class="seg"><span>Auto</span><span class="on">Off</span></div></div>`;
+const raceBody = `<div class="lab"><b>Traffic</b><div class="seg"><span class="on">Off</span><span>Same way</span><span>Both ways</span></div></div>`;
+const SP = {
+  A: tab => `<div class="sp spA"><button class="x">✕</button><h4>SETTINGS</h4>
+    <div class="seg tabs">${["iPad", "Camera", "Race"].map((n, k) => `<span class="${k === tab ? "on" : ""}" data-tab="${k}">${n}</span>`).join("")}</div>
+    ${[padBody, camBody, raceBody][tab]}<i class="tip"></i></div>`,
+  B: () => `<div class="sp spB"><button class="x">✕</button><h4>SETTINGS</h4>
+    <div class="grp"><em>iPAD</em>${padBody}</div><div class="grp"><em>CAMERA</em>${camBody}</div><div class="grp"><em>RACE</em>${raceBody}</div><i class="tip"></i></div>`,
+  C: tab => `<div class="sp spC"><nav>${[["pad", "iPAD"], ["cam", "CAMERA"], ["race", "RACE"]].map(([i, n], k) => `<span class="${k === tab ? "on" : ""}" data-tab="${k}">${IC[i]}${n}</span>`).join("")}</nav>
+    <div class="body"><button class="x">✕</button><h4>${["iPAD", "CAMERA", "RACE"][tab]}</h4>${[padBody, camBody, raceBody][tab]}</div></div>`
+};
+let spKind = "A", spTab = 0;
+const spHost = document.getElementById("spHost");
+function drawSP() { spHost.innerHTML = SP[spKind](spTab); }
+spHost.addEventListener("click", e => { const t = e.target.closest("[data-tab]"); if (t) { spTab = +t.dataset.tab; drawSP(); return; } const s = e.target.closest(".seg span, .modes div"); if (s) { s.parentElement.querySelectorAll(".on").forEach(x => x.classList.remove("on")); s.classList.add("on"); } });
+document.querySelectorAll("[data-sp]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-sp]").forEach(x => x.classList.toggle("on", x === b)); spKind = b.dataset.sp; spTab = 0; drawSP(); });
+document.querySelectorAll("[data-w]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-w]").forEach(x => x.classList.toggle("on", x === b)); document.getElementById("fw").style.width = b.dataset.w + "%"; });
+drawSP();
+
+/* ===================== 2. TRÚNG TÊN LỬA ===================== */
+// mất lái = L giây (như tổng xoay + đứng yên cũ) · lệch 8 + 3·L độ · khói gầm: số hạt / giây + thời gian · lửa: cỡ
+const DM = L => ({ T: L, ang: 8 + 3 * L, smoke: 18 + 14 * L, smokeT: 0.8 + 0.9 * L, fire: ["nhỏ", "nhỏ", "vừa", "lớn", "rất lớn"][L - 1] });
+{ const tb = document.getElementById("dmgTable"); for (let L = 1; L <= 5; L++) { const d = DM(L); tb.insertAdjacentHTML("beforeend", `<tr${L === 2 ? ' style="background:rgba(96,165,250,.08)"' : ""}><td><b>${L}</b>${L === 2 ? " (mặc định)" : ""}</td><td>${d.T} s</td><td>~${d.ang}°</td><td>${d.smoke} cụm/s · ${d.smokeT.toFixed(1)} s</td><td>${d.fire}</td></tr>`); } }
+// thanh DAMAGE: màu theo NẤC (đỏ → cam → vàng → xanh lá) theo phần còn lại
+const dmgCol = f => f > 0.75 ? "#ff3b30" : f > 0.5 ? "#ff8a1f" : f > 0.25 ? "#ffd23f" : "#3ddc84";
+const dmgBars = document.getElementById("dmgBars");
+for (let L = 1; L <= 5; L++) dmgBars.insertAdjacentHTML("beforeend", `<div class="dmgRow"><span>L${L} · ${L} s</span><div class="dmg"><i id="db${L}"></i></div><b id="dt${L}"></b></div>`);
+function runBar(el, txt, T, onTick) {
+  const t0 = performance.now();
+  const f = () => { const k = Math.max(0, 1 - (performance.now() - t0) / 1000 / T); el.style.transform = `scaleX(${k})`; el.style.background = `linear-gradient(90deg, ${dmgCol(k)}, ${dmgCol(Math.max(0, k - .12))})`;
+    if (txt) txt.textContent = k > 0 ? (k * T).toFixed(1) + " s" : "GO!"; if (onTick) onTick(k); if (k > 0) requestAnimationFrame(f); };
+  f();
+}
+document.getElementById("dmgGo").onclick = () => { for (let L = 1; L <= 5; L++) runBar(document.getElementById("db" + L), document.getElementById("dt" + L), L); };
+for (let L = 1; L <= 5; L++) { const e = document.getElementById("db" + L); e.style.transform = "scaleX(1)"; e.style.background = dmgCol(1); document.getElementById("dt" + L).textContent = L + ".0 s"; }
+
+// minh hoạ trên xuống: xe chạy lên, tên lửa rơi trúng ⇒ lệch, khói gầm, lửa chỗ trúng, thanh damage trên đầu
+const hc = document.getElementById("hitCv"), hx = hc.getContext("2d");
+let hitL = 2, H = null;
+document.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-l]").forEach(x => x.classList.toggle("on", x === b)); hitL = +b.dataset.l; });
+function hitReset() { H = { x: 320, ang: 0, v: 1, t: 0, hitAt: 0.9, hit: false, side: Math.random() < 0.5 ? -1 : 1, P: [], dmg: 0, road: 0, ms: { y: -40 } }; }
+hitReset();
+document.getElementById("hitGo").onclick = hitReset;
+let hLast = performance.now();
+function carShape(ctx, x, y, a, col) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(a);
+  ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fillRect(-24, -40, 48, 84);
+  ctx.fillStyle = col; ctx.beginPath(); ctx.roundRect(-20, -42, 40, 84, 12); ctx.fill();
+  ctx.fillStyle = "#0b1220"; ctx.beginPath(); ctx.roundRect(-14, -18, 28, 26, 6); ctx.fill();
+  ctx.restore();
+}
+function hitFrame(now) {
+  const dt = Math.min(0.05, (now - hLast) / 1000); hLast = now; const d = DM(hitL);
+  H.t += dt; H.road = (H.road + dt * 260 * H.v) % 60;
+  hx.fillStyle = "#1a1f26"; hx.fillRect(0, 0, 640, 420);
+  hx.fillStyle = "#2b3038"; hx.fillRect(160, 0, 320, 420);
+  hx.strokeStyle = "rgba(255,255,255,.5)"; hx.lineWidth = 4; hx.setLineDash([30, 30]); hx.lineDashOffset = -H.road; hx.beginPath(); hx.moveTo(320, 0); hx.lineTo(320, 420); hx.stroke(); hx.setLineDash([]);
+  const cy = 300;
+  if (!H.hit) {
+    H.ms.y += dt * 420; const ky = Math.min(1, H.ms.y / cy);
+    // quầng đỏ chỗ rơi
+    const pulse = 0.55 + 0.45 * Math.sin(H.t * (10 + 20 * ky));
+    const g = hx.createRadialGradient(H.x, cy - 6, 0, H.x, cy - 6, 34); g.addColorStop(0, `rgba(255,50,40,${.75 * pulse})`); g.addColorStop(.55, `rgba(255,40,30,${.3 * pulse})`); g.addColorStop(1, "rgba(255,40,30,0)");
+    hx.fillStyle = g; hx.beginPath(); hx.arc(H.x, cy - 6, 34, 0, 7); hx.fill();
+    hx.fillStyle = "#ffd9a0"; hx.beginPath(); hx.arc(H.x + H.side * 30 * (1 - ky), H.ms.y, 5, 0, 7); hx.fill();
+    if (H.ms.y >= cy - 20) { H.hit = true; H.hitT = H.t; H.v = 0.25; }
+  } else {
+    const e = H.t - H.hitT, k = Math.max(0, 1 - e / d.T);
+    const turn = Math.min(1, e / 0.35);
+    H.ang = H.side * d.ang * Math.PI / 180 * turn * (0.4 + 0.6 * k);   // lệch rồi dần thẳng lại khi hết mất lái
+    H.x += Math.sin(H.ang) * 60 * dt * (0.4 + k); H.x = Math.max(200, Math.min(440, H.x));
+    if (e < d.smokeT) for (let n = 0; n < d.smoke * dt; n++) { const a = Math.random() * 6.283; H.P.push({ x: H.x + Math.cos(a) * 26, y: cy + Math.sin(a) * 44, vx: Math.cos(a) * 30, vy: 40 + Math.sin(a) * 20, r: 6, life: 1.2 + Math.random() }); }
+    if (k <= 0 && e > d.T + 1.2) hitReset();
+  }
+  H.P = H.P.filter(p => (p.life -= dt) > 0);
+  H.P.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.r += 22 * dt; hx.fillStyle = `rgba(14,14,16,${Math.min(.55, p.life * .4)})`; hx.beginPath(); hx.arc(p.x, p.y, p.r, 0, 7); hx.fill(); });
+  carShape(hx, H.x, cy, H.ang, "#3b8cff");
+  if (H.hit) {
+    const e = H.t - H.hitT, k = Math.max(0, 1 - e / d.T);
+    if (k > 0) {   // lửa chỗ trúng (mũi + phía bị trúng)
+      hx.save(); hx.translate(H.x, cy); hx.rotate(H.ang);
+      for (let n = 0; n < 6; n++) { const fx = H.side * 14 + (Math.random() - 0.5) * 10, fy = -30 + (Math.random() - 0.5) * 10, r = (6 + 10 * Math.random()) * (0.4 + 0.6 * k) * (0.6 + hitL * 0.15);
+        const g = hx.createRadialGradient(fx, fy, 0, fx, fy, r); g.addColorStop(0, "rgba(255,240,180,.95)"); g.addColorStop(.4, "rgba(255,140,30,.8)"); g.addColorStop(1, "rgba(255,60,0,0)"); hx.fillStyle = g; hx.beginPath(); hx.arc(fx, fy, r, 0, 7); hx.fill(); }
+      hx.restore();
+      // thanh damage trên đầu
+      const w = 90, x0 = H.x - w / 2, y0 = cy - 80;
+      hx.fillStyle = "rgba(0,0,0,.6)"; hx.beginPath(); hx.roundRect(x0 - 3, y0 - 3, w + 6, 14, 7); hx.fill();
+      hx.fillStyle = dmgCol(k); hx.beginPath(); hx.roundRect(x0, y0, w * k, 8, 4); hx.fill();
+      hx.fillStyle = "#fff"; hx.font = "italic 800 12px 'Exo 2'"; hx.textAlign = "center"; hx.fillText("DAMAGE", H.x, y0 - 8);
+    } else { hx.fillStyle = "#3ddc84"; hx.font = "italic 900 22px 'Exo 2'"; hx.textAlign = "center"; hx.fillText("GO!", H.x, cy - 70); }
+  }
+  requestAnimationFrame(hitFrame);
+}
+requestAnimationFrame(hitFrame);
+
+/* ===================== 3. QUỸ ĐẠO + NÉ ===================== */
+(function side() {
+  const s = document.getElementById("sideSvg"); const X0 = 40, X1 = 560, Y = 190, M = 12.5;   // 1 m = 12,5 px dọc
+  const arc = h => `M${X0} ${Y - 18} C ${X0 + 140} ${Y - h * M * 1.6} ${X1 - 160} ${Y - h * M * 1.2} ${X1} ${Y}`;
+  s.innerHTML = `<line x1="0" y1="${Y}" x2="600" y2="${Y}" stroke="#3a4350" stroke-width="2"/>
+    <rect x="${X0 - 26}" y="${Y - 16}" width="44" height="16" rx="5" fill="#3b8cff"/><rect x="${X1 - 22}" y="${Y - 16}" width="44" height="16" rx="5" fill="#ff7a00"/>
+    <path d="${arc(11)}" fill="none" stroke="#ff8a8a" stroke-width="2.5" stroke-dasharray="6 6"/><path d="${arc(4)}" fill="none" stroke="#6ee7a0" stroke-width="3.5"/>
+    <text x="300" y="${Y - 11 * M - 6}" fill="#ff8a8a" font-size="14" text-anchor="middle" font-family="Exo 2">cũ: đỉnh 11 m — ra khỏi khung nhìn buồng lái</text>
+    <text x="300" y="${Y - 4 * M - 14}" fill="#6ee7a0" font-size="14" text-anchor="middle" font-family="Exo 2">mới: đỉnh 4 m — luôn thấy</text>
+    <line x1="0" y1="${Y - 1.1 * M}" x2="600" y2="${Y - 1.1 * M}" stroke="rgba(255,255,255,.12)" stroke-dasharray="3 5"/><text x="8" y="${Y - 1.1 * M - 4}" fill="#8d9bb0" font-size="11">tầm mắt 1,1 m</text>`;
+})();
+const dc = document.getElementById("dodgeCv"), dx = dc.getContext("2d");
+let hm = "new", keyL = false, keyR = false;
+document.querySelectorAll("[data-hm]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-hm]").forEach(x => x.classList.toggle("on", x === b)); hm = b.dataset.hm; });
+const hold = (id, set) => { const b = document.getElementById(id); b.onpointerdown = () => set(true); b.onpointerup = b.onpointerleave = () => set(false); };
+hold("dL", v => keyL = v); hold("dR", v => keyR = v);
+addEventListener("keydown", e => { if (e.key === "ArrowLeft") { keyL = true; e.preventDefault(); } if (e.key === "ArrowRight") { keyR = true; e.preventDefault(); } });
+addEventListener("keyup", e => { if (e.key === "ArrowLeft") keyL = false; if (e.key === "ArrowRight") keyR = false; });
+// đơn vị: m. Đường rộng 9 m (−4,5..4,5); xe rộng 1,9 m; tên lửa bay T = 2,45 s
+const PXM = 46, ROAD = 4.5;
+let D = { cx: 0, cvx: 0, m: null, res: "", resT: 0, road: 0 };
+function shoot() { D.m = { t: 0, T: 2.45, px: D.cx + (Math.random() - 0.5) * 1.5, locked: false }; D.res = ""; }
+document.getElementById("dGo").onclick = shoot;
+let dLast = performance.now();
+function dodgeFrame(now) {
+  const dt = Math.min(0.05, (now - dLast) / 1000); dLast = now;
+  const steer = (keyR ? 1 : 0) - (keyL ? 1 : 0);
+  D.cvx += (steer * 6 - D.cvx) * Math.min(1, dt * 6); D.cx = Math.max(-ROAD + 1, Math.min(ROAD - 1, D.cx + D.cvx * dt)); D.road = (D.road + dt * 12) % 3;
+  const W = 640, Hh = 460, cxp = W / 2 + D.cx * PXM, cyp = 380;
+  dx.fillStyle = "#1a1f26"; dx.fillRect(0, 0, W, Hh); dx.fillStyle = "#2b3038"; dx.fillRect(W / 2 - ROAD * PXM, 0, ROAD * 2 * PXM, Hh);
+  dx.strokeStyle = "rgba(255,255,255,.35)"; dx.lineWidth = 3; dx.setLineDash([24, 24]); dx.lineDashOffset = -D.road * 16; [-1.5, 1.5].forEach(l => { dx.beginPath(); dx.moveTo(W / 2 + l * PXM, 0); dx.lineTo(W / 2 + l * PXM, Hh); dx.stroke(); }); dx.setLineDash([]);
+  if (D.m) {
+    const m = D.m; m.t += dt; const left = m.T - m.t;
+    if (hm === "old") { if (left > 1.0) m.px = D.cx + D.cvx * 0.5; else m.locked = true; }
+    else { if (left > 1.4) { const want = D.cx + D.cvx * 0.4, mx = 2.5 * dt; m.px += Math.max(-mx, Math.min(mx, want - m.px)); } else m.locked = true; }
+    const R = hm === "old" ? 2.7 : 1.2, pulse = 0.55 + 0.45 * Math.sin(m.t * (8 + 26 * (m.t / m.T)));
+    const mx = W / 2 + m.px * PXM;
+    if (hm === "old") { dx.strokeStyle = `rgba(255,60,50,${.5 + .5 * pulse})`; dx.lineWidth = 5; dx.beginPath(); dx.arc(mx, cyp, R * PXM, 0, 7); dx.stroke(); dx.beginPath(); dx.arc(mx, cyp, R * PXM * .5, 0, 7); dx.stroke(); }
+    else { const g = dx.createRadialGradient(mx, cyp, 0, mx, cyp, R * PXM * 1.25); g.addColorStop(0, `rgba(255,70,55,${.85 * pulse})`); g.addColorStop(.5, `rgba(255,40,30,${.38 * pulse})`); g.addColorStop(1, "rgba(255,30,20,0)");
+      dx.fillStyle = g; dx.beginPath(); dx.arc(mx, cyp, R * PXM * 1.25, 0, 7); dx.fill(); }
+    const ky = m.t / m.T; dx.fillStyle = "#ffe0a8"; dx.beginPath(); dx.arc(mx + (1 - ky) * 40, 20 + ky * (cyp - 20), 6, 0, 7); dx.fill();
+    if (left <= 0) { const hit = Math.abs(D.cx - m.px) < (hm === "old" ? 1.55 : 1.4); D.res = hit ? "TRÚNG!" : "NÉ ĐƯỢC!"; D.resT = 1.6; D.m = null; }
+  }
+  carShape(dx, cxp, cyp, D.cvx * 0.04, "#3b8cff");
+  if (D.resT > 0) { D.resT -= dt; dx.fillStyle = D.res === "TRÚNG!" ? "#ff5a4f" : "#3ddc84"; dx.font = "italic 900 34px 'Exo 2'"; dx.textAlign = "center"; dx.fillText(D.res, W / 2, 120); }
+  if (!D.m && D.resT <= 0) { dx.fillStyle = "#8d9bb0"; dx.font = "700 16px 'Exo 2'"; dx.textAlign = "center"; dx.fillText("Bấm 🚀 Bắn 1 quả rồi đổi làn bằng ← →", W / 2, 120); }
+  requestAnimationFrame(dodgeFrame);
+}
+requestAnimationFrame(dodgeFrame);
+
+/* ===================== 4. MŨI TÊN ĐỐI THỦ ===================== */
+const OC = "#ff7a00";
+const ARW = [
+  { n: "1 · Chevron kính", d: "Hình tròn kính mờ, chevron kép màu đội, số mét bên dưới.",
+    h: () => `<div style="width:7.2cqh;height:7.2cqh;border-radius:50%;background:rgba(8,12,20,.55);border:.35cqh solid ${OC};box-shadow:0 0 2.4cqh ${OC}66, inset 0 0 1.6cqh ${OC}44;display:grid;place-items:center"><svg class="rot" viewBox="0 0 24 24" style="width:4.2cqh;height:4.2cqh"><path d="M6 14l6-6 6 6M6 19l6-6 6 6" fill="none" stroke="${OC}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b class="dist" style="display:block;text-align:center;margin-top:.6cqh;font:italic 800 2.2cqh 'Exo 2';color:#fff;text-shadow:0 .2cqh .6cqh #000"></b>` },
+  { n: "2 · Mũi nhọn kim loại", d: "Tam giác bo góc viền sáng màu đội (lõi đặc màu đội), số mét bên dưới.",
+    h: () => `<svg class="rot" viewBox="0 0 60 60" style="width:8.4cqh;height:8.4cqh;overflow:visible"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="${OC}"/></linearGradient></defs>
+      <path d="M30 4 L54 50 Q30 40 6 50 Z" fill="rgba(10,14,22,.82)" stroke="url(#g2)" stroke-width="3.2" stroke-linejoin="round"/><path d="M30 14 L44 42 Q30 36 16 42 Z" fill="${OC}" opacity=".85"/></svg><b class="dist" style="display:block;text-align:center;font:italic 800 2.2cqh 'Exo 2';color:#fff;text-shadow:0 .2cqh .6cqh #000"></b>` },
+  { n: "3 · Thẻ xe ở mép", d: "Thẻ nhỏ: icon xe (nhìn trên) màu đội + mét; đầu nhọn chỉ hướng. Kiểu game đua hiện đại.",
+    h: () => `<div style="position:relative;display:flex;align-items:center;gap:.8cqh;padding:.8cqh 1.4cqh;border-radius:1.4cqh;background:rgba(8,12,20,.78);border:.3cqh solid ${OC};box-shadow:0 0 2cqh ${OC}55">
+      <svg viewBox="0 0 20 34" style="width:2.2cqh;height:3.8cqh"><rect x="2" y="1" width="16" height="32" rx="6" fill="${OC}"/><rect x="5" y="10" width="10" height="9" rx="2" fill="#0b1220"/></svg><b class="dist" style="font:italic 900 2.4cqh 'Exo 2';color:#fff"></b>
+      <svg class="rot" viewBox="0 0 20 20" style="position:absolute;left:50%;top:50%;width:13cqh;height:13cqh;margin:-6.5cqh 0 0 -6.5cqh;overflow:visible;pointer-events:none"><path d="M10 -1.2 L13 3 L7 3 Z" fill="${OC}"/></svg></div>` },
+  { n: "4 · Vệt sáng mép", d: "Không có hình mũi tên to: một VỆT SÁNG màu đội ôm mép khung + chevron nhỏ + mét — gọn, không che đường.",
+    h: () => `<div style="position:relative;width:16cqh;height:7cqh;display:grid;place-items:center"><i class="glow" style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(closest-side, ${OC}aa, ${OC}33 55%, transparent)"></i>
+      <div style="position:relative;display:flex;align-items:center;gap:.6cqh"><svg class="rot" viewBox="0 0 24 24" style="width:3cqh;height:3cqh"><path d="M7 15l5-5 5 5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><b class="dist" style="font:italic 900 2.3cqh 'Exo 2';color:#fff;text-shadow:0 .2cqh .6cqh #000"></b></div></div>` }
+];
+const host = document.getElementById("arrows"), AR = [];
+ARW.forEach((a, k) => {
+  const w = document.createElement("div");
+  w.innerHTML = `<div class="ahcap">${a.n}</div><div class="ah"><i class="car"></i><div class="oa">${a.h().replace(/([\d.]+)cqh/g, (m, v) => (v * 1.7).toFixed(2) + "cqh")}</div></div><div class="legend">${a.d}</div>`;
+  host.appendChild(w); AR.push({ el: w.querySelector(".oa"), box: w.querySelector(".ah"), rot: w.querySelector(".rot"), dist: w.querySelector(".dist"), x: 0, y: 0 });
+});
+// đối thủ chạy vòng ngoài khung: góc θ quanh tâm; mũi tên dính mép (lề 7 %), trượt MƯỢT (lọc thấp), xoay theo hướng
+let aLast = performance.now(), th = -1.4;
+function arrowFrame(now) {
+  const dt = Math.min(0.05, (now - aLast) / 1000); aLast = now; th += dt * 0.55;
+  const dist = Math.round(40 + 30 * Math.sin(th * 1.3));
+  AR.forEach(a => {
+    const W = a.box.clientWidth, Hh = a.box.clientHeight, ew = a.el.offsetWidth, eh = a.el.offsetHeight;
+    const dxv = Math.cos(th), dyv = Math.sin(th), m = 0.07, hw = W / 2 - ew / 2 - W * m * 0.5, hh = Hh / 2 - eh / 2 - Hh * m * 0.5;
+    const s = Math.min(hw / Math.max(1e-6, Math.abs(dxv)), hh / Math.max(1e-6, Math.abs(dyv)));
+    const tx = W / 2 + dxv * s - ew / 2, ty = Hh / 2 + dyv * s - eh / 2;
+    const k = 1 - Math.exp(-dt * 10); a.x += (tx - a.x) * k; a.y += (ty - a.y) * k;
+    a.el.style.transform = `translate(${a.x.toFixed(1)}px, ${a.y.toFixed(1)}px)`;
+    if (a.rot) a.rot.style.transform = `rotate(${(th * 180 / Math.PI + 90).toFixed(1)}deg)`;
+    if (a.dist) a.dist.textContent = dist + " m";
+  });
+  requestAnimationFrame(arrowFrame);
+}
+requestAnimationFrame(arrowFrame);
+</script>
+</body>
+</html>
