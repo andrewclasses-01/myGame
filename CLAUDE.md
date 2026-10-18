@@ -96,8 +96,8 @@ speed-run/                    (11/10) SPEED RUN — đua ô tô 2 đội; hồ s
   mau-3p-muot.html + core/rw-3p.js + sr3d-3p.js + sr3d-car-3p.js + sr3d-intro-3p.js + sr3d-carmeta-3p.js   (15/10) MẪU 3p (= AWord Đợt 529): mượt (gộp lưới xe, số đo xe sẵn, dịch sẵn shader) + chạm đúp bỏ intro (mục 28)
   mau-3q-fight.html + core/rw-3q.js + sr3d-3q.js + sr3d-car-3q.js + sr3d-intro-3q.js + sr3d-world-3q.js + sr3d-missile-3q.js + rw-3q.css   (15/10) MẪU 3q (= AWord Đợt 531): Fight (theo lượt, Lives, Missile damages, Time delay, Miss wait) + cảnh xa đúng vật lý + 35 km/h (mục 29)
   mau-3r-muot.html + core/rw-3r.js + sr3d-3r.js + sr3d-intro-3r.js + sr3d-car-3r.js + sr3d-world-3r.js + sr3d-missile-3r.js + sr3d-autores-3r.js + rw-3r.css   (16/10) MẪU 3r MỚI NHẤT: = 3q tối ưu MƯỢT trên TOMKO (đo act 572 trong myActivity: xưởng 37⇒60, phim 18⇒60, đua hết dịch shader; nén vật liệu xe; HUD bỏ filter đắt) (mục 30)
-  ⭐⭐⭐ RACING WORDS ĐANG LÀM = DRONE (iPad thứ 3) chia 3 đợt 4k → 4l → 4m, chốt cả 3 mới lên AWord. 4k (19/10) ✅ BUILD: mau-4k-drone.html · core/rw-4k.js · sr3d-4k.js · rw-4k.css
-    (cột drone giữa, tab Settings ▸ Drone, máy quay sau drone, tâm bắn + khoá xe, phím J L I K 1 2 3; bàn đo fps / lệnh vẽ góc trên trái). Thiết kế: thiet-ke-4k-drone-v2.html. NGHIEN CUU mục 45.
+  ⭐⭐⭐ RACING WORDS ĐANG LÀM = DRONE (iPad thứ 3) — TẠM DỪNG 19/10, bản mới nhất 4s: mau-4s-dan-gon.html · core/rw-4s.js · sr3d-4s.js · sr3d-dammo-4s.js · sr3d-drone3d-4p.js · pad-4l.html.
+    Làm tiếp ở myGame (4t…), CHƯA lên template AWord. ĐỌC TRƯỚC: speed-run/HO SO BAN GIAO RACING WORDS.md mục 0. NGHIEN CUU mục 45–46.
   (đã lên AWord) RACING WORDS mẫu 4j (18/10, ✅ ĐÃ LÊN AWord Đợt 551 `27825a2`): mau-4j-nut-ban.html + pad-4j.html · core/rw-4j.js · sr3d-4j.js · sr3d-intro-4h.js + sr3d-car-4h.js (cùng mô-đun xe)
     · sr3d-missile-4i.js · iPad sr3d-padui-4j.js + sr3d-padlink-4j.js · CSS rw-4g · rw-4h · rw-4i · rw-4j-fb (thẻ nút bắn dùng chung game + iPad) · rw-4j · màn chờ rw-loadpace-4h.js.
     Chuỗi 4h (chờ câu mới, loading đều, sửa đơ bóng xe) → 4i (cửa sổ góc, tạm dừng chung + 3-2-1, lái đồng thời, tên lửa mới, DAMAGE, mũi tên dính mép, bảng đếm đầu vạch)

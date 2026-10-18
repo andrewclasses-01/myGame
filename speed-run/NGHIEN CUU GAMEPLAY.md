@@ -1120,3 +1120,8 @@ Thiết kế qua 8 bản `thiet-ke-4j.html` → `thiet-ke-4j-v8.html` (v8 = ch�
 Thiết kế `thiet-ke-4k-drone.html` (bản 1: khả thi, bố cục A/B/C) → `thiet-ke-4k-drone-v2.html` (thầy chốt: A, tab DRONE 3 chế độ + chừa 2 drone, camera SAU drone,
 lái TÂM BẮN, 3 loại đạn dáng tên lửa bay lạng lách + định vị tương đối, nổ xe / đường khác nhau, pin tự sạc). Trang thử `mau-4k-drone.html`. Còn: 4l (3 loại đạn, nổ, pin, luật,
 tiếng, kết trận) · 4m (iPad drone, vai DRONE trong đường nối, thẻ + QR ở xưởng).
+
+## 46. ✅ DRONE 4l → 4s (19/10/2026) — iPad drone · mẫu 3D · quạt quay · tâm ngắm HUD · đạn — TẠM DỪNG
+Thiết kế: `thiet-ke-4k-drone-v2.html` (luật, iPad) · `chon-drone-4l.html` + `-v2` (chọn mẫu) · `thiet-ke-4q-tam-ngam.html` (tâm ngắm, chọn R5).
+Trang thử từng bước: mau-4l-drone-ipad · mau-4m-drone-3d · mau-4n-drone-bay · mau-4o-chon-drone · mau-4p-drone-5-mau · mau-4q-tam-ngam · mau-4r-dan-drone · mau-4s-dan-gon.
+Tóm tắt + việc còn lại: HO SO BAN GIAO mục 0.

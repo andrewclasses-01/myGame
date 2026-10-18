@@ -746,6 +746,11 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - ⛔ BẪY lặp 3 lần trong phiên: vá chuỗi có "// chú thích" chèn GIỮA dòng ⇒ nuốt phần code sau (lần 3 làm object H mất tag/msHold). Dùng /* */ hoặc kiểm phần đuôi dòng gốc.
 - AWord Đợt 551: worktree web-wt-dot551, GOC rw-4j.js, `core/loader3d.js` + `pace` / `h.mark`, pad.js padui-4j + rw-4j-fb.css, load-files.js đo lại. ⬜ thầy thử TOMKO + 2 iPad.
 
+## Racing Words DRONE 4k → 4s — 19/10/2026 · TẠM DỪNG (chỉ myGame; AWord có trang thử ẩn /lab/racing-drone.html)
+- 4k cột drone + tab Drone + camera sau drone + tâm bắn · 4l iPad drone (vai t=2) · 4m–4p mẫu drone Sketchfab (giữ 5: Mavic · Quad · Osprey · Northstar · Dvergr), cánh quạt quay, bay lượn
+  · 4q tâm ngắm lục giác HUD · 4r đạn Heart/Boost/Missile + pin + trúng xe/đường · 4s đạn nhỏ, phóng về trước, đuôi chỉ lửa + khói.
+- Chi tiết + việc còn lại: speed-run/HO SO BAN GIAO RACING WORDS.md mục 0. Công cụ mẫu 3D: tools/*.mjs.
+
 ## Train Rush 1ax — 18/10/2026 · MÀN iPAD MƯỢT (30 khung, nền cam trơn, hết thùng "nảy") · phiên máy MSI
 **Bối cảnh (thầy):** iPad vẫn giật (cần tăng fps) · khinh khí cầu ("máy bay") và hộp chuyển động rất giật · có hộp rơi xuống đường rồi lại nảy lên trên iPad (màn lớn rơi chuẩn) ·
 đồ hoạ iPad không cần đẹp, cảnh sau một màu cam trơn. Điều kiện: không sai tính năng khác, không ảnh hưởng hiệu năng game đã tối ưu. Đầu phiên đã kiểm: AWord (Đợt 532 `8018252`)
