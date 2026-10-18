@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế tâm ngắm drone</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ 4q (19/10/2026) — thầy: "tâm khu vực ngắm của drone hơi xấu, cần đẹp, mảnh, blur, hiện đại và ngầu hơn".
+   5 kiểu tâm ngắm vẽ trên mặt đường (nghiêng như góc máy drone), mỗi kiểu 2 trạng thái: ĐANG NGẮM (trên đường) · KHOÁ XE (vòng quanh xe).
+   Màu theo đạn đang chọn. Trong game sẽ là ảnh phát sáng (texture) dán trên mặt đường — không tốn thêm hiệu năng. CHƯA đụng code game. */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140,200,255,.14); --tx: #e7eef8; --mut: #8d9bb0; --dr: #b07cff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.5 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: #f5c542; color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1240px; margin: 0 auto; padding: 18px 16px 60px; }
+h1 { font: italic 900 28px "Exo 2"; margin: 8px 0 4px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b.on { background: var(--dr); color: #12061f; border-color: var(--dr); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+.card h2 { font: italic 900 19px "Exo 2"; margin: 0 0 2px; } .card h2 b { color: var(--dr); margin-right: 8px; }
+.card p { margin: 0 0 8px; font-size: 13px; color: var(--mut); min-height: 3em; }
+.view { position: relative; height: 260px; border-radius: 12px; overflow: hidden; background: #2b3036; perspective: 520px; }
+.view canvas { position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; transform: rotateX(52deg) translateY(40px); }
+.mut { color: var(--mut); }
+</style>
+</head>
+<body>
+<div class="top">TRANG THIẾT KẾ · CHƯA ĐỤNG CODE GAME · RACING WORDS 4q — TÂM NGẮM DRONE</div>
+<main>
+<h1>Tâm ngắm drone — 5 kiểu</h1>
+<p class="mut">Mỗi ô là mặt đường nhìn từ máy quay drone. Bấm để đổi trạng thái và màu đạn. Kiểu đang dùng (4p) là vòng dày + 4 vạch — xấu, thô. Các kiểu mới: nét mảnh 1–2 px, lõi trắng sáng + quầng màu đạn mờ (blur), chuyển động chậm, ít.</p>
+<div class="row">
+  <button class="b on" data-st="aim">Đang ngắm (trên đường)</button><button class="b" data-st="lock">Khoá xe</button>
+  <span class="mut" style="margin-left:14px">Đạn:</span>
+  <button class="b on" data-c="#ff5fa2">Heart</button><button class="b" data-c="#2ee6c9">Boost</button><button class="b" data-c="#ff4d5e">Missile</button>
+</div>
+<div class="grid" id="g"></div>
+</main>
+<script>
+// Mỗi kiểu = hàm vẽ (ctx, t giây, trạng thái, màu). Vẽ 2 lớp: QUẦNG (shadowBlur, màu đạn) rồi LÕI (trắng pha màu, mảnh).
+const S = 520, C = S / 2;
+const STYLES = [
+  { k: "R1", t: "Halo mảnh", d: "Một vòng tròn rất mảnh + quầng mờ, 4 gạch nhỏ ngoài vòng, chấm giữa. Khoá: vòng thứ 2 xoay chậm, có 3 cung đứt quanh xe.", f: halo },
+  { k: "R2", t: "Ngoặc góc", d: "4 ngoặc vuông ở 4 góc (kiểu khung ngắm camera) + dấu cộng nhỏ giữa. Khoá: 4 ngoặc thu vào ôm sát xe, nhịp chậm.", f: bracket },
+  { k: "R3", t: "Radar quét", d: "Vòng mảnh + vòng trong mờ + vệt quét gradient xoay. Khoá: vệt quét dừng, vòng ngoài sáng nhịp chậm.", f: radar },
+  { k: "R4", t: "Mũi chỉ", d: "3 mũi tên mảnh chỉ vào tâm (cách nhau 120°) + vòng đứt nét. Khoá: 3 mũi khép vào sát xe.", f: chevron },
+  { k: "R5", t: "Lục giác HUD", d: "Lục giác nét mảnh có khe hở ở các cạnh + hình thoi nhỏ giữa — cảm giác giao diện máy bay chiến đấu. Khoá: lục giác thứ 2 xoay ngược.", f: hexa },
+];
+let ST = "aim", COL = "#ff5fa2";
+function glow(ctx, col, w, blur, fn) {   // quầng màu (mờ) + lõi sáng mảnh
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = w * 3; ctx.globalAlpha = 0.35; ctx.shadowColor = col; ctx.shadowBlur = blur; fn(); ctx.restore();
+  ctx.save(); ctx.strokeStyle = mix(col, "#ffffff", 0.55); ctx.fillStyle = mix(col, "#ffffff", 0.55); ctx.lineWidth = w; ctx.shadowColor = col; ctx.shadowBlur = blur * 0.5; fn(); ctx.restore();
+}
+function mix(a, b, k) { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const x = p(a), y = p(b); return "rgb(" + x.map((v, i) => Math.round(v + (y[i] - v) * k)).join(",") + ")"; }
+function arc(ctx, r, a0, a1) { ctx.beginPath(); ctx.arc(C, C, r, a0, a1); ctx.stroke(); }
+function car(ctx) { ctx.save(); ctx.fillStyle = "#3b8cff"; ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 10; ctx.fillRect(C - 34, C - 62, 68, 124); ctx.fillStyle = "#1b2a44"; ctx.fillRect(C - 26, C - 30, 52, 34); ctx.restore(); }
+function halo(ctx, t, lock, col) {
+  const r = lock ? 108 : 70;
+  glow(ctx, col, 2, 18, () => { arc(ctx, r, 0, Math.PI * 2); });
+  glow(ctx, col, 2, 10, () => { for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2; ctx.beginPath(); ctx.moveTo(C + Math.cos(a) * (r + 10), C + Math.sin(a) * (r + 10)); ctx.lineTo(C + Math.cos(a) * (r + 26), C + Math.sin(a) * (r + 26)); ctx.stroke(); } });
+  if (!lock) glow(ctx, col, 1, 8, () => { ctx.beginPath(); ctx.arc(C, C, 4, 0, Math.PI * 2); ctx.fill(); });
+  else glow(ctx, col, 1.5, 12, () => { for (let k = 0; k < 3; k++) { const a = t * 0.6 + k * Math.PI * 2 / 3; arc(ctx, r + 40, a, a + 1.2); } });
+}
+function bracket(ctx, t, lock, col) {
+  const h = lock ? 92 + 4 * Math.sin(t * 2.4) : 62, L = lock ? 30 : 22;
+  glow(ctx, col, 2, 14, () => { [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => { ctx.beginPath(); ctx.moveTo(C + sx * h, C + sy * (h - L)); ctx.lineTo(C + sx * h, C + sy * h); ctx.lineTo(C + sx * (h - L), C + sy * h); ctx.stroke(); }); });
+  if (!lock) glow(ctx, col, 1.5, 8, () => { ctx.beginPath(); ctx.moveTo(C - 12, C); ctx.lineTo(C - 4, C); ctx.moveTo(C + 4, C); ctx.lineTo(C + 12, C); ctx.moveTo(C, C - 12); ctx.lineTo(C, C - 4); ctx.moveTo(C, C + 4); ctx.lineTo(C, C + 12); ctx.stroke(); });
+  else { ctx.save(); ctx.font = "800 18px 'Exo 2'"; ctx.fillStyle = mix(col, "#ffffff", 0.6); ctx.shadowColor = col; ctx.shadowBlur = 10; ctx.textAlign = "center"; ctx.fillText("LOCK", C, C + h + 26); ctx.restore(); }
+}
+function radar(ctx, t, lock, col) {
+  const r = lock ? 104 : 74;
+  glow(ctx, col, 1.5, 16, () => { arc(ctx, r, 0, Math.PI * 2); });
+  ctx.save(); ctx.globalAlpha = 0.5; glow(ctx, col, 1, 6, () => { arc(ctx, r * 0.55, 0, Math.PI * 2); }); ctx.restore();
+  const a = lock ? -Math.PI / 2 : t * 2.2, g = ctx.createConicGradient ? ctx.createConicGradient(a - 1.1, C, C) : null;
+  if (g) { g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(0.175, col + "aa"); g.addColorStop(0.176, "rgba(0,0,0,0)"); ctx.save(); ctx.globalAlpha = lock ? 0.25 + 0.2 * Math.sin(t * 3) : 0.55; ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(C, C); ctx.arc(C, C, r, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+  glow(ctx, col, 1, 8, () => { ctx.beginPath(); ctx.arc(C, C, 3, 0, Math.PI * 2); ctx.fill(); });
+}
+function chevron(ctx, t, lock, col) {
+  const r = lock ? 96 + 4 * Math.sin(t * 2.4) : 58;
+  ctx.save(); ctx.setLineDash([6, 10]); glow(ctx, col, 1, 8, () => { arc(ctx, r + 34, 0, Math.PI * 2); }); ctx.restore();
+  glow(ctx, col, 2, 14, () => { for (let k = 0; k < 3; k++) { const a = -Math.PI / 2 + k * Math.PI * 2 / 3 + (lock ? 0 : t * 0.25), x = C + Math.cos(a) * r, y = C + Math.sin(a) * r, s = 14;
+    ctx.beginPath(); ctx.moveTo(x + Math.cos(a + 2.5) * s, y + Math.sin(a + 2.5) * s); ctx.lineTo(x, y); ctx.lineTo(x + Math.cos(a - 2.5) * s, y + Math.sin(a - 2.5) * s); ctx.stroke(); } });
+}
+function hexa(ctx, t, lock, col) {
+  const hex = (r, rot, gap) => { for (let k = 0; k < 6; k++) { const a0 = rot + k * Math.PI / 3, a1 = a0 + Math.PI / 3, p0 = [C + Math.cos(a0) * r, C + Math.sin(a0) * r], p1 = [C + Math.cos(a1) * r, C + Math.sin(a1) * r];
+    const u = gap, q0 = [p0[0] + (p1[0] - p0[0]) * u, p0[1] + (p1[1] - p0[1]) * u], q1 = [p1[0] + (p0[0] - p1[0]) * u, p1[1] + (p0[1] - p1[1]) * u]; ctx.beginPath(); ctx.moveTo(q0[0], q0[1]); ctx.lineTo(q1[0], q1[1]); ctx.stroke(); } };
+  const r = lock ? 104 : 70;
+  glow(ctx, col, 2, 16, () => hex(r, Math.PI / 6, 0.14));
+  if (lock) glow(ctx, col, 1.2, 10, () => hex(r + 26, -t * 0.4, 0.3));
+  glow(ctx, col, 1.5, 8, () => { ctx.beginPath(); ctx.moveTo(C, C - 7); ctx.lineTo(C + 7, C); ctx.lineTo(C, C + 7); ctx.lineTo(C - 7, C); ctx.closePath(); ctx.stroke(); });
+}
+function road(ctx) {
+  ctx.fillStyle = "#3a3f47"; ctx.fillRect(0, 0, S, S);
+  ctx.fillStyle = "rgba(255,255,255,.55)"; for (let y = -40; y < S; y += 80) { ctx.fillRect(C - 150, y, 6, 40); ctx.fillRect(C + 150, y, 6, 40); }
+  ctx.fillStyle = "#c53a3a"; ctx.fillRect(0, 0, 18, S); ctx.fillRect(S - 18, 0, 18, S);
+}
+const g = document.getElementById("g"), cvs = [];
+STYLES.forEach(s => { const c = document.createElement("div"); c.className = "card"; c.innerHTML = `<h2><b>${s.k}</b>${s.t}</h2><p>${s.d}</p><div class="view"><canvas width="${S}" height="${S}"></canvas></div>`; g.append(c); cvs.push([c.querySelector("canvas").getContext("2d"), s]); });
+// kiểu đang dùng (4p) để so
+{ const c = document.createElement("div"); c.className = "card"; c.innerHTML = `<h2><b>4p</b>Đang dùng (để so)</h2><p>Vòng dày + 4 vạch thẳng, không quầng — thầy thấy thô.</p><div class="view"><canvas width="${S}" height="${S}"></canvas></div>`; g.append(c);
+  cvs.push([c.querySelector("canvas").getContext("2d"), { f: (ctx, t, lock, col) => { ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 14; arc(ctx, lock ? 110 : 60, 0, Math.PI * 2); ctx.lineWidth = 10; [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(([x, y]) => { ctx.beginPath(); ctx.moveTo(C + x * 70, C + y * 70); ctx.lineTo(C + x * 100, C + y * 100); ctx.stroke(); }); ctx.restore(); } }]); }
+function frame(now) {
+  const t = now / 1000;
+  cvs.forEach(([ctx, s]) => { road(ctx); if (ST === "lock") car(ctx); s.f(ctx, t, ST === "lock", COL); });
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+document.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { ST = b.dataset.st; document.querySelectorAll("[data-st]").forEach(x => x.classList.toggle("on", x === b)); });
+document.querySelectorAll("[data-c]").forEach(b => b.onclick = () => { COL = b.dataset.c; document.querySelectorAll("[data-c]").forEach(x => x.classList.toggle("on", x === b)); });
+</script>
+</body>
+</html>
