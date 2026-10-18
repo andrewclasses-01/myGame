@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Nút bắn v3 phẳng</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ 4j — bản 3 (18/10/2026): thầy "hiện đại, đơn giản, TĨNH (không động), dạng PHẲNG" ⇒ 5 kiểu I–M.
+   Không gradient, không bóng phát sáng, không hiệu ứng chạy — trạng thái chỉ đổi bằng MÀU. Icon tên lửa phẳng 1 màu. */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140,200,255,.14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa;
+  --red: #ff3b30; --off: #2a313c; --off2: #3d4655; --ink: #0d1118; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: #f5c542; color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; } h1 small { font: 600 15px "Exo 2"; color: var(--mut); margin-left: 8px; }
+h3 { font: italic 900 20px "Exo 2"; margin: 0 0 4px; } h3 b { color: #f5c542; margin-right: 6px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); } .ask { background: rgba(245,197,66,.08); border: 1px dashed rgba(245,197,66,.5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; } .ask b { color: #f5c542; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--ac); color: #06101f; border-color: var(--ac); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+.ctl { position: sticky; top: 30px; z-index: 8; background: rgba(11,14,19,.96); border-bottom: 1px solid var(--line); padding: 4px 0 8px; }
+.grid2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; align-items: start; } @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+.cap { font: 800 13px "Exo 2"; color: var(--mut); margin: 8px 0 4px; }
+/* ===== khung giả ===== */
+.dash { container-type: inline-size; --u: 1.1cqw; position: relative; width: 100%; aspect-ratio: 16 / 6.6; border-radius: 12px; overflow: hidden; background: #121821;
+  display: grid; grid-template-columns: 58% 1fr; gap: 2%; padding: 2.4% 2.2%; --team: #3b8cff; }
+.ansP { display: flex; flex-direction: column; gap: calc(1 * var(--u)); padding: calc(1.4 * var(--u)); border-radius: calc(2.4 * var(--u)); background: rgba(6,10,18,.85); }
+.ans { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: calc(.8 * var(--u)); }
+.ans i { border-radius: calc(1.2 * var(--u)); border: calc(.3 * var(--u)) solid color-mix(in srgb, var(--team) 45%, rgba(255,255,255,.2)); background: #16233b; display: grid; place-items: center; font: 800 calc(3 * var(--u)) "Exo 2"; color: #fff; font-style: normal; }
+.arms { height: calc(7 * var(--u)); display: flex; align-items: center; gap: calc(1 * var(--u)); }
+.wheelStub { border-radius: calc(3 * var(--u)); background: #0f141c; display: grid; place-items: center; color: #3b4658; font: 800 calc(2.4 * var(--u)) "Exo 2"; letter-spacing: .2em; }
+.ipad { container-type: size; position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 22px; overflow: hidden; background: #0a0d13; border: 10px solid #1a1d22; --team: #3b8cff; }
+.ipad .itop { position: absolute; left: 0; right: 0; top: 0; height: 7.6cqh; display: flex; align-items: center; justify-content: center; gap: 2cqmin; background: #070a11; border-bottom: 1px solid rgba(140,210,255,.16); font: italic 900 2.8cqmin "Exo 2"; color: var(--team); letter-spacing: .14em; }
+.ipad .itop span { font: 700 1.8cqmin "Exo 2"; color: #4ade80; font-style: normal; letter-spacing: 0; }
+.ipad .band { --u: 1.7cqmin; position: absolute; left: 3cqmin; right: 3cqmin; top: 10.4cqh; bottom: 70%; display: flex; align-items: center; justify-content: center; gap: 3cqmin; }
+.ipad .low { position: absolute; left: 0; right: 0; bottom: 0; top: 34%; display: flex; justify-content: center; align-items: flex-end; gap: 6cqmin; padding-bottom: 3cqmin; color: #3b4658; font: 800 2.4cqmin "Exo 2"; letter-spacing: .2em; }
+.ipad .low i { width: 12cqmin; height: 30cqmin; border-radius: 3cqmin; background: #151a22; }
+.ipad .low b { width: 50cqmin; height: 34cqmin; border-radius: 50% 50% 0 0; background: #0f141c; display: grid; place-items: center; }
+
+/* icon tên lửa PHẲNG 1 màu (currentColor), mũi chĩa lên */
+.fm { display: block; width: 100%; height: 100%; }
+.tilt .fm { transform: rotate(45deg); }
+
+/* ---------- I · NÚT VIÊN THUỐC ---------- */
+.kI { flex: 1; height: 100%; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: calc(1.2 * var(--u)); background: var(--off); color: #7d8796; }
+.kI .ic { width: calc(2.6 * var(--u)); height: calc(3.6 * var(--u)); }
+.kI .t { font: italic 900 calc(2.4 * var(--u)) "Exo 2"; letter-spacing: .2em; }
+.kI .n { min-width: calc(2.8 * var(--u)); height: calc(2.8 * var(--u)); border-radius: 999px; display: grid; place-items: center; background: rgba(0,0,0,.25); font: 900 calc(1.7 * var(--u)) "Exo 2"; }
+.kI.ready { background: var(--red); color: #fff; }
+
+/* ---------- J · KHỐI CHIA ĐÔI (icon màu đội | FIRE + chấm số quả) ---------- */
+.kJ { flex: 1; height: 100%; border-radius: calc(1 * var(--u)); overflow: hidden; display: flex; background: var(--off); color: #7d8796; }
+.kJ .l { flex: none; height: 100%; aspect-ratio: 1; display: grid; place-items: center; background: var(--off2); }
+.kJ .l .ic { width: 40%; height: 60%; }
+.kJ .r { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 calc(1.6 * var(--u)); }
+.kJ .t { font: italic 900 calc(2.4 * var(--u)) "Exo 2"; letter-spacing: .2em; }
+.kJ .dots { display: flex; gap: calc(.6 * var(--u)); } .kJ .dots i { width: calc(1.1 * var(--u)); height: calc(1.1 * var(--u)); border-radius: 50%; background: #4a5363; }
+.kJ.ready .l { background: var(--team); color: #fff; } .kJ.ready .r { background: var(--red); color: #fff; } .kJ.ready .dots i.on { background: #fff; }
+
+/* ---------- K · NÚT TRÒN + CHẤM ---------- */
+.kK { flex: none; height: 116%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: var(--off); color: #7d8796; position: relative; }
+.kK .ic { width: 34%; height: 46%; }
+.kK .pips { position: absolute; bottom: -18%; left: 50%; translate: -50% 0; display: flex; gap: calc(.5 * var(--u)); } .kK .pips i { width: calc(1 * var(--u)); height: calc(1 * var(--u)); border-radius: 50%; background: #4a5363; }
+.kK.ready { background: var(--red); color: #fff; } .kK .pips i.on { background: var(--red); }
+.side { flex: 1; display: flex; align-items: center; gap: calc(.6 * var(--u)); font: 900 calc(1.9 * var(--u)) "Exo 2"; color: #9aa6b6; } .side.r { justify-content: flex-end; }
+
+/* ---------- L · VIỀN MẢNH → ĐẶC KHI SẴN SÀNG ---------- */
+.kL { flex: 1; height: 100%; border-radius: calc(1.2 * var(--u)); border: calc(.3 * var(--u)) solid #4a5363; display: flex; align-items: center; justify-content: center; gap: calc(1.4 * var(--u)); color: #7d8796; }
+.kL .ic { width: calc(2.4 * var(--u)); height: calc(3.4 * var(--u)); }
+.kL .n { font: italic 900 calc(3.4 * var(--u)) "Exo 2"; line-height: 1; }
+.kL .t { font: 800 calc(1.5 * var(--u)) "Exo 2"; letter-spacing: .24em; }
+.kL.ready { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* ---------- M · Ô SỐ LỚN + KHE ĐẠN ---------- */
+.kM { flex: 1; height: 100%; border-radius: calc(1 * var(--u)); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: calc(1.4 * var(--u)); padding: 0 calc(1.6 * var(--u)); background: var(--off); color: #7d8796; position: relative; }
+.kM .n { font: italic 900 calc(4 * var(--u)) "Exo 2"; line-height: 1; }
+.kM .mid { display: flex; flex-direction: column; gap: calc(.3 * var(--u)); }
+.kM .mid b { font: italic 900 calc(2 * var(--u)) "Exo 2"; letter-spacing: .2em; } .kM .mid small { font: 700 calc(1.2 * var(--u)) "Exo 2"; letter-spacing: .1em; color: #8b95a4; }
+.kM .slots { display: flex; gap: calc(.5 * var(--u)); } .kM .slots i { width: calc(1 * var(--u)); height: calc(4 * var(--u)); border-radius: calc(.3 * var(--u)); background: #4a5363; }
+.kM::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(.5 * var(--u)); border-radius: 0 0 calc(1 * var(--u)) calc(1 * var(--u)); background: transparent; }
+.kM.ready { color: #fff; } .kM.ready::after { background: var(--red); } .kM.ready .slots i.on { background: var(--red); } .kM.ready .n { color: var(--red); }
+
+/* chung: không mục tiêu ⇒ mờ + chữ; hết ⇒ xám (mặc định) */
+.noaim { opacity: .45; }
+.hint { font: 800 calc(1.2 * var(--u)) "Exo 2"; letter-spacing: .12em; color: #f5c542; }
+.press { transform: scale(.96); }
+.stk { display: flex; gap: calc(.4 * var(--u)); } .stk i { width: calc(1.8 * var(--u)); height: calc(.6 * var(--u)); border-radius: 9px; background: #3d4655; } .stk i.on { background: #ffd36a; }
+</style>
+</head>
+<body>
+<div class="top">THIẾT KẾ 4j — NÚT BẮN bản 3 · PHẲNG · TĨNH · CHƯA BUILD — chờ thầy chọn</div>
+<main>
+<h1>Nút bắn tên lửa — 5 kiểu phẳng <small>hiện đại · đơn giản · tĩnh</small></h1>
+<div class="mut">Theo yêu cầu: không chuyển động, không bóng, không ánh kim — chỉ mảng màu phẳng. Xám = chưa bắn được · ĐỎ = sẵn sàng bắn · mờ = không có mục tiêu phía trước.
+Icon tên lửa phẳng 1 màu. Vẫn đủ: số quả trên giá · kho dự trữ (+3) · chuỗi trả lời đúng (3 vạch vàng).</div>
+<div class="ctl"><div class="row"><b>Trạng thái:</b> <button class="b" data-st="empty">Hết đạn</button><button class="b on" data-st="ready">Sẵn sàng (2 + kho 3)</button><button class="b" data-st="one">Còn 1 quả</button><button class="b" data-st="noaim">Không có mục tiêu</button><button class="b" data-st="press">Đang bấm</button>
+  <b style="margin-left:8px">Đội:</b> <button class="b on" data-tm="#3b8cff">Xanh</button><button class="b" data-tm="#ff7a00">Cam</button></div></div>
+<div id="styles"></div>
+<div class="ask"><b>Thầy chọn:</b> I, J, K, L hay M (có thể ghép).</div>
+</main>
+<script>
+// tên lửa PHẲNG: thân bo + mũi tròn nhọn + 2 cánh + đuôi — 1 màu currentColor (viewBox 24 × 34)
+const FM = `<svg class="fm" viewBox="0 0 24 34" fill="currentColor" aria-hidden="true"><path d="M12 1 C15.5 4 16 8 16 11 V24 H8 V11 C8 8 8.5 4 12 1 Z"/><path d="M8 18 L3 25 V28 L8 25.5 Z M16 18 L21 25 V28 L16 25.5 Z"/><rect x="9.5" y="25.5" width="5" height="3" rx="1"/><path d="M10 30 H14 L12 33 Z" opacity=".55"/></svg>`;
+const STK = () => `<span class="stk"><i class="on"></i><i></i><i></i></span>`;
+const RES = () => `<span class="res">+3</span>`;
+const STY = [
+  { k: "I", n: "Nút viên thuốc", d: "Một nút bo tròn hai đầu: icon tên lửa + chữ FIRE + số quả trong vòng tròn nhỏ. Sẵn sàng = nền đỏ đặc, chữ trắng; chưa được = xám. Đơn giản nhất.",
+    g: () => `<div class="kI"><span class="ic tilt">${FM}</span><span class="t">FIRE</span><span class="n">2</span></div>`, side: true },
+  { k: "J", n: "Khối chia đôi", d: "Ô vuông bên trái mang MÀU ĐỘI có icon tên lửa; phần phải chữ FIRE + chấm = số quả. Sẵn sàng ⇒ phần phải đỏ đặc. Gọn, đọc nhanh, gắn màu đội.",
+    g: () => `<div class="kJ"><span class="l"><span class="ic">${FM}</span></span><span class="r"><span class="t">FIRE</span><span class="dots"><i></i><i></i><i></i><i></i><i></i></span></span></div>`, side: false },
+  { k: "K", n: "Nút tròn + chấm", d: "Nút tròn đặc với icon tên lửa chéo; dưới nút là hàng chấm = số tên lửa. Kho dự trữ và chuỗi đúng nằm hai bên. Kiểu nút hành động của game di động hiện đại.",
+    g: () => `<div class="kK"><span class="ic tilt">${FM}</span><span class="pips"><i></i><i></i><i></i><i></i><i></i></span></div>`, side: "center" },
+  { k: "L", n: "Viền mảnh → đặc", d: "Chưa bắn được: chỉ là khung viền mảnh xám (nhẹ, không chiếm mắt). Sẵn sàng: cả khối đổ ĐỎ ĐẶC với icon + số lớn + chữ MISSILE. Tương phản rõ nhất giữa 2 trạng thái.",
+    g: () => `<div class="kL"><span class="ic tilt">${FM}</span><span class="n">2</span><span class="t">MISSILE</span></div>`, side: true },
+  { k: "M", n: "Ô số lớn + khe đạn", d: "Ô phẳng tối: số quả TO bên trái, giữa là FIRE + dòng nhỏ (kho / chuỗi), phải là các khe dọc = từng quả. Sẵn sàng ⇒ số + khe + vạch đáy chuyển đỏ.",
+    g: () => `<div class="kM"><span class="n">2</span><span class="mid"><b>FIRE</b><small class="sub">+3 IN STOCK</small></span><span class="slots"><i></i><i></i><i></i><i></i><i></i></span></div>`, side: false }
+];
+const host = document.getElementById("styles"), units = [];
+STY.forEach(s => {
+  const w = document.createElement("div"); w.className = "sec";
+  const sideL = `<span class="side">${RES()}</span>`, sideR = `<span class="side r">${STK()}</span>`;
+  const arms = s.side === "center" ? `${sideL}${s.g()}${sideR}` : s.side ? `${RES().replace('class="res"', 'class="res side" style="flex:none"')}${s.g()}<span style="flex:none">${STK()}</span>` : `${s.g()}<span style="flex:none">${STK()}</span>`;
+  w.innerHTML = `<h3><b>${s.k}</b>${s.n}</h3><div class="mut" style="margin-bottom:6px">${s.d}</div>
+    <div class="grid2"><div><div class="cap">MÀN LỚN — bảng điều khiển</div><div class="dash"><div class="ansP"><div class="ans"><i>Gagarin</i><i>Newton</i><i>Armstrong</i><i>Curie</i></div><div class="arms">${arms}</div></div><div class="wheelStub">WHEEL</div></div></div>
+    <div><div class="cap">iPAD — dải bắn trên cùng (cả dải là vùng bấm)</div><div class="ipad"><div class="itop">TEAM 1 <span>● Connected</span></div><div class="band">${arms}</div><div class="low"><i></i><b>WHEEL</b><i></i></div></div></div></div>`;
+  host.appendChild(w); units.push(...w.querySelectorAll(".kI, .kJ, .kK, .kL, .kM"));
+});
+let st = "ready";
+function paint() {
+  const rack = st === "empty" ? 0 : st === "one" ? 1 : 2, total = st === "empty" ? 0 : st === "one" ? 1 : 5;
+  units.forEach(u => {
+    const ready = rack > 0 && st !== "noaim";
+    u.classList.toggle("ready", ready); u.classList.toggle("noaim", st === "noaim"); u.classList.toggle("press", st === "press");
+    u.querySelectorAll(".n").forEach(e => e.textContent = rack);
+    u.querySelectorAll(".dots i, .pips i, .slots i").forEach((e, j) => e.classList.toggle("on", j < total));
+    u.querySelectorAll(".sub").forEach(e => e.textContent = st === "noaim" ? "NO TARGET AHEAD" : total - rack > 0 ? `+${total - rack} IN STOCK` : "ANSWER 3 IN A ROW");
+  });
+  document.querySelectorAll(".res").forEach(e => { e.textContent = total - rack > 0 ? "+" + (total - rack) : ""; });
+}
+document.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-st]").forEach(x => x.classList.toggle("on", x === b)); st = b.dataset.st; paint(); });
+document.querySelectorAll("[data-tm]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-tm]").forEach(x => x.classList.toggle("on", x === b)); document.querySelectorAll(".dash, .ipad").forEach(e => e.style.setProperty("--team", b.dataset.tm)); });
+paint();
+</script>
+</body>
+</html>
