@@ -1115,3 +1115,8 @@ Trang thiết kế `thiet-ke-4i.html` (mục 1–7 thầy chốt), trang thử `
 
 ## 44. ✅ MẪU 4j (18/10/2026) — nút bắn kiểu thẻ · giá tên lửa thấp · ĐÃ LÊN AWord Đợt 551
 Thiết kế qua 8 bản `thiet-ke-4j.html` → `thiet-ke-4j-v8.html` (v8 = chốt). Trang thử `mau-4j-nut-ban.html` + `pad-4j.html`. CSS thẻ dùng chung `core/rw-4j-fb.css`.
+
+## 45. ✅ MẪU 4k (19/10/2026) — DRONE đợt 1/3: cột giữa · tab Drone · máy quay sau drone · tâm bắn + khoá xe
+Thiết kế `thiet-ke-4k-drone.html` (bản 1: khả thi, bố cục A/B/C) → `thiet-ke-4k-drone-v2.html` (thầy chốt: A, tab DRONE 3 chế độ + chừa 2 drone, camera SAU drone,
+lái TÂM BẮN, 3 loại đạn dáng tên lửa bay lạng lách + định vị tương đối, nổ xe / đường khác nhau, pin tự sạc). Trang thử `mau-4k-drone.html`. Còn: 4l (3 loại đạn, nổ, pin, luật,
+tiếng, kết trận) · 4m (iPad drone, vai DRONE trong đường nối, thẻ + QR ở xưởng).
