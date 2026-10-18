@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế 4j</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ mẫu 4j (18/10/2026): (1) giá tên lửa trên nóc LUÔN hạ thấp · (2) NÚT BẮN TÊN LỬA làm lại, đồng bộ phong cách game, cả màn lớn và iPad.
+   Chỉ là trang xem: chưa đụng code game. Icon tên lửa = đúng hình của game (core/sr3d-dash-3h.js). */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140,200,255,.14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa; --t0: #3b8cff; --t1: #ff7a00; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: #f5c542; color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1240px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; } h1 small { font: 600 15px "Exo 2"; color: var(--mut); margin-left: 8px; }
+h2 { font: italic 900 21px "Exo 2"; margin: 0 0 6px; } h2 b { color: var(--ac); margin-right: 8px; }
+h3 { font: italic 900 17px "Exo 2"; margin: 0 0 6px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); } .note { background: rgba(96,165,250,.08); border-left: 3px solid var(--ac); padding: 8px 12px; border-radius: 0 10px 10px 0; margin: 10px 0; }
+.ask { background: rgba(245,197,66,.08); border: 1px dashed rgba(245,197,66,.5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; } .ask b { color: #f5c542; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--ac); color: #06101f; border-color: var(--ac); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+svg.side { width: 100%; height: auto; background: #0e131a; border-radius: 12px; }
+
+/* ===== khung giả: bảng điều khiển màn lớn (1 đội) — đo theo "u" = 1 cqh của game ===== */
+.dash { container-type: inline-size; --u: 1.1cqw; position: relative; width: 100%; aspect-ratio: 16 / 6.2; border-radius: 12px; overflow: hidden; background: linear-gradient(180deg, #151b25, #0b0f16);
+  display: grid; grid-template-columns: 58% 1fr; gap: 2%; padding: 2.4% 2.2%; --team: #3b8cff; }
+.dash.t1 { --team: #ff7a00; }
+.ansP { display: flex; flex-direction: column; gap: calc(1 * var(--u)); padding: calc(1.4 * var(--u)) calc(1.4 * var(--u)); border-radius: calc(2.4 * var(--u)); background: rgba(6,10,18,.85); border: calc(.3 * var(--u)) solid rgba(255,255,255,.08); }
+.ans { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: calc(.8 * var(--u)); }
+.ans i { border-radius: calc(1.2 * var(--u)); border: calc(.3 * var(--u)) solid color-mix(in srgb, var(--team) 45%, rgba(255,255,255,.2)); background: linear-gradient(180deg, rgba(26,42,72,.95), rgba(12,20,38,.97));
+  display: grid; place-items: center; font: 800 calc(3 * var(--u)) "Exo 2"; color: #fff; font-style: normal; }
+.arms { height: calc(6.4 * var(--u)); display: flex; align-items: center; gap: calc(1 * var(--u)); }
+.wheelStub { border-radius: calc(3 * var(--u)); background: radial-gradient(80% 90% at 50% 100%, #1b222d, #0d1118); display: grid; place-items: center; color: #3b4658; font: 800 calc(2.4 * var(--u)) "Exo 2"; letter-spacing: .2em; }
+
+/* ===== khung giả: iPad (dải bắn trên cùng) ===== */
+.ipad { container-type: size; position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 22px; overflow: hidden; background: #0a0d13; border: 10px solid #1a1d22; --v: 1cqmin; --team: #3b8cff; }
+.ipad .itop { position: absolute; left: 0; right: 0; top: 0; height: 7.6cqh; display: flex; align-items: center; justify-content: center; gap: 2cqmin; background: rgba(4,7,14,.82); border-bottom: 1px solid rgba(140,210,255,.16);
+  font: italic 900 2.8cqmin "Exo 2"; color: var(--team); letter-spacing: .14em; }
+.ipad .itop span { font: 700 1.8cqmin "Exo 2"; color: #4ade80; font-style: normal; letter-spacing: 0; }
+.ipad .band { position: absolute; left: 0; right: 0; top: 10.4cqh; bottom: 70%; }
+.ipad .low { position: absolute; left: 0; right: 0; bottom: 0; top: 34%; display: flex; justify-content: center; align-items: flex-end; gap: 6cqmin; padding-bottom: 3cqmin; color: #3b4658; font: 800 2.4cqmin "Exo 2"; letter-spacing: .2em; }
+.ipad .low i { width: 12cqmin; height: 30cqmin; border-radius: 3cqmin; background: #151a22; border: .5cqmin solid #2a313c; }
+.ipad .low b { width: 50cqmin; height: 34cqmin; border-radius: 50% 50% 0 0; background: radial-gradient(80% 100% at 50% 100%, #1b222d, #0d1118); display: grid; place-items: center; font-weight: 800; }
+
+/* ===== icon tên lửa ===== */
+.ms { display: block; } .ms svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.fB .dome .ms svg, .fC .btn .ms svg, .side .ms svg, .sideI .ms svg, .arms > span .ms svg { transform: rotate(45deg); }   /* chéo 45° như nút cũ của game */
+
+/* ---------- KIỂU A: BỆ PHÓNG KIM LOẠI ---------- */
+.fA { position: relative; flex: 1; height: 100%; border-radius: calc(1.2 * var(--u, 1cqmin)); overflow: hidden; display: flex; align-items: center; justify-content: center; gap: calc(1.4 * var(--u, 1cqmin));
+  background: linear-gradient(180deg, #3a414b 0, #20252c 45%, #15191e 100%); border: calc(.25 * var(--u, 1cqmin)) solid #59626e; box-shadow: inset 0 calc(.2 * var(--u, 1cqmin)) 0 rgba(255,255,255,.14), inset 0 calc(-.6 * var(--u, 1cqmin)) calc(1.2 * var(--u, 1cqmin)) rgba(0,0,0,.6); }
+.fA::before, .fA::after { content: ""; position: absolute; top: 0; bottom: 0; width: 9%; background: repeating-linear-gradient(-45deg, #f5c542 0 22%, #15191e 22% 44%); opacity: .35; transition: opacity .3s; }
+.fA::before { left: 0; } .fA::after { right: 0; }
+.fA .lbl { font: italic 900 calc(2.6 * var(--u, 1cqmin)) "Exo 2"; letter-spacing: .22em; color: #6b7480; transition: color .3s, text-shadow .3s; }
+.fA .pods { display: flex; gap: calc(.9 * var(--u, 1cqmin)); }
+.fA .pod { width: calc(2.4 * var(--u, 1cqmin)); height: calc(4.6 * var(--u, 1cqmin)); border-radius: calc(.6 * var(--u, 1cqmin)); background: #0b0e12; box-shadow: inset 0 0 calc(.6 * var(--u, 1cqmin)) #000; display: grid; place-items: end center; padding-bottom: 6%; }
+.fA .pod .ms { width: 70%; height: 92%; color: #e9ecef; opacity: 0; transform: translateY(40%); transition: opacity .25s, transform .35s cubic-bezier(.2,.9,.3,1); }
+.fA .pod.on .ms { opacity: 1; transform: none; }
+.fA .pod .ms .tip { fill: var(--team); }
+.fA .led { position: absolute; left: 12%; right: 12%; bottom: 8%; height: calc(.45 * var(--u, 1cqmin)); border-radius: 9px; background: #3a1414; transition: background .3s, box-shadow .3s; }
+.fA.ready::before, .fA.ready::after { opacity: 1; }
+.fA.ready .lbl { color: #fff; text-shadow: 0 0 calc(1.2 * var(--u, 1cqmin)) rgba(255,70,40,.9); }
+.fA.ready .led { background: #ff3b30; box-shadow: 0 0 calc(1.6 * var(--u, 1cqmin)) #ff3b30; animation: ledA .9s ease-in-out infinite alternate; }
+@keyframes ledA { from { opacity: .55; } to { opacity: 1; } }
+.fA.noaim { opacity: .45; } .fA.noaim .lbl::after { content: " · NO TARGET"; font-size: .6em; letter-spacing: .12em; }
+.fA.shot .pod.fly .ms { animation: flyA .45s cubic-bezier(.4,0,.8,.4) forwards; }
+@keyframes flyA { to { transform: translateY(-260%); opacity: 0; } }
+
+/* ---------- KIỂU B: NÚT VÒM ĐỎ + VÒNG ĐẠN ---------- */
+.fB { position: relative; flex: none; height: 100%; aspect-ratio: 1; display: grid; place-items: center; }
+.fB .bez { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 210deg, #7b8490, #2b3037 25%, #c3c9d1 50%, #2b3037 75%, #7b8490); padding: 7%; }
+.fB .dome { position: absolute; inset: 14%; border-radius: 50%; background: radial-gradient(circle at 40% 32%, #6a3a3a, #2a1414 60%, #160909); box-shadow: inset 0 -.3em .6em rgba(0,0,0,.6); display: grid; place-items: center; transition: background .3s, box-shadow .3s; }
+.fB .dome .ms { width: 34%; height: 60%; color: #7d5a5a; transform: rotate(0); transition: color .3s; }
+.fB svg.ring { position: absolute; inset: -12%; width: 124%; height: 124%; overflow: visible; }
+.fB svg.ring circle { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke .3s, opacity .3s; }
+.fB.ready .dome { background: radial-gradient(circle at 40% 32%, #ffd0c8, #ff3b2a 40%, #a3170c 85%); box-shadow: 0 0 1.4em rgba(255,60,40,.75), inset 0 -.3em .6em rgba(0,0,0,.35); animation: domeB .9s ease-in-out infinite alternate; }
+.fB.ready .dome .ms { color: #fff; }
+@keyframes domeB { from { filter: brightness(.9); } to { filter: brightness(1.15); } }
+.fB.noaim { opacity: .45; } .fB.noaim .dome { animation: none; }
+.fB.shot .dome { animation: pushB .3s ease-out; } @keyframes pushB { 40% { transform: scale(.88); } }
+.armsB { justify-content: center; }
+.armsB .side { flex: 1; display: flex; align-items: center; gap: calc(.6 * var(--u, 1cqmin)); font: italic 900 calc(2.2 * var(--u, 1cqmin)) "Exo 2"; color: #ffb08f; }
+.armsB .side.r { justify-content: flex-end; }
+.streak { display: flex; gap: calc(.5 * var(--u, 1cqmin)); } .streak i { width: calc(1.3 * var(--u, 1cqmin)); height: calc(1.3 * var(--u, 1cqmin)); border-radius: 50%; background: #2a3140; }
+.streak i.on { background: #ffd36a; box-shadow: 0 0 calc(1 * var(--u, 1cqmin)) #ffb13a; }
+
+/* ---------- KIỂU C: PHÍM CÓ NẮP BẢO VỆ (cockpit) ---------- */
+.fC { position: relative; flex: 1; height: 100%; border-radius: calc(1.2 * var(--u, 1cqmin)); background: linear-gradient(180deg, #2b3037, #15191e); border: calc(.25 * var(--u, 1cqmin)) solid #59626e; overflow: hidden; perspective: 400px; }
+.fC .btn { position: absolute; inset: 14% 10%; border-radius: calc(.9 * var(--u, 1cqmin)); display: flex; align-items: center; justify-content: center; gap: calc(1 * var(--u, 1cqmin));
+  background: linear-gradient(180deg, #ff5a2c, #b3230e); box-shadow: 0 0 calc(2 * var(--u, 1cqmin)) rgba(255,80,40,.7), inset 0 calc(.2 * var(--u, 1cqmin)) 0 rgba(255,255,255,.35);
+  font: italic 900 calc(2.6 * var(--u, 1cqmin)) "Exo 2"; letter-spacing: .2em; color: #fff; }
+.fC .btn .ms { width: calc(1.8 * var(--u, 1cqmin)); height: calc(3.4 * var(--u, 1cqmin)); color: #fff; }
+.fC .cover { position: absolute; inset: 6% 4%; border-radius: calc(1 * var(--u, 1cqmin)); transform-origin: 50% 0; transition: transform .45s cubic-bezier(.3,1.4,.5,1);
+  background: repeating-linear-gradient(-45deg, rgba(245,197,66,.85) 0 7%, rgba(20,22,26,.92) 7% 14%), #222; border: calc(.25 * var(--u, 1cqmin)) solid #9aa2ad;
+  box-shadow: 0 calc(.4 * var(--u, 1cqmin)) calc(1 * var(--u, 1cqmin)) rgba(0,0,0,.6); display: grid; place-items: center; }
+.fC .cover b { padding: .2em .6em; border-radius: .3em; background: rgba(10,12,16,.9); font: italic 900 calc(1.7 * var(--u, 1cqmin)) "Exo 2"; letter-spacing: .2em; color: #9aa2ad; }
+.fC.ready .cover { transform: rotateX(-78deg) translateY(-6%); }
+.fC.noaim .cover { transform: rotateX(-30deg); } .fC.noaim .cover b::after { content: " · NO TARGET"; }
+.fC.shot .btn { animation: pushC .3s ease-out; } @keyframes pushC { 40% { transform: scale(.94); filter: brightness(1.4); } }
+
+/* iPad: cùng kiểu, phóng to theo dải */
+.ipad .band .fA, .ipad .band .fC { position: absolute; inset: 0 3cqmin; height: auto; --u: 1.25cqmin; }
+.ipad .band .fB { position: absolute; left: 50%; top: 50%; height: 120%; transform: translate(-50%, -50%); --u: 1.25cqmin; font-size: 2cqmin; }
+.ipad .band .sideI { position: absolute; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 1cqmin; font: italic 900 2.6cqmin "Exo 2"; color: #ffb08f; }
+.ipad .band .sideI.l { left: 4cqmin; }
+.ipad .fA .pod { width: 5.2cqmin; height: 11cqmin; } .ipad .fA .lbl { font-size: 5cqmin; } .ipad .fA .pods { gap: 2cqmin; } .ipad .fA { gap: 4cqmin; }
+.ipad .fC .btn { font-size: 5cqmin; } .ipad .fC .btn .ms { width: 4cqmin; height: 7.5cqmin; } .ipad .fC .cover b { font-size: 3cqmin; }
+.ipad .band .sideI { font-size: 4cqmin; } .ipad .band .sideI .ms { width: 3cqmin !important; height: 5.4cqmin !important; } .ipad .streak i { width: 2.4cqmin; height: 2.4cqmin; } .ipad .band .sideI.r { right: 4cqmin; }
+.cap { font: 800 13px "Exo 2"; color: var(--mut); margin: 8px 0 4px; }
+</style>
+</head>
+<body>
+<div class="top">THIẾT KẾ 4j · CHƯA BUILD — xem / bấm thử · chờ thầy chọn rồi "ok build"</div>
+<main>
+<h1>RACING WORDS — mẫu 4j <small>18/10/2026 · giá tên lửa hạ thấp · nút bắn tên lửa mới</small></h1>
+
+<section class="sec">
+  <h2><b>1</b>Giá tên lửa trên nóc xe: LUÔN nằm thấp</h2>
+  <div class="grid2">
+    <div><svg class="side" viewBox="0 0 600 220" id="podSvg"></svg></div>
+    <div>Hiện tại: có tên lửa ⇒ cánh tay robot <b>nâng lên ~49°</b>, giá chếch mũi lên (cao hơn nóc ~0,4 m); hết tên lửa ⇒ gập nằm sát nóc.
+      <br>Mới: tay <b>luôn gập sát nóc</b> như lúc không có tên lửa; 2 quả vẫn nằm trên giá (hiện / nạp lớn dần như cũ), bắn thì bay lên từ đúng chỗ đó.
+      <div class="note">Không cần thầy chọn — làm luôn khi "ok build". Lợi thêm: góc nhìn sau đuôi (Chase) không còn bị giá nâng che đường phía trước.</div></div>
+  </div>
+</section>
+
+<section class="sec">
+  <h2><b>2</b>Nút BẮN TÊN LỬA — 3 kiểu (màn lớn + iPad cùng kiểu)</h2>
+  <div class="mut">Giữ đủ thông tin cũ: số quả trên giá (≤ 2) · <b>kho dự trữ</b> · <b>chuỗi trả lời đúng</b> (3 chấm, đủ 3 = +1 tên lửa) · trạng thái <i>sẵn sàng / hết đạn / không có mục tiêu phía trước</i>.
+  Đồng bộ phong cách game: kim loại xám (như bàn đạp, vô lăng ATEAM), vạch vàng–đen cảnh báo, đỏ phát sáng khi sẵn sàng; chữ Exo 2 nghiêng. Không dùng filter/blur (TOMKO mượt).</div>
+  <div class="row"><b>Trạng thái:</b> <button class="b" data-st="empty">Hết đạn</button><button class="b on" data-st="ready">Sẵn sàng (2 + kho 3)</button><button class="b" data-st="one">Còn 1 quả</button><button class="b" data-st="noaim">Không có mục tiêu</button>
+    <button class="b" id="shoot">🚀 Bấm bắn</button></div>
+  <div id="styles"></div>
+  <div class="ask"><b>Thầy chọn:</b> kiểu A, B hay C (iPad đi cùng kiểu đó).</div>
+</section>
+</main>
+
+<script type="module">
+import { MS_ICON } from "./core/sr3d-dash-3h.js";
+const MS = (cls = "") => `<span class="ms ${cls}">${MS_ICON}</span>`;
+// ---- 1. hình giá tên lửa (nhìn ngang)
+(() => {
+  const s = document.getElementById("podSvg");
+  const car = (x, lbl, up) => `<g transform="translate(${x} 0)"><path d="M10 170 Q20 130 70 122 L110 98 Q150 88 190 100 L240 126 Q270 132 272 170 Z" fill="#3b8cff"/><circle cx="62" cy="172" r="18" fill="#111"/><circle cx="222" cy="172" r="18" fill="#111"/>
+    <g transform="translate(140 95)"><rect x="-26" y="-4" width="52" height="5" rx="2" fill="#2b3037"/>
+      <g transform="rotate(${up ? -49 : -3} 18 -2)"><rect x="-22" y="-8" width="40" height="5" rx="2" fill="#7b8490"/>
+        <g transform="translate(-22 -10) rotate(${up ? 41 : 3})"><rect x="-20" y="-4" width="40" height="5" rx="2" fill="#2b3037"/><path d="M-18 -9 h30 l8 3 -8 3 h-30 z" fill="#e9ecef"/><path d="M12 -9 l8 3 -8 3 z" fill="#ff7a00"/></g></g></g>
+    <text x="140" y="210" fill="${up ? "#ff8a8a" : "#6ee7a0"}" font-size="15" text-anchor="middle" font-family="Exo 2" font-weight="800">${lbl}</text></g>`;
+  s.innerHTML = `<line x1="0" y1="190" x2="600" y2="190" stroke="#3a4350" stroke-width="2"/>` + car(10, "HIỆN TẠI: tay nâng 49°", true) + car(310, "MỚI: luôn sát nóc", false);
+})();
+// ---- 2. ba kiểu nút
+const A = () => `<div class="fA"><span class="lbl">FIRE</span><span class="pods"><i class="pod">${MS()}</i><i class="pod">${MS()}</i></span><i class="led"></i></div>`;
+const B = () => `<div class="fB"><i class="bez"></i><svg class="ring" viewBox="-60 -60 120 120"></svg><i class="dome">${MS()}</i></div>`;
+const C = () => `<div class="fC"><div class="btn">${MS()}FIRE${MS()}</div><div class="cover"><b>ARMED WHEN LOADED</b></div></div>`;
+const reserve = n => `<span style="display:flex;align-items:center;gap:calc(.3*var(--u,1cqmin))">${MS().repeat(0)}<span class="ms" style="width:calc(1.6*var(--u,1cqmin));height:calc(2.8*var(--u,1cqmin));color:#ff6a3c">${MS_ICON}</span>×${n}</span>`;
+const STY = [
+  { k: "A", n: "A · Bệ phóng kim loại", d: "Tấm kim loại như bàn đạp, 2 hốc chứa tên lửa đứng (thấy quả nào còn), chữ FIRE; sẵn sàng ⇒ 2 mép vạch vàng–đen sáng lên + đèn LED đỏ chạy dưới đáy. Bắn ⇒ quả bay vọt lên khỏi hốc.", f: A, arms: "between" },
+  { k: "B", n: "B · Nút vòm đỏ + vòng đạn", d: "Nút tròn vòm đỏ trong viền kim loại xoay (như vô lăng); vòng ngoài = số tên lửa (mỗi vạch 1 quả, tối đa theo Options). Sẵn sàng ⇒ vòm đỏ phát sáng nhịp thở. Gọn nhất, dễ bấm bằng ngón cái.", f: B, arms: "center" },
+  { k: "C", n: "C · Phím có nắp bảo vệ (buồng lái)", d: "Như công tắc phóng trong buồng lái: nắp vạch vàng–đen ĐÓNG khi hết đạn; có đạn ⇒ nắp BẬT lên lộ nút đỏ FIRE. Không có mục tiêu ⇒ nắp hé. Ấn tượng, rõ trạng thái nhất từ xa.", f: C, arms: "between" }
+];
+const host = document.getElementById("styles"), units = [];
+STY.forEach(s => {
+  const w = document.createElement("div"); w.className = "sec"; w.style.background = "#0e131a";
+  const armsG = s.arms === "center"
+    ? `<div class="arms armsB"><span class="side">${reserve(3)}</span>${s.f()}<span class="side r"><span class="streak"><i></i><i></i><i></i></span></span></div>`
+    : `<div class="arms">${reserve(3)}${s.f()}<span class="streak"><i></i><i></i><i></i></span></div>`;
+  w.innerHTML = `<h3>${s.n}</h3><div class="mut" style="margin-bottom:8px">${s.d}</div>
+    <div class="grid2"><div><div class="cap">MÀN LỚN — bảng điều khiển đội 1</div><div class="dash"><div class="ansP"><div class="ans"><i>Gagarin</i><i>Newton</i><i>Armstrong</i><i>Curie</i></div>${armsG}</div><div class="wheelStub">WHEEL</div></div></div>
+    <div><div class="cap">iPAD — dải bắn trên cùng (cả dải là vùng bấm)</div><div class="ipad"><div class="itop">TEAM 1 <span>● Connected</span></div>
+      <div class="band">${s.f()}${s.k === "B" ? `<span class="sideI l">${reserve(3)}</span><span class="sideI r"><span class="streak"><i></i><i></i><i></i></span></span>` : ""}</div>
+      <div class="low"><i></i><b>WHEEL</b><i></i></div></div></div></div>`;
+  host.appendChild(w); units.push(...w.querySelectorAll(".fA, .fB, .fC"));
+  w.querySelectorAll(".streak").forEach(st => st.children[0].classList.add("on"));
+});
+let st = "ready";
+function paint() {
+  const n = st === "empty" ? 0 : st === "one" ? 1 : 2, maxR = 5, total = st === "empty" ? 0 : st === "one" ? 1 : 5;
+  units.forEach(u => {
+    u.classList.toggle("ready", n > 0 && st !== "noaim"); u.classList.toggle("noaim", st === "noaim");
+    u.querySelectorAll(".pod").forEach((p, j) => p.classList.toggle("on", j < n));
+    const ring = u.querySelector("svg.ring");
+    if (ring) { const seg = 360 / maxR, r = 52, c = 2 * Math.PI * r; ring.innerHTML = Array.from({ length: maxR }, (_, j) => { const a0 = -90 + j * seg + 4, len = (seg - 8) / 360 * c;
+      return `<circle r="${r}" stroke="${j < total ? "#ff5a3c" : "#2a3140"}" stroke-dasharray="${len} ${c}" transform="rotate(${a0})" ${j < total ? 'style="filter:none"' : ""}/>`; }).join(""); }
+  });
+}
+document.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-st]").forEach(x => x.classList.toggle("on", x === b)); st = b.dataset.st; paint(); });
+document.getElementById("shoot").onclick = () => {
+  units.forEach(u => { if (!u.classList.contains("ready")) return; u.classList.remove("shot"); void u.offsetWidth; u.classList.add("shot");
+    const pods = [...u.querySelectorAll(".pod.on")]; const p = pods[pods.length - 1]; if (p) { p.classList.add("fly"); setTimeout(() => { p.classList.remove("fly"); }, 900); } });
+  setTimeout(() => units.forEach(u => u.classList.remove("shot")), 500);
+};
+paint();
+</script>
+</body>
+</html>
