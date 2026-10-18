@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế 4k DRONE v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ 4k DRONE — bản 2 (18/10/2026) theo trả lời của thầy sau bản 1:
+   bố cục A (cột giữa vùng đua) · tab DRONE riêng trong Settings: Neutral / Help the losing team / Team drone (+ chừa cửa 2 drone mỗi đội 1 cái, build sau)
+   · camera ĐẰNG SAU drone · lái chủ yếu là TÂM BẮN (drone dịch theo một chút) · 3 loại đạn hình gần giống tên lửa, bay lạng lách + định vị tương đối vào xe
+   · trúng xe / trúng đường có hiệu ứng nổ khác nhau · pin tự sạc. CHƯA đụng code game. */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140, 200, 255, .14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa; --t0: #3b8cff; --t1: #ff7a00; --dr: #b07cff; --ok: #38d39f; --bad: #ff4d5e; --y: #f5c542; --hp: #ff5fa2; --bo: #2ee6c9; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: var(--y); color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1240px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; } h1 small { font: 600 15px "Exo 2"; color: var(--mut); margin-left: 8px; }
+h2 { font: italic 900 21px "Exo 2"; margin: 0 0 6px; } h2 b { color: var(--dr); margin-right: 8px; }
+h3 { font: italic 900 16px "Exo 2"; margin: 12px 0 4px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); } .note { background: rgba(96,165,250,.08); border-left: 3px solid var(--ac); padding: 8px 12px; border-radius: 0 10px 10px 0; margin: 10px 0; }
+.warn { background: rgba(255,122,0,.1); border-left-color: var(--t1); }
+.chot { background: rgba(56,211,159,.07); border: 1px solid rgba(56,211,159,.3); border-radius: 12px; padding: 10px 14px; }
+.chot li { margin: 2px 0; }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--dr); color: #12061f; border-color: var(--dr); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } td, th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; } th { color: var(--mut); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+@media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+.tag { display: inline-block; font: 800 11px "Exo 2"; letter-spacing: .06em; padding: 1px 8px; border-radius: 99px; background: rgba(176,124,255,.18); color: var(--dr); }
+.tag.y { background: rgba(245,197,66,.16); color: var(--y); }
+
+/* ---------- khung game giả (cqh) ---------- */
+.gframe { container-type: size; position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #07090d; }
+.race { position: absolute; left: 0; right: 0; top: 0; height: 70cqh; }
+.dash { position: absolute; left: 0; right: 0; bottom: 0; height: 30cqh; display: grid; grid-template-columns: 1fr 1fr; gap: .4cqh; background: #0a0d12; border-top: .3cqh solid #000; }
+.dash > div { padding: 1.6cqh 2cqh; display: grid; grid-template-rows: auto 1fr; gap: 1.2cqh; }
+.dash .q { font: 800 3.4cqh "Exo 2"; color: #fff; background: rgba(255,255,255,.06); border-radius: 1cqh; padding: 1cqh 1.6cqh; }
+.dash .ans { display: grid; grid-template-columns: 1fr 1fr; gap: 1cqh; } .dash .ans i { border-radius: 1cqh; background: rgba(255,255,255,.08); }
+.dash .t0 .q { box-shadow: inset .5cqh 0 0 var(--t0); } .dash .t1 .q { box-shadow: inset .5cqh 0 0 var(--t1); }
+.view { position: absolute; top: 0; bottom: 0; overflow: hidden; }
+.view.tv { background: linear-gradient(180deg, #5d7d99 0, #2c4157 40%, #2a3038 41%, #171b21 100%); }
+.view.tv::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 70%; height: 59%; transform: translateX(-50%); clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%); background: #3a3f47; }
+.view .car { position: absolute; left: 50%; bottom: 7cqh; width: 11cqh; height: 6cqh; transform: translateX(-50%); border-radius: 1.4cqh 1.4cqh .6cqh .6cqh; z-index: 2; }
+.view .lbl { position: absolute; top: 1.2cqh; left: 1.4cqh; font: 900 2.4cqh "Exo 2"; letter-spacing: .08em; z-index: 3; }
+.view .dro { position: absolute; top: 4cqh; left: 50%; width: 5cqh; transform: translateX(-50%); z-index: 3; }
+.view.dv { border-left: .35cqh solid #000; border-right: .35cqh solid #000; }
+.view.dv svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+.view.dv .lbl { color: var(--dr); left: 50%; transform: translateX(-50%); white-space: nowrap; text-shadow: 0 .2cqh .6cqh #000; }
+.view.dv .bat { position: absolute; left: 12%; right: 12%; bottom: 2cqh; height: .9cqh; border-radius: 1cqh; background: rgba(255,255,255,.12); z-index: 3; }
+.view.dv .bat i { position: absolute; inset: 0 30% 0 0; border-radius: 1cqh; background: var(--dr); }
+
+/* ---------- Settings giả (kiểu C 4i: tab icon bên trái) ---------- */
+.set { display: grid; grid-template-columns: 150px 1fr; max-width: 720px; margin: 8px auto 0; border-radius: 18px; overflow: hidden; background: rgba(14,19,27,.96); border: 1px solid rgba(255,255,255,.1); }
+.set nav { background: rgba(255,255,255,.03); padding: 10px 8px; display: grid; align-content: start; gap: 4px; }
+.set nav span { font: 900 13px "Exo 2"; letter-spacing: .08em; color: var(--mut); padding: 9px 10px; border-radius: 10px; }
+.set nav span.on { background: rgba(176,124,255,.16); color: var(--dr); }
+.set .pn { padding: 14px 18px; display: grid; gap: 14px; }
+.set .it > div:first-child { font: 900 12px "Exo 2"; letter-spacing: .1em; color: var(--mut); margin-bottom: 6px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { font: 800 14px "Exo 2"; color: #cfd8e6; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 7px 12px; cursor: pointer; }
+.seg button.on { background: var(--dr); border-color: var(--dr); color: #12061f; }
+.seg button[disabled] { opacity: .35; cursor: default; }
+.set .hint { font-size: 13px; color: var(--mut); margin-top: 6px; min-height: 2.6em; }
+
+/* ---------- 3 loại đạn ---------- */
+.ammo { background: #0e141c; border: 1px solid var(--line); border-radius: 14px; padding: 12px; text-align: center; }
+.ammo svg { width: 100%; max-width: 260px; display: block; margin: 0 auto; }
+.ammo h3 { margin: 6px 0 2px; } .ammo p { font-size: 13px; color: var(--mut); margin: 0; }
+
+/* ---------- iPad ---------- */
+.ipad { position: relative; width: 100%; max-width: 860px; aspect-ratio: 4 / 3; margin: 0 auto; border-radius: 26px; border: 10px solid #1b1f26; background: #0b0f15; overflow: hidden; }
+.ipad svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px 14px; font-size: 14px; margin-top: 10px; } .legend b { color: var(--dr); }
+.plan td:first-child { white-space: nowrap; font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="top">TRANG THIẾT KẾ · CHƯA ĐỤNG CODE GAME · RACING WORDS 4k — DRONE · BẢN 2</div>
+<main>
+<h1>Drone — iPad thứ 3 · bản 2 <small>18/10/2026 · sửa theo trả lời của thầy ở bản 1</small></h1>
+
+<div class="chot">
+<b>Thầy đã chốt ở bản 1:</b>
+<ul style="margin:6px 0 0">
+<li>Bố cục <b>A</b> — cột drone ở giữa vùng đua, dải câu hỏi giữ nguyên.</li>
+<li>Tab <b>DRONE</b> riêng trong Settings với 3 chế độ: <b>Neutral</b> · <b>Help the losing team</b> · <b>Team drone</b>. Chừa cửa cho <b>2 drone</b> (mỗi đội 1 drone + 1 iPad) — <i>build sau</i>.</li>
+<li>Camera đặt <b>đằng sau drone</b>; người chơi chủ yếu lái <b>tâm bắn</b>, drone dịch theo một chút.</li>
+<li>Mọi thứ drone bắn ra đều có <b>dáng gần giống tên lửa</b> (khác màu, kiểu dáng), bay <b>hơi lạng lách</b> như tên lửa và <b>định vị tương đối</b> vào xe mục tiêu. Trúng <b>xe</b> / trúng <b>đường</b> nổ khác nhau.</li>
+<li>Pin <b>tự sạc theo thời gian</b>.</li>
+</ul>
+</div>
+
+<!-- ============ 1. MÀN DRONE (camera sau drone) ============ -->
+<section class="sec">
+<h2><b>1</b>Màn hình drone — camera đằng sau drone</h2>
+<p class="mut">Bố cục A đã chốt. Kéo thanh để chọn độ rộng cột. Trong cột drone: thân drone ở dưới (nhìn từ sau), 2 xe phía trước bên dưới, <b>tâm bắn tím</b> trên mặt đường, đạn đang bay.</p>
+<div class="row"><span class="mut">Độ rộng cột drone</span> <input id="dw" type="range" min="18" max="28" value="24"> <b id="dwv">24 %</b></div>
+<div class="gframe" id="gf"></div>
+<div class="grid2" style="margin-top:14px">
+<div>
+<h3>Drone bay ở đâu</h3>
+<ul>
+<li>Drone tự bay <b>sau và trên</b> cụm 2 xe (cao ~12 m, lùi sau xe cuối ~20 m) — dùng lại cách đặt camera gộp 4d nên luôn thấy cả 2 xe.</li>
+<li>Người chơi <b>không phải lái drone đi theo xe</b> — chỉ lái tâm bắn. Tâm sang trái ⇒ drone trượt sang trái một chút và hơi quay theo (tối đa ~4 m) để góc nhìn bám tâm.</li>
+<li>2 xe cách xa nhau (&gt; 120 m) ⇒ drone theo <b>xe đang được ngắm</b> (xe gần tâm nhất), xe kia hiện mũi tên ở mép như 4i.</li>
+</ul>
+</div>
+<div>
+<h3>Tâm bắn</h3>
+<ul>
+<li>Tâm nằm trên mặt đường, đi được: ngang hết bề rộng đường, dọc từ <b>15 m tới 90 m</b> trước drone.</li>
+<li>Tâm đến gần xe (&lt; 6 m) ⇒ <b>khoá</b>: vòng tâm đổi thành màu của loại đạn đang chọn + vòng quanh xe. Bắn lúc khoá ⇒ đạn bám xe; không khoá ⇒ đạn rơi vào điểm tâm trên đường.</li>
+<li>Xe không được phép nhận loại đạn đó (theo chế độ — mục 2) ⇒ tâm không khoá xe đó, nút bắn mờ "NO TARGET" như 4j.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- ============ 2. TAB DRONE ============ -->
+<section class="sec">
+<h2><b>2</b>Settings ▸ tab DRONE <span class="tag">CHỐT CHI TIẾT</span></h2>
+<p class="mut">Cùng kiểu Settings 4i (tab icon bên trái). Bấm thử các nút — dòng chữ dưới mỗi mục giải thích luật.</p>
+<div class="set">
+  <nav><span>DRIVER</span><span>CAMERA</span><span>RACE</span><span class="on">DRONE</span></nav>
+  <div class="pn">
+    <div class="it"><div>DRONE</div><div class="seg" data-k="on"><button>Off</button><button class="on">1 drone</button><button disabled title="build sau">2 drones · soon</button></div>
+      <div class="hint" id="h-on"></div></div>
+    <div class="it"><div>MODE</div><div class="seg" data-k="mode"><button class="on">Neutral</button><button>Help the losing team</button><button>Team drone</button></div>
+      <div class="hint" id="h-mode"></div></div>
+    <div class="it" id="it-team" style="display:none"><div>DRONE TEAM</div><div class="seg" data-k="team"><button class="on">Team 1</button><button>Team 2</button></div></div>
+    <div class="it"><div>AMMO</div><div class="seg" data-k="ammo"><button class="on">Heart</button><button class="on">Boost</button><button class="on">Missile</button></div>
+      <div class="hint">Bật / tắt từng loại đạn (ví dụ tắt Missile ⇒ drone chỉ tiếp tế).</div></div>
+  </div>
+</div>
+<table style="margin-top:14px">
+<tr><th>Chế độ</th><th>❤ Heart / ⚡ Boost bắn vào</th><th>🚀 Missile bắn vào</th><th>Kết trận ghi</th></tr>
+<tr><td><b>Neutral</b></td><td>Đội nào cũng được</td><td>Đội nào cũng được</td><td>Đã giúp / bắn trúng từng đội bao nhiêu lần</td></tr>
+<tr><td><b>Help the losing team</b></td><td>Chỉ đội <b>đang sau</b></td><td>Chỉ đội <b>đang dẫn</b></td><td>Số lần lật ngược thế trận</td></tr>
+<tr><td><b>Team drone</b></td><td>Chỉ <b>đội mình</b></td><td>Chỉ <b>đội kia</b></td><td>Drone tính vào đội: khung drone + iPad viền màu đội</td></tr>
+</table>
+<div class="note"><b>Chừa cửa 2 drone (build sau):</b> đường nối iPad dành sẵn chỗ "drone 0" / "drone 1"; Settings đã có nút "2 drones · soon" (mờ). Khi build: mỗi đội 1 drone ở chế độ Team drone, màn hình chia 4 cột (Team 1 · Drone 1 · Drone 2 · Team 2) hoặc 2 drone chung 1 cột chia đôi trên/dưới — sẽ thiết kế riêng lúc đó.</div>
+</section>
+
+<!-- ============ 3. 3 LOẠI ĐẠN ============ -->
+<section class="sec">
+<h2><b>3</b>3 loại đạn — dáng tên lửa, khác màu và kiểu <span class="tag">CHỐT</span></h2>
+<div class="grid3">
+<div class="ammo">
+<svg viewBox="0 0 260 110">
+  <defs><radialGradient id="tr-h" cx="1" cy=".5" r="1"><stop offset="0" stop-color="#ff5fa2" stop-opacity=".55"/><stop offset="1" stop-color="#ff5fa2" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="50" cy="55" rx="50" ry="10" fill="url(#tr-h)"/>
+  <path d="M86 42 h96 c26 0 46 6 52 13 c-6 7 -26 13 -52 13 h-96 z" fill="#ff5fa2"/>
+  <path d="M86 42 l-14 -12 h16 l14 12z M86 68 l-14 12 h16 l14 -12z" fill="#ff8fc0"/>
+  <path d="M150 55 l-8 -8 a5 5 0 0 1 8 -5 a5 5 0 0 1 8 5 z" fill="#fff"/>
+  <circle cx="208" cy="55" r="5" fill="#fff" fill-opacity=".7"/>
+</svg>
+<h3 style="color:var(--hp)">❤ HEART</h3>
+<p>Thân hồng, mũi <b>tròn</b> (thân thiện), hình tim trắng trên thân, vệt khói hồng mờ. Trúng xe ⇒ <b>+1 mạng</b>.</p>
+</div>
+<div class="ammo">
+<svg viewBox="0 0 260 110">
+  <defs><radialGradient id="tr-b" cx="1" cy=".5" r="1"><stop offset="0" stop-color="#2ee6c9" stop-opacity=".55"/><stop offset="1" stop-color="#2ee6c9" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="50" cy="55" rx="50" ry="9" fill="url(#tr-b)"/>
+  <path d="M86 45 h110 l42 10 l-42 10 h-110 z" fill="#2ee6c9"/>
+  <path d="M86 45 l-16 -14 h18 l16 14z M86 65 l-16 14 h18 l16 -14z" fill="#8ff5e4"/>
+  <path d="M160 46 l-14 11 h9 l-6 9 l16 -12 h-9 l6 -8z" fill="#06231f"/>
+</svg>
+<h3 style="color:var(--bo)">⚡ BOOST</h3>
+<p>Thân xanh ngọc, mũi <b>vát nhọn dẹt</b> (nhanh), tia sét trên thân, vệt sáng xanh. Trúng xe ⇒ <b>đầy 1 ô boost</b> (+ nitro lóe 1 s).</p>
+</div>
+<div class="ammo">
+<svg viewBox="0 0 260 110">
+  <defs><radialGradient id="tr-m" cx="1" cy=".5" r="1"><stop offset="0" stop-color="#ff4d5e" stop-opacity=".6"/><stop offset="1" stop-color="#ff4d5e" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="50" cy="55" rx="50" ry="11" fill="url(#tr-m)"/>
+  <path d="M86 46 h104 l46 9 l-46 9 h-104 z" fill="#d9dde3"/>
+  <path d="M190 46 l46 9 l-46 9 z" fill="#ff4d5e"/>
+  <path d="M86 46 l-16 -14 h18 l16 14z M86 64 l-16 14 h18 l16 -14z" fill="#ff4d5e"/>
+  <rect x="120" y="46" width="6" height="18" fill="#ff4d5e"/>
+</svg>
+<h3 style="color:var(--bad)">🚀 MISSILE</h3>
+<p>Giống tên lửa xe hiện có (thân bạc, mũi đỏ, quầng đỏ 4i) để ai cũng nhận ra là <b>nguy hiểm</b>. Trúng xe ⇒ như 4i: lệch + DAMAGE.</p>
+</div>
+</div>
+<h3>Bay thế nào</h3>
+<ul>
+<li>Phóng từ bụng drone, chúc xuống, bay <b>hơi lạng lách</b> (cùng kiểu tên lửa 4i), thời gian bay ~1,4 s.</li>
+<li><b>Định vị tương đối:</b> đã khoá ⇒ bám xe nhưng chỉ trôi ngang tối đa ~2,5 m/s (như 4i) ⇒ xe <b>lái gắt vẫn né được</b> Missile, và <b>phải lái vào</b> để chắc ăn Heart / Boost.</li>
+<li>Trượt xe ⇒ rơi xuống đường và nổ kiểu "trúng đường".</li>
+</ul>
+<h3>Hiệu ứng nổ</h3>
+<table>
+<tr><th></th><th>Trúng XE</th><th>Trúng ĐƯỜNG (trượt)</th></tr>
+<tr><td style="color:var(--hp)"><b>❤ Heart</b></td><td>Bung tim hồng + vòng sáng hồng ôm xe, chữ <b>+1 ❤</b> bay lên, tiếng "ting"</td><td>Bụi hồng nhỏ tan nhanh, không ai được gì</td></tr>
+<tr><td style="color:var(--bo)"><b>⚡ Boost</b></td><td>Vòng sóng xanh ngọc toả ra + pô lóe nitro 1 s + ô boost sáng lên, tiếng "vút"</td><td>Tia điện xanh nhảy trên mặt đường rồi tắt</td></tr>
+<tr><td style="color:var(--bad)"><b>🚀 Missile</b></td><td>Như 4i: nổ cam, xe lệch 8+3L°, khói gầm, cháy, thanh DAMAGE</td><td>Nổ cam nhỏ + vết cháy đen trên đường; xe ở gần (&lt; 4 m) chỉ <b>rung nhẹ</b>, không mất máu</td></tr>
+</table>
+</section>
+
+<!-- ============ 4. PIN ============ -->
+<section class="sec">
+<h2><b>4</b>Pin drone (tự sạc)</h2>
+<table>
+<tr><th>Đạn</th><th>Tốn pin</th><th>Chờ giữa 2 lần bắn cùng loại</th></tr>
+<tr><td style="color:var(--hp)">❤ Heart</td><td>40 %</td><td>4 s</td></tr>
+<tr><td style="color:var(--bo)">⚡ Boost</td><td>25 %</td><td>3 s</td></tr>
+<tr><td style="color:var(--bad)">🚀 Missile</td><td>35 %</td><td>3 s</td></tr>
+</table>
+<p class="mut">Sạc ~6 %/giây (đầy sau ~17 s). Thanh pin mảnh nằm đáy cột drone (màn lớn) + trên đầu iPad. Số liệu chỉnh khi thử.</p>
+</section>
+
+<!-- ============ 5. iPAD DRONE ============ -->
+<section class="sec">
+<h2><b>5</b>iPad drone — lái tâm bắn</h2>
+<p class="mut">Giữ cảm giác lái xe: <b>nghiêng iPad</b> = tâm sang trái / phải; 2 bàn đạp đúng chỗ phanh / ga = tâm <b>gần lại / xa ra</b>. Chọn đạn ở 3 thẻ trái, bắn bằng nút FIRE lớn bên phải (kiểu thẻ 4j). Chế độ Touch: kéo ngón tay trên bản đồ giữa để di tâm.</p>
+<div class="ipad">
+<svg viewBox="0 0 1024 768" font-family="Exo 2">
+  <rect width="1024" height="768" fill="#0b0f15"/>
+  <text x="40" y="58" fill="#b07cff" font-weight="900" font-style="italic" font-size="34" letter-spacing="2">DRONE</text>
+  <text x="168" y="56" fill="#8d9bb0" font-weight="700" font-size="17">NEUTRAL · ● Connected</text>
+  <text x="640" y="44" fill="#8d9bb0" font-weight="800" font-size="15" letter-spacing="2">BATTERY</text>
+  <rect x="640" y="54" width="340" height="12" rx="6" fill="#1d2633"/><rect x="640" y="54" width="238" height="12" rx="6" fill="#b07cff"/>
+  <text x="980" y="44" fill="#fff" font-weight="900" font-size="18" text-anchor="end">70 %</text>
+  <!-- 3 thẻ chọn đạn -->
+  <g transform="translate(40 110)">
+    <rect width="290" height="120" rx="20" fill="rgba(255,95,162,.14)" stroke="#ff5fa2" stroke-width="3"/>
+    <text x="64" y="80" fill="#ff5fa2" font-size="52" font-weight="900" text-anchor="middle">❤</text>
+    <text x="186" y="60" fill="#fff" font-size="30" font-weight="900" font-style="italic" text-anchor="middle">HEART</text>
+    <text x="186" y="90" fill="#ff8fc0" font-size="15" font-weight="800" text-anchor="middle">ĐANG CHỌN · 40 %</text>
+  </g>
+  <g transform="translate(40 250)">
+    <rect width="290" height="120" rx="20" fill="#16202b" stroke="rgba(46,230,201,.5)" stroke-width="2"/>
+    <text x="64" y="80" fill="#2ee6c9" font-size="52" font-weight="900" text-anchor="middle">⚡</text>
+    <text x="186" y="60" fill="#fff" font-size="30" font-weight="900" font-style="italic" text-anchor="middle">BOOST</text>
+    <text x="186" y="90" fill="#8d9bb0" font-size="15" font-weight="700" text-anchor="middle">25 %</text>
+  </g>
+  <g transform="translate(40 390)" opacity=".45">
+    <rect width="290" height="120" rx="20" fill="#16202b" stroke="#ff4d5e" stroke-width="2"/>
+    <text x="64" y="80" fill="#ff4d5e" font-size="48" font-weight="900" text-anchor="middle">🚀</text>
+    <text x="186" y="60" fill="#fff" font-size="30" font-weight="900" font-style="italic" text-anchor="middle">MISSILE</text>
+    <text x="186" y="90" fill="#8d9bb0" font-size="15" font-weight="700" text-anchor="middle">chờ 2 s</text>
+  </g>
+  <!-- bản đồ giữa: đường từ trên nhìn xuống + tâm (vùng kéo ngón tay khi Touch) -->
+  <rect x="356" y="110" width="312" height="400" rx="22" fill="#121a24" stroke="rgba(176,124,255,.35)"/>
+  <path d="M460 510 C460 420 530 380 520 300 C510 210 490 160 495 110 L550 110 C545 160 565 210 575 300 C585 380 540 420 550 510Z" fill="#2a3038"/>
+  <rect x="487" y="440" width="14" height="26" rx="4" fill="#3b8cff"/><rect x="530" y="330" width="14" height="26" rx="4" fill="#ff7a00"/>
+  <circle cx="537" cy="343" r="22" fill="none" stroke="#ff5fa2" stroke-width="3"/>
+  <text x="512" y="140" fill="#b07cff" font-weight="900" font-size="14" text-anchor="middle" letter-spacing="1">TÂM KHOÁ: TEAM 2</text>
+  <text x="512" y="494" fill="#8d9bb0" font-weight="700" font-size="13" text-anchor="middle">Touch: kéo ngón tay ở đây</text>
+  <!-- nút FIRE lớn -->
+  <g transform="translate(694 110)">
+    <rect width="290" height="400" rx="24" fill="rgba(255,95,162,.12)" stroke="#ff5fa2" stroke-width="3"/>
+    <path d="M145 120 l-34 -34 a20 20 0 0 1 34 -22 a20 20 0 0 1 34 22 z" fill="#ff5fa2"/>
+    <text x="145" y="220" fill="#fff" font-size="56" font-weight="900" font-style="italic" text-anchor="middle">FIRE</text>
+    <text x="145" y="258" fill="#ff8fc0" font-size="18" font-weight="800" text-anchor="middle" letter-spacing="1">HEART → TEAM 2</text>
+    <text x="145" y="360" fill="#8d9bb0" font-size="15" font-weight="700" text-anchor="middle">nghiêng iPad = tâm trái / phải</text>
+  </g>
+  <!-- 2 bàn đạp gần / xa -->
+  <rect x="40" y="540" width="200" height="190" rx="28" fill="#1a222e" stroke="rgba(255,255,255,.12)"/>
+  <text x="140" y="632" fill="#fff" font-weight="900" font-size="26" text-anchor="middle">▼ NEAR</text>
+  <text x="140" y="664" fill="#8d9bb0" font-weight="700" font-size="15" text-anchor="middle">tâm lùi gần drone</text>
+  <rect x="784" y="540" width="200" height="190" rx="28" fill="#1a222e" stroke="rgba(176,124,255,.5)"/>
+  <text x="884" y="632" fill="#fff" font-weight="900" font-size="26" text-anchor="middle">FAR ▲</text>
+  <text x="884" y="664" fill="#8d9bb0" font-weight="700" font-size="15" text-anchor="middle">tâm tiến ra xa</text>
+  <text x="512" y="640" fill="#8d9bb0" font-weight="800" font-size="16" text-anchor="middle" letter-spacing="1">NGHIÊNG ◀ ▶ = TÂM TRÁI / PHẢI</text>
+</svg>
+</div>
+<div class="legend">
+  <div><b>Trái:</b> 3 thẻ chọn đạn (thẻ đang chọn sáng màu đạn). Thiếu pin / đang chờ ⇒ mờ + ghi lý do.</div>
+  <div><b>Phải:</b> nút FIRE to đổi màu theo đạn đang chọn, ghi bắn vào đâu ("HEART → TEAM 2" hoặc "→ ROAD").</div>
+  <div><b>Giữa:</b> bản đồ nhỏ (2 xe + tâm); chế độ Touch kéo ngón tay ở đây.</div>
+  <div><b>Dưới:</b> NEAR / FAR ở đúng chỗ phanh / ga của iPad xe.</div>
+</div>
+<div class="note">Màn lớn lái drone được khi chưa có iPad 3: phím ← → (tâm ngang), ↑ ↓ (gần / xa), 1 / 2 / 3 chọn đạn, Space bắn.</div>
+</section>
+
+<!-- ============ 6. KẾ HOẠCH ============ -->
+<section class="sec">
+<h2><b>6</b>Kế hoạch (không đổi số đợt)</h2>
+<table class="plan">
+<tr><th>Đợt</th><th>Làm gì</th><th>Thầy thử được gì</th></tr>
+<tr><td>4k</td><td>Tab DRONE (Off / 1 drone, 3 chế độ, chọn đạn) · chia 3 cột · camera sau drone + tâm bắn + khoá xe · mô hình drone + bóng trong màn 2 đội · lái bằng bàn phím · bàn đo fps</td><td>Bố cục, độ rộng, góc máy, độ mượt TOMKO</td></tr>
+<tr><td>4l</td><td>3 loại đạn (mô hình, bay lạng lách, định vị) · 6 kiểu nổ xe / đường · pin + thời gian chờ · luật theo chế độ · tiếng · dòng drone ở kết trận</td><td>Chơi đủ luật bằng bàn phím</td></tr>
+<tr><td>4m</td><td>iPad drone (mục 5) · thêm vai DRONE vào đường nối + chừa "drone 1" · thẻ DRONE + QR ở xưởng · khoá 1 iPad</td><td>Thử 3 iPad thật</td></tr>
+<tr><td>AWord</td><td>Khi thầy chốt cả 3 đợt</td><td>Lên lớp</td></tr>
+</table>
+</section>
+</main>
+
+<script>
+const gf = document.getElementById("gf"), dw = document.getElementById("dw"), dwv = document.getElementById("dwv");
+/* cột drone: camera sau drone — đường phối cảnh, 2 xe nhìn từ sau-trên, tâm bắn, đạn đang bay, thân drone ở đáy */
+const droneSvg = `<svg class="scene" viewBox="0 0 100 160" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8fab"/><stop offset="1" stop-color="#2e4459"/></linearGradient></defs>
+  <rect width="100" height="40" fill="url(#sk)"/><rect y="40" width="100" height="120" fill="#22361f"/>
+  <path d="M46 40 L54 40 L100 160 L0 160Z" fill="#3a3f47"/>
+  <path d="M50 40 L50 160" stroke="#fff" stroke-opacity=".35" stroke-width=".8" stroke-dasharray="4 4"/>
+  <rect x="52" y="66" width="6" height="5" rx="1.2" fill="#ff7a00"/><rect x="40" y="88" width="9" height="7" rx="1.6" fill="#3b8cff"/>
+  <ellipse cx="55" cy="70" rx="7" ry="2.6" fill="none" stroke="#ff5fa2" stroke-width=".9"/>
+  <g stroke="#ff5fa2" stroke-width="1" fill="none"><circle cx="55" cy="69" r="3"/><path d="M55 62v3M55 73v3M48 69h3M59 69h3"/></g>
+  <path d="M51 118 Q54 96 55 74" stroke="#ff5fa2" stroke-opacity=".5" stroke-width="1.4" fill="none" stroke-dasharray="1.5 2"/>
+  <path d="M53.5 92 l2 -5 l1.4 5z" fill="#ff5fa2"/>
+  <g transform="translate(50 128)"><rect x="-9" y="-3" width="18" height="6" rx="2" fill="#2b2140"/>
+    <path d="M-9 -1 h-9 M9 -1 h9" stroke="#2b2140" stroke-width="2"/>
+    <ellipse cx="-19" cy="-2" rx="7" ry="1.6" fill="#b07cff" fill-opacity=".45"/><ellipse cx="19" cy="-2" rx="7" ry="1.6" fill="#b07cff" fill-opacity=".45"/>
+    <circle cx="0" cy="0" r="1.4" fill="#b07cff"/></g></svg>`;
+const droneIcon = `<svg class="dro" viewBox="0 0 40 14"><rect x="14" y="5" width="12" height="4" rx="1.5" fill="#2b2140"/><path d="M14 6h-6M26 6h6" stroke="#2b2140" stroke-width="1.6"/>
+  <ellipse cx="7" cy="5.5" rx="6" ry="1.4" fill="#b07cff" fill-opacity=".8"/><ellipse cx="33" cy="5.5" rx="6" ry="1.4" fill="#b07cff" fill-opacity=".8"/></svg>`;
+function tv(i, left, width) {
+  const c = i ? "var(--t1)" : "var(--t0)";
+  return `<div class="view tv" style="left:${left}%;width:${width}%"><span class="lbl" style="color:${c}">TEAM ${i + 1}</span>${droneIcon}<div class="car" style="background:${c}"></div></div>`;
+}
+function draw() {
+  const w = +dw.value, side = (100 - w) / 2; dwv.textContent = w + " %";
+  gf.innerHTML = `<div class="race">${tv(0, 0, side)}<div class="view dv" style="left:${side}%;width:${w}%">${droneSvg}<span class="lbl">DRONE · NEUTRAL</span><div class="bat"><i></i></div></div>${tv(1, side + w, side)}</div>
+  <div class="dash"><div class="t0"><div class="q">What is the opposite of "hot"?</div><div class="ans"><i></i><i></i><i></i><i></i></div></div>
+  <div class="t1"><div class="q">Which word means "very big"?</div><div class="ans"><i></i><i></i><i></i><i></i></div></div></div>`;
+}
+dw.oninput = draw; draw();
+
+/* Settings giả */
+const HINT = {
+  on: ["Tắt — game như 4j, không vẽ thêm gì.", "Một drone trung tâm, một iPad thứ 3 (hoặc lái bằng bàn phím trên màn lớn)."],
+  mode: ["Drone tự quyết giúp hay cản ai. Kết trận ghi lại đã giúp / bắn trúng từng đội bao nhiêu lần.",
+         "Heart / Boost chỉ bắn vào đội đang SAU, Missile chỉ vào đội đang DẪN — giữ trận sát nút. Đổi đội dẫn ⇒ đổi mục tiêu ngay.",
+         "Drone thuộc 1 đội: Heart / Boost cho đội mình, Missile vào đội kia. Khung drone + iPad viền màu đội."]
+};
+function sync() {
+  const on = [...document.querySelectorAll('[data-k="on"] button')].findIndex(b => b.classList.contains("on"));
+  const mode = [...document.querySelectorAll('[data-k="mode"] button')].findIndex(b => b.classList.contains("on"));
+  document.getElementById("h-on").textContent = HINT.on[on];
+  document.getElementById("h-mode").textContent = HINT.mode[mode];
+  document.getElementById("it-team").style.display = mode === 2 ? "" : "none";
+}
+document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b || b.disabled) return;
+  if (seg.dataset.k === "ammo") b.classList.toggle("on");
+  else seg.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+  sync();
+}));
+sync();
+</script>
+</body>
+</html>
