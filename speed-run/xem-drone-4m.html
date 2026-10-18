@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>Xem mẫu drone (bàn kiểm hướng mũi)</title>
+<style>html,body{margin:0;background:#111;color:#ddd;font:13px system-ui}#g{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:6px}canvas{width:100%;aspect-ratio:1;background:#223}</style>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+</head><body><div id="g"></div>
+<script type="module">
+// Bàn kiểm 4m: mỗi mẫu 2 góc — NHÌN TỪ TRÊN (mũi tên đỏ = −Z = hướng "phía trước" của game) và NHÌN NGANG từ +X. Mẫu đã chuẩn cỡ (bề ngang lớn nhất = 2,6).
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+const L = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const files = ["drone-A1-mavic2pro", "drone-A6-quadrocopter2", "drone-B3-combat"];
+const g = document.getElementById("g"); window.__info = {};
+for (const f of files) {
+  const gl = await L.loadAsync("drone3d/" + f + ".glb"); const m = gl.scene;
+  const b = new THREE.Box3().setFromObject(m), s = b.getSize(new THREE.Vector3()), c = b.getCenter(new THREE.Vector3());
+  const k = 2.6 / Math.max(s.x, s.z); m.position.sub(c).multiplyScalar(k); m.scale.setScalar(k);
+  const wrap = new THREE.Group(); wrap.add(m);
+  window.__info[f] = { size: s.toArray().map(v => +v.toFixed(2)), k: +k.toFixed(4), anim: gl.animations.map(a => a.name + ":" + a.duration.toFixed(2)) };
+  for (const view of ["top", "side"]) {
+    const cv = document.createElement("canvas"); cv.width = cv.height = 400; g.append(cv);
+    const r = new THREE.WebGLRenderer({ canvas: cv, antialias: true }); r.outputColorSpace = THREE.SRGBColorSpace;
+    const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight("#fff", "#445", 2.2)); const d = new THREE.DirectionalLight("#fff", 2); d.position.set(3, 5, 2); sc.add(d);
+    sc.add(wrap.clone(true));
+    const arr = new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0, 0), 2.2, 0xff2020, 0.4, 0.25); sc.add(arr);
+    const cam = new THREE.OrthographicCamera(-2, 2, 2, -2, 0.1, 50);
+    if (view === "top") { cam.position.set(0, 10, 0); cam.up.set(0, 0, -1); } else cam.position.set(10, 0.4, 0);
+    cam.lookAt(0, 0, 0); r.render(sc, cam);
+  }
+  const p = document.createElement("div"); p.textContent = f + " · trái: từ trên (mũi tên đỏ = phía trước game, hướng lên) · phải: nhìn ngang (phía trước = bên trái)"; p.style.gridColumn = "span 2"; g.append(p);
+}
+</script></body></html>
