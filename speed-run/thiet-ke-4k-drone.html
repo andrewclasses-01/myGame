@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế 4k DRONE</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+/* Trang THIẾT KẾ mẫu 4k (18/10/2026) — người chơi thứ 3 lái DRONE trên không bằng iPad thứ 3: màn hình thứ 3 ở giữa,
+   thả TIM / BOOST tiếp tế, bắn TÊN LỬA cản trở. Bật / tắt trong Settings. CHƯA đụng code game. */
+:root { --bg: #0b0e13; --card: #121821; --line: rgba(140, 200, 255, .14); --tx: #e7eef8; --mut: #8d9bb0; --ac: #60a5fa; --t0: #3b8cff; --t1: #ff7a00; --dr: #b07cff; --ok: #38d39f; --bad: #ff4d5e; --y: #f5c542; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.top { position: sticky; top: 0; z-index: 9; background: var(--y); color: #1b1300; font: 800 13px "Exo 2"; letter-spacing: .08em; padding: 6px 16px; }
+main { max-width: 1240px; margin: 0 auto; padding: 18px 16px 80px; }
+h1 { font: italic 900 30px "Exo 2"; margin: 10px 0 2px; } h1 small { font: 600 15px "Exo 2"; color: var(--mut); margin-left: 8px; }
+h2 { font: italic 900 21px "Exo 2"; margin: 0 0 6px; } h2 b { color: var(--dr); margin-right: 8px; }
+h3 { font: italic 900 16px "Exo 2"; margin: 0 0 4px; }
+.sec { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-top: 18px; }
+.mut { color: var(--mut); } .note { background: rgba(96,165,250,.08); border-left: 3px solid var(--ac); padding: 8px 12px; border-radius: 0 10px 10px 0; margin: 10px 0; }
+.warn { background: rgba(255,122,0,.1); border-left-color: var(--t1); }
+.good { background: rgba(56,211,159,.08); border-left-color: var(--ok); }
+.ask { background: rgba(245,197,66,.08); border: 1px dashed rgba(245,197,66,.5); border-radius: 12px; padding: 10px 14px; margin-top: 12px; } .ask b { color: var(--y); }
+button.b { font: 800 14px "Exo 2"; color: #fff; background: #1d2a3b; border: 1px solid rgba(140,200,255,.3); border-radius: 10px; padding: 7px 14px; cursor: pointer; }
+button.b:hover { background: #26384f; } button.b.on { background: var(--dr); color: #12061f; border-color: var(--dr); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; } td, th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; } th { color: var(--mut); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+.tag { display: inline-block; font: 800 11px "Exo 2"; letter-spacing: .06em; padding: 1px 8px; border-radius: 99px; background: rgba(176,124,255,.18); color: var(--dr); }
+.verdict { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-top: 10px; }
+.verdict div { background: #0e141c; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.verdict b { display: block; font: italic 900 18px "Exo 2"; } .verdict span { font-size: 13px; color: var(--mut); }
+@media (max-width: 860px) { .verdict { grid-template-columns: 1fr 1fr; } }
+
+/* ================= 1. KHUNG GAME GIẢ (đo theo cqh như trang 4i) ================= */
+.gframe { container-type: size; position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #07090d; }
+.race { position: absolute; left: 0; right: 0; top: 0; height: 70cqh; }
+.dash { position: absolute; left: 0; right: 0; bottom: 0; height: 30cqh; display: grid; grid-template-columns: 1fr 1fr; gap: .4cqh; background: #0a0d12; border-top: .3cqh solid #000; }
+.dash > div { padding: 1.6cqh 2cqh; display: grid; grid-template-rows: auto 1fr; gap: 1.2cqh; }
+.dash .q { font: 800 3.4cqh "Exo 2"; color: #fff; background: rgba(255,255,255,.06); border-radius: 1cqh; padding: 1cqh 1.6cqh; }
+.dash .ans { display: grid; grid-template-columns: 1fr 1fr; gap: 1cqh; } .dash .ans i { border-radius: 1cqh; background: rgba(255,255,255,.08); }
+.dash .t0 .q { box-shadow: inset .5cqh 0 0 var(--t0); } .dash .t1 .q { box-shadow: inset .5cqh 0 0 var(--t1); }
+.view { position: absolute; top: 0; bottom: 0; overflow: hidden; }
+.view.tv { background: linear-gradient(180deg, #5d7d99 0, #2c4157 40%, #2a3038 41%, #171b21 100%); }
+.view.tv::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 70%; height: 59%; transform: translateX(-50%); clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%); background: #3a3f47; }
+.view .car { position: absolute; left: 50%; bottom: 7cqh; width: 11cqh; height: 6cqh; transform: translateX(-50%); border-radius: 1.4cqh 1.4cqh .6cqh .6cqh; z-index: 2; }
+.view .lbl { position: absolute; top: 1.2cqh; left: 1.4cqh; font: 900 2.4cqh "Exo 2"; letter-spacing: .08em; z-index: 3; }
+.view .mini { position: absolute; top: 3cqh; left: 50%; width: 3.4cqh; height: 3.4cqh; transform: translateX(-50%); z-index: 3; }
+.view.dv { background: #1a2a1c; border-left: .35cqh solid #000; border-right: .35cqh solid #000; }
+.view.dv svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.view.dv.float { z-index: 4; border: .4cqh solid var(--dr); border-radius: 1.6cqh; box-shadow: 0 1cqh 3cqh rgba(0,0,0,.6); }
+.view.dv .lbl { color: var(--dr); left: 50%; transform: translateX(-50%); white-space: nowrap; text-shadow: 0 .2cqh .6cqh #000; }
+.lay-cap { font-size: 13px; color: var(--mut); margin-top: 6px; }
+
+/* ================= 3. iPAD DRONE ================= */
+.ipad { container-type: size; position: relative; width: 100%; max-width: 860px; aspect-ratio: 4 / 3; margin: 0 auto; border-radius: 26px; border: 10px solid #1b1f26; background: #0b0f15; overflow: hidden; }
+.ipad svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px 14px; font-size: 14px; margin-top: 10px; }
+.legend b { color: var(--dr); }
+.plan td:first-child { white-space: nowrap; font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="top">TRANG THIẾT KẾ · CHƯA ĐỤNG CODE GAME · RACING WORDS 4k — DRONE (người chơi thứ 3)</div>
+<main>
+<h1>Drone — iPad thứ 3 <small>18/10/2026 · bật / tắt trong Settings ▸ RACE</small></h1>
+<p class="mut">Thầy mô tả: giữa 2 màn hình đội cắt ra một màn hình thứ 3 cho người thứ 3 lái DRONE trên cao, nhìn xuống 2 xe đang đua; drone thả <b>tiếp tế</b> (tim, boost) hoặc <b>cản trở</b> (tên lửa). Dưới đây là đánh giá khả thi, bố cục, luật chơi, iPad drone và kế hoạch chia đợt — các chỗ cần thầy chốt đánh dấu <span class="tag">CHỐT</span>.</p>
+
+<!-- ============ 0. KHẢ THI ============ -->
+<section class="sec">
+<h2><b>0</b>Có làm được không?</h2>
+<div class="verdict">
+  <div><b style="color:var(--ok)">Làm được</b><span>Game đã có sẵn 3 thứ nền: góc nhìn trên trời (camera gộp 4d), phần thưởng tim / boost / tên lửa trên đường, tên lửa + DAMAGE (4i).</span></div>
+  <div><b style="color:var(--y)">Hiệu năng: cần đo</b><span>Thêm 1 góc máy quay = vẽ thêm khoảng 40–55 % số lệnh vẽ. Máy nhà dư sức; TOMKO phải đo thật (mục 6).</span></div>
+  <div><b style="color:var(--y)">Kết nối: rủi ro vừa</b><span>Đường nối iPad viết cho 2 đội; thêm "pad2" không khó. Rủi ro thật là Wi-Fi lớp: đã có lần 1 / 2 iPad nối chậm — 3 iPad thì khả năng gặp cao hơn.</span></div>
+  <div><b style="color:var(--ac)">Khối lượng: 3 đợt</b><span>4k bố cục + drone bay (thử bằng bàn phím) · 4l thả / bắn + năng lượng · 4m iPad drone. Sau đó mới lên AWord.</span></div>
+</div>
+<div class="note">Tắt Drone ⇒ game y như 4j hiện tại (không vẽ thêm gì, không tốn hiệu năng). Đó là cách giữ an toàn cho bản đang chạy trên lớp.</div>
+</section>
+
+<!-- ============ 1. BỐ CỤC ============ -->
+<section class="sec">
+<h2><b>1</b>Chỗ đặt màn hình thứ 3 <span class="tag">CHỐT</span></h2>
+<p class="mut">Khung giả đo theo khung thật (vùng đua 70 % trên, dải câu hỏi 2 đội 30 % dưới). Bấm để xem từng kiểu, kéo thanh để thử độ rộng.</p>
+<div class="row">
+  <button class="b on" data-lay="A">A · Cột giữa vùng đua (em đề xuất)</button>
+  <button class="b" data-lay="B">B · Ô nổi trên vạch giữa</button>
+  <button class="b" data-lay="C">C · Cột giữa suốt chiều cao</button>
+  <span class="mut" style="margin-left:12px">Độ rộng drone</span> <input id="dw" type="range" min="16" max="30" value="22"> <b id="dwv">22 %</b>
+</div>
+<div class="gframe" id="gf"></div>
+<div class="lay-cap" id="cap"></div>
+<table style="margin-top:12px">
+<tr><th></th><th>A · Cột giữa vùng đua</th><th>B · Ô nổi trên vạch giữa</th><th>C · Cột giữa suốt chiều cao</th></tr>
+<tr><td>Màn 2 đội</td><td>Hẹp lại (mỗi đội 39 % thay 50 %) — gần vuông, vẫn thấy rõ đường</td><td>Giữ nguyên 50 %, nhưng ô drone che mép trong của 2 đội</td><td>Hẹp lại như A, và dải câu hỏi cũng hẹp</td></tr>
+<tr><td>Màn drone</td><td>Cao, hẹp — hợp với đường nhìn từ trên xuống (đường chạy dọc)</td><td>Nhỏ, thấp — khó nhìn từ cuối lớp</td><td>Cao nhất, nhìn đường xa nhất</td></tr>
+<tr><td>Câu hỏi + đáp án</td><td>Không đổi</td><td>Không đổi</td><td>⚠️ Ô đáp án hẹp ⇒ chữ nhỏ hơn</td></tr>
+<tr><td>Bảng đếm đầu vạch (4i)</td><td>Dời lên đầu cột drone</td><td>Nằm trên ô drone</td><td>Dời lên đầu cột drone</td></tr>
+</table>
+</section>
+
+<!-- ============ 2. GÓC NHÌN DRONE + LUẬT ============ -->
+<section class="sec">
+<h2><b>2</b>Drone bay thế nào, thả / bắn thế nào</h2>
+<div class="grid2">
+<div>
+<svg viewBox="0 0 360 520" style="width:100%;max-width:380px;display:block;margin:auto;background:#1b2c1d;border-radius:14px">
+  <defs>
+    <radialGradient id="g-ring" r=".5"><stop offset=".55" stop-color="#ff4d5e" stop-opacity="0"/><stop offset=".8" stop-color="#ff4d5e" stop-opacity=".55"/><stop offset="1" stop-color="#ff4d5e" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g-drop" r=".5"><stop offset=".5" stop-color="#38d39f" stop-opacity="0"/><stop offset=".85" stop-color="#38d39f" stop-opacity=".5"/><stop offset="1" stop-color="#38d39f" stop-opacity="0"/></radialGradient>
+  </defs>
+  <!-- đường cong nhẹ, nhìn từ trên -->
+  <path d="M120 520 C120 380 220 330 210 200 C200 90 150 40 160 0 L240 0 C230 40 280 90 290 200 C300 330 200 380 240 520 Z" fill="#3a3f47"/>
+  <path d="M180 520 C170 380 255 330 250 200 C245 90 200 40 200 0" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="14 14"/>
+  <!-- cây -->
+  <g fill="#2f5a34"><circle cx="60" cy="90" r="16"/><circle cx="40" cy="300" r="20"/><circle cx="320" cy="420" r="18"/><circle cx="330" cy="120" r="14"/><circle cx="80" cy="450" r="15"/></g>
+  <!-- xe đội 1 (xanh) + đội 2 (cam) -->
+  <rect x="146" y="392" width="20" height="36" rx="6" fill="#3b8cff"/><rect x="198" y="330" width="20" height="36" rx="6" fill="#ff7a00"/>
+  <!-- vòng cảnh báo tên lửa -->
+  <circle cx="232" cy="230" r="34" fill="url(#g-ring)"/><circle cx="232" cy="230" r="22" fill="none" stroke="#ff4d5e" stroke-width="2.5" stroke-dasharray="5 5"/>
+  <text x="232" y="282" fill="#ff4d5e" font-family="Exo 2" font-weight="900" font-size="12" text-anchor="middle">1,2 s nữa nổ</text>
+  <!-- thùng dù rơi -->
+  <circle cx="250" cy="120" r="30" fill="url(#g-drop)"/><circle cx="250" cy="120" r="18" fill="none" stroke="#38d39f" stroke-width="2"/>
+  <g transform="translate(250 120)"><rect x="-8" y="-8" width="16" height="16" rx="3" fill="#ff4d8b"/><path d="M0 4 L-4 0 A2.4 2.4 0 0 1 0 -3 A2.4 2.4 0 0 1 4 0 Z" fill="#fff"/></g>
+  <text x="250" y="166" fill="#38d39f" font-family="Exo 2" font-weight="900" font-size="12" text-anchor="middle">TIM đang rơi</text>
+  <!-- tâm ngắm drone -->
+  <g stroke="#b07cff" stroke-width="2.5" fill="none"><circle cx="190" cy="250" r="12"/><path d="M190 230v10M190 260v10M170 250h10M200 250h10"/></g>
+  <!-- khung hành lang -->
+  <rect x="10" y="10" width="340" height="500" rx="10" fill="none" stroke="#b07cff" stroke-opacity=".35" stroke-dasharray="6 8"/>
+  <text x="180" y="28" fill="#b07cff" font-family="Exo 2" font-weight="900" font-size="13" text-anchor="middle" letter-spacing="1">DRONE · nhìn thẳng xuống</text>
+  <text x="180" y="505" fill="#8d9bb0" font-family="Exo 2" font-weight="700" font-size="11" text-anchor="middle">đáy khung = 25 m sau xe cuối</text>
+</svg>
+</div>
+<div>
+<h3>Bay</h3>
+<ul>
+<li>Drone bay ở <b>độ cao cố định</b> (~30 m), camera <b>nhìn thẳng xuống</b>, đường chạy dọc màn hình (đầu xe hướng lên trên).</li>
+<li>Drone bị giữ trong một <b>hành lang</b>: từ 25 m sau xe cuối tới 120 m trước xe đầu, ngang không quá mép đường + 15 m ⇒ không bao giờ lạc mất 2 xe.</li>
+<li>Không ai lái ⇒ drone tự bay lơ lửng theo <b>giữa 2 xe</b>.</li>
+<li>Tốc độ tối đa nhanh hơn xe đang boost một chút ⇒ đuổi kịp xe dẫn.</li>
+</ul>
+<h3>Thả / bắn — vào <b>tâm ngắm</b> dưới bụng drone</h3>
+<table>
+<tr><th>Nút</th><th>Chuyện gì xảy ra</th><th>Tốn pin</th></tr>
+<tr><td>❤ TIM</td><td>Thùng dù rơi ~1,5 s xuống tâm ngắm, có vòng xanh trên đường. Xe nào chạy qua thì ăn (+1 mạng) — <b>cả 2 đội đều tranh được</b>.</td><td>40 %</td></tr>
+<tr><td>⚡ BOOST</td><td>Như trên, xe ăn được đầy 1 ô năng lượng boost.</td><td>25 %</td></tr>
+<tr><td>🚀 TÊN LỬA</td><td>Vòng đỏ cảnh báo trên đường 1,2 s rồi nổ. Xe trong vòng = trúng như tên lửa thường (lệch + DAMAGE, 4i). Tài xế kịp thấy để né.</td><td>35 %</td></tr>
+</table>
+<p class="mut" style="font-size:13px">Pin sạc dần ~6 %/giây (đầy sau ~17 s) ⇒ drone không thể xả liên tục; mỗi nút còn có thời gian chờ riêng 3 s. Số liệu chỉnh được khi thử.</p>
+</div>
+</div>
+<div class="note"><b>Vì sao "thả xuống đường" thay vì "chọn đội rồi bắn thẳng vào xe"?</b> Thả xuống đường ⇒ drone phải <b>ngắm</b> (có kỹ năng), tài xế phải <b>lái vào / né</b> (có kỹ năng), và đội kia vẫn có thể giành phần tiếp tế ⇒ vui hơn và khó "thiên vị". Kiểu "chọn đội ⇒ tự bay vào xe" dễ hơn cho người lái drone nhỏ tuổi — thầy chọn ở câu hỏi cuối.</div>
+<h3 style="margin-top:14px">Trên màn hình 2 đội thấy gì</h3>
+<ul>
+<li>Một chiếc drone nhỏ màu tím bay phía trên, có <b>bóng</b> trên mặt đường (biết drone đang ở đâu).</li>
+<li>Vòng đỏ / vòng xanh in trên mặt đường + thùng dù rơi xuống — nhìn trực tiếp trong góc lái.</li>
+<li>Trúng tên lửa drone: giống trúng tên lửa đối thủ (lệch nhẹ, khói gầm, cháy, thanh DAMAGE). Ăn tim / boost: giống ăn phần thưởng trên đường hiện có.</li>
+</ul>
+</section>
+
+<!-- ============ 3. iPAD DRONE ============ -->
+<section class="sec">
+<h2><b>3</b>iPad thứ 3 — bảng lái drone</h2>
+<p class="mut">Giữ đúng cách lái xe để người chơi không phải học lại: nghiêng iPad = sang trái / phải, bàn đạp phải = bay nhanh lên trước, bàn đạp trái = chậm lại / lùi. 3 nút thả / bắn dùng kiểu thẻ phẳng của 4j.</p>
+<div class="ipad">
+<svg viewBox="0 0 1024 768">
+  <rect width="1024" height="768" fill="#0b0f15"/>
+  <!-- thanh trên: tên vai + pin -->
+  <text x="40" y="58" fill="#b07cff" font-family="Exo 2" font-weight="900" font-style="italic" font-size="34" letter-spacing="2">DRONE</text>
+  <text x="170" y="58" fill="#8d9bb0" font-family="Exo 2" font-weight="700" font-size="18">● Connected</text>
+  <text x="640" y="44" fill="#8d9bb0" font-family="Exo 2" font-weight="800" font-size="15" letter-spacing="2">BATTERY</text>
+  <rect x="640" y="54" width="340" height="16" rx="8" fill="#1d2633"/><rect x="640" y="54" width="238" height="16" rx="8" fill="#b07cff"/>
+  <text x="980" y="44" fill="#fff" font-family="Exo 2" font-weight="900" font-size="18" text-anchor="end">70 %</text>
+  <!-- radar giữa: 2 xe + drone -->
+  <rect x="372" y="100" width="280" height="420" rx="22" fill="#121a24" stroke="rgba(176,124,255,.35)"/>
+  <path d="M470 520 C470 420 540 380 530 300 C520 210 500 160 505 100 L560 100 C555 160 575 210 585 300 C595 380 550 420 560 520Z" fill="#2a3038"/>
+  <rect x="495" y="440" width="14" height="26" rx="4" fill="#3b8cff"/><rect x="540" y="392" width="14" height="26" rx="4" fill="#ff7a00"/>
+  <g stroke="#b07cff" stroke-width="3" fill="none"><circle cx="530" cy="330" r="14"/><path d="M530 306v10M530 344v10M506 330h10M544 330h10"/></g>
+  <text x="512" y="132" fill="#b07cff" font-family="Exo 2" font-weight="900" font-size="15" text-anchor="middle" letter-spacing="1">BẢN ĐỒ NHỎ</text>
+  <text x="512" y="500" fill="#8d9bb0" font-family="Exo 2" font-weight="700" font-size="13" text-anchor="middle">TEAM 1 · 120 m · TEAM 2</text>
+  <!-- bàn đạp trái (chậm) / phải (nhanh) như xe -->
+  <rect x="40" y="540" width="190" height="190" rx="28" fill="#1a222e" stroke="rgba(255,255,255,.12)"/>
+  <text x="135" y="640" fill="#fff" font-family="Exo 2" font-weight="900" font-size="26" text-anchor="middle">◀◀ SLOW</text>
+  <text x="135" y="672" fill="#8d9bb0" font-family="Exo 2" font-weight="700" font-size="15" text-anchor="middle">chậm lại / lùi</text>
+  <rect x="794" y="540" width="190" height="190" rx="28" fill="#1a222e" stroke="rgba(176,124,255,.5)"/>
+  <text x="889" y="640" fill="#fff" font-family="Exo 2" font-weight="900" font-size="26" text-anchor="middle">FAST ▶▶</text>
+  <text x="889" y="672" fill="#8d9bb0" font-family="Exo 2" font-weight="700" font-size="15" text-anchor="middle">bay lên trước</text>
+  <!-- 3 thẻ hành động -->
+  <g font-family="Exo 2" text-anchor="middle">
+    <g transform="translate(40 120)">
+      <rect width="300" height="120" rx="20" fill="#16202b" stroke="#ff4d8b" stroke-opacity=".7" stroke-width="2"/>
+      <text x="70" y="78" fill="#ff4d8b" font-size="54" font-weight="900">❤</text>
+      <text x="200" y="62" fill="#fff" font-size="30" font-weight="900" font-style="italic">HEART</text>
+      <text x="200" y="92" fill="#8d9bb0" font-size="16" font-weight="700">40 % pin · thả xuống</text>
+    </g>
+    <g transform="translate(40 260)">
+      <rect width="300" height="120" rx="20" fill="#16202b" stroke="#38d39f" stroke-opacity=".7" stroke-width="2"/>
+      <text x="70" y="80" fill="#38d39f" font-size="54" font-weight="900">⚡</text>
+      <text x="200" y="62" fill="#fff" font-size="30" font-weight="900" font-style="italic">BOOST</text>
+      <text x="200" y="92" fill="#8d9bb0" font-size="16" font-weight="700">25 % pin · thả xuống</text>
+    </g>
+    <g transform="translate(40 400)" opacity=".45">
+      <rect width="300" height="120" rx="20" fill="#16202b" stroke="#ff4d5e" stroke-width="2"/>
+      <text x="70" y="80" fill="#ff4d5e" font-size="50" font-weight="900">🚀</text>
+      <text x="200" y="62" fill="#fff" font-size="30" font-weight="900" font-style="italic">MISSILE</text>
+      <text x="200" y="92" fill="#8d9bb0" font-size="16" font-weight="700">chờ 2 s · thiếu pin</text>
+    </g>
+  </g>
+  <!-- bên phải: chỉ báo nghiêng (như xe) -->
+  <g transform="translate(684 120)" font-family="Exo 2" text-anchor="middle">
+    <rect width="300" height="400" rx="22" fill="#121a24" stroke="rgba(255,255,255,.08)"/>
+    <text x="150" y="44" fill="#8d9bb0" font-size="15" font-weight="800" letter-spacing="2">NGHIÊNG ĐỂ SANG NGANG</text>
+    <g transform="translate(150 210) rotate(-14)"><rect x="-100" y="-62" width="200" height="124" rx="16" fill="none" stroke="#b07cff" stroke-width="4"/>
+      <circle cx="0" cy="0" r="18" fill="#b07cff"/><path d="M-36 0h-30M36 0h30" stroke="#b07cff" stroke-width="4"/></g>
+    <text x="150" y="350" fill="#fff" font-size="22" font-weight="900">◀ trái 14°</text>
+  </g>
+</svg>
+</div>
+<div class="legend">
+  <div><b>Trái:</b> 3 thẻ HEART / BOOST / MISSILE — thiếu pin hoặc đang chờ ⇒ mờ + ghi lý do (giống "không mục tiêu" của 4j).</div>
+  <div><b>Giữa:</b> bản đồ nhỏ thấy 2 xe + tâm ngắm (người lái drone vẫn nhìn màn lớn là chính).</div>
+  <div><b>Phải:</b> chỉ báo nghiêng như iPad xe (có thể đổi sang Touch kéo ngón tay — cùng tab DRIVER trong Settings).</div>
+  <div><b>Dưới:</b> 2 bàn đạp SLOW / FAST đúng chỗ phanh / ga của xe.</div>
+</div>
+<div class="note">Màn lớn cũng lái được drone khi chưa có iPad 3 (phím: mũi tên + 1 / 2 / 3) — để thầy thử ngay trên máy, và để chơi khi chỉ có 2 iPad.</div>
+</section>
+
+<!-- ============ 4. KẾT NỐI + SETTINGS ============ -->
+<section class="sec">
+<h2><b>4</b>Bật / tắt, kết nối, xưởng</h2>
+<ul>
+<li><b>Settings ▸ RACE</b> thêm dòng <b>Drone: Off / On</b> (mặc định Off, nhớ theo máy như Traffic).</li>
+<li>Bật ⇒ ở xưởng (intro) có thẻ thứ 3 màu tím <b>DRONE</b> với mã QR riêng; màn chọn đội trên iPad có thêm lựa chọn <b>DRONE</b>. Khoá như đội: 1 drone = 1 iPad.</li>
+<li>Đường nối: thêm tài liệu "pad2" bên cạnh "pad0"/"pad1" — cùng cách bắt tay, tự nối lại, nhịp tim của 4f.</li>
+<li>Khi bật Drone ⇒ <b>Sky view tự Off</b> (camera gộp bay lên trời của 4d) — vì cột drone đã cho góc nhìn trên cao, gộp thêm sẽ rối.</li>
+<li>Kết trận: bảng kết quả có thêm dòng của drone — đã giúp đội nào bao nhiêu lần, bắn trúng ai bao nhiêu lần.</li>
+</ul>
+</section>
+
+<!-- ============ 5. HIỆU NĂNG ============ -->
+<section class="sec">
+<h2><b>5</b>Hiệu năng (ưu tiên số 1 của thầy)</h2>
+<table>
+<tr><th>Hạng mục</th><th>Hiện tại (4j, 2 góc)</th><th>Có drone (3 góc) — ước tính</th><th>Cách giữ mượt</th></tr>
+<tr><td>Lệnh vẽ / khung</td><td>~375</td><td>~520–580</td><td>Góc drone không vẽ cỏ, bụi nhỏ, vệt gió; cây ở xa vẽ bản thấp</td></tr>
+<tr><td>Số điểm ảnh tô</td><td>cả màn hình</td><td>gần như không đổi (cùng màn hình, chỉ chia lại)</td><td>—</td></tr>
+<tr><td>Hậu kỳ (bloom, nhoè)</td><td>1 lần cả khung</td><td>không đổi</td><td>Nhoè tốc độ không áp lên cột drone</td></tr>
+<tr><td>Dự phòng nếu TOMKO tụt</td><td colspan="3">Cột drone vẽ <b>nửa nhịp</b> (30 lần/giây, xen kẽ) — mắt gần như không thấy vì camera trên cao di chuyển chậm.</td></tr>
+</table>
+<div class="note warn">Đợt 4k sẽ có bàn đo: bật / tắt drone và đọc số lệnh vẽ + fps ngay trên trang — thầy mở trên TOMKO là biết có đủ mượt trước khi làm phần thả / bắn.</div>
+</section>
+
+<!-- ============ 6. KẾ HOẠCH ============ -->
+<section class="sec">
+<h2><b>6</b>Kế hoạch — thiết kế, thử, chỉnh đến khi chốt mới lên AWord</h2>
+<table class="plan">
+<tr><th>Đợt</th><th>Làm gì</th><th>Thầy thử được gì</th></tr>
+<tr><td>4k</td><td>Settings Drone On/Off · chia màn 3 · camera drone nhìn xuống + hành lang bay · mô hình drone nhỏ + bóng trong màn 2 đội · lái drone bằng bàn phím · bàn đo fps</td><td>Mở trang trên TOMKO: bố cục, độ rộng cột, độ mượt</td></tr>
+<tr><td>4l</td><td>Pin + 3 hành động: thùng dù TIM / BOOST, tên lửa có vòng cảnh báo · tiếng · dòng drone ở bảng kết trận</td><td>Chơi đủ luật bằng bàn phím trên màn lớn</td></tr>
+<tr><td>4m</td><td>iPad drone (pad-4m.html): bảng lái mục 3 · thêm "pad2" vào đường nối · thẻ DRONE + QR ở xưởng · khoá 1 iPad</td><td>Thử 3 iPad thật</td></tr>
+<tr><td>AWord</td><td>Chỉ khi thầy chốt cả 3 đợt — làm như Đợt 551 (chép, đo lại load-files, pad.js nhận vai DRONE)</td><td>Lên lớp</td></tr>
+</table>
+</section>
+
+<!-- ============ 7. CẦN CHỐT ============ -->
+<section class="sec">
+<h2><b>7</b>Thầy cần chốt trước khi em làm 4k</h2>
+<ol>
+<li><b>Chỗ đặt màn drone:</b> A cột giữa vùng đua (đề xuất) · B ô nổi · C cột suốt chiều cao.</li>
+<li><b>Drone đứng phe nào:</b> trung lập (giúp / cản ai cũng được — đề xuất) · luôn giúp đội đang thua · thuộc về 1 đội.</li>
+<li><b>Cách tiếp tế:</b> thả xuống đường, ai chạy qua thì ăn (đề xuất) · chọn đội, đồ tự bay vào xe.</li>
+<li><b>Pin drone sạc bằng gì:</b> tự sạc theo thời gian (đề xuất) · người lái drone trả lời câu hỏi để nạp (iPad 3 cũng có câu hỏi).</li>
+</ol>
+</section>
+</main>
+
+<script>
+/* Khung giả bố cục: A / B / C + độ rộng cột drone */
+const gf = document.getElementById("gf"), cap = document.getElementById("cap"), dw = document.getElementById("dw"), dwv = document.getElementById("dwv");
+let lay = "A";
+const droneSvg = `<svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMid slice"><rect width="100" height="200" fill="#1b2c1d"/>
+  <path d="M30 200 C30 140 62 120 58 80 C55 40 40 15 44 0 L66 0 C62 15 77 40 80 80 C84 120 62 140 72 200Z" fill="#3a3f47"/>
+  <path d="M51 200 C47 140 72 120 69 80 C66 40 54 15 55 0" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".8" stroke-dasharray="5 5"/>
+  <rect x="40" y="150" width="7" height="13" rx="2" fill="#3b8cff"/><rect x="60" y="124" width="7" height="13" rx="2" fill="#ff7a00"/>
+  <circle cx="66" cy="78" r="9" fill="none" stroke="#ff4d5e" stroke-width="1" stroke-dasharray="2 2"/>
+  <g stroke="#b07cff" stroke-width="1.2" fill="none"><circle cx="56" cy="100" r="5"/><path d="M56 91v4M56 105v4M47 100h4M61 100h4"/></g></svg>`;
+function tv(i, left, width) {
+  const c = i ? "var(--t1)" : "var(--t0)";
+  return `<div class="view tv" style="left:${left}%;width:${width}%"><span class="lbl" style="color:${c}">TEAM ${i + 1}</span>
+    <svg class="mini" viewBox="0 0 20 20"><path d="M10 2 L16 16 L10 12 L4 16Z" fill="#b07cff"/></svg>
+    <div class="car" style="background:${c}"></div></div>`;
+}
+function draw() {
+  const w = +dw.value; dwv.textContent = w + " %";
+  const side = (100 - w) / 2;
+  const dash = `<div class="dash"${lay === "C" ? ` style="grid-template-columns:${side}% ${side}%;column-gap:${w}%"` : ""}>
+    <div class="t0"><div class="q">What is the opposite of "hot"?</div><div class="ans"><i></i><i></i><i></i><i></i></div></div>
+    <div class="t1"><div class="q">Which word means "very big"?</div><div class="ans"><i></i><i></i><i></i><i></i></div></div></div>`;
+  let race;
+  if (lay === "A") race = `<div class="race">${tv(0, 0, side)}<div class="view dv" style="left:${side}%;width:${w}%">${droneSvg}<span class="lbl">DRONE</span></div>${tv(1, side + w, side)}</div>`;
+  else if (lay === "B") { const fw = w * 1.15, fh = 52; race = `<div class="race">${tv(0, 0, 50)}${tv(1, 50, 50)}<div class="view dv float" style="left:${50 - fw / 2}%;width:${fw}%;top:2cqh;bottom:auto;height:${fh}%">${droneSvg}<span class="lbl">DRONE</span></div></div>`; }
+  else {
+    race =`<div class="race">${tv(0, 0, side)}${tv(1, side + w, side)}</div><div class="view dv" style="left:${side}%;width:${w}%;top:0;bottom:0;z-index:4">${droneSvg}<span class="lbl">DRONE</span></div>`;
+  }
+  gf.innerHTML = race + dash;
+  cap.textContent = lay === "A" ? `A — mỗi đội rộng ${side.toFixed(0)} % màn hình; dải câu hỏi giữ nguyên. Mũi tên tím nhỏ trên đầu mỗi màn đội = drone đang ở phía trước.`
+    : lay === "B" ? "B — 2 đội giữ nguyên 50 %; ô drone nổi đè lên mép trong của cả 2 đội."
+    : `C — cột drone chạy suốt chiều cao; 2 dải câu hỏi hẹp còn ${side.toFixed(0)} % mỗi bên.`;
+}
+document.querySelectorAll("[data-lay]").forEach(b => b.onclick = () => { lay = b.dataset.lay; document.querySelectorAll("[data-lay]").forEach(x => x.classList.toggle("on", x === b)); draw(); });
+dw.oninput = draw; draw();
+</script>
+</body>
+</html>
