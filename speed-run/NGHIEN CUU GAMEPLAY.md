@@ -1125,3 +1125,17 @@ tiếng, kết trận) · 4m (iPad drone, vai DRONE trong đường nối, thẻ
 Thiết kế: `thiet-ke-4k-drone-v2.html` (luật, iPad) · `chon-drone-4l.html` + `-v2` (chọn mẫu) · `thiet-ke-4q-tam-ngam.html` (tâm ngắm, chọn R5).
 Trang thử từng bước: mau-4l-drone-ipad · mau-4m-drone-3d · mau-4n-drone-bay · mau-4o-chon-drone · mau-4p-drone-5-mau · mau-4q-tam-ngam · mau-4r-dan-drone · mau-4s-dan-gon.
 Tóm tắt + việc còn lại: HO SO BAN GIAO mục 0.
+
+## 47. 🔬 iPad LÁI NGHIÊNG 2 TRỤC (vô lăng + chúc lên / xuống) — nghiên cứu 19/10/2026, CHƯA build
+Câu hỏi của thầy: iPad cầm ngang xoay như vô lăng, có thể CHÚC LÊN / CHÚC XUỐNG để điều khiển nhiều hướng không? ⇒ **ĐƯỢC.**
+- iPad báo hướng trọng lực theo 3 trục (sự kiện `devicemotion`, `accelerationIncludingGravity` x · y · z). Bảng lái 4l đang dùng x · y (góc vô lăng trong mặt màn).
+  Thêm z ⇒ góc CHÚC: `pitch = atan2(z, hypot(x, y))` — tách hẳn khỏi góc vô lăng `atan2(x, y)` nên xoay và chúc cùng lúc không lẫn nhau.
+- Gán cho DRONE: xoay trái / phải = tâm ngắm sang trái / phải · ngả mép trên RA XA = tâm ra xa (FAR) · kéo mép trên VỀ = tâm lại gần (NEAR) ⇒ như cần điều khiển 2 chiều, một tay vẫn rảnh bấm FIRE.
+  (Xe đua cũng làm được: chúc ra xa = BOOST, kéo về = phanh — để sau, xe đang có nút.)
+- Điều phải xử lý:
+  1. MỐC 0: người cầm thường ngả màn ra sau 20–40° ⇒ lấy mốc lúc bấm TILT (nút LEVEL đặt lại mốc). Vùng chết ±4°, hết cỡ ±15–18° (chúc nhiều thì khó nhìn màn).
+  2. Chúc điều khiển TỐC ĐỘ dời tâm (giống giữ nút NEAR / FAR), không phải vị trí ⇒ cầm lâu không mỏi.
+  3. iPad TỰ XOAY MÀN khi nghiêng mạnh; Safari không khoá được hướng màn ⇒ dặn bật Khoá xoay màn hình (Trung tâm điều khiển); code đã tự lấy lại mốc khi màn đổi hướng.
+  4. Gần nằm phẳng (chúc > ~60°) góc vô lăng nhiễu ⇒ tạm ngưng lái, hiện "HOLD UP".
+  5. iOS cần bấm nút để xin quyền chuyển động + trang HTTPS (nút TILT đã làm) ⇒ thử thật phải qua trang thử ẩn AWord, máy nhà http không được.
+- Đề xuất build (chờ thầy): nút TILT 3 nấc Off · Steer · Steer + Pitch; vòng tròn nhỏ có chấm hiện hướng đang nghiêng; bàn thử máy tính giả góc bằng `tiltDebug`.

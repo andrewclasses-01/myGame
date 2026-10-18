@@ -6,9 +6,9 @@
 Thầy: "Tạm thời thế đã… build tiếp ở các phiên sau, khi nào ok hết rồi mới đẩy bản cuối lên AWord". ⇒ Mọi việc tiếp theo làm ở myGame (bản mới = tên mới: 4t, 4u…);
 CHƯA đụng template racing_words thật của AWord (vẫn Đợt 551 = 4j).
 
-**Bản mới nhất: 4s** — trang `mau-4s-dan-gon.html` · gói `core/rw-4s.js` · lõi `core/sr3d-4s.js` · đạn `core/sr3d-dammo-4s.js` · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
+**Bản mới nhất: 4t** (19/10 tối) — trang `mau-4t-drone-chinh.html` · gói `core/rw-4t.js` · lõi `core/sr3d-4t.js` · đạn `core/sr3d-dammo-4t.js` · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.
-Thử nhanh: mở `mau-4s-dan-gon.html` ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
+Thử nhanh: mở `mau-4t-drone-chinh.html` ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
 
 **Đã có (thầy duyệt từng bước):**
 - Bố cục A: cột drone giữa vùng đua rộng 24 % (`DRONE_W`), 2 nửa đội hẹp lại; màn kết thu cột lại; Sky view tự tắt khi có drone.
@@ -17,6 +17,8 @@ Thử nhanh: mở `mau-4s-dan-gon.html` ⇒ ⚙ Settings ▸ Drone ▸ 1 drone �
 - 5 mẫu drone thầy giữ: Mavic · Quad · Osprey · Northstar · Dvergr (Sketchfab CC BY, ghi công ở tab Drone); cánh quạt quay quanh trọng tâm + vòng mờ; bay lượn như thật (lò xo giảm chấn thiếu, roll / pitch theo gia tốc, rung gió).
 - Tâm ngắm lục giác HUD (R5): ảnh canvas phát sáng, cộng sáng, y 0,3 m.
 - Đạn Heart / Boost / Missile: dáng tên lửa nhỏ, phóng về trước, đuôi chỉ thấy lửa + khói, lạng lách, bám xe có giới hạn; pin + thời gian chờ; trúng xe / đường 6 kiểu; dòng DRONE ở kết trận; tiếng.
+- 4t (thầy chỉnh): drone nhỏ 10 % (mẫu thật + bóng) · đạn ra từ BỤNG: thả 0,22 s dưới bụng (½ cỡ, chưa lửa, bám drone) rồi mới đánh lửa đẩy về trước; lửa + vệt chỉ bùng khi đạn > 1 m trước tâm drone ·
+  Settings ▸ Drone thêm **Column width** (18 / 21 / 24 / 28 / 32 %) + **View zoom** (Close · Normal · Wide · Wider · Widest = máy quay drone ×0,8…×1,8 xa).
 - iPad drone: vai thứ 3 (t = 2) trong đường nối; màn chọn vai 3 nút; bảng lái (thẻ đạn, ô kéo lái tâm, FIRE, NEAR / FAR, TILT); thẻ DRONE · iPAD có QR ở xưởng (không chặn START).
 
 **Trang thử ẩn trên AWord (ĐÃ ĐẨY trước khi thầy dặn chỉ myGame — để thử 3 iPad thật):** `https://aword.andrewclasses.com/lab/racing-drone.html` (+ `lab/racing-drone-pad.html`),
@@ -26,6 +28,8 @@ kênh riêng `templates/racing-words/rw-lab-signal.js` (tài liệu rwlab_*), b�
 **Còn lại / chờ thầy:**
 - ⬜ Thầy thử 3 iPad thật trên trang ẩn (chưa thử lần nào) · đo fps TOMKO bật / tắt drone (máy nhà: 433 → ~700 lệnh vẽ, 0,78 → 1,2 M tam giác).
 - ⬜ iPad drone: chưa hiện thời gian chờ từng loại đạn / thiếu pin trên thẻ (tin "j:" mới có pin); kiểm lái nghiêng trên iPad thật.
+- ⬜ LÁI NGHIÊNG 2 TRỤC trên iPad (xoay như vô lăng = trái / phải · chúc mép trên ra xa / kéo về = tâm xa / gần): ĐÃ NGHIÊN CỨU = LÀM ĐƯỢC (NGHIEN CUU mục 47), chờ thầy "ok build";
+  thử thật cần HTTPS ⇒ phải đẩy trang thử ẩn AWord (thầy quyết).
 - ⬜ "2 drones" (mỗi đội 1 drone) — mới chừa cửa, chưa thiết kế.
 - ⬜ Đưa lên template thật AWord khi thầy chốt hết (load-files.js đo lại, pad.js nhận vai DRONE, drone3d/ trong danh sách tải).
 
