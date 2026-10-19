@@ -6,9 +6,9 @@
 Thầy: "Tạm thời thế đã… build tiếp ở các phiên sau, khi nào ok hết rồi mới đẩy bản cuối lên AWord". ⇒ Mọi việc tiếp theo làm ở myGame (bản mới = tên mới: 4t, 4u…);
 CHƯA đụng template racing_words thật của AWord (vẫn Đợt 551 = 4j).
 
-**Bản mới nhất: 4v** (19/10 tối) — trang `mau-4v-drone-ngam-tay.html` · gói `core/rw-4v.js` · lõi `core/sr3d-4v.js` · đạn `core/sr3d-dammo-4v.js` · iPad `pad-4v.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4v.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
+**Bản mới nhất: 4w** (19/10 tối) — trang `mau-4w-tam-tab-muot.html` · gói `core/rw-4w.js` (+ CSS `rw-4w.css` sau rw-4r.css) · lõi `core/sr3d-4w.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4w.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4w.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.
-Thử nhanh: mở `mau-4v-drone-ngam-tay.html` (+ tab `pad-4v.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
+Thử nhanh: mở `mau-4w-tam-tab-muot.html` (+ tab `pad-4w.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
 
 **Đã có (thầy duyệt từng bước):**
 - Bố cục A: cột drone giữa vùng đua rộng 24 % (`DRONE_W`), 2 nửa đội hẹp lại; màn kết thu cột lại; Sky view tự tắt khi có drone.
@@ -23,6 +23,10 @@ Thử nhanh: mở `mau-4v-drone-ngam-tay.html` (+ tab `pad-4v.html?t=2&dev=c` = 
   tâm ngắm TAY HOÀN TOÀN (bỏ khoá + bám xe; chữ "IN SIGHT · TEAM x" chỉ báo) · bắn ⇒ DẤU ĐIỂM RƠI phát sáng màu đạn trên đường (mọi máy quay thấy ⇒ xe né được), co + nháy nhanh dần ·
   Settings ▸ Drone: **Auto target** Off (mặc định) / On + thanh **Auto pull** 1–10 = điểm rơi trượt về xe gần (bán kính 4 + 1,2·k m, ≤ 0,8·k m/s, mọi loại đạn, theo luật chế độ).
   Ô lái kéo dọc trên iPad = tâm xa / gần (như chúc). Đã thử giả lập + AWord trang ẩn Đợt 552j `905acdd`.
+- ✅ 4w: tâm / thẻ / vệt / dấu điểm rơi Heart HỒNG #ff63c3 · Missile ĐỎ CHÓT #ff2020 · trên đường LUÔN 1 TÂM (đạn bay ⇒ tâm ngắm ẩn; chạm xong mới hiện) và 1 quả một lúc ("WAIT · SHOT IN THE AIR") ·
+  hiện / ẩn tâm + dấu = 2 lớp ảnh nét / nhoè (canvas filter blur) đan nhau + nở to khi mờ · đổi tab Settings mượt (vệt sáng trượt, nội dung trồi lên mờ + nhoè → rõ, khung cao / thấp dần) ·
+  bỏ dòng ghi công mẫu 3D trên màn hình (tab Drone + .ri-cred màn chọn xe) — ghi công CC BY vẫn nằm trong code (sr3d-drone3d-4p.js, xe3d) + hồ sơ. AWord trang ẩn Đợt 552k `1294629`.
+- ⬜ ICON 2D vẽ riêng thay emoji (🚀 ❤ ⚡ ✔ ✘ ⚠ ▲…): trang mẫu `thiet-ke-4w-icon.html` — 3 kiểu A Neon viền · B Khối phẳng 2 tông · C Huy hiệu lục giác, chờ thầy chọn rồi build 4x.
 - iPad drone: vai thứ 3 (t = 2) trong đường nối; màn chọn vai 3 nút; bảng lái (thẻ đạn, ô kéo lái tâm, FIRE, NEAR / FAR, TILT); thẻ DRONE · iPAD có QR ở xưởng (không chặn START).
 
 **Trang thử ẩn trên AWord (ĐÃ ĐẨY trước khi thầy dặn chỉ myGame — để thử 3 iPad thật):** `https://aword.andrewclasses.com/lab/racing-drone.html` (+ `lab/racing-drone-pad.html`),
