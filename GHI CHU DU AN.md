@@ -746,6 +746,11 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - ⛔ BẪY lặp 3 lần trong phiên: vá chuỗi có "// chú thích" chèn GIỮA dòng ⇒ nuốt phần code sau (lần 3 làm object H mất tag/msHold). Dùng /* */ hoặc kiểm phần đuôi dòng gốc.
 - AWord Đợt 551: worktree web-wt-dot551, GOC rw-4j.js, `core/loader3d.js` + `pace` / `h.mark`, pad.js padui-4j + rw-4j-fb.css, load-files.js đo lại. ⬜ thầy thử TOMKO + 2 iPad.
 
+## Racing Words 2 DRONE 5e → 5g — 19/10/2026 · ✅ CHỐT · AWord Đợt 554 `12f3922`
+- 5e chế độ 2 drone (hàng ngang lệch tầng, máy quay chung, bảng đạn M1, iPad t=3) · 5f màu SƠN drone, máy quay ưu tiên xe dẫn + nâng theo khoảng cách, drone + chọn drone trong xưởng, màn chọn vai iPad ảnh thật ·
+  5g iPad: nút tên lửa hết bề ngang, vừa mọi tỉ lệ (cả cầm dọc), ANDREW STUDIO. Chi tiết: speed-run/HO SO mục 0.
+- ⛔ Bẫy: thân mẫu Mavic có cờ transparent ⇒ pha màu bỏ qua nhầm (chỉ bỏ vật liệu opacity < 0,3) · đo load-files lần đầu có thể thiếu CSS ⇒ so danh sách, đo lại.
+
 ## Racing Words DRONE 4k → 5d — 19/10/2026 · ✅ CHỐT · AWord Đợt 553 · TẠM DỪNG (chỉ myGame; AWord có trang thử ẩn /lab/racing-drone.html)
 - 4k cột drone + tab Drone + camera sau drone + tâm bắn · 4l iPad drone (vai t=2) · 4m–4p mẫu drone Sketchfab (giữ 5: Mavic · Quad · Osprey · Northstar · Dvergr), cánh quạt quay, bay lượn
   · 4q tâm ngắm lục giác HUD · 4r đạn Heart/Boost/Missile + pin + trúng xe/đường · 4s đạn nhỏ, phóng về trước, đuôi chỉ lửa + khói.

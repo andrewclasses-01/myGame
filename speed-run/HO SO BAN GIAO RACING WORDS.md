@@ -2,11 +2,14 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## 0. ⭐ DRONE (iPad thứ 3) — ✅ CHỐT 19/10/2026 · ĐÃ LÊN AWORD THẬT (Đợt 553, myGame 5d) — ĐỌC PHẦN NÀY TRƯỚC
+## 0. ⭐ DRONE — ✅ 2 DRONE CHỐT 19/10/2026 · ĐÃ LÊN AWORD THẬT (Đợt 554 `12f3922`, myGame 5f + iPad 5g) — ĐỌC PHẦN NÀY TRƯỚC
+Thầy 19/10: "Bản 5g ổn rồi, chốt và đưa lên AWord" ⇒ template racing_words THẬT = GOC rw-5f + iPad padui-5g + padlink-5e (4 chỗ: t = 2 drone 1 · t = 3 drone 2, rwpad_pad3, cờ aw.rwDrone "2"/"3"),
+anh-pad/ 4 ảnh, load-files 97 file 5,36 MB; trang thử ẩn lab/racing-drone* ĐÃ XOÁ. Không còn việc chờ drone — ⬜ thầy thử TOMKO + 4 iPad thật.
+(Lịch sử bên dưới: 1 drone 5d ⇒ Đợt 553; 2 drone 5e → 5g ⇒ Đợt 554.)
 Thầy 19/10 tối: "ok rồi nhé. chốt bản này đến đây, đưa lên AWord và myGame, ghi hồ sơ và ghi việc chờ tiếp theo là điều khiển drone thứ 2".
 ⇒ Bản CHỐT = 5d (lõi sr3d-5d = 5a + chỉ tải mẫu drone khi drone bật) + iPad padui-5c + padlink-5a. AWord Đợt 553 `f244280`: template racing_words THẬT dùng bản này
 (GOC rw-5d, pad.js ?t=2 = vai DRONE với cờ riêng aw.rwDrone, rwpad_pad2, drone3d/ 5 mẫu, load-files đo lại 95 file 5,3 MB). Drone mặc định OFF.
-⭐⭐ ĐANG LÀM: ĐIỀU KHIỂN DRONE THỨ 2 (✅ bản 5e build xong, chờ thầy xem) — chế độ "2 drones" (mỗi đội 1 drone, nút "2 drones · soon" trong Settings ▸ Drone đã chừa cửa).
+✅ (xong 19/10) ĐIỀU KHIỂN DRONE THỨ 2 — 5e → 5g, Đợt 554. Ghi chép gốc:
   Cần thiết kế ở myGame trước (bản 5e…): bố cục 2 cột drone (hay chia đôi cột giữa?) · iPad thứ 4 (t = 3, rwpad_pad3, padlink 4 chỗ) · luật đạn từng đội · màu / mẫu riêng mỗi drone.
   Thử 4 thiết bị ở trang ẩn `lab/racing-drone.html` (giữ lại), chốt xong mới đưa lên template thật.
   ⏳ 19/10 thầy: "Drone 2 tính năng như drone 1, bay cao hơn chút để không che / không va; drone 1 bay gần mép dưới hơn — thiết kế cẩn thận cho gọn".
@@ -91,7 +94,7 @@ kênh riêng `templates/racing-words/rw-lab-signal.js` (tài liệu rwlab_*), b�
   xoay = trái / phải · ngả mép trên ra xa = tâm xa · kéo về = tâm gần · drone NGHIÊNG THEO tay lái (cả phím J L I K) · nút LEVEL = tư thế đang cầm thành tư thế 0 (nhớ máy `rwdrone.th0`)
   · vòng nhỏ có chấm trên iPad = hướng đang nghiêng · gần nằm phẳng ⇒ "HOLD IT UP". Đã thử giả lập; ĐÃ ĐẨY trang thử ẩn AWord (Đợt 552i `0a6df44`) — ⬜ thầy thử iPad thật
   (bấm TILT ⇒ cho phép chuyển động; dấu trục chúc tự lấy lúc bật, coi tư thế đang cầm là màn ngửa — nếu ngược chiều thì báo để sửa).
-- ⬜⭐ VIỆC CHỜ: "2 drones" — điều khiển DRONE THỨ 2 (mỗi đội 1 drone) — chưa thiết kế (xem đầu mục 0).
+- ✅ "2 drones" — điều khiển DRONE THỨ 2 (mỗi đội 1 drone) — myGame 5e→5g, AWord Đợt 554 `12f3922`. ⬜ thầy thử 4 iPad thật.
 - ✅ Đã lên template thật AWord Đợt 553 `f244280` (myGame 5d): load-files đo lại, pad.js nhận vai DRONE (?t=2, cờ aw.rwDrone), drone3d/ chép kèm. ⬜ thầy thử TOMKO + iPad thật trên game thật.
 
 **Công cụ mẫu 3D** (`myGame/tools/*.mjs`, cần npm @gltf-transform 4 + meshoptimizer + sharp 0.34): `tex.mjs` (webp ≤ 1024, chạy RIÊNG tiến trình) → `process.mjs` (meshopt) · `split2.mjs` (tách cánh quạt theo mảnh liền ⇒ PROP_k) · `hubs.mjs` / `hubfix.mjs` (dò trục) · `nodes.mjs` (liệt kê). Bàn xem: `xem-drone-4m.html` (hướng mũi) · `xem-quat-4n.html?id=A1&w=0.6` (soi quạt).
