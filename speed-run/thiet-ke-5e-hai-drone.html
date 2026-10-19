@@ -97,6 +97,28 @@ svg text { font-family: "Exo 2", sans-serif; }
 .ask { border-color: var(--hi); }
 .ask ol { margin: 6px 0 0; padding-left: 20px; } .ask li { margin: 6px 0; }
 @media (max-width: 1000px) { .opts { grid-template-columns: 1fr 1fr; } .find, .pair, .rules { grid-template-columns: 1fr; } }
+/* 5e: bảng đạn TỐI GIẢN (thầy chọn A1 + "tinh gọn, bỏ cái không cần") */
+.mini { position: absolute; left: 0; right: 0; top: 6.6cqh; height: 9cqh; display: flex; justify-content: space-between; align-items: flex-start; padding: 0 3%;
+  background: linear-gradient(rgba(6,9,15,.55), transparent); }
+.mg { display: flex; flex-direction: column; gap: .7cqh; --c: #fff; }
+.mg.r { align-items: flex-end; }
+.mg .row { display: flex; align-items: center; gap: .9cqh; }
+.mg.r .row > .n, .mg.r .row > .nr { order: 9; }   /* bên phải: số ở mép ngoài, icon vẫn đúng thứ tự Heart · Boost · Missile */
+.mg .n { display: grid; place-items: center; width: 3.2cqh; height: 3.2cqh; border-radius: 50%; background: var(--c); font: 900 1.8cqh/1 "Chakra Petch"; color: #fff; box-shadow: 0 0 1.2cqh var(--c); }
+.mg .ic { position: relative; display: grid; place-items: center; width: 3.4cqh; height: 3.4cqh; border-radius: 50%; opacity: .38; }
+.mg .ic .rwi { height: 2.3cqh; width: auto; }
+.mg .ic.on { opacity: 1; background: color-mix(in srgb, var(--ac) 24%, rgba(8,12,20,.7)); box-shadow: 0 0 0 .25cqh var(--ac), 0 0 1.4cqh var(--ac); }
+.mg .ic.cd { opacity: .9; }
+.mg .ic.cd::after { content: ""; position: absolute; inset: -.3cqh; border-radius: 50%; background: conic-gradient(rgba(255,255,255,.85) var(--p), transparent 0);
+  -webkit-mask: radial-gradient(closest-side, transparent 82%, #000 84%); mask: radial-gradient(closest-side, transparent 82%, #000 84%); }
+.mg .bt { width: 13.5cqh; height: .55cqh; border-radius: 1cqh; background: rgba(255,255,255,.16); overflow: hidden; }
+.mg .bt i { display: block; height: 100%; width: var(--b); background: var(--c); }
+.mg .bt.low i { background: #ff4d5e; }
+/* M2: vòng pin quanh số + 1 icon đạn đang chọn */
+.mg .nr { position: relative; display: grid; place-items: center; width: 4.4cqh; height: 4.4cqh; border-radius: 50%; background: conic-gradient(var(--c) var(--b), rgba(255,255,255,.16) 0); }
+.mg .nr .n { width: 3.3cqh; height: 3.3cqh; box-shadow: none; border: .3cqh solid #0b111c; }
+.zoomc { max-width: 300px; }
+.mini-legend { font-size: 14px; } .mini-legend li { margin: 4px 0; }
 </style>
 </head>
 <body>
@@ -221,6 +243,28 @@ Em đặt lại máy quay drone và thêm một bản sao drone để làm drone
   </div>
 </div>
 
+<h2>3b · Bảng đạn TỐI GIẢN (thầy chọn A1, gọn hơn)</h2>
+<p class="lead mu">Đã bỏ: ô nền, chữ "DRONE 1 · TEAM 1", chữ "AIM ON THE ROAD / IN SIGHT", chữ tên đạn, dòng phím. Lý do: tâm ngắm trên đường đã cho biết đang ngắm đâu, iPad đã có đủ chi tiết.
+Giữ lại đúng 3 thứ cần nhìn từ xa: <b>drone của đội nào</b> (số màu đội) · <b>đạn đang chọn + còn chờ bao lâu</b> · <b>pin</b>.</p>
+<div class="pair">
+  <div>
+    <div class="full"><div class="slot"><div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-m1"></div></div></div>
+    <p class="cap"><b>M1 · một hàng icon</b>: số đội + 3 icon đạn (đang chọn sáng viền màu đạn, đang hồi chiêu có vòng chạy, không dùng được thì mờ) + vạch pin mảnh bên dưới.</p>
+  </div>
+  <div>
+    <div class="full"><div class="slot"><div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-m2"></div></div></div>
+    <p class="cap"><b>M2 · siêu gọn</b>: chỉ còn số đội có <b>vòng pin</b> bao quanh + 1 icon đạn đang chọn (có vòng hồi chiêu). Đổi đạn thì icon đổi theo.</p>
+  </div>
+</div>
+<div class="pair" style="margin-top:18px; grid-template-columns: repeat(2, minmax(0, 300px)); justify-content: center; gap: 40px">
+  <div class="zoomc"><div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-m1"></div><p class="cap" style="text-align:center"><b>M1</b> phóng to</p></div>
+  <div class="zoomc"><div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-m2"></div><p class="cap" style="text-align:center"><b>M2</b> phóng to</p></div>
+</div>
+<ul class="mini-legend mu">
+  <li>Ví dụ trên ảnh: drone 1 chọn Heart (sẵn sàng, pin 72 %) · drone 2 chọn Missile đang hồi chiêu 40 %, Boost không dùng được, pin 18 % (vạch / vòng pin đỏ = pin yếu).</li>
+  <li>Khi drone 2 đang có đạn bay: không cần chữ "SHOT IN THE AIR" nữa — tâm bóng mờ trắng trên đường đã cho biết.</li>
+</ul>
+
 <h2>4 · Luật đi kèm cách A</h2>
 <div class="rules">
   <div class="box"><h3><i>01</i> Drone nào của đội nào</h3>
@@ -240,15 +284,15 @@ Em đặt lại máy quay drone và thêm một bản sao drone để làm drone
     <p>Trên đường có 2 tâm ngắm, mỗi drone 1 tâm. iPad thứ 4 (vai DRONE 2): QR riêng ở xưởng, màn chọn vai thành 4 nút, bảng lái AERO YOKE giữ nguyên, chỉ đổi màu đội và chữ "DRONE 2".</p></div>
 </div>
 
-<h2>5 · Thầy chọn giúp em</h2>
+<h2>5 · Thầy đã chọn (19/10)</h2>
 <div class="box ask">
   <ol>
-    <li><b>Cách bố trí:</b> A (khuyên) · B · C · D?</li>
-    <li><b>Bảng đạn:</b> A1 trên trời (khuyên) hay A2 dưới chân drone?</li>
-    <li><b>NEAR / FAR:</b> a trung bình 2 iPad (khuyên) · b chỉ thầy chỉnh · c chỉ nhích drone mình?</li>
-    <li><b>Mẫu drone:</b> 2 drone dùng chung 1 mẫu (khác màu đội), hay mỗi đội chọn mẫu riêng ở Settings?</li>
+    <li><b>Bố trí:</b> ✓ A hàng ngang lệch tầng.</li>
+    <li><b>Bảng đạn:</b> ✓ A1 trên trời, nhưng tinh gọn tối đa ⇒ em vẽ 2 mức M1 / M2 ở mục 3b — <b>thầy chọn 1</b>.</li>
+    <li><b>NEAR / FAR:</b> ✓ a — máy quay ở khoảng trung bình của 2 iPad, mỗi drone nhích ±3 m theo ý người lái.</li>
+    <li><b>Mẫu drone:</b> ✓ chung 1 mẫu (chọn ở Settings), khác màu đội (vòng sáng + số).</li>
   </ol>
-  <p class="mu">Thầy chốt xong em mới làm bản 5e trong myGame (chưa đụng AWord).</p>
+  <p class="mu">Chọn xong M1 / M2 và thầy bảo "ok build" thì em làm bản 5e trong myGame (chưa đụng AWord).</p>
 </div>
 </div>
 
@@ -258,6 +302,11 @@ const T1 = "#3b8cff", T2 = "#ff7a00", AC = { heart: "#ff63c3", boost: "#2ee6c9",
 const chips = (sel, wait = []) => `<div class="ch">${["heart", "boost", "missile"].map(k => `<span class="${k === sel ? "on" : ""} ${wait.includes(k) ? "wait" : ""}" style="--ac:${AC[k]}">${icon(k)}</span>`).join("")}</div>`;
 const panel = (n, c, sel, bat, st, wait) => `<div class="hp" style="--c:${c}"><div class="hd"><b>${n}</b>DRONE ${n}<em>TEAM ${n}</em></div>${chips(sel, wait)}<div class="bt" style="--b:${bat}%"><i></i></div><div class="st">${st}</div></div>`;
 const ban = `<div class="ban">721 m<i>LEFT</i></div>`;
+// 5e: lớp nhận diện trên cảnh (vòng sáng + số + thẻ tâm) dùng chung cho M1 / M2
+const scene = ["glow|35.7|86|1", "glow|78|85|2", "dn|35.7|74|1", "dn|78|73.5|2", "rt|70|51|1", "rt|41|47.5|2"].map(x => { const [c, X, Y, n] = x.split("|"); return `<div class="${c}" style="left:${X}%;top:${Y}%;--c:${n === "1" ? "#3b8cff" : "#ff7a00"}">${c === "glow" ? "" : n}</div>`; }).join("");
+const ico = (k, sel, st) => `<span class="ic ${k === sel ? "on" : ""} ${st > 0 ? "cd" : ""}" style="--ac:${AC[k]};--p:${st > 0 ? st : 0}%;${st < 0 ? "opacity:.16" : ""}">${icon(k)}</span>`;
+const m1 = (n, c, sel, bat, cd, r) => `<div class="mg ${r ? "r" : ""}" style="--c:${c}"><div class="row"><span class="n">${n}</span>${["heart", "boost", "missile"].map(k => ico(k, sel, cd[k] || 0)).join("")}</div><div class="bt ${bat < 25 ? "low" : ""}" style="--b:${bat}%"><i></i></div></div>`;
+const m2 = (n, c, sel, bat, cd, r) => `<div class="mg ${r ? "r" : ""}" style="--c:${c}"><div class="row"><span class="nr" style="--b:${bat}%;${bat < 25 ? "--c:#ff4d5e" : ""}"><span class="n" style="--c:${c}">${n}</span></span>${ico(sel, sel, cd)}</div></div>`;
 const at = (cls, x, y, c, txt = "") => `<div class="${cls}" style="left:${x}%;top:${y}%;--c:${c}">${txt}</div>`;
 // vị trí đo trên ảnh 308×568 (%)
 const UI = {
@@ -266,6 +315,9 @@ const UI = {
   "a-bot": () => ban + at("glow", 35.7, 86, T1) + at("glow", 78, 85, T2) + at("dn", 35.7, 74, T1, "1") + at("dn", 78, 73.5, T2, "2") + at("rt", 70, 51, T1, "1") + at("rt", 41, 47.5, T2, "2")
     + `<div class="hud2 bot">${panel(1, T1, "heart", 72, "AIM ON THE ROAD")}${panel(2, T2, "missile", 46, "IN SIGHT · TEAM 1", ["boost"])}</div>`,
   "a18": () => ban + at("dn", 30, 74, T1, "1") + at("dn", 76, 73.5, T2, "2") + `<div class="hud2 top">${panel(1, T1, "heart", 72, "AIM")}${panel(2, T2, "missile", 46, "AIM")}</div>`,
+  // 5e: bảng đạn tối giản — M1 một hàng icon · M2 vòng pin quanh số + 1 icon
+  "a-m1": () => ban + scene + `<div class="mini">${m1(1, T1, "heart", 72, {})}${m1(2, T2, "missile", 18, { missile: 40, boost: -1 }, true)}</div>`,
+  "a-m2": () => ban + scene + `<div class="mini">${m2(1, T1, "heart", 72, 0)}${m2(2, T2, "missile", 18, 40, true)}</div>`,
   "b": () => ban + at("dn", 56.5, 70, T1, "1") + at("dn", 57, 40, T2, "2") + at("x", 57, 48, "#ff5a5a"),
   "c": () => ban + at("dn", 56.5, 72, T1, "1") + at("dn", 61, 15, T2, "2"),
   "d": () => `<div class="split-line"></div>` + at("dn", 56, 38, T2, "2") + at("dn", 56, 88, T1, "1"),
