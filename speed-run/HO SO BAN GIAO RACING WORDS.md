@@ -6,9 +6,9 @@
 Thầy: "Tạm thời thế đã… build tiếp ở các phiên sau, khi nào ok hết rồi mới đẩy bản cuối lên AWord". ⇒ Mọi việc tiếp theo làm ở myGame (bản mới = tên mới: 4t, 4u…);
 CHƯA đụng template racing_words thật của AWord (vẫn Đợt 551 = 4j).
 
-**Bản mới nhất: 5a** (19/10 tối) — trang `mau-5a-ban-lai-aero.html` · gói `core/rw-5a.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-5a.js` · iPad `pad-5b.html` (`sr3d-padlink-5a.js` + `sr3d-padui-5b.js`) · trang `mau-5b-vo-lang-lo-lung.html` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
+**Bản mới nhất: 5a** (19/10 tối) — trang `mau-5a-ban-lai-aero.html` · gói `core/rw-5a.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-5a.js` · iPad `pad-5c.html` (`sr3d-padlink-5a.js` + `sr3d-padui-5c.js`) · trang `mau-5c-ban-lai-dien-thoai.html` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.
-Thử nhanh: mở `mau-5b-vo-lang-lo-lung.html` (+ tab `pad-5b.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
+Thử nhanh: mở `mau-5c-ban-lai-dien-thoai.html` (+ tab `pad-5c.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
 
 **Đã có (thầy duyệt từng bước):**
 - Bố cục A: cột drone giữa vùng đua rộng 24 % (`DRONE_W`), 2 nửa đội hẹp lại; màn kết thu cột lại; Sky view tự tắt khi có drone.
@@ -39,6 +39,8 @@ Thử nhanh: mở `mau-5b-vo-lang-lo-lung.html` (+ tab `pad-5b.html?t=2&dev=c` =
   hàng cuối dòng ANDREW STUDIO (chữ kim loại + quầng tím, 2 vạch + hình thoi) · thẻ đạn có VÒNG HỒI CHIÊU + "READY IN n s" / "LOW BATTERY" · FIRE mờ + lý do (SHOT IN THE AIR…).
   ✅ 5b (thầy: cột + đế xấu): BỎ cột + chân đế — vô lăng LƠ LỬNG giữa vùng lái (to hơn), coi như gắn cần có trục VUÔNG GÓC màn: sau trục chỉ thấy ĐẦU CẦN tròn (vòng kim loại + quầng tím) co / giãn theo đẩy kéo ·
   ANDREW STUDIO nhỏ + thấp hơn · NEAR / FAR chỉ còn icon 2 mũi tên neon to (lên = tiến lại gần xe, xuống = lùi), nhấn giữ ⇒ sáng + mũi tên nhích. AWord trang ẩn Đợt 552p `f48c4b3`.
+  ✅ 5c (thầy: "iPad rất ok; điện thoại ngang lỗi — nút tiến to đè nút khác"): cỡ không còn theo bề ngang mà theo đơn vị --u = min(1cqw, 1,333cqh) (luôn vừa khung 4:3) ·
+  2 cột bên = max(21u, 19 % bề ngang) · chữ --t = max(u, 5,4px) · .dq container-type: size. Đã đo 900×360: không phần nào chồng, không chữ bị cắt; iPad y như cũ. AWord Đợt 552q `33935ac`.
   Game gửi thêm trong tin "j:" thời gian chờ từng loại + cờ đạn đang bay (sr3d-5a + padlink-5a). Kích thước theo bề ngang màn (cqw). AWord trang ẩn Đợt 552o `db4b8b0`.
 - iPad drone: vai thứ 3 (t = 2) trong đường nối; màn chọn vai 3 nút; bảng lái (thẻ đạn, ô kéo lái tâm, FIRE, NEAR / FAR, TILT); thẻ DRONE · iPAD có QR ở xưởng (không chặn START).
 
