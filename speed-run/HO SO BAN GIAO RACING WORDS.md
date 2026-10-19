@@ -2,6 +2,26 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ VIỆC CHỜ SỐ 1 — PHIÊN SAU VÀO THẲNG: TEST LẠI + TỐI ƯU TRÊN TOMKO (ghi 19/10/2026)
+Thầy 19/10: "sau đợt tối ưu game gần nhất cho TOMKO, hiện đã nâng phiên bản và thêm nhiều tính năng mới. Ghi việc chờ test lại trên TOMKO để tiếp tục tối ưu
+các tính năng mới đó trên TOMKO, để phiên tiếp theo ngay lập tức vào việc test và tối ưu."
+- **Đợt tối ưu TOMKO gần nhất = mẫu 3r** (16/10, AWord Đợt 533): xưởng 37 ⇒ 60 fps, phim intro 18 ⇒ ~55–60, đua 58,6 ⇒ ~60, hết dịch shader giữa trận.
+  Cách đo + nguyên nhân + cách sửa: `NGHIEN CUU GAMEPLAY.md` mục 30 (ĐỌC TRƯỚC). Mục tiêu giữ nguyên: **≥ 59 fps trên TOMKO, không khựng, không dịch shader giữa trận**.
+- **Bản cần đo = bản thật trên AWord Đợt 554 `12f3922`** (GOC `rw-5f.js` · lõi `sr3d-5f.js` · xưởng `sr3d-intro-5f.js` · iPad `padui-5g`). Thêm từ sau 3r, CHƯA đo trên TOMKO:
+  · 3y lái nghiêng iPad · 3z HUD mới · 4a chế độ đua / đích dời / cây · 4b đường cong thật (bendProfile mỗi máy quay) + dốc xoắn + phần thưởng trên đường · 4c xe khác (Traffic) ·
+    4d Sky view gộp camera · 4e Settings nổi + tạm dừng · 4f cổng iPad · 4g kết trận SLOW MOTION · 4h–4j loading, tên lửa mới, DAMAGE, nút bắn thẻ ·
+  · DRONE 4k–5d: cột drone = LẦN VẼ CẢNH THỨ 3 mỗi khung (máy nhà: 433 ⇒ ~700 lệnh vẽ, 0,78 ⇒ 1,2 M tam giác), mẫu drone .glb + đĩa quạt trong suốt, tâm ngắm ảnh canvas cộng sáng,
+    đạn drone có vệt + khói + dấu điểm rơi 2 lớp nét / nhoè, bảng kết quả nhiều hiệp ·
+  · 2 DRONE 5e–5f: 2 mẫu drone + 2 bộ tâm ngắm + đạn 2 chủ, máy quay nâng cao khi 2 xe xa (nhìn xa hơn ⇒ nhiều cảnh hơn trong khung) ·
+  · XƯỞNG 5f: 2 drone .glb + **PointLight mới** (thêm 1 đèn ⇒ mọi vật liệu xưởng đổi khoá shader + tốn GPU từng điểm ảnh — nghi số 1 cho phim intro) + ô chọn drone.
+- **Kịch bản đo** (y mục 30: myActivity mở `--remote-debugging-port`, act thật 572, server cục bộ thay thư mục racing-words): đo riêng từng trường hợp
+  Drone OFF · 1 drone · 2 drones × (xưởng 12 s · phim START · 5 đèn · đua cả ván · 2 xe cách xa > 60 m · PLAY AGAIN · đổi mẫu drone / đổi xe ở xưởng) + Traffic Both + Sky view Auto.
+  Ghi: fps từng khung + long-animation-frame (hàm gây) · `renderer.info.programs` mới giữa trận · lệnh vẽ / tam giác (bàn đo góc trên trái trang mẫu) · timer query GPU từng pass · nvidia-smi.
+- **Nghi vấn cần đo trước:** PointLight xưởng 5f · lần vẽ thứ 3 (cột drone) + bloom / nhoè hướng tâm trên cả 3 khung · đĩa quạt trong suốt + bóng drone · ảnh tâm ngắm cộng sáng ·
+  vệt / khói đạn drone · dịch shader khi bật drone giữa chừng hoặc đổi mẫu (compileAsync đã có — kiểm có khựng không) · traffic + đường cong 4b · slow motion kết trận.
+- **Làm:** sửa ở myGame bản mới tên mới (5h…, ghi vào mục này), đo lại trên TOMKO, thầy chốt ⇒ đưa lên AWord như Đợt 554 (`tools/chep-racing-words.py` + đo lại load-files).
+  Được phép (như 3r): giảm đồ hoạ / bỏ hiệu ứng đắt nếu cần để giữ mượt — báo thầy những gì bỏ.
+
 ## 0. ⭐ DRONE — ✅ 2 DRONE CHỐT 19/10/2026 · ĐÃ LÊN AWORD THẬT (Đợt 554 `12f3922`, myGame 5f + iPad 5g) — ĐỌC PHẦN NÀY TRƯỚC
 Thầy 19/10: "Bản 5g ổn rồi, chốt và đưa lên AWord" ⇒ template racing_words THẬT = GOC rw-5f + iPad padui-5g + padlink-5e (4 chỗ: t = 2 drone 1 · t = 3 drone 2, rwpad_pad3, cờ aw.rwDrone "2"/"3"),
 anh-pad/ 4 ảnh, load-files 97 file 5,36 MB; trang thử ẩn lab/racing-drone* ĐÃ XOÁ. Không còn việc chờ drone — ⬜ thầy thử TOMKO + 4 iPad thật.
