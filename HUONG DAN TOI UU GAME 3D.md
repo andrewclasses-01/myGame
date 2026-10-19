@@ -55,6 +55,9 @@ làm số dao động ±3 fps giữa các lần — so A/B liền nhau.
 | 14 | Vật liệu xe Sketchfab nhiều biến thể (normal/roughness/metal/AO map, clearcoat) | đổi xe đứng 4–5 s (dịch 23–29 shader × 2 renderer) | `slimMat`: bỏ normal/AO map, roughness/metal map ⇒ trung bình ảnh, bỏ clearcoat |
 | 15 | Dò tia + DecalGeometry giữa trận (vết cháy) | khung JS 86–117 ms ở xe nặng | Làm sẵn lúc rảnh, dùng lại chỗ cũ, không dispose hình |
 | 16 | Vào trận chờ prewarm CŨ sau khi đổi xe | khựng ở 5 đèn | Chờ lần prewarm HIỆN HÀNH |
+| 17 | Vật liệu `transparent` + `DoubleSide` | `material.version` tăng mỗi khung, `getParameters` nóng trong profiler, lệnh vẽ gấp đôi | `forceSinglePass = true` TRƯỚC khi dịch sẵn (Racing Words 5h) |
+| 18 | `fit(true)` / đo HUD (`scrollWidth`, `offsetWidth`) khi chỉ đổi độ nét hoặc khi cột/khung trượt | khung 35–54 ms đúng lúc bộ tự chỉnh đổi ⇒ vòng xoáy hạ độ nét | đổi độ nét = `setPixelRatio` + `composer.setSize`; đo DOM 1 lần, không đọc sau khi ghi style |
+| 19 | Lần vẽ cảnh thứ 3 (cột drone / gương / minimap 3D) | CPU vẽ gần gấp đôi (lệnh vẽ ~+300) | ẩn mảnh nhỏ riêng trong lượt đó; đo bằng `tools/do-game-3d/cpuview.js` |
 | (cũ) | Tạo đèn / lưới / biến thể vật liệu mới giữa ván, thanh cuộn ⇒ resize | xem bộ nhớ Train Rush / Star Loot | dựng sẵn, ghim shader, khoá cuộn |
 
 Lần theo program mới → vật liệu: `renderer.properties.get(mat).currentProgram.id` duyệt `scene.traverse`; khoá program (`cacheKey`) cho biết khác ở đâu

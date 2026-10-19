@@ -1139,3 +1139,39 @@ Câu hỏi của thầy: iPad cầm ngang xoay như vô lăng, có thể CHÚC L
   4. Gần nằm phẳng (chúc > ~60°) góc vô lăng nhiễu ⇒ tạm ngưng lái, hiện "HOLD UP".
   5. iOS cần bấm nút để xin quyền chuyển động + trang HTTPS (nút TILT đã làm) ⇒ thử thật phải qua trang thử ẩn AWord, máy nhà http không được.
 - Đề xuất build (chờ thầy): nút TILT 3 nấc Off · Steer · Steer + Pitch; vòng tròn nhỏ có chấm hiện hướng đang nghiêng; bàn thử máy tính giả góc bằng `tiltDebug`.
+
+## 48. ✅ MẪU 5h (19/10/2026) — TEST LẠI + TỐI ƯU TRÊN TOMKO SAU 3r (drone, 2 drone, traffic…) — ⬜ thầy chốt ⇒ lên AWord
+Trang thử: `speed-run/mau-5h-tomko.html` (= mau-5g + gói nhúng `core/rw-5h.js` → lõi `core/sr3d-5h.js`, CSS thêm `core/rw-5h.css`; xưởng, iPad, mô-đun khác giữ bản 5f/5g).
+**Cách đo** (y mục 30): myActivity `--remote-debugging-port=9333`, act thật 572, server cục bộ `tools/do-game-3d/serve.mjs` (sửa: đường có dấu cách + móc `rw-<mẫu>.js`),
+kịch bản mới `scen5.js` + `runfull5.sh <root> <out> off|d1|d2|d2tr` (chế độ iPad 0 = HUD trên màn lớn, drone bắn mỗi 1,6 s, 2 xe chênh tốc, PLAY AGAIN),
+`cpuview.js` (CPU ms từng lượt vẽ theo máy quay), `profspike.mjs` (CPU profiler cả ván ⇒ hàm gây TỪNG khung dài). Bản 5h đo trên nháp `stage5h/` dựng bằng chính `chep-racing-words.py` của AWord.
+
+**Đo 5f = AWord Đợt 554 (khung VẼ THẬT/giây; khung > 20 ms trong đua):**
+| | Không drone | 1 drone | 2 drone | 2 drone + Traffic Both + Sky Auto |
+|---|---|---|---|---|
+| Xưởng · phim | 60 · 60 | 59,3 · 60 | 60 · 60 | 60 · 60 |
+| 5 đèn | 60,2 | 57,0 | 56,4 | 57,6 |
+| Đua | 59,8 (≈ 12) | 59,5 (≈ 56) | 59,2 (≈ 85) | 59,2 (≈ 86) |
+| Độ nét tự chỉnh | 1,0 (tụt 0,9 ở màn kết) | tụt 0,8 | **tụt 0,7** | **tụt 0,7** |
+0 lỗi JS, 0 dịch shader giữa trận (prewarm 5f tốt). Bật drone: lệnh vẽ 455 ⇒ 790–890, tam giác 0,8 ⇒ 1,27 M, GPU WebGL 6,3 ⇒ 9,1 ms, **CPU vẽ (composer) 4,8 ⇒ 9,0 ms**.
+PointLight xưởng 5f: KHÔNG gây hại (xưởng 60 cả 4 cấu hình).
+
+**Nguyên nhân + sửa (5h):**
+1. **Vật liệu trong suốt + DoubleSide** (kính xe, thân + đĩa quạt drone, …): three vẽ 2 lượt (BackSide rồi FrontSide), mỗi lượt `needsUpdate = true` ⇒ `getParameters` MỖI lần vẽ
+   (đo: `material.version` tăng 4–30 lần/khung) + gấp đôi lệnh vẽ ⇒ `forceSinglePass = true` (`singlePass()` trong prewarm + khi nạp mẫu drone, TRƯỚC compileAsync).
+2. **Cột drone trượt vào lúc 5 đèn**: mỗi khung đổi `--rw-dw` + đọc `clientWidth`; trượt xong `fit(true)` ⇒ cấp lại khung đệm renderer + composer + bloom ⇒ `fitHud()` (chỉ đo HUD),
+   lúc trượt tính bề rộng thay vì đọc DOM; canh chữ ô trả lời (`fitAns`, ~8 ms/nửa) chia 2 khung.
+3. **Đổi độ nét** (bộ tự chỉnh): `apply` cũ = `fit(true)` ⇒ cả `fitAns` (vòng đo `scrollWidth`) ⇒ MỖI lần đổi 1 khung 35–54 ms ⇒ lại kéo trung bình ⇒ hạ tiếp (vòng xoáy tới 0,7).
+   Nay chỉ `setPixelRatio` + `composer.setSize`. (profspike: 5/5 khung dài của 5h vòng 1 đều ở đây.)
+4. `loop` gọi `fit()` MỖI khung (đọc `stage.clientWidth`) ⇒ 1 lần/giây (ResizeObserver đã lo). Mũi tên đối thủ `oppArrow` đọc `offsetWidth/Height` sau khi ghi style ⇒ đo sẵn.
+5. Cột drone: mảnh xe bán kính < 0,22 m, không phát sáng ⇒ ẩn riêng trong lượt vẽ cột drone (~ −50 lệnh vẽ). CSS `rw-5h.css`: keyframes bảng hiệp (rw-4y) + đổi tab Settings (rw-4w) bỏ `blur`.
+
+**Đo 5h (cùng máy, act, kịch bản):**
+| | Không drone | 1 drone | 2 drone | 2 drone + Traffic + Sky |
+|---|---|---|---|---|
+| Xưởng · phim | 60 · 60 | 60 · 60 | 59,5 · 60 | 60 · 60 |
+| 5 đèn | 60,2 | 59,1 | **59,8** | 57,7 |
+| Đua | 59,9 (≈ 16) | 59,8 (≈ 33) | 59,7 (≈ 42) | 59,6 (≈ 37) |
+| Độ nét | 1,0 | 0,9–1,0 | 0,9–0,95 | 0,9–1,0 |
+0 lỗi · 0 dịch shader · **không còn khung > 50 ms trong đua (LOAF trống)** · GPU WebGL 2 drone 7,1–7,3 ms · lệnh vẽ ~760.
+Còn lại (nhẹ): màn kết slow motion 58,6–58,9 có drone; 5 đèn 2 drone + Traffic 57,7 (cột trượt + xe khác cùng lúc).

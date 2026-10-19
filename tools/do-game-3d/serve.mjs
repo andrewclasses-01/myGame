@@ -1,8 +1,9 @@
-// AWord web cục bộ (no-store) — /templates/racing-words/* lấy từ thư mục trong root.txt + móc window.__sr vào rw-3*.js
+// AWord web cục bộ (no-store) — /templates/racing-words/* lấy từ thư mục trong root.txt + móc window.__sr vào rw-<mẫu>.js (3r…5f…)
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
-const DIR = path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1'));
+import { fileURLToPath } from 'node:url';
+const DIR = path.dirname(fileURLToPath(import.meta.url));   // đường có dấu cách (%20) ⇒ phải giải mã
 const WEB = 'E:/LAP TRINH APP/AWord/web';
 const rootNow = () => fs.readFileSync(path.join(DIR, 'root.txt'), 'utf8').trim();
 const CT = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.glb': 'model/gltf-binary', '.mp3': 'audio/mpeg', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon', '.wasm': 'application/wasm', '.txt': 'text/plain' };
@@ -16,7 +17,7 @@ http.createServer((req, res) => {
   else if (p.startsWith(RW)) f = path.join(rootNow(), p.slice(RW.length)); else f = path.join(WEB, p);
   if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end('404'); }
   let buf = fs.readFileSync(f);
-  if (p.startsWith(RW) && /\/3d\/rw-3\w+\.js$/.test(p)) {
+  if (p.startsWith(RW) && /\/3d\/rw-\d\w+\.js$/.test(p)) {
     const s = buf.toString('utf8'), s2 = s.replace(/return \{\s*\n\s*game, intro,/, m0 => 'window.__sr = game; window.__rwI = intro;\n  ' + m0);
     if (s2 === s) console.log('HOOK FAIL', p);
     buf = Buffer.from(s2, 'utf8');

@@ -14,6 +14,8 @@ Cách dùng + bẫy: `../../HUONG DAN TOI UU GAME 3D.md` (mục 2). Viết cho R
 | `scen.js` · `scen2.js` · `runfull.sh <root> <out>` | kịch bản cả ván · kịch bản nặng (đổi xe, chơi lại) · chạy trọn 1 lần đo |
 | `ab.js` · `filmexp.js` · `filmcss.js` · `introexp*.js` | A/B khoá độ nét: CSS HUD · độ nét phim · CSS phim · đèn / bóng / sàn intro |
 | `liveplay.js` | chơi thật trên web live bằng DOM (cần `window.__liveAct` = đáp án act) |
+| `scen5.js` · `runfull5.sh <root> <out> off\|d1\|d2\|d2tr` | (5h) kịch bản 5f+: drone bắn đều, 2 xe cách xa, PLAY AGAIN; cài đặt drone / traffic / sky trước khi tải |
+| `cpuview.js` · `profspike.mjs` · `shot.mjs` | (5h) CPU ms từng lượt vẽ theo camera · profiler cả ván ⇒ hàm gây TỪNG khung dài · chụp màn |
 | `chep-stage.py` | công cụ chép AWord, đích `stage/` (bản nháp để đo trước khi chép thật) |
 | `ed.py FILE < sửa.json` | thay chuỗi giữ CRLF, mỗi chuỗi phải khớp đúng 1 lần |
 | `gpuwin.py` | ghép kết quả A/B với log nvidia-smi |

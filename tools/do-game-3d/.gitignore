@@ -4,3 +4,4 @@ base/
 root.txt
 gpu-*.csv
 *.log
+stage*/
