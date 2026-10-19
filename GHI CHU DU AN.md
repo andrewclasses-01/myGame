@@ -746,7 +746,7 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - ⛔ BẪY lặp 3 lần trong phiên: vá chuỗi có "// chú thích" chèn GIỮA dòng ⇒ nuốt phần code sau (lần 3 làm object H mất tag/msHold). Dùng /* */ hoặc kiểm phần đuôi dòng gốc.
 - AWord Đợt 551: worktree web-wt-dot551, GOC rw-4j.js, `core/loader3d.js` + `pace` / `h.mark`, pad.js padui-4j + rw-4j-fb.css, load-files.js đo lại. ⬜ thầy thử TOMKO + 2 iPad.
 
-## Racing Words DRONE 4k → 5c — 19/10/2026 · TẠM DỪNG (chỉ myGame; AWord có trang thử ẩn /lab/racing-drone.html)
+## Racing Words DRONE 4k → 5d — 19/10/2026 · ✅ CHỐT · AWord Đợt 553 · TẠM DỪNG (chỉ myGame; AWord có trang thử ẩn /lab/racing-drone.html)
 - 4k cột drone + tab Drone + camera sau drone + tâm bắn · 4l iPad drone (vai t=2) · 4m–4p mẫu drone Sketchfab (giữ 5: Mavic · Quad · Osprey · Northstar · Dvergr), cánh quạt quay, bay lượn
   · 4q tâm ngắm lục giác HUD · 4r đạn Heart/Boost/Missile + pin + trúng xe/đường · 4s đạn nhỏ, phóng về trước, đuôi chỉ lửa + khói.
 - 4t: drone nhỏ 10 % · đạn ra từ bụng (thả rồi mới đánh lửa) · Settings ▸ Drone: Column width + View zoom · nghiên cứu lái nghiêng 2 trục (NGHIEN CUU mục 47).
@@ -759,6 +759,7 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - 5a: bảng lái drone AERO YOKE (chân đế cố định, vòng hồi chiêu, ANDREW STUDIO) · AWord Đợt 552o.
 - 5b: iPad drone bỏ cột + đế, vô lăng lơ lửng, slogan nhỏ, NEAR / FAR icon (padui-5b) · AWord Đợt 552p.
 - 5c: bảng lái drone cân cả điện thoại ngang (đơn vị theo chiều hẹp, padui-5c) · AWord Đợt 552q.
+- 5d CHỐT (chỉ tải mẫu drone khi bật) ⇒ AWord template thật Đợt 553 `f244280`. ⬜ Việc chờ: điều khiển drone thứ 2 (2 drones).
 - Chi tiết + việc còn lại: speed-run/HO SO BAN GIAO RACING WORDS.md mục 0. Công cụ mẫu 3D: tools/*.mjs.
 
 ## Train Rush 1ax — 18/10/2026 · MÀN iPAD MƯỢT (30 khung, nền cam trơn, hết thùng "nảy") · phiên máy MSI
