@@ -746,7 +746,7 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - ⛔ BẪY lặp 3 lần trong phiên: vá chuỗi có "// chú thích" chèn GIỮA dòng ⇒ nuốt phần code sau (lần 3 làm object H mất tag/msHold). Dùng /* */ hoặc kiểm phần đuôi dòng gốc.
 - AWord Đợt 551: worktree web-wt-dot551, GOC rw-4j.js, `core/loader3d.js` + `pace` / `h.mark`, pad.js padui-4j + rw-4j-fb.css, load-files.js đo lại. ⬜ thầy thử TOMKO + 2 iPad.
 
-## Racing Words DRONE 4k → 4y — 19/10/2026 · TẠM DỪNG (chỉ myGame; AWord có trang thử ẩn /lab/racing-drone.html)
+## Racing Words DRONE 4k → 4z — 19/10/2026 · TẠM DỪNG (chỉ myGame; AWord có trang thử ẩn /lab/racing-drone.html)
 - 4k cột drone + tab Drone + camera sau drone + tâm bắn · 4l iPad drone (vai t=2) · 4m–4p mẫu drone Sketchfab (giữ 5: Mavic · Quad · Osprey · Northstar · Dvergr), cánh quạt quay, bay lượn
   · 4q tâm ngắm lục giác HUD · 4r đạn Heart/Boost/Missile + pin + trúng xe/đường · 4s đạn nhỏ, phóng về trước, đuôi chỉ lửa + khói.
 - 4t: drone nhỏ 10 % · đạn ra từ bụng (thả rồi mới đánh lửa) · Settings ▸ Drone: Column width + View zoom · nghiên cứu lái nghiêng 2 trục (NGHIEN CUU mục 47).
@@ -755,6 +755,7 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - 4w: màu tâm hồng / đỏ chót · 1 tâm trên đường + hiện / ẩn nhoè · đổi tab mượt · bỏ ghi công trên màn hình · trang mẫu icon 2D thiet-ke-4w-icon.html (chờ chọn) · AWord Đợt 552k.
 - 4x: icon 2D Neon viền vẽ riêng thay emoji (rw-icons-4x.js) · AWord Đợt 552l.
 - 4y: tâm bóng mờ trắng khi đạn bay · bảng kết quả nhiều hiệp 2 cột (PLAY AGAIN cộng dồn, START / Menu / Options xoá) · AWord Đợt 552m.
+- 4z: vùng nổ trúng mọi xe trong vùng · trang mẫu bảng lái drone 4 kiểu thiet-ke-4z-ban-lai-drone.html (chờ chọn) · AWord Đợt 552n.
 - Chi tiết + việc còn lại: speed-run/HO SO BAN GIAO RACING WORDS.md mục 0. Công cụ mẫu 3D: tools/*.mjs.
 
 ## Train Rush 1ax — 18/10/2026 · MÀN iPAD MƯỢT (30 khung, nền cam trơn, hết thùng "nảy") · phiên máy MSI

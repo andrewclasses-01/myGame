@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế bảng lái DRONE (iPad)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,500;0,700;0,800;0,900;1,800;1,900&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Thiết kế 4z (19/10/2026) — thầy: "thiết kế lại bảng điều khiển drone từ đầu, đẹp, chuyên nghiệp; giữa là CẦN LÁI đẹp hiện đại (máy bay hoặc kiểu Tesla Cybertruck), nghiêng mượt theo các trục khi lái".
+   4 mẫu, mỗi mẫu trong khung iPad NẰM NGANG 4:3 (đúng tỉ lệ iPad thật). Cần lái nghiêng theo: (1) tự lắc demo, (2) rê / kéo chuột trên khung = nghiêng thử, (3) phím mũi tên. */
+:root { --bg: #05070b; --tx: #e8eef7; --mut: #8e9bb0; --gold: #f5c542; --drone: #b07cff; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: radial-gradient(1400px 700px at 50% -15%, #1a2133, var(--bg)); color: var(--tx); font-family: "Exo 2", system-ui, sans-serif; }
+body { padding: 26px 22px 70px; }
+.top { max-width: 1240px; margin: 0 auto 18px; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: end; justify-content: space-between; }
+h1 { margin: 0; font: italic 900 30px/1.1 "Exo 2"; letter-spacing: .05em; } h1 b { color: var(--drone); }
+.lead { margin: 6px 0 0; color: var(--mut); font-weight: 600; max-width: 760px; font-size: 14px; }
+.ctl { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ctl button { font: 800 13px "Exo 2"; letter-spacing: .08em; color: #dfe6f2; background: #151b27; border: 1px solid rgba(255,255,255,.14); border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+.ctl button.on { background: color-mix(in srgb, var(--drone) 30%, #151b27); border-color: var(--drone); color: #fff; }
+.ctl span { font: 700 12.5px "Exo 2"; color: var(--mut); }
+.list { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 46px; }
+.mau h2 { margin: 0 0 4px; font: italic 900 24px "Exo 2"; letter-spacing: .06em; } .mau h2 em { font-style: normal; color: var(--gold); margin-right: 10px; }
+.mau p { margin: 0 0 12px; color: var(--mut); font-weight: 600; font-size: 14px; max-width: 980px; }
+/* KHUNG iPad 4:3 nằm ngang — mọi kích thước bên trong theo cqw (1cqw = 1 % bề ngang màn) */
+.ipad { position: relative; width: 100%; aspect-ratio: 4 / 3; max-height: 88vh; margin: 0 auto; border-radius: 3.2%/4.2%; padding: 1.6%; background: linear-gradient(145deg, #2a2e36, #0c0e12 60%, #23262d); box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.07) inset; }
+.ipad > .scr { position: relative; width: 100%; height: 100%; border-radius: 2%/2.7%; overflow: hidden; container-type: inline-size; user-select: none; -webkit-user-select: none; touch-action: none; cursor: grab; }
+.list .ipad { max-width: calc(88vh * 4 / 3); }
+svg { overflow: visible; }
+.rwi { width: 1.15em; height: 1.15em; vertical-align: -.22em; display: inline-block; }
+
+/* ============ phần dùng chung trong màn (mỗi mẫu đổi màu / dáng qua biến + lớp riêng) ============ */
+.pad { position: absolute; inset: 0; display: grid; grid-template-rows: 9.5cqw 1fr 13cqw; gap: 1.6cqw; padding: 1.8cqw 2cqw; }
+.bar { display: flex; align-items: center; gap: 1.6cqw; }
+.back { width: 5.4cqw; height: 5.4cqw; display: grid; place-items: center; border-radius: 1.4cqw; font: 900 2.4cqw "Exo 2"; }
+.ttl { display: flex; flex-direction: column; line-height: 1; gap: .5cqw; }
+.ttl b { font: italic 900 3.6cqw "Exo 2"; letter-spacing: .1em; }
+.ttl small { font: 800 1.25cqw "Exo 2"; letter-spacing: .18em; }
+.link { display: flex; align-items: center; gap: .7cqw; font: 700 1.3cqw "Exo 2"; letter-spacing: .06em; }
+.link i { width: 1cqw; height: 1cqw; border-radius: 50%; background: #38d39f; box-shadow: 0 0 1cqw #38d39f; }
+.bar .sp { flex: 1; }
+.bat { width: 22cqw; display: flex; flex-direction: column; gap: .6cqw; font: 800 1.2cqw "Exo 2"; letter-spacing: .16em; }
+.bat div { display: flex; justify-content: space-between; } .bat b { font-weight: 900; }
+.bat i { display: block; height: 1cqw; border-radius: 1cqw; overflow: hidden; background: rgba(255,255,255,.1); }
+.bat em { display: block; height: 100%; width: 72%; border-radius: inherit; }
+.mid { display: grid; grid-template-columns: 21cqw 1fr 21cqw; gap: 1.8cqw; min-height: 0; }
+.ammo { display: flex; flex-direction: column; gap: 1.2cqw; }
+.am { flex: 1; position: relative; display: flex; align-items: center; gap: 1.4cqw; padding: 0 1.6cqw; border-radius: 1.8cqw; cursor: pointer; font: italic 900 1.9cqw "Exo 2"; letter-spacing: .1em; transition: transform .2s cubic-bezier(.22,.9,.3,1), background .25s, border-color .25s, box-shadow .25s; }
+.am .ic { position: relative; width: 6cqw; height: 6cqw; display: grid; place-items: center; font-size: 3.4cqw; flex: none; }
+.am .ic::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--c) calc((1 - var(--cd, 0)) * 360deg), rgba(255,255,255,.08) 0); -webkit-mask: radial-gradient(circle, transparent 62%, #000 64%); mask: radial-gradient(circle, transparent 62%, #000 64%); }
+.am .nm { display: flex; flex-direction: column; gap: .4cqw; } .am .nm small { font: 700 1.1cqw "Exo 2"; letter-spacing: .14em; font-style: normal; opacity: .65; }
+.am.on { transform: translateX(.6cqw); }
+.fire { position: relative; border: 0; border-radius: 2.4cqw; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8cqw; transition: transform .12s; }
+.fire b { font: italic 900 4.6cqw "Exo 2"; letter-spacing: .12em; }
+.fire small { font: 800 1.25cqw "Exo 2"; letter-spacing: .14em; }
+.fire:active, .fire.hit { transform: scale(.96); }
+.bot { display: grid; grid-template-columns: 21cqw 1fr 21cqw; gap: 1.8cqw; align-items: stretch; }
+.ped { border-radius: 1.8cqw; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4cqw; cursor: pointer; font: italic 900 2.2cqw "Exo 2"; letter-spacing: .1em; }
+.ped small { font: 700 1.1cqw "Exo 2"; letter-spacing: .14em; font-style: normal; opacity: .7; }
+.tilt { display: flex; align-items: center; justify-content: center; gap: 1.6cqw; }
+.chip { font: 900 1.3cqw "Exo 2"; letter-spacing: .14em; padding: .9cqw 1.4cqw; border-radius: 1cqw; }
+.read { font: 700 1.3cqw "Chakra Petch"; letter-spacing: .1em; text-align: center; line-height: 1.5; }
+.read b { font-weight: 700; }
+/* sân khấu cần lái: 3D */
+.stage { position: relative; display: grid; place-items: center; perspective: 70cqw; min-height: 0; }
+.yoke { width: 100%; max-width: 50cqw; transform-style: preserve-3d; will-change: transform;
+  transform: translateY(calc(var(--p, 0) * -1.6cqw)) rotateX(calc(var(--p, 0) * 20deg)) rotateZ(calc(var(--r, 0) * 30deg)); }
+.lock { position: absolute; top: .6cqw; left: 50%; transform: translateX(-50%); font: italic 900 1.5cqw "Exo 2"; letter-spacing: .16em; white-space: nowrap; }
+
+/* ============ A · AERO YOKE (cần lái máy bay, buồng lái cao cấp) ============ */
+.A .scr { background: radial-gradient(90cqw 60cqw at 50% 30%, #1b1f2b, #0a0c12 70%); color: #e9edf6; }
+.A .scr::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0 .5cqw, transparent .5cqw 1cqw); pointer-events: none; }
+.A .back, .A .chip { background: #1a1f2b; border: .15cqw solid rgba(255,255,255,.1); color: #fff; }
+.A .ttl b { color: var(--drone); text-shadow: 0 0 2cqw rgba(176,124,255,.45); } .A .ttl small { color: #8e9bb0; } .A .link { color: #8e9bb0; }
+.A .bat { color: #8e9bb0; } .A .bat em { background: linear-gradient(90deg, #7c4dff, var(--drone)); box-shadow: 0 0 1cqw var(--drone); }
+.A .am { background: linear-gradient(180deg, #171c27, #10141c); border: .18cqw solid rgba(255,255,255,.07); color: #dfe6f2; }
+.A .am.on { border-color: var(--c); background: linear-gradient(90deg, color-mix(in srgb, var(--c) 22%, #141924), #10141c); box-shadow: 0 0 2.4cqw color-mix(in srgb, var(--c) 30%, transparent), 0 0 0 .1cqw var(--c) inset; }
+.A .fire { color: #fff; background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--ac) 60%, #2a0d16), #13060a 75%); box-shadow: 0 0 0 .25cqw var(--ac) inset, 0 0 3cqw color-mix(in srgb, var(--ac) 45%, transparent); }
+.A .fire small { color: color-mix(in srgb, var(--ac) 60%, #fff); }
+.A .ped { background: linear-gradient(180deg, #171c27, #0f131b); border: .18cqw solid rgba(255,255,255,.08); color: #dfe6f2; }
+.A .read { color: #9fb0c6; } .A .read b { color: #fff; } .A .lock { color: #9fb0c6; }
+.A .stage::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 34cqw; height: 6cqw; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(176,124,255,.25), transparent); filter: blur(1cqw); }
+
+/* ============ B · CYBER YOKE (kiểu Tesla Cybertruck: thép xước, góc vát, tối giản) ============ */
+.B .scr { background: linear-gradient(160deg, #1d2025, #0d0e10 60%, #16181c); color: #e7e9ec; font-family: "Chakra Petch", sans-serif; }
+.B .pad { font-family: "Chakra Petch"; }
+.B .cut, .B .back, .B .am, .B .fire, .B .ped, .B .chip { clip-path: polygon(1.4cqw 0, 100% 0, 100% calc(100% - 1.4cqw), calc(100% - 1.4cqw) 100%, 0 100%, 0 1.4cqw); border-radius: 0; }
+.B .back, .B .chip { background: #2a2e34; color: #e7e9ec; }
+.B .ttl b { font-family: "Chakra Petch"; font-style: normal; font-weight: 700; color: #f2f4f7; letter-spacing: .32em; } .B .ttl small { color: #8b929c; font-family: "Chakra Petch"; }
+.B .link { color: #8b929c; font-family: "Chakra Petch"; }
+.B .bat { color: #8b929c; font-family: "Chakra Petch"; } .B .bat i { border-radius: 0; height: .8cqw; } .B .bat em { background: repeating-linear-gradient(90deg, #e7e9ec 0 1.2cqw, transparent 1.2cqw 1.5cqw); border-radius: 0; }
+.B .am { background: linear-gradient(180deg, #2b2f35, #1c1f23); color: #d9dde2; font-family: "Chakra Petch"; font-style: normal; font-weight: 700; letter-spacing: .2em; }
+.B .am .nm small { font-family: "Chakra Petch"; }
+.B .am.on { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, #2b2f35), #1c1f23); color: #fff; box-shadow: inset .5cqw 0 0 var(--c); }
+.B .fire { background: linear-gradient(180deg, #e9ecef, #9aa1aa); color: #121417; }
+.B .fire b { font-family: "Chakra Petch"; font-style: normal; font-weight: 700; letter-spacing: .3em; } .B .fire small { color: #3a3f46; font-family: "Chakra Petch"; }
+.B .fire::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: 14%; height: .5cqw; background: var(--ac); box-shadow: 0 0 1.4cqw var(--ac); }
+.B .ped { background: linear-gradient(180deg, #2b2f35, #1c1f23); color: #e7e9ec; font-family: "Chakra Petch"; font-style: normal; font-weight: 700; letter-spacing: .24em; }
+.B .ped small { font-family: "Chakra Petch"; }
+.B .read { color: #8b929c; } .B .read b { color: #f2f4f7; } .B .lock { color: #8b929c; font-family: "Chakra Petch"; font-style: normal; letter-spacing: .3em; }
+
+/* ============ C · HOLO HUD (buồng lái chiến đấu cơ: cần lái hologram trên đường chân trời nhân tạo) ============ */
+.C .scr { background: radial-gradient(80cqw 60cqw at 50% 45%, #06222a, #020a0d 70%); color: #bff8ff; }
+.C .scr::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(120,255,240,.035) 0 .15cqw, transparent .15cqw .6cqw); pointer-events: none; }
+.C .back, .C .chip { background: rgba(80,240,230,.06); border: .15cqw solid rgba(110,255,240,.35); color: #bff8ff; }
+.C .ttl b { color: #6ff7ea; text-shadow: 0 0 2cqw rgba(111,247,234,.6); font-family: "Chakra Petch"; font-style: normal; font-weight: 700; letter-spacing: .3em; } .C .ttl small { color: #5fb7bd; }
+.C .link { color: #5fb7bd; } .C .bat { color: #5fb7bd; } .C .bat em { background: #6ff7ea; box-shadow: 0 0 1.2cqw #6ff7ea; }
+.C .am { background: rgba(80,240,230,.04); border: .15cqw solid rgba(110,255,240,.2); color: #bff8ff; backdrop-filter: blur(4px); }
+.C .am.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, rgba(4,20,24,.6)); box-shadow: 0 0 2cqw color-mix(in srgb, var(--c) 35%, transparent), 0 0 0 .1cqw var(--c) inset; }
+.C .fire { background: transparent; color: #fff; border: .25cqw solid var(--ac); box-shadow: 0 0 2.6cqw color-mix(in srgb, var(--ac) 50%, transparent), 0 0 3cqw color-mix(in srgb, var(--ac) 25%, transparent) inset; }
+.C .fire b { text-shadow: 0 0 2cqw var(--ac); } .C .fire small { color: var(--ac); }
+.C .ped { background: rgba(80,240,230,.04); border: .15cqw solid rgba(110,255,240,.25); color: #bff8ff; }
+.C .read { color: #5fb7bd; } .C .read b { color: #bff8ff; } .C .lock { color: #6ff7ea; text-shadow: 0 0 1cqw #6ff7ea; }
+.C .yoke { max-width: 56cqw; transform: none; }   /* C: quả cầu đứng yên, chỉ khung cần lái hologram xoay (JS) */
+
+/* ============ D · RACE PRO (vô lăng bướm kiểu F1: màn LCD giữa, đèn LED pin, nút màu) ============ */
+.D .scr { background: linear-gradient(180deg, #121417, #070809); color: #f1f3f6; }
+.D .scr::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 49.8%, rgba(255,255,255,.03) 50%, transparent 50.2%), repeating-linear-gradient(135deg, rgba(255,255,255,.02) 0 .35cqw, rgba(0,0,0,.05) .35cqw .7cqw); pointer-events: none; }
+.D .back, .D .chip { background: #1d2024; border-radius: 1cqw; color: #fff; border: .15cqw solid #2c3036; }
+.D .ttl b { color: #fff; } .D .ttl small { color: #ff5d3a; } .D .link { color: #9aa1aa; }
+.D .bat { color: #9aa1aa; } .D .bat em { background: linear-gradient(90deg, #36d27a 0 60%, #f5c542 60% 85%, #ff3b30 85%); }
+.D .am { background: #17191c; border: .2cqw solid #25292e; color: #f1f3f6; border-radius: 1.2cqw; }
+.D .am.on { border-color: var(--c); background: linear-gradient(90deg, color-mix(in srgb, var(--c) 25%, #17191c), #17191c 70%); }
+.D .fire { background: radial-gradient(circle at 50% 35%, #ff6b4a, #c4210a 70%); color: #fff; border-radius: 50% / 40%; box-shadow: 0 1cqw 0 #6d1104, 0 1.6cqw 3cqw rgba(0,0,0,.6), inset 0 .5cqw 1cqw rgba(255,255,255,.35); }
+.D .fire small { color: #ffe1d9; }
+.D .ped { background: #17191c; border: .2cqw solid #25292e; color: #f1f3f6; border-radius: 1.2cqw; }
+.D .read { color: #9aa1aa; } .D .read b { color: #fff; } .D .lock { color: #9aa1aa; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div><h1>BẢNG LÁI <b>DRONE</b> · iPad</h1>
+    <p class="lead">4 mẫu thiết kế lại từ đầu, mỗi mẫu đặt trong khung iPad nằm ngang 4:3. Cần lái ở giữa nghiêng theo 2 trục như khi lái thật: xoay trái / phải = lăn cánh, đẩy ra / kéo về = chúc / ngóc. Rê chuột trên một khung để tự nghiêng thử (giữa khung = đứng yên), hoặc dùng phím mũi tên. Bấm thẻ đạn / FIRE để xem vòng hồi chiêu.</p></div>
+  <div class="ctl"><button type="button" id="demo" class="on">TỰ LẮC (DEMO)</button><span>Rê chuột trên khung = nghiêng thử · ← → ↑ ↓</span></div>
+</div>
+<div class="list" id="list"></div>
+
+<script type="module">
+import { icon } from "./core/rw-icons-4x.js";
+const AM = [{ k: "heart", t: "HEART", c: "#ff63c3", cost: 40, cd: 4 }, { k: "boost", t: "BOOST", c: "#2ee6c9", cost: 25, cd: 3 }, { k: "missile", t: "MISSILE", c: "#ff2020", cost: 35, cd: 3 }];
+
+// ---------------- CẦN LÁI từng mẫu (SVG, id có tiền tố riêng theo mẫu) ----------------
+const YOKE = {
+  // A: cần lái máy bay — thanh ngang cong, 2 tay nắm sừng cừu bọc cao su, nút cò đỏ, trục giữa có màn nhỏ; trục lái (cột) phía dưới co / dãn khi đẩy / kéo
+  A: () => `<svg viewBox="0 0 600 380">
+    <defs>
+      <linearGradient id="A-metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b6272"/><stop offset=".45" stop-color="#2a2f3a"/><stop offset="1" stop-color="#14171e"/></linearGradient>
+      <linearGradient id="A-grip" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0d0f14"/><stop offset=".45" stop-color="#2b303b"/><stop offset="1" stop-color="#0b0d11"/></linearGradient>
+      <linearGradient id="A-shaft" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1a1d24"/><stop offset=".5" stop-color="#6b7384"/><stop offset="1" stop-color="#1a1d24"/></linearGradient>
+      <radialGradient id="A-hub" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#3a4150"/><stop offset="1" stop-color="#0e1117"/></radialGradient>
+      <linearGradient id="A-glow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b07cff" stop-opacity="0"/><stop offset=".5" stop-color="#b07cff"/><stop offset="1" stop-color="#b07cff" stop-opacity="0"/></linearGradient>
+    </defs>
+    <g class="A-col"><rect x="272" y="196" width="56" height="190" rx="10" fill="url(#A-shaft)"/><rect x="262" y="196" width="76" height="16" rx="6" fill="#2a2f3a"/></g>
+    <path d="M118 150 Q300 118 482 150 L482 206 Q300 180 118 206 Z" fill="url(#A-metal)" stroke="#0a0c10" stroke-width="3"/>
+    <path d="M140 156 Q300 130 460 156" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2"/>
+    <rect x="150" y="168" width="300" height="4" rx="2" fill="url(#A-glow)" opacity=".9"/>
+    ${[1, -1].map(sx => `<g transform="${sx < 0 ? "translate(600 0) scale(-1 1)" : ""}">
+      <path d="M150 150 C150 108 136 66 108 46 C90 33 66 42 66 66 L66 246 C66 286 104 300 134 280 C148 270 152 254 152 236 Z" fill="url(#A-grip)" stroke="#07080b" stroke-width="3"/>
+      ${[0, 1, 2, 3, 4, 5, 6].map(i => `<path d="M72 ${96 + i * 22} Q100 ${90 + i * 22} 146 ${98 + i * 22}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="3"/>`).join("")}
+      <path d="M78 70 C82 54 96 48 106 56" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3" stroke-linecap="round"/>
+      <rect x="84" y="40" width="26" height="14" rx="5" transform="rotate(-28 97 47)" fill="${sx > 0 ? "#ff2a2a" : "#f5c542"}" stroke="#07080b" stroke-width="2"/>
+      <circle cx="132" cy="196" r="7" fill="#262b35" stroke="#07080b" stroke-width="2"/></g>`).join("")}
+    <circle cx="300" cy="170" r="64" fill="url(#A-hub)" stroke="#07080b" stroke-width="4"/>
+    <circle cx="300" cy="170" r="56" fill="none" stroke="#b07cff" stroke-opacity=".55" stroke-width="2"/>
+    <rect x="258" y="146" width="84" height="40" rx="8" fill="#05070b" stroke="rgba(176,124,255,.5)" stroke-width="1.5"/>
+    <text x="300" y="164" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="13" fill="#b07cff" letter-spacing="2">DRONE</text>
+    <text class="yk-read" x="300" y="180" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="11" fill="#cfd6e2">0° · 0°</text>
+    <circle cx="276" cy="205" r="6" fill="#38d39f"/><circle cx="300" cy="210" r="6" fill="#f5c542"/><circle cx="324" cy="205" r="6" fill="#ff5a5a"/>
+  </svg>`,
+  // B: kiểu Tesla Cybertruck — khung chữ nhật bo tròn mặt trên phẳng, thép không gỉ xước, 2 má bọc da tối, đường LED mảnh, tâm vuông vát
+  B: () => `<svg viewBox="0 0 600 360">
+    <defs>
+      <linearGradient id="B-steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3f5f8"/><stop offset=".35" stop-color="#b9bfc8"/><stop offset=".55" stop-color="#e2e6eb"/><stop offset="1" stop-color="#7c838d"/></linearGradient>
+      <pattern id="B-brush" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 1.5 H6 M0 4.5 H6" stroke="rgba(0,0,0,.06)" stroke-width="1"/></pattern>
+      <linearGradient id="B-leather" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#111214"/><stop offset=".5" stop-color="#2a2d32"/><stop offset="1" stop-color="#111214"/></linearGradient>
+      <linearGradient id="B-hub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3e45"/><stop offset="1" stop-color="#16181b"/></linearGradient>
+    </defs>
+    <path d="M70 40 H530 Q560 40 560 70 V230 Q560 320 470 320 H130 Q40 320 40 230 V70 Q40 40 70 40 Z M140 92 Q122 92 122 110 V214 Q122 262 170 262 H430 Q478 262 478 214 V110 Q478 92 460 92 Z" fill="url(#B-steel)" fill-rule="evenodd" stroke="#2a2d32" stroke-width="3"/>
+    <path d="M70 40 H530 Q560 40 560 70 V230 Q560 320 470 320 H130 Q40 320 40 230 V70 Q40 40 70 40 Z M140 92 Q122 92 122 110 V214 Q122 262 170 262 H430 Q478 262 478 214 V110 Q478 92 460 92 Z" fill="url(#B-brush)" fill-rule="evenodd"/>
+    <path d="M40 100 V230 Q40 320 130 320 H160 V262 Q122 262 122 214 V100 Z" fill="url(#B-leather)"/>
+    <path d="M560 100 V230 Q560 320 470 320 H440 V262 Q478 262 478 214 V100 Z" fill="url(#B-leather)"/>
+    ${[0, 1, 2, 3, 4, 5].map(i => `<path d="M48 ${120 + i * 26} H114 M486 ${120 + i * 26} H552" stroke="rgba(255,255,255,.05)" stroke-width="2"/>`).join("")}
+    <path d="M150 66 H450" stroke="var(--ac,#b07cff)" stroke-width="3" stroke-linecap="round" style="filter:drop-shadow(0 0 6px var(--ac,#b07cff))"/>
+    <rect x="122" y="160" width="104" height="34" fill="url(#B-steel)" stroke="#2a2d32" stroke-width="2"/><rect x="374" y="160" width="104" height="34" fill="url(#B-steel)" stroke="#2a2d32" stroke-width="2"/>
+    <path d="M238 130 H362 L384 152 V204 L362 226 H238 L216 204 V152 Z" fill="url(#B-hub)" stroke="#9aa1aa" stroke-width="2"/>
+    <path d="M250 150 H350 V204 H250 Z" fill="#050607" stroke="rgba(255,255,255,.12)"/>
+    <text x="300" y="172" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="14" fill="#f2f4f7" letter-spacing="5">DRONE</text>
+    <text class="yk-read" x="300" y="192" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="12" fill="#8b929c">0° · 0°</text>
+    <rect x="236" y="210" width="128" height="3" fill="var(--ac,#b07cff)" opacity=".8"/>
+  </svg>`,
+  // C: hologram — quả cầu chân trời nhân tạo (trời / đất nghiêng theo lăn, trượt theo chúc) + thang góc chúc + biểu tượng máy bay cố định + khung cần lái phát sáng
+  C: () => `<svg viewBox="0 0 600 400">
+    <defs>
+      <clipPath id="C-ball"><circle cx="300" cy="200" r="150"/></clipPath>
+      <linearGradient id="C-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e5f7a" stop-opacity=".55"/><stop offset="1" stop-color="#0a3442" stop-opacity=".25"/></linearGradient>
+      <linearGradient id="C-gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2a12" stop-opacity=".35"/><stop offset="1" stop-color="#1a1206" stop-opacity=".6"/></linearGradient>
+    </defs>
+    <g clip-path="url(#C-ball)"><g class="C-hor">
+      <rect x="0" y="-400" width="600" height="600" fill="url(#C-sky)"/><rect x="0" y="200" width="600" height="600" fill="url(#C-gnd)"/>
+      <line x1="0" y1="200" x2="600" y2="200" stroke="#6ff7ea" stroke-width="2.5" style="filter:drop-shadow(0 0 4px #6ff7ea)"/>
+      ${[-3, -2, -1, 1, 2, 3].map(i => `<g stroke="#bff8ff" stroke-opacity=".75" stroke-width="2"><line x1="${300 - (i % 2 ? 40 : 70)}" y1="${200 - i * 34}" x2="${300 + (i % 2 ? 40 : 70)}" y2="${200 - i * 34}" stroke-dasharray="${i < 0 ? "8 6" : "none"}"/></g>
+        <text x="${300 + (i % 2 ? 50 : 80)}" y="${204 - i * 34}" font-family="Chakra Petch" font-size="12" fill="#bff8ff" fill-opacity=".7">${Math.abs(i) * 10}</text>`).join("")}
+    </g></g>
+    <circle cx="300" cy="200" r="150" fill="none" stroke="#6ff7ea" stroke-opacity=".55" stroke-width="2"/>
+    <circle cx="300" cy="200" r="162" fill="none" stroke="#6ff7ea" stroke-opacity=".18" stroke-width="10"/>
+    ${Array.from({ length: 13 }, (_, i) => { const a = (-90 + (i - 6) * 10) * Math.PI / 180, r1 = 162, r2 = i % 3 ? 172 : 180; return `<line x1="${300 + Math.cos(a) * r1}" y1="${200 + Math.sin(a) * r1}" x2="${300 + Math.cos(a) * r2}" y2="${200 + Math.sin(a) * r2}" stroke="#6ff7ea" stroke-width="2"/>`; }).join("")}
+    <path class="C-ptr" d="M300 30 L292 44 H308 Z" fill="#f5c542"/>
+    <g class="C-yk" stroke="#6ff7ea" stroke-width="3" fill="rgba(111,247,234,.06)" style="filter:drop-shadow(0 0 6px #6ff7ea)">
+      <path d="M150 200 Q300 176 450 200"/><path d="M150 200 C150 160 138 128 118 116 C104 108 90 116 90 134 V270 C90 296 116 304 134 290 C146 282 150 270 150 256 Z"/>
+      <path d="M450 200 C450 160 462 128 482 116 C496 108 510 116 510 134 V270 C510 296 484 304 466 290 C454 282 450 270 450 256 Z"/>
+    </g>
+    <g stroke="#f5c542" stroke-width="4" fill="none" stroke-linecap="round" style="filter:drop-shadow(0 0 4px #f5c542)"><path d="M232 204 H272 L286 220 L300 204 L314 220 L328 204 H368"/><circle cx="300" cy="204" r="3" fill="#f5c542"/></g>
+    <text class="yk-read" x="300" y="388" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="15" fill="#6ff7ea" letter-spacing="3">ROLL 0° · PITCH 0°</text>
+  </svg>`,
+  // D: vô lăng bướm kiểu F1 — thân carbon, 2 tay nắm cao su, màn LCD giữa (pin · ngắm), dải 12 đèn LED trên đỉnh = pin, nút tròn màu, lẫy sau
+  D: () => `<svg viewBox="0 0 600 360">
+    <defs>
+      <pattern id="D-carbon" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#15171a"/><rect width="5" height="5" fill="#1d2024"/><rect x="5" y="5" width="5" height="5" fill="#1d2024"/></pattern>
+      <linearGradient id="D-rub" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0b0c0e"/><stop offset=".5" stop-color="#26292e"/><stop offset="1" stop-color="#0b0c0e"/></linearGradient>
+      <linearGradient id="D-shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    </defs>
+    <path d="M60 300 L22 150 Q14 112 52 100 L150 74 Q300 46 450 74 L548 100 Q586 112 578 150 L540 300 Q530 330 498 324 L452 312 Q420 262 300 262 Q180 262 148 312 L102 324 Q70 330 60 300 Z" fill="url(#D-carbon)" stroke="#2c3036" stroke-width="3"/>
+    <path d="M60 300 L22 150 Q14 112 52 100 L150 74 Q300 46 450 74 L548 100 Q586 112 578 150 L540 300 Q530 330 498 324 L452 312 Q420 262 300 262 Q180 262 148 312 L102 324 Q70 330 60 300 Z" fill="url(#D-shine)"/>
+    <path d="M60 300 L26 160 Q22 140 40 132 L96 120 L132 300 Q120 330 96 326 Z" fill="url(#D-rub)"/>
+    <path d="M540 300 L574 160 Q578 140 560 132 L504 120 L468 300 Q480 330 504 326 Z" fill="url(#D-rub)"/>
+    <g class="D-leds">${Array.from({ length: 12 }, (_, i) => `<circle cx="${190 + i * 20}" cy="74" r="6" fill="${i < 6 ? "#36d27a" : i < 9 ? "#f5c542" : "#ff3b30"}" stroke="#000" stroke-width="1.5"/>`).join("")}</g>
+    <rect x="212" y="100" width="176" height="104" rx="10" fill="#020304" stroke="#3a3f46" stroke-width="3"/>
+    <text x="226" y="122" font-family="Chakra Petch" font-size="11" fill="#9aa1aa" letter-spacing="2">AIM</text>
+    <text x="374" y="122" text-anchor="end" font-family="Chakra Petch" font-size="11" fill="#9aa1aa" letter-spacing="2">BAT</text>
+    <text x="226" y="160" font-family="Chakra Petch" font-weight="700" font-size="30" fill="#fff">42<tspan font-size="14" fill="#9aa1aa">m</tspan></text>
+    <text x="374" y="160" text-anchor="end" font-family="Chakra Petch" font-weight="700" font-size="30" fill="#36d27a">72<tspan font-size="14" fill="#9aa1aa">%</tspan></text>
+    <text class="yk-read" x="300" y="192" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="13" fill="#ff5d3a" letter-spacing="2">0° · 0°</text>
+    ${[[168, 132, "#2e7dff"], [168, 176, "#f5c542"], [432, 132, "#36d27a"], [432, 176, "#ff3b30"]].map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="15" fill="${c}" stroke="#000" stroke-width="3"/><circle cx="${x - 4}" cy="${y - 5}" r="5" fill="#fff" opacity=".35"/>`).join("")}
+    ${[[250, 236], [350, 236]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#2a2e34" stroke="#000" stroke-width="3"/><line x1="${x}" y1="${y}" x2="${x}" y2="${y - 13}" stroke="#ff5d3a" stroke-width="3" stroke-linecap="round"/>`).join("")}
+  </svg>`,
+};
+
+// ---------------- dựng 4 mẫu ----------------
+const META = {
+  A: ["AERO YOKE", "Cần lái máy bay cao cấp: tay nắm sừng cừu bọc cao su, nút cò đỏ / vàng, trục giữa có màn nhỏ và đèn tím của drone, cột lái phía dưới co / dãn khi đẩy / kéo. Nền buồng lái graphite, thẻ đạn phát sáng màu đạn, nút FIRE tròn sáng."],
+  B: ["CYBER YOKE", "Kiểu Tesla Cybertruck: khung chữ nhật mặt trên phẳng bằng thép không gỉ xước, 2 má bọc da tối, đường LED mảnh đổi theo màu đạn, tâm hình bát giác vát. Toàn bộ nút góc VÁT, chữ Chakra Petch, tối giản đơn sắc + 1 màu nhấn."],
+  C: ["HOLO HUD", "Buồng lái chiến đấu cơ: quả cầu đường chân trời nhân tạo (trời / đất nghiêng theo lăn, trượt theo chúc), thang góc, khung cần lái HOLOGRAM phát sáng xoay theo tay. Mọi khung là kính mờ viền xanh ngọc, có vạch quét màn."],
+  D: ["RACE PRO", "Vô lăng bướm kiểu F1 bằng carbon: màn LCD giữa (khoảng ngắm · pin), dải 12 đèn LED trên đỉnh = pin, 4 nút màu + 2 núm xoay, tay nắm cao su. Nút FIRE kiểu nút bấm đỏ nổi; bảng tối như khoang xe đua."],
+};
+const pad = (k) => `<div class="pad">
+  <div class="bar"><div class="back cut">◀</div><div class="ttl"><b>DRONE</b><small>NEUTRAL · ${META[k][0]}</small></div><div class="link"><i></i>CONNECTED · 18 ms</div><div class="sp"></div>
+    <div class="chip cut">TILT ON</div><div class="chip cut">LEVEL</div><div class="bat"><div><span>BATTERY</span><b class="batn">72 %</b></div><i><em class="bate"></em></i></div></div>
+  <div class="mid">
+    <div class="ammo">${AM.map((a, i) => `<div class="am cut${i === 0 ? " on" : ""}" data-i="${i}" style="--c:${a.c}"><span class="ic">${icon(a.k)}</span><span class="nm">${a.t}<small>${a.cost} % · ${a.cd} s</small></span></div>`).join("")}</div>
+    <div class="stage"><div class="lock">AIM ON THE ROAD</div><div class="yoke">${YOKE[k]()}</div></div>
+    <button type="button" class="fire cut"><b>FIRE</b><small class="fsm">HEART → ROAD</small></button>
+  </div>
+  <div class="bot"><div class="ped cut">▲ NEAR<small>DRONE CLOSER</small></div><div class="tilt"><div class="read">STEER <b class="rr">0°</b> &nbsp;·&nbsp; AIM <b class="rp">0°</b><br><span class="rh">STEADY</span></div></div><div class="ped cut">FAR ▼<small>DRONE BACK</small></div></div>
+</div>`;
+const list = document.getElementById("list");
+list.innerHTML = Object.keys(META).map(k => `<section class="mau ${k}"><h2><em>${k}</em>${META[k][0]}</h2><p>${META[k][1]}</p><div class="ipad"><div class="scr" data-k="${k}">${pad(k)}</div></div></section>`).join("");
+
+// ---------------- tương tác ----------------
+const S = [...document.querySelectorAll(".scr")].map(el => ({ el, k: el.dataset.k, r: 0, p: 0, tr: 0, tp: 0, hover: false, sel: 0, cd: [0, 0, 0], bat: 0.72 }));
+let demo = true; const demoB = document.getElementById("demo");
+demoB.onclick = () => { demo = !demo; demoB.classList.toggle("on", demo); };
+const keys = new Set(); addEventListener("keydown", e => { if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); } }); addEventListener("keyup", e => keys.delete(e.key));
+S.forEach(s => {
+  s.el.addEventListener("pointermove", e => { const b = s.el.getBoundingClientRect(); s.hover = true; s.tr = Math.max(-1, Math.min(1, ((e.clientX - b.left) / b.width - .5) * 2.4)); s.tp = Math.max(-1, Math.min(1, -((e.clientY - b.top) / b.height - .5) * 2.4)); });
+  s.el.addEventListener("pointerleave", () => { s.hover = false; });
+  s.el.querySelectorAll(".am").forEach(c => c.addEventListener("click", () => { s.sel = +c.dataset.i; s.el.querySelectorAll(".am").forEach(x => x.classList.toggle("on", x === c)); }));
+  const f = s.el.querySelector(".fire");
+  f.addEventListener("click", () => { const a = AM[s.sel]; if (s.cd[s.sel] > 0 || s.bat < a.cost / 100) return; s.cd[s.sel] = 1; s.bat -= a.cost / 100; f.classList.add("hit"); setTimeout(() => f.classList.remove("hit"), 140); });
+});
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000), t = now / 1000; last = now;
+  const kx = (keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0), ky = (keys.has("ArrowUp") ? 1 : 0) - (keys.has("ArrowDown") ? 1 : 0);
+  S.forEach((s, i) => {
+    let tr, tp;
+    if (kx || ky) { tr = kx * 0.9; tp = ky * 0.9; }
+    else if (s.hover) { tr = s.tr; tp = s.tp; }
+    else if (demo) { tr = Math.sin(t * 0.9 + i) * 0.75 + Math.sin(t * 2.1 + i) * 0.1; tp = Math.sin(t * 0.63 + 1 + i * 0.7) * 0.6; }
+    else { tr = 0; tp = 0; }
+    const e = 1 - Math.exp(-dt * 7); s.r += (tr - s.r) * e; s.p += (tp - s.p) * e;
+    s.el.style.setProperty("--r", s.r.toFixed(4)); s.el.style.setProperty("--p", s.p.toFixed(4));
+    const a = AM[s.sel]; s.el.style.setProperty("--ac", a.c);
+    s.bat = Math.min(1, s.bat + 0.06 * dt);
+    s.cd = s.cd.map((c, j) => Math.max(0, c - dt / AM[j].cd));
+    s.el.querySelectorAll(".am").forEach((c, j) => c.style.setProperty("--cd", s.cd[j].toFixed(3)));
+    const rd = Math.round(s.r * 30), pd = Math.round(s.p * 20), dir = (s.p > .1 ? "FAR " : s.p < -.1 ? "NEAR " : "") + (s.r < -.1 ? "◀" : s.r > .1 ? "▶" : "");
+    s.el.querySelector(".rr").textContent = rd + "°"; s.el.querySelector(".rp").textContent = pd + "°"; s.el.querySelector(".rh").textContent = dir || "STEADY";
+    const yr = s.el.querySelector(".yk-read"); if (yr) yr.textContent = s.k === "C" ? `ROLL ${rd}° · PITCH ${pd}°` : `${rd}° · ${pd}°`;
+    s.el.querySelector(".batn").textContent = Math.round(s.bat * 100) + " %"; s.el.querySelector(".bate").style.width = (s.bat * 100).toFixed(1) + "%";
+    s.el.querySelector(".fsm").textContent = a.t + " → " + (Math.abs(s.r) < .15 && s.p > .3 ? "TEAM 2" : "ROAD");
+    s.el.querySelector(".lock").textContent = Math.abs(s.r) < .15 && s.p > .3 ? "IN SIGHT · TEAM 2" : "AIM ON THE ROAD";
+    // riêng từng mẫu
+    if (s.k === "A") s.el.querySelector(".A-col").setAttribute("transform", `rotate(${(-s.r * 30).toFixed(2)} 300 170) translate(0 ${(-s.p * 26).toFixed(1)})`);   // cột lái đứng thẳng (không lăn theo vô lăng), co / dãn theo đẩy / kéo
+    if (s.k === "C") { const h = s.el.querySelector(".C-hor"); h.setAttribute("transform", `rotate(${(-s.r * 30).toFixed(2)} 300 200) translate(0 ${(-s.p * 60).toFixed(1)})`); s.el.querySelector(".C-yk").setAttribute("transform", `translate(0 ${(-s.p * 14).toFixed(1)}) rotate(${(s.r * 30).toFixed(2)} 300 200)`); s.el.querySelector(".C-ptr").setAttribute("transform", `rotate(${(-s.r * 30).toFixed(2)} 300 200)`); }
+    if (s.k === "D") { const n = Math.round(s.bat * 12); s.el.querySelectorAll(".D-leds circle").forEach((c, j) => c.style.opacity = j < n ? 1 : .15); }
+  });
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

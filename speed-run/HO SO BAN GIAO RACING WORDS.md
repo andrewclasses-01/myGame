@@ -6,9 +6,9 @@
 Thầy: "Tạm thời thế đã… build tiếp ở các phiên sau, khi nào ok hết rồi mới đẩy bản cuối lên AWord". ⇒ Mọi việc tiếp theo làm ở myGame (bản mới = tên mới: 4t, 4u…);
 CHƯA đụng template racing_words thật của AWord (vẫn Đợt 551 = 4j).
 
-**Bản mới nhất: 4y** (19/10 tối) — trang `mau-4y-bang-hiep.html` · gói `core/rw-4y.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-4y.js` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
+**Bản mới nhất: 4z** (19/10 tối) — trang `mau-4z-vung-no.html` · gói `core/rw-4z.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-4z.js` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.
-Thử nhanh: mở `mau-4y-bang-hiep.html` (+ tab `pad-4x.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
+Thử nhanh: mở `mau-4z-vung-no.html` (+ tab `pad-4x.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
 
 **Đã có (thầy duyệt từng bước):**
 - Bố cục A: cột drone giữa vùng đua rộng 24 % (`DRONE_W`), 2 nửa đội hẹp lại; màn kết thu cột lại; Sky view tự tắt khi có drone.
@@ -33,6 +33,10 @@ Thử nhanh: mở `mau-4y-bang-hiep.html` (+ tab `pad-4x.html?t=2&dev=c` = iPad 
   BẢNG KẾT QUẢ NHIỀU HIỆP: 2 cột 2 đội, đầu cột = tổng hiệp thắng (số to), dưới = từng hiệp R1, R2… (WIN / LOSE · mét · đúng / sai · tên lửa trúng), hiệp mới nhất lên đầu + viền sáng; giữa VS;
   dòng DRONE (hiệp này) bên dưới. PLAY AGAIN giữa màn ⇒ CỘNG DỒN · START ở màn chờ / Menu ▸ START AGAIN / CHANGE CARS / Options áp ngay / dựng lại game ⇒ về 0. Bàn thử: game.series.
   AWord trang ẩn Đợt 552m `951944c`.
+- ✅ 4z: đạn drone chạm ⇒ MỌI xe trong vùng nổ (ngang < 1,9 m, dọc < 3,8 m) mà chế độ cho phép đều nhận tác dụng — 2 xe gần nhau: Heart / Boost cả 2, Missile trúng cả 2 (đã thử). AWord trang ẩn Đợt 552n `817ce6a`.
+- ⬜ BẢNG LÁI DRONE MỚI (thầy: thiết kế lại từ đầu, đẹp, chuyên nghiệp, giữa là CẦN LÁI nghiêng mượt theo các trục): trang mẫu `thiet-ke-4z-ban-lai-drone.html` —
+  4 mẫu trong khung iPad 4:3: A AERO YOKE (cần lái máy bay) · B CYBER YOKE (kiểu Tesla Cybertruck) · C HOLO HUD (chân trời nhân tạo + cần lái hologram) · D RACE PRO (vô lăng bướm F1);
+  thẻ đạn có vòng hồi chiêu (việc cũ còn thiếu). Chờ thầy chọn rồi build padui mới.
 - iPad drone: vai thứ 3 (t = 2) trong đường nối; màn chọn vai 3 nút; bảng lái (thẻ đạn, ô kéo lái tâm, FIRE, NEAR / FAR, TILT); thẻ DRONE · iPAD có QR ở xưởng (không chặn START).
 
 **Trang thử ẩn trên AWord (ĐÃ ĐẨY trước khi thầy dặn chỉ myGame — để thử 3 iPad thật):** `https://aword.andrewclasses.com/lab/racing-drone.html` (+ `lab/racing-drone-pad.html`),
