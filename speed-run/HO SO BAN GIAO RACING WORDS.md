@@ -26,7 +26,15 @@ Thầy 19/10 tối: "ok rồi nhé. chốt bản này đến đây, đưa lên A
   Bảng đạn M1 trên trời (.rw-dv2): 3 icon (chọn = viền sáng · hồi chiêu = vòng chạy · thiếu pin = mờ) + vạch pin màu đội (đỏ khi < 25 %). Kết trận: 2 dòng TEAM 1 DRONE / TEAM 2 DRONE.
   Xưởng: 2 thẻ DRONE 1 · iPAD (xanh) + DRONE 2 · iPAD (cam) giữa trên. Phím drone 2: bàn số 4 6 8 5 · 7 9 · 1 2 3 · 0. Bàn thử: game.drone.drones / aim(ax, ad, n) / fire(n) / sel(k, n) / near(bk, n).
   Đã thử: khung đúng thiết kế (2 drone 83 % chiều cao, ngang hàng) · bắn 2 drone độc lập, luật đội đúng, chặn quả 2 khi đang bay · iPad t=3 nối, màu cam "TEAM 2 DRONE", lái + chọn đạn + FIRE ·
-  1 drone y như 5d (màu gốc, không quầng, bảng cũ) · bảng kết quả 2 dòng · xưởng 2 thẻ QR. ⬜ thầy xem + thử 4 iPad thật; chốt mới đưa lên AWord (template thật: GOC rw-5e, pad.js t=3, rwpad_pad3).
+  1 drone y như 5d (màu gốc, không quầng, bảng cũ) · bảng kết quả 2 dòng · xưởng 2 thẻ QR. ⬜ thầy xem + thử 4 iPad thật; chốt mới đưa lên AWord (template thật: GOC rw-5f, pad.js t=3, rwpad_pad3).
+  ✅ 5f (19/10, thầy chỉnh 5 điểm): trang `mau-5f-drone-xuong.html` · gói `core/rw-5f.js` (+ `rw-5f.css` sau rw-5e.css) · lõi `core/sr3d-5f.js` · xưởng `core/sr3d-intro-5f.js` ·
+  iPad `pad-5f.html` (`sr3d-padui-5f.js`, ảnh `anh-pad/*.webp` chụp bằng `tao-anh-vai-ipad-5f.html?save=1` + máy lưu 8898, rồi PIL cắt viền + webp).
+  1) MÀU SƠN trên thân drone, bỏ quầng sáng: color = lerp(màu gốc, màu đội ×2,4, 0,85), không emissive (⛔ thân Mavic có cờ transparent ⇒ chỉ bỏ vật liệu opacity < 0,3 = đĩa quạt; 5e bỏ nhầm nên chưa lên màu).
+  2+3) máy quay ƯU TIÊN XE DẪN: neo xe đi trước, lùi bk + khoảng 2 xe (≤ GMAX 70 m); khoảng xa ⇒ drone cao D_ALT·(1+kg) (tới 24 m), máy quay +20 %, nhìn xa +0,6·khoảng; > 70 m xe sau rơi khỏi khung.
+     D_FAR 90 ⇒ 130. Đo: 2 xe cách 60 m thấy cả 2; cách 110 m chỉ xe dẫn.
+  4) XƯỞNG: drone lơ lửng khe giữa 2 xe ngang mui (2 drone sơn màu đội, lệch về xe đội mình, chúc mũi 0,32), đèn PointLight riêng (luôn có), ô chọn giữa dưới trên START:
+     NO DRONE · 1 DRONE · 2 DRONES + ◀ mẫu ▶ ⇒ đặt thẳng cho trận (game.drone.setDrone), Settings đổi ⇒ intro.setDrone. Phim START: drone bay theo xe ra cửa, bốc cao.
+  5) iPad màn chọn vai mới: 4 thẻ vát góc (TEAM 1 · TEAM 2 ảnh xe Revuelto / Jesko sơn màu đội · DRONE 1 · DRONE 2 ảnh Mavic sơn màu), vệt sáng lướt, drone bồng bềnh, TAKEN. Vừa iPad + điện thoại ngang.
 
 **Bản CHỐT: 5d** (19/10 tối) — trang `mau-5d-chot-drone.html` · gói `core/rw-5d.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-5d.js` · iPad `pad-5c.html` (`sr3d-padlink-5a.js` + `sr3d-padui-5c.js`) · trang `mau-5c-ban-lai-dien-thoai.html` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Tạo ảnh màn chọn vai iPad (5f)</title>
+<style>body { margin: 0; background: #222; color: #fff; font: 14px sans-serif; } canvas { background: repeating-conic-gradient(#333 0 25%, #444 0 50%) 0 0 / 20px 20px; margin: 6px; width: 320px; }</style>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+</head>
+<body>
+<p id="st">đang dựng…</p>
+<script type="module">
+// Công cụ (19/10/2026, mẫu 5f): chụp 2 xe mặc định (Revuelto TEAM 1 xanh · Jesko TEAM 2 cam) + drone Mavic sơn màu đội, nền TRONG SUỐT ⇒ anh-pad/*.png
+// cho màn chọn vai iPad (sr3d-padui-5f.js). Cần máy chủ lưu ảnh cổng 8898 (?save=1). Đổi xe / drone mặc định ⇒ chạy lại trang này.
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { prepXe } from "./core/sr3d-xe3d-3o.js";
+import { makeCar3d } from "./core/sr3d-car-4h.js";
+import { loadDrone, SPAN } from "./core/sr3d-drone3d-4p.js";
+const W = 900, H = 600, save = new URLSearchParams(location.search).has("save");
+const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); r.setSize(W, H); r.setClearColor(0, 0);
+r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); const pm = new THREE.PMREMGenerator(r); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-4, 7, -5); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 1.4); rim.position.set(5, 3, 6); scene.add(rim);
+const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+const U = { uBend: { value: new THREE.Vector2() }, uBendZ: { value: 0 }, uBendT: { value: null }, uBendD: { value: 0 } };
+async function shot(name, obj, pos, look) {
+  scene.add(obj); cam.position.set(...pos); cam.lookAt(...look); r.render(scene, cam);
+  const c = document.createElement("canvas"); c.width = W; c.height = H; c.getContext("2d").drawImage(r.domElement, 0, 0); document.body.append(c);
+  if (save) { const b = await new Promise(res => r.domElement.toBlob(res, "image/png")); await fetch("http://127.0.0.1:8898/?name=" + name, { method: "POST", body: b }); }
+  scene.remove(obj);
+}
+const TC = ["#3b8cff", "#ff7a00"];
+for (const [i, id] of [[0, "Y2"], [1, "H4"]]) {
+  await prepXe(id); const c = makeCar3d({ id, color: TC[i], num: i + 1, U }); c.update && c.update(0, { dist: 0, accel: 0, steer: 0, boost: 0, t: 0, pop: 0 });
+  const sx = i ? -1 : 1;   // 2 xe nhìn chéo vào giữa màn chọn
+  await shot(`car-${i}.png`, c.rig, [sx * 4.2, 1.7, -5.6], [0, 0.55, 0.1]);
+}
+for (const i of [0, 1]) {
+  const m = await loadDrone("A1", x => x); const g = new THREE.Group(); g.add(m.obj); g.scale.setScalar(1.6 / SPAN);
+  const seen = new Set(), tc = new THREE.Color(TC[i]).multiplyScalar(2.4);
+  m.obj.traverse(q => { if (!q.isMesh) return; (Array.isArray(q.material) ? q.material : [q.material]).forEach(mt => { if (seen.has(mt) || !mt.color || (mt.transparent && mt.opacity < 0.3)) return; seen.add(mt); mt.color.lerp(tc, 0.85); }); });
+  g.rotation.set(0.1, i ? -0.5 : 0.5, i ? 0.08 : -0.08);
+  await shot(`drone-${i}.png`, g, [0, 1.9, -3.1], [0, 0, 0]);
+}
+document.getElementById("st").textContent = save ? "đã lưu" : "xem thử (thêm ?save=1 để lưu)";
+window.__done = true;
+</script>
+</body>
+</html>
