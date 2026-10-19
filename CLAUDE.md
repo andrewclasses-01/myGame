@@ -37,6 +37,7 @@ rocket-race/
   game11/ + mau-12-tau-3d.html                MẪU 12 (MỚI NHẤT, 19/10) = AWord a4170d8 + TÀU / TÊN LỬA 3D CÓ SẴN: game11/rr3d-ships.js (bảng mẫu, chuẩn hoá về khung tàu cũ,
                               sơn màu đội, lửa nhiều vòi, mảnh vỡ cắt từ thân, vết cháy dán vỏ) + sửa view/launch/missile; ⚙ Settings (Ship · Missile) lưu localStorage
   tau3d/*.glb                 7 tàu (R1 R2 R8 S5 S7 S9 S10) + 5 tên lửa (M1–M5) đã nén — gốc ở Desktop\MAU TAU ROCKET; nén lại: tools/nen-tau3d/nen.sh
+                              ⇒ ĐÃ LÊN AWord Đợt 557 (10c1298): sửa ở game11/ rồi chạy tools/chep-rr-mau12-sang-aword.py (chép 4 file 3D + tau3d, đổi import three); ⚙ Settings của AWord viết riêng trong rocket-race.js
   tao-anh-tau.html            (12b) chụp ảnh mô phỏng cho ô chọn Settings ⇒ tau3d/anh/*.webp (?save=1 + máy nhận tạm cổng 8877)
   xem-tau-3d.html             bàn soi mẫu glb sau chuẩn hoá (?ship= / ?missile= / &view=back) — đặt vòi lửa (engines) · chon-tau-3d.html: trang thầy chọn mẫu Sketchfab
   mau-9-ipad-dieu-khien.html + pad-9.html   MẪU 9 (13/10): iPAD THAM GIA GAME — dùng game9; luật tên lửa trong trang = chép AWord msLoad/msFire/msBoost/msEnd
