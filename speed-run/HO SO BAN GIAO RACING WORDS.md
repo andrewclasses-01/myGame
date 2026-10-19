@@ -6,9 +6,9 @@
 Thầy: "Tạm thời thế đã… build tiếp ở các phiên sau, khi nào ok hết rồi mới đẩy bản cuối lên AWord". ⇒ Mọi việc tiếp theo làm ở myGame (bản mới = tên mới: 4t, 4u…);
 CHƯA đụng template racing_words thật của AWord (vẫn Đợt 551 = 4j).
 
-**Bản mới nhất: 4x** (19/10 tối) — trang `mau-4x-icon-neon.html` · gói `core/rw-4x.js` (+ CSS `rw-4w.css` sau rw-4r.css) · lõi `core/sr3d-4x.js` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
+**Bản mới nhất: 4y** (19/10 tối) — trang `mau-4y-bang-hiep.html` · gói `core/rw-4y.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-4y.js` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.
-Thử nhanh: mở `mau-4x-icon-neon.html` (+ tab `pad-4x.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
+Thử nhanh: mở `mau-4y-bang-hiep.html` (+ tab `pad-4x.html?t=2&dev=c` = iPad drone giả; `__padui.tiltDebug(ngang°, chúc°)` giả nghiêng) ⇒ ⚙ Settings ▸ Drone ▸ 1 drone ⇒ phím J L (tâm ngang) · I K (xa / gần) · 1 2 3 (đạn) · Space (bắn). Góc trên trái = bàn đo fps / lệnh vẽ.
 
 **Đã có (thầy duyệt từng bước):**
 - Bố cục A: cột drone giữa vùng đua rộng 24 % (`DRONE_W`), 2 nửa đội hẹp lại; màn kết thu cột lại; Sky view tự tắt khi có drone.
@@ -29,6 +29,10 @@ Thử nhanh: mở `mau-4x-icon-neon.html` (+ tab `pad-4x.html?t=2&dev=c` = iPad 
 - ✅ 4x ICON 2D NEON VIỀN (thầy chọn kiểu A ở `thiet-ke-4w-icon.html`) — `core/rw-icons-4x.js`: icon(tên) / iconize("[heart]") · 8 hình missile · heart · boost · ok · bad · warn · drone · hit, không dùng id SVG.
   Đã thay: cảnh báo MISSILE trên màn lớn + iPad đội (padui-4x bắt chữ ⚠ của 4j) · bảng kết trận ✔ ✘ 🚀 · dòng DRONE · thông báo +1 tim / HIT −n boost · thẻ đạn iPad drone.
   Giữ nguyên các mũi tên chữ (◀ ▶ ▲ ▼ ✕ ↻ ⚙) vì là ký hiệu nút, không phải icon. AWord trang ẩn Đợt 552l `30bc278`.
+- ✅ 4y: đạn đang bay ⇒ vẫn hiện TÂM BÓNG MỜ trắng (độ mờ 0,3, hơi nhoè) theo chỗ đang ngắm để chuẩn bị quả sau (vẫn chỉ bắn được khi quả trước chạm) ·
+  BẢNG KẾT QUẢ NHIỀU HIỆP: 2 cột 2 đội, đầu cột = tổng hiệp thắng (số to), dưới = từng hiệp R1, R2… (WIN / LOSE · mét · đúng / sai · tên lửa trúng), hiệp mới nhất lên đầu + viền sáng; giữa VS;
+  dòng DRONE (hiệp này) bên dưới. PLAY AGAIN giữa màn ⇒ CỘNG DỒN · START ở màn chờ / Menu ▸ START AGAIN / CHANGE CARS / Options áp ngay / dựng lại game ⇒ về 0. Bàn thử: game.series.
+  AWord trang ẩn Đợt 552m `951944c`.
 - iPad drone: vai thứ 3 (t = 2) trong đường nối; màn chọn vai 3 nút; bảng lái (thẻ đạn, ô kéo lái tâm, FIRE, NEAR / FAR, TILT); thẻ DRONE · iPAD có QR ở xưởng (không chặn START).
 
 **Trang thử ẩn trên AWord (ĐÃ ĐẨY trước khi thầy dặn chỉ myGame — để thử 3 iPad thật):** `https://aword.andrewclasses.com/lab/racing-drone.html` (+ `lab/racing-drone-pad.html`),
