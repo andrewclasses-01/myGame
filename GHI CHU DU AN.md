@@ -659,6 +659,14 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **ROCKET RACE MẪU 12 — TÀU + TÊN LỬA 3D** (19/10, CHƯA push, CHƯA lên AWord): thầy mở `rocket-race/mau-12-tau-3d.html` trên máy nhà + TOMKO ⇒ ⚙ Settings thử
+  từng tàu (R1 R2 R8 S5 S7 S9 S10) + tên lửa (M1–M5): cỡ tàu, màu sơn 2 đội, chỗ lửa đuôi (vòi đặt tay — lệch thì sửa `engines` trong `game11/rr3d-ships.js`,
+  soi bằng `xem-tau-3d.html?ship=S7&view=back`), intro phi thuyền cất cánh thẳng đứng, fps TOMKO (đo: lệnh vẽ ít hơn tàu cũ, tam giác +6–12 %).
+  OK ⇒ ghép AWord: chép rr3d-ships.js + tau3d/*.glb + 3 file sửa (view/launch/missile — chỉ đổi đường import three), ⚙ Settings vào rocket-race.js
+  (AWord không có nút này — xem Options/thanh dải nút), thêm glb vào load-files.js, chọn mẫu đồng bộ theo act hay theo máy (hỏi thầy).
+  Chưa làm: bảng tên lửa trên iPad (`rr-padscene`) vẫn vẽ tên lửa CŨ · ghi công tác giả chỉ ở cửa sổ Settings · thầy chọn mẫu mặc định.
+  12b (19/10 tối): lượn riêng từng tàu + nghiêng theo gia tốc, tàu sáng hơn, iPad vào ⚙ Settings, ảnh mô phỏng — thầy xem lại cảm giác lượn ở góc rộng.
+  12c (19/10 khuya): tàu + tên lửa TỰ SÁNG theo màu bề mặt (12d: GLOW ship 0,45 / rocket 0,34 / missile 0,27) — thầy xem độ sáng trên TOMKO.
 - ⬜ **TRAIN RUSH 1ax = AWord Đợt 550 `7cc6b6c` (LIVE 9/9, 18/10)**: thầy chơi TOMKO + 2 iPad thật — iPad mượt chưa, còn nóng không (chạm 3 lần góc phải dưới iPad = bảng đo: FPS 30,
   dòng 3 có `st`). iPad đang mở trang cũ thì tải lại. Còn giật ⇒ xem dòng "msg every … (max …)" (Wi-Fi) trước khi sửa vẽ.
 - ⬜ **RACING WORDS 4g** (18/10, đã push myGame, CHƯA lên AWord): thầy chạy `speed-run/mau-4g-ket-slow-motion.html` (máy nhà + TOMKO) ⇒ duyệt màn kết slow motion (drift / bay), số đếm 10 s,
@@ -781,3 +789,100 @@ thùng lún rồi bật lên (Wi-Fi trễ 0–150 ms) 15/17 → 0/16, khinh khí
 thùng tính theo đầu máy để thùng trên tàu không trễ so với tàu; không thêm trường mới vào kho Firestore (cờ phiên bản nằm trong nonce).
 **Lỗi gặp:** bàn đo treo vì gắn `ws.onopen` sau khi đã ngủ (sự kiện open bắn trước) ⇒ chờ open ngay khi tạo; màn máy soạn rAF 83 Hz ⇒ ngưỡng "≥ 31 ms" chỉ ra 26 khung ⇒ đổi sang lịch theo mốc.
 **Lên AWord (cùng ngày, thầy xem `xem-1ax.html` OK):** Đợt 550 `7cc6b6c` — `tools/chep-train-rush.py` GOC fight-1ax / GOC_THEM tr-padui-1ax, sửa tay `balloon-pop.js`, `pad.js`, `tr-pad-signal.js` (localSignal từ tr-padlink-1ax), `load-files.js` (đổi tên + số byte). Thử bàn đo trỏ vào AWord (cả bản thu gọn tải từ live): 30 khung, 0 thùng lún, chạm iPad nổ quả, kênh `st` mở. Live 9/9.
+
+## Rocket Race chọn tàu 3D — 19/10/2026 · SOÁT ĐỒNG BỘ + TRANG CHỌN MẪU TÀU · phiên máy MSI
+**Bối cảnh (thầy):** "Đọc Rocket Race trên AWord và myGame, kiểm tra đồng bộ chưa; nghiên cứu dùng model 3D miễn phí thiết kế sẵn thay 2 tàu vũ trụ cũ thô sơ" ⇒ rồi "làm trang chọn tàu 3D như trang chọn drone".
+**Soát đồng bộ (đầu phiên):** myGame = origin `74c0fab`, AWord = origin `a4170d8`, không file dở. `rocket-race/game10` (= AWord Đợt 511 `20110c4`) so AWord hiện nay (đã chuẩn hoá dòng import three):
+autores / intro-sound / launch / misswait / sfx / view **khớp từng dòng**; launch/ + sfx/ + sfx-intro/ giống (AWord thêm `sfx/NGUON AM THANH.md`, layout.json chỉ khác CRLF);
+`rr3d-missile.js` lệch đúng 1 chỗ Đợt 514 (`launch(from, to, want)` bắn đúng ô iPad chạm). File iPad: `core/rr-padscene-12.js` = AWord `rr-padscene.js` (chỉ khác import + dòng ghi chú);
+`core/rr-padlink-9.js` / `rr-padui-9.js` là bản mẫu 9 — AWord đã đi tiếp Đợt 514 (fire0/fire1, từ chối iPad thứ 2 `x<t>`, màn "taken"), lệch 21 / 86 dòng. Luật `rocket-race.js` chỉ ở AWord
+(sau Đợt 511 có Đợt 513 · 514 · 523 · 527 · 530 · 540 · 544). ⇒ phần 3D đồng bộ; ai làm mẫu 12 nên chạy `tools/chep-aword-sang-game.py game11` trước để lấy luôn bản Đợt 514.
+**Tàu hiện nay:** `makeRocket(team, idx, H)` trong AWord `rr3d-view.js:364` dựng tay (lathe thân + mũi ogive màu đội, 4 cánh extrude, số đội vẽ canvas, lửa shader 2 nón, PointLight, khiên cầu);
+trả `{rig, ship, model, hullMat, teamMat, mats, base, flameGroup, flameOuter, flameInner, light, shield, nozzleGlow, …}`; `setDamageLook` đổi màu `mats` theo dmg. Gọi ở `rr3d-view.js:630` (cảnh đua)
+và `rr3d-launch.js:958` (intro phóng) ⇒ thay mô hình phải giữ NGUYÊN giao diện trả về. Thầy nhắc 19/10: đổi tàu = đổi CẢ tàu ở INTRO (intro dựng tàu đứng trên bệ, `NOZ = 2,52 × sc`, vòi lửa đặt cứng `(-2.5,0,0)` trong `nozzle()` rr3d-launch.js:1036) ⇒ mẫu mới chuẩn hoá đuôi đúng −2,52 hoặc sửa 2 hằng này; nhóm S không đứng được trên bệ ⇒ phải làm lại intro. Trang chọn đã ghi rõ.
+**Đã làm:** `rocket-race/chon-tau-3d.html` (khung giống `speed-run/chon-drone-4l-v2.html`, thêm nút Chọn + thanh dưới "Chép danh sách", nhớ lựa chọn trong localStorage) — 27 mẫu, tất cả
+CC Attribution + tải được (lấy qua API công khai `api.sketchfab.com/v3/search`/`models/<uid>`, lọc bỏ NC / SA / Standard, bỏ mẫu dính thương hiệu/phim: SpaceX, Star Trek, Rick and Morty,
+Capsule Corp, Gorilla Tag…): **R1–R15 tên lửa đứng**, **S1–S12 phi thuyền** (S7 / S9 / S10 = drone E1 / E3 / E4 đã tải ở `speed-run/drone3d`). Thẻ index Rocket Race lên đầu.
+Thử trên máy chủ myGame 8865: 26 ảnh tải đủ, Xoay 3D mở khung Sketchfab, Chọn/Bỏ chọn + lưu chạy, 0 lỗi console.
+**Nguồn khác đã xem (chưa đưa vào trang vì không xoay xem được trên Sketchfab):** Quaternius Ultimate Space Kit + LowPoly Spaceships Pack (CC0, glTF — không phải ghi công),
+Kenney Space Kit (CC0, có tàu), NASA 3D Resources (tên lửa thật, miễn phí — tránh logo NASA), Poly Pizza (nhiều "Rocket ship" Poly by Google CC-BY).
+**Kế hoạch sau khi thầy chọn (mẫu 12):** tải glb ≤ 1K texture (cách Racing Words: thầy đăng nhập Sketchfab, tải từng mẫu cách ~45 s) ⇒ nén meshopt (`tools/process.mjs`) ⇒
+`core/rr3d-tau3d.js` kiểu `sr3d-xe3d.js` (bảng TAU[]: tên, trục mũi, cỡ chuẩn dài ≈ 4,8 đv như tàu cũ y −2,52…2,25, vật liệu sơn màu đội, vị trí vòi lửa, tác giả, giấy phép) ⇒ `makeRocket`
+nhận mô hình đã tải sẵn (tải TRƯỚC khi dựng cảnh, qua loader3d — makeRocket đang đồng bộ), giữ lửa / đèn / khiên / số đội / `mats` cho setDamageLook ⇒ ghi công tác giả ở màn chờ.
+**Quyết định:** chỉ Sketchfab vào trang chọn (xoay 3D xem được ngay, cùng quy trình đã chạy với xe + drone); nhóm R đặt trước vì thay thẳng không đổi intro phóng đứng.
+**Lỗi gặp:** Python in tiếng Việt / emoji ra màn hình lỗi cp1252 ⇒ chạy với `PYTHONIOENCODING=utf-8`; heredoc bash lớn chứa dấu nháy làm lệnh vỡ ⇒ viết file bằng công cụ Write; công cụ Edit của Claude XOÁ 1 CR trần có sẵn (dòng "5 CR trần" chặng Train Rush 1at) ⇒ git diff cả 1.590 dòng ⇒ chèn lại CR đúng chỗ bằng Python (so với git show HEAD).
+
+## Rocket Race MẪU 12 — 19/10/2026 · TÀU + TÊN LỬA 3D CÓ SẴN + ⚙ SETTINGS · phiên máy MSI
+**Bối cảnh (thầy, sau khi xem trang chọn):** chọn S10 · S9 · S7 · S5 · R8 · R1 · R2. "Thêm một nút cài đặt như Racing Words để chọn loại tàu và cài đặt khác nếu cần ·
+các màn có tàu giống loại, chỉ khác màu sơn · tàu đưa vào phải nén để ưu tiên độ mượt, khói lửa đẹp như tàu cũ · tìm thêm missiles đẹp thay loại cũ". Trước đó thầy nhắc:
+đổi tàu là đổi cả tàu ở INTRO. Thầy cho phép tải 9 file glb bằng Chrome đã đăng nhập Sketchfab (AskUserQuestion).
+**Tải:** bản gốc ở `Desktop\MAU TAU ROCKET\rr-*.glb` (12 file: 4 tàu mới + S7/S9/S10 lấy lại từ speed-run/drone3d + 5 tên lửa). Cách tải không cần bấm tay: trong tab
+sketchfab.com gọi `fetch('/i/models/<uid>/download')` ⇒ `latest.glb[]` (chọn bản nhỏ nhất) ⇒ `url` của nó trả JSON có `url` THẬT (bước 2) ⇒ blob ⇒ thẻ `<a download>`
+(về Downloads rồi chuyển). Cách nhau 45 s. Tên lửa chọn 5: Sci-fi missile (robnewman76) · AIM-9 (rickslash) · AIM-120 low poly (Mustafa Garip) · Ballistic kiểu hoạt hình
+(leslava) · Missile Rocket (Jawad Abedin) — CC BY, tải được, bỏ mẫu có chữ/thương hiệu (Tomahawk…).
+**Nén:** `tools/nen-tau3d/nen.sh` (= tex2.mjs: ảnh màu webp ≤ 1024, ảnh phụ ≤ 512, tiến trình riêng · mesh2.mjs: dedup/weld/flatten/join theo vật liệu, simplify khi quá
+12k (tên lửa đứng) / 14k (phi thuyền) / 3k (tên lửa), meshopt). Kết quả `rocket-race/tau3d/`: tàu 0,10–0,79 MB, tên lửa 0,02–0,10 MB, tổng 3,1 MB (gốc ~13 MB).
+**Đã làm:** `game11/` = chép AWord a4170d8 (Đợt 556) bằng `chep-aword-sang-game.py` (có luôn Đợt 514) +
+- `game11/rr3d-ships.js` (MỚI): bảng SHIPS / MISSILES (rot về mũi +X nóc +Y, engines [x,y,z,r] đặt tay, paint, hide, tác giả + giấy phép) · `bake()` nướng mọi lưới
+  về khung tàu cũ (đuôi −2,5 mũi 2,25 dài 4,75; bề ngang ≤ 2×1,3 tên lửa / 2×1,7 phi thuyền — mẫu bè thì nhỏ lại, tâm giữ −0,125) · sơn màu đội: "accent" đổi pixel
+  CÓ MÀU sang màu đội (giữ trắng/xám/đen, chỗ tối sáng lên chút), "all" phủ màu đội k phần trên vật liệu chỉ định (S7/S9/S10 gần như toàn xám) · `makeShipRocket` trả
+  ĐÚNG giao diện makeRocket cũ (FlameSet: nhiều vòi mà code cũ vẫn gọi `.visible` + `.scale.set` như 1 nhóm, vật liệu lửa CHUNG ⇒ màu xanh sắp thắng / turbo tự ăn) ·
+  mặt cắt ellipse 24 khúc (tên lửa chạm vỏ thật) · `shipWreckKit` cắt CHÍNH thân tàu thành mảnh theo lưới 6×2×3 · `hullSpot` dò điểm trên vỏ cho vết cháy ·
+  tên lửa glb làm MẬP thân (bán kính thân ≈ 0,16, tối đa ×2,4) cho dễ thấy.
+- `rr3d-view.js`: shader lửa tách thành `makeFlameMat`/`makeFlameGroup` (tàu glb dùng CÙNG shader) · `makeAnyRocket` · createView tải mẫu trước khi dựng (lỗi ⇒ tàu cũ) ·
+  hạt lửa chia đều các vòi, cỡ theo miệng vòi · mảnh vỡ glb.
+- `rr3d-missile.js`: tên lửa glb (trên tàu, đang bay, bảng nạp "đổ đầy" bằng fillMat trên vật liệu glb, PEACE ngả xanh lá) · tàu glb: không cửa khoang / tay robot, quả
+  trượt ra hông ở `mount` · chạm vỏ theo mặt cắt · vết cháy = tấm muội dán đúng điểm trên vỏ (khung mô hình = khung tàu xoay −90°: (x,y,z) ↦ (−y,x,z)).
+- `rr3d-launch.js`: tải mẫu trước khi dựng bệ · tên lửa glb đứng cao theo đuôi mẫu · phi thuyền NẰM trên bệ (ẩn vòng đỡ + 20 ngàm, tay kẹp/tay tiếp nhiên liệu hạ
+  ngang thân), cất cánh THẲNG ĐỨNG: 3 vòi nâng dưới bụng (tự đặt theo mặt cắt) chĩa xuống + hạt lửa thổi xuống bệ, mũi ngóc 0,42 rad rồi về phẳng; đường bay /
+  máy quay / lúc cắt vào game giữ nguyên.
+- `mau-12-tau-3d.html` (từ mẫu 10, nối game11): nút ⚙ Settings trên dải nút (nút Options mờ đổi icon thanh trượt) ⇒ cửa sổ góc dưới phải kiểu Racing Words
+  (tab icon Ship / Missile, ô chọn theo nhóm ROCKETS / SPACESHIPS, ghi công tác giả, nút APPLY — RESTART GAME hiện khi đổi). Lưu `localStorage rocketrace.ship.v1`.
+  `?ship=S9&missile=M2` thử nhanh. Bàn soi `xem-tau-3d.html` (?ship= / ?missile= / &view=back|side|top, vòng đỏ = vòi đang cấu hình).
+**Thử (máy MSI, khung xem trước lái bằng step):** 7 tàu × intro + đua + bắn + trúng + nổ, 0 lỗi console. R8: lửa 5 vòi, M4 gắn hông, bay vòng, "HIT 50 %", vết cháy.
+S9: nằm bệ → cất cánh thẳng đứng → bay vào game; nổ ra mảnh thân thật. Settings: chọn Northstar + AIM-9 ⇒ APPLY ⇒ tải lại đúng mẫu. Tải đồ hoạ (1 khung trong đua):
+Classic 188 lệnh vẽ / 204k tam giác · S9 148 / 229k · R1 170 / 217k — chưa đo fps thật (TOMKO).
+**Quyết định:** chỉnh tàu trong KHUNG TÀU CŨ (không đổi đường đua / camera / luật) · 2 đội 1 mẫu, sơn bằng đổi màu pixel thay vì tô cả tàu (giữ chi tiết) · đổi mẫu = dựng
+lại (tàu dựng lúc vào cảnh) · iPad chưa đổi tên lửa.
+**Lỗi gặp:** (1) file meshopt lượng tử hoá: vị trí là Int16 CHUẨN HOÁ ⇒ xoay/phóng thẳng trên đó bị kẹp [−1,1] ⇒ hình nát thành khối ⇒ chép ra Float32 bằng
+`getComponent` trước. (2) R8 kèm hộp nền 246×200 (Object_16 / Material.002) ⇒ `hide`. (3) S5 / S9 / M1 / M2 / M5 sai trục mũi — soi bằng bàn soi 3 hướng. (4) R1 bè
+4,3 đv ⇒ 2 tàu chạm nhau ⇒ luật giới hạn bề ngang. (5) tex.mjs trên file đã meshopt cần đăng ký CẢ encoder. (6) công cụ trình duyệt chặn đọc URL có chữ ký
+(query string) ⇒ tải bằng blob trong trang thay vì curl. (7) `python -I` bỏ qua PYTHONIOENCODING ⇒ dùng `-X utf8`.
+
+## Rocket Race MẪU 12b — 19/10/2026 (tối) · LƯỢN RIÊNG TỪNG TÀU + SÁNG HƠN + iPad VÀO ⚙ SETTINGS + ẢNH MÔ PHỎNG · phiên máy MSI
+**Bối cảnh (thầy xem mẫu 12, gửi ảnh góc rộng S7):** "độ nghiêng và láng của 2 tàu khá giống nhau ⇒ cần khác nhau hoàn toàn · góc rộng lượn quá nhanh, không hợp lý,
+nhất là phi thuyền dẹt ⇒ láng nhẹ nhàng, đều, mượt, chuẩn vật lý · tàu mới tối quá · phần iPad đưa vào nút cài đặt · chọn tàu / missiles cần hình mô phỏng".
+**Nguyên nhân đo được:** (1) 2 tàu dùng CHUNG một công thức lượn (chỉ lệch pha `i`). (2) nghiêng = sóng sin tự do 0,18 rad, không gắn chuyển động.
+(3) Đợt 398 bỏ HÌNH đá nhưng giữ LỰC né đá ẩn ⇒ cứ 0,8–1,7 s tàu bị đẩy ngang (gia tốc ±3 đv/s², nghiêng ±0,5 rad đổi chiều trong 0,5 s). (4) vỏ glb nhiều kim loại
+(metal 1) mà cảnh vũ trụ không có gì để phản chiếu ⇒ đen.
+**Đã làm (game11/rr3d-view.js):** `flightOf(r, i)` — mỗi tàu một bộ tham số bay riêng (3 sóng lượn ngang + 2 sóng lên xuống, tần số không chia hết nhau, tàu 1 / tàu 2
+tần số chính khác hẳn; nhấp nhô riêng; phi thuyền chậm ×0,62) · đích lượn qua bộ lọc (0,9 s phi thuyền / 0,55 s tên lửa) rồi lò xo mềm (k 3,2 / 5,5 thay 11) ·
+NGHIÊNG = atan(gia tốc ngang × hệ số) lọc 0,6 / 0,4 s, tối đa 0,3 / 0,38 rad, tốc độ nghiêng ≤ 0,45 / 0,75 rad/s; ngóc mũi theo vận tốc lên xuống · lực né đá ẩn còn 30 %.
+Đo S9 ở góc rộng 15 s: nghiêng tối đa 0,16 / 0,20 rad, tốc độ ≤ 0,45 rad/s, gia tốc ≤ 0,7 (trước: 0,5 rad · 2,85 rad/s · 3). Áp cho CẢ tàu Classic.
+**Sáng hơn (rr3d-ships.js `upgrade`):** kim loại ≤ 0,45, nhám ≥ 0,32, phản chiếu môi trường ×2,6, màu nền ×1,45 (phi thuyền) / ×1,15 (tên lửa) — đổi màu đội chuẩn hoá
+màu > 1 trước khi đổi.
+**⚙ Settings (mau-12):** thêm tab **iPad** đầu tiên — CHUYỂN HẲN 3 thẻ Off / Question screen / Game controller + bảng đội vào cửa sổ (logic nối iPad giữ nguyên; nút iPad
+dưới khung ẩn, chip iPad trên khung vẫn hiện) · ô Ship / Missile có **ảnh mô phỏng** `tau3d/anh/ship-<id>.webp`, `missile-<id>.webp` (14 ảnh, 3–12 KB) chụp từ CHÍNH
+mô hình game (sơn đội 1, lửa bật, nền trong suốt) bằng `rocket-race/tao-anh-tau.html?save=1` + máy nhận tạm 127.0.0.1:8877 (scratchpad luu_anh.py) — đổi mẫu ⇒ chụp lại.
+**Thử:** 0 lỗi console; Settings 3 tab chạy (Game controller hiện 2 thẻ đội trong cửa sổ, về Off được); ảnh hiện đủ 8 tàu + 6 tên lửa; góc rộng S7 sáng rõ xanh / cam.
+**Chưa:** thầy xem trên máy thật (nhịp lượn có đủ "sống" không — chỉnh `wa`/`bank` trong flightOf) · tên lửa trên bảng iPad vẫn kiểu cũ · chưa push / AWord.
+
+## Rocket Race MẪU 12c — 19/10/2026 (khuya) · TÀU TỰ SÁNG · phiên máy MSI
+**Bối cảnh (thầy):** "màu và độ sáng của tàu vẫn còn đang rất tối, muốn sáng rõ ràng" (sau 12b nâng màu ×1,45 + phản chiếu ×2,6 vẫn chưa đủ: mặt khuất nắng trong cảnh
+vũ trụ gần như đen).
+**Đã làm (game11/rr3d-ships.js):** `addGlow(m, k)` — chèn shader sau `emissivemap_fragment`: `totalEmissiveRadiance += diffuseColor.rgb * uGlow` ⇒ tàu tự sáng theo
+CHÍNH màu bề mặt (texture đã sơn đội × màu), mặt có nắng vẫn có sáng tối / bóng như cũ, đèn emissiveMap sẵn có của mẫu vẫn giữ; hư hại làm tối luôn phần tự sáng.
+Mức `GLOW = { ship 0,55 · rocket 0,42 · missile 0,32 }` (ghi đè từng mẫu bằng trường `glow`). Gắn ở `makeShipRocket` (mỗi vật liệu 1 lần) + tên lửa glb (prepMissile);
+mảnh vỡ dùng bản clone ⇒ không tự sáng (cháy sạm). Chụp lại 14 ảnh mô phỏng (`tao-anh-tau.html?save=1`).
+**Thử:** góc rộng S7 / S9 / R8 rõ màu xanh / cam, thấy chi tiết thân; intro ban ngày không chói; 0 lỗi console. Chưa đo trên TOMKO (độ sáng màn 4K khác máy soạn).
+**Chỉnh nhanh nếu thầy thấy quá / thiếu sáng:** đổi 3 số trong `GLOW` (đầu mục TỰ SÁNG) hoặc `glow:` riêng từng mẫu trong SHIPS.
+
+## Rocket Race MẪU 12d — 19/10/2026 (khuya) · BỚT CHÓI
+**Thầy:** "hơi sáng chói quá rồi, giảm một chút xíu" ⇒ `GLOW` 0,55 / 0,42 / 0,32 → **0,45 / 0,34 / 0,27** (ship / rocket / missile, ~−18 %); chụp lại 14 ảnh mô phỏng.
+Thử S9 góc rộng: vẫn rõ xanh / cam, bớt loá; 0 lỗi console. Ghi chú: khung xem trước bị thu 0×0 thì mẫu 10 / 12 đều văng "startBtn null" ở view.step(1) đầu trang
+(nút START 3D chỉ dựng khi khung có cỡ) — lỗi CŨ của bản thử, không do mẫu 12.
+
+## Rocket Race MẪU 12e — 19/10/2026 (khuya) · ĐỘ SÁNG RIÊNG TỪNG TÀU
+**Thầy:** Retro Toy, Toy Rocket giảm chút · Northstar giảm nhiều · Low Poly Ship tăng nhiều · Space Fighter tăng chút ⇒ trường riêng trong `SHIPS` (game11/rr3d-ships.js):
+R1 / R2 `glow 0,26` (mặc định tên lửa 0,34) · S9 `glow 0,28 + bright 1,2` (mặc định phi thuyền 0,45 + 1,45) · S5 `glow 0,78 + bright 1,75` · S7 `glow 0,56`; R8, S10 giữ mặc định.
+Chụp lại 14 ảnh mô phỏng. Thử S5 góc rộng: sáng rõ xanh / cam; 0 lỗi. Chỉnh tiếp: sửa 2 trường glow / bright của mẫu đó.

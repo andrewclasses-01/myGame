@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soi tàu 3D</title>
+<style>
+/* BÀN SOI mẫu 12 (19/10/2026): xem tàu / tên lửa glb SAU chuẩn hoá — 3 hướng (hông · trên · sau) + lưới 0,5 đv, đo vòi lửa, kiểm màu sơn 2 đội.
+   ?ship=R1 · ?missile=M2 · ?flame=1 bật lửa · ?spin=1 xoay */
+body{margin:0;background:#0b0e13;color:#e7eef8;font:14px system-ui,sans-serif}
+#bar{position:fixed;left:8px;top:8px;z-index:2;display:flex;gap:6px;flex-wrap:wrap;max-width:98vw}
+#bar a{color:#cfe3ff;background:#1b2430;border-radius:7px;padding:4px 9px;text-decoration:none;font-weight:700}
+#bar a.on{background:#ff7a00;color:#fff}
+#info{position:fixed;left:8px;bottom:8px;z-index:2;font:12px ui-monospace,monospace;white-space:pre;background:rgba(0,0,0,.6);padding:6px 8px;border-radius:8px}
+canvas{display:block}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head><body><div id="bar"></div><div id="info">…</div>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { SHIPS, MISSILES, prepShip, prepMissile, makeShipRocket, missileMeshes } from "./game11/rr3d-ships.js";
+const QS = new URLSearchParams(location.search);
+const shipId = QS.get("ship"), misId = QS.get("missile");
+document.getElementById("bar").innerHTML = SHIPS.filter(s => s.file).map(s => `<a href="?ship=${s.id}&flame=1" class="${s.id === shipId ? "on" : ""}">${s.id}</a>`).join("")
+  + MISSILES.filter(s => s.file).map(s => `<a href="?missile=${s.id}" class="${s.id === misId ? "on" : ""}">${s.id}</a>`).join("");
+const W = innerWidth, H = innerHeight;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.setScissorTest(true);
+document.body.append(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x1a2130);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x202030, 1.2)); const sun = new THREE.DirectionalLight(0xffffff, 2.5); sun.position.set(3, 6, 5); scene.add(sun);
+// lưới 0,5 đv trên 3 mặt phẳng
+const grid = (rot, col) => { const g = new THREE.GridHelper(10, 20, col, 0x334155); g.rotation.set(...rot); g.material.depthTest = false; g.renderOrder = -1; scene.add(g); return g; };
+const gXY = grid([Math.PI / 2, 0, 0], 0x64748b), gXZ = grid([0, 0, 0], 0x64748b), gYZ = grid([0, 0, Math.PI / 2], 0x64748b);
+const flameMat = (core, outer, pow) => new THREE.MeshBasicMaterial({ color: new THREE.Color(...outer).multiplyScalar(0.4), transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+const info = [];
+let objs = [];
+if (shipId) {
+  const T = await prepShip(shipId); window.__T = T;
+  const teams = [{ color: new THREE.Color("#3b8cff"), css: "#3b8cff" }, { color: new THREE.Color("#ff7a00"), css: "#ff7a00" }];
+  objs = teams.map((t, i) => { const r = makeShipRocket(T, t, i, { flameMat }); r.flameGroup.visible = QS.get("flame") === "1"; r.flameGroup.scale.set(1, 1.2, 1); scene.add(r.rig); return r.rig; });
+  // vòng đỏ = vòi lửa đang cấu hình (engines) · vòng xanh = vòi nâng (lift) — vẽ đè, nhìn xuyên vỏ
+  const ring = (p, r, col, axis) => { const m = new THREE.Mesh(new THREE.RingGeometry(r * 0.88, r, 40), new THREE.MeshBasicMaterial({ color: col, depthTest: false, side: THREE.DoubleSide }));
+    m.renderOrder = 9; m.position.set(p[0], p[1], p[2]); if (axis === "x") m.rotation.y = Math.PI / 2; else m.rotation.x = Math.PI / 2; objs[0].add(m); };
+  (T.info.engines || []).forEach(e => ring(e, e[3], 0xff2030, "x"));
+  (T.info.lift || []).forEach(e => ring(e, e[3], 0x20c0ff, "y"));
+  const b = T.box; info.push(`${shipId} ${T.info.name}  box x ${b.min.x.toFixed(2)}…${b.max.x.toFixed(2)}  y ${b.min.y.toFixed(2)}…${b.max.y.toFixed(2)}  z ${b.min.z.toFixed(2)}…${b.max.z.toFixed(2)}`);
+  info.push(`mats: ${T.list.map(p => p.mat.name + (p.mat.map ? "(tex)" : "") + " " + p.geo.index.count / 3 + "tg").join(" · ")}`);
+  info.push(`engines: ${JSON.stringify(T.info.engines)}`);
+  const pr = T.prof; info.push("profile ry/rz: " + pr.P.map(p => p.ry.toFixed(2) + "/" + p.rz.toFixed(2)).join(" "));
+} else if (misId) {
+  const MT = await prepMissile(misId);
+  const g = missileMeshes(MT); scene.add(g); objs = [g, g];
+  const b = MT.box; info.push(`${misId} ${MT.info.name}  box x ${b.min.x.toFixed(2)}…${b.max.x.toFixed(2)}  y ${b.min.y.toFixed(2)}…${b.max.y.toFixed(2)}  z ${b.min.z.toFixed(2)}…${b.max.z.toFixed(2)}`);
+  info.push(`mats: ${MT.list.map(p => p.mat.name + (p.mat.map ? "(tex)" : "")).join(" · ")}`);
+}
+document.getElementById("info").textContent = info.join("\n");
+// 4 ô: hông (+Z nhìn vào, đội 1) · trên (đội 1) · sau (nhìn từ −X) · phối cảnh đội 2
+const BIG = QS.get("view");                       // ?view=back|side|top ⇒ 1 hướng phóng to
+const S = BIG ? 1.9 : misId ? 1.6 : 3.2;
+const ortho = () => new THREE.OrthographicCamera(-S * W / H, S * W / H, S, -S, -50, 50);
+const views = [
+  { cam: ortho(), pos: [0, 0, 10], up: [0, 1, 0], show: 0, g: gXY },
+  { cam: ortho(), pos: [0, 10, 0], up: [0, 0, -1], show: 0, g: gXZ },
+  { cam: ortho(), pos: [-10, 0, 0], up: [0, 1, 0], show: 0, g: gYZ },
+  { cam: new THREE.PerspectiveCamera(32, W / H, 0.1, 100), pos: [-6, 3.2, 9], up: [0, 1, 0], show: 1, g: null }
+];
+views.forEach(v => { v.cam.position.set(...v.pos); v.cam.up.set(...v.up); v.cam.lookAt(0, 0, 0); v.cam.updateProjectionMatrix(); });
+let t = 0;
+renderer.setAnimationLoop(() => {
+  t += 0.016;
+  if (QS.get("spin") === "1") objs.forEach(o => { o.rotation.y = t * 0.4; });
+  views.forEach((v, i) => {
+    const big = BIG ? ["side", "top", "back"].indexOf(BIG) : -1;
+    if (big >= 0 && i !== big) return;
+    const x = big >= 0 ? 0 : (i % 2) * W / 2, y = big >= 0 ? 0 : (i < 2 ? H / 2 : 0), w = big >= 0 ? W : W / 2, h = big >= 0 ? H : H / 2;
+    renderer.setViewport(x, y, w, h); renderer.setScissor(x, y, w, h);
+    if (v.cam.isPerspectiveCamera) { v.cam.aspect = W / H; v.cam.updateProjectionMatrix(); }
+    objs.forEach((o, k) => { o.visible = k === v.show || objs[0] === objs[1]; });
+    [gXY, gXZ, gYZ].forEach(g => { g.visible = g === v.g; });
+    renderer.render(scene, v.cam);
+  });
+});
+window.__ready = true;
+</script></body></html>

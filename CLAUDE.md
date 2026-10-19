@@ -33,7 +33,12 @@ rocket-race/
   game5c/ + core/launch-aerial-5c.js + core/auto-res.js   MẪU 5c: tự giữ 60 khung, bóng theo nhu cầu, dịch sẵn shader
   game6/ (+ rr3d-missile.js) + core/launch-aerial-6.js     MẪU 6: TÊN LỬA tấn công giữa 2 tàu + đội 2 CAM; tiếng tools/tao-am-thanh-6.py
   game8/ (+ rr3d-launch.js, launch/, rr3d-intro-sound.js, sfx-intro/)   MẪU 8 (05/10) = chép NGUYÊN AWord 156cf57 (sau Đợt 478) — cảnh phóng + tiếng intro cũng của AWord
-  game10/ + mau-10-khop-aword.html            MẪU 10 (MỚI NHẤT, 13/10) = chép NGUYÊN AWord 20110c4 (Đợt 511 — đã ghép mẫu 9) — gốc để cải tiến tiếp
+  game10/ + mau-10-khop-aword.html            MẪU 10 (13/10) = chép NGUYÊN AWord 20110c4 (Đợt 511 — đã ghép mẫu 9)
+  game11/ + mau-12-tau-3d.html                MẪU 12 (MỚI NHẤT, 19/10) = AWord a4170d8 + TÀU / TÊN LỬA 3D CÓ SẴN: game11/rr3d-ships.js (bảng mẫu, chuẩn hoá về khung tàu cũ,
+                              sơn màu đội, lửa nhiều vòi, mảnh vỡ cắt từ thân, vết cháy dán vỏ) + sửa view/launch/missile; ⚙ Settings (Ship · Missile) lưu localStorage
+  tau3d/*.glb                 7 tàu (R1 R2 R8 S5 S7 S9 S10) + 5 tên lửa (M1–M5) đã nén — gốc ở Desktop\MAU TAU ROCKET; nén lại: tools/nen-tau3d/nen.sh
+  tao-anh-tau.html            (12b) chụp ảnh mô phỏng cho ô chọn Settings ⇒ tau3d/anh/*.webp (?save=1 + máy nhận tạm cổng 8877)
+  xem-tau-3d.html             bàn soi mẫu glb sau chuẩn hoá (?ship= / ?missile= / &view=back) — đặt vòi lửa (engines) · chon-tau-3d.html: trang thầy chọn mẫu Sketchfab
   mau-9-ipad-dieu-khien.html + pad-9.html   MẪU 9 (13/10): iPAD THAM GIA GAME — dùng game9; luật tên lửa trong trang = chép AWord msLoad/msFire/msBoost/msEnd
   game9/                      = game8 + `rr3d-missile.js` thêm CHẾ ĐỘ GƯƠNG (api.mirror / mirrorTick / mirrorFlash / ui; threatFor đọc MIR) — để iPad dựng CHÍNH bảng tên lửa
                               + cột vạch năng lượng LUÔN cao 4 ô dự phòng (cả màn lớn, mọi Missiles max) + icon BOOST BỎ 3 vạch tốc độ ở đáy
