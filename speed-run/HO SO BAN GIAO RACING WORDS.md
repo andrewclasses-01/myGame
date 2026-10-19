@@ -6,7 +6,7 @@
 Thầy 19/10 tối: "ok rồi nhé. chốt bản này đến đây, đưa lên AWord và myGame, ghi hồ sơ và ghi việc chờ tiếp theo là điều khiển drone thứ 2".
 ⇒ Bản CHỐT = 5d (lõi sr3d-5d = 5a + chỉ tải mẫu drone khi drone bật) + iPad padui-5c + padlink-5a. AWord Đợt 553 `f244280`: template racing_words THẬT dùng bản này
 (GOC rw-5d, pad.js ?t=2 = vai DRONE với cờ riêng aw.rwDrone, rwpad_pad2, drone3d/ 5 mẫu, load-files đo lại 95 file 5,3 MB). Drone mặc định OFF.
-⭐⭐ VIỆC CHỜ TIẾP THEO: ĐIỀU KHIỂN DRONE THỨ 2 — chế độ "2 drones" (mỗi đội 1 drone, nút "2 drones · soon" trong Settings ▸ Drone đã chừa cửa).
+⭐⭐ ĐANG LÀM: ĐIỀU KHIỂN DRONE THỨ 2 (✅ bản 5e build xong, chờ thầy xem) — chế độ "2 drones" (mỗi đội 1 drone, nút "2 drones · soon" trong Settings ▸ Drone đã chừa cửa).
   Cần thiết kế ở myGame trước (bản 5e…): bố cục 2 cột drone (hay chia đôi cột giữa?) · iPad thứ 4 (t = 3, rwpad_pad3, padlink 4 chỗ) · luật đạn từng đội · màu / mẫu riêng mỗi drone.
   Thử 4 thiết bị ở trang ẩn `lab/racing-drone.html` (giữ lại), chốt xong mới đưa lên template thật.
   ⏳ 19/10 thầy: "Drone 2 tính năng như drone 1, bay cao hơn chút để không che / không va; drone 1 bay gần mép dưới hơn — thiết kế cẩn thận cho gọn".
@@ -17,7 +17,16 @@ Thầy 19/10 tối: "ok rồi nhé. chốt bản này đến đây, đưa lên A
   mỗi drone nhích ±3 m theo người lái) · chung 1 mẫu drone, khác màu đội (vòng sáng + số 1/2; thẻ số cạnh tâm ngắm).
   Trang thiết kế mục 3b: bảng đạn tối giản 2 mức — M1 một hàng (số đội + 3 icon đạn: chọn = viền sáng, hồi chiêu = vòng chạy, không dùng = mờ + vạch pin mảnh) ·
   M2 siêu gọn (vòng pin quanh số đội + 1 icon đạn đang chọn). Bỏ: ô nền, chữ DRONE / TEAM, AIM ON THE ROAD / IN SIGHT, tên đạn, dòng phím, "SHOT IN THE AIR".
-  ⬜ CHỜ THẦY: chọn M1 / M2 + "ok build" ⇒ làm bản 5e trong myGame (drone 2 = iPad thứ 4 t=3, rwpad_pad3, padlink 4 chỗ; luật Team drone mỗi drone; drone nhỏ 15 % khi 2 chiếc).
+  ✅ BUILD 5e (19/10, thầy: "Dùng M1, nhưng không cần số 1 và 2 ở khu vực pin và trên thân drone; drone 2 đội thêm màu tương ứng với đội"):
+  trang `mau-5e-hai-drone.html` · gói `core/rw-5e.js` (+ CSS `rw-5e.css` sau rw-4y.css) · lõi `core/sr3d-5e.js` · đạn `core/sr3d-dammo-5e.js` (owner + activeOf) ·
+  iPad `pad-5e.html` (`sr3d-padlink-5e.js` 4 chỗ, t = 3 = DRONE 2 · `sr3d-padui-5e.js` màn chọn vai 4 nút).
+  Settings ▸ Drone: Off / 1 drone / 2 drones (2 drone ẩn chế độ — luôn Team drone: drone 1 = TEAM 1, drone 2 = TEAM 2). Mỗi drone: pin, hồi chiêu, 1 quả một lúc, tâm + tâm bóng mờ riêng.
+  Máy quay chung (×1,15, nhìn xa +15 m), F = đội hình (anchorS), máy quay ở NEAR/FAR trung bình, mỗi drone ±3 m; drone 2 cao 13 m lùi 0,7 m; mỗi drone giữ nửa đường mình; nhỏ 15 %.
+  MÀU ĐỘI: pha 38 % màu đội vào thân mẫu 3D (+ phát sáng nhẹ, trả màu gốc khi về 1 drone) + quầng sáng dưới bụng + chấm thoi màu đội giữa tâm ngắm. KHÔNG số.
+  Bảng đạn M1 trên trời (.rw-dv2): 3 icon (chọn = viền sáng · hồi chiêu = vòng chạy · thiếu pin = mờ) + vạch pin màu đội (đỏ khi < 25 %). Kết trận: 2 dòng TEAM 1 DRONE / TEAM 2 DRONE.
+  Xưởng: 2 thẻ DRONE 1 · iPAD (xanh) + DRONE 2 · iPAD (cam) giữa trên. Phím drone 2: bàn số 4 6 8 5 · 7 9 · 1 2 3 · 0. Bàn thử: game.drone.drones / aim(ax, ad, n) / fire(n) / sel(k, n) / near(bk, n).
+  Đã thử: khung đúng thiết kế (2 drone 83 % chiều cao, ngang hàng) · bắn 2 drone độc lập, luật đội đúng, chặn quả 2 khi đang bay · iPad t=3 nối, màu cam "TEAM 2 DRONE", lái + chọn đạn + FIRE ·
+  1 drone y như 5d (màu gốc, không quầng, bảng cũ) · bảng kết quả 2 dòng · xưởng 2 thẻ QR. ⬜ thầy xem + thử 4 iPad thật; chốt mới đưa lên AWord (template thật: GOC rw-5e, pad.js t=3, rwpad_pad3).
 
 **Bản CHỐT: 5d** (19/10 tối) — trang `mau-5d-chot-drone.html` · gói `core/rw-5d.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-5d.js` · iPad `pad-5c.html` (`sr3d-padlink-5a.js` + `sr3d-padui-5c.js`) · trang `mau-5c-ban-lai-dien-thoai.html` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.
