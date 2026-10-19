@@ -9,6 +9,11 @@ Thầy 19/10 tối: "ok rồi nhé. chốt bản này đến đây, đưa lên A
 ⭐⭐ VIỆC CHỜ TIẾP THEO: ĐIỀU KHIỂN DRONE THỨ 2 — chế độ "2 drones" (mỗi đội 1 drone, nút "2 drones · soon" trong Settings ▸ Drone đã chừa cửa).
   Cần thiết kế ở myGame trước (bản 5e…): bố cục 2 cột drone (hay chia đôi cột giữa?) · iPad thứ 4 (t = 3, rwpad_pad3, padlink 4 chỗ) · luật đạn từng đội · màu / mẫu riêng mỗi drone.
   Thử 4 thiết bị ở trang ẩn `lab/racing-drone.html` (giữ lại), chốt xong mới đưa lên template thật.
+  ⏳ 19/10 thầy: "Drone 2 tính năng như drone 1, bay cao hơn chút để không che / không va; drone 1 bay gần mép dưới hơn — thiết kế cẩn thận cho gọn".
+  ⇒ Trang thiết kế `thiet-ke-5e-hai-drone.html` (ảnh THẬT chụp từ game 5d trong `anh-5e/`: máy quay drone đặt tay + bản sao drone): 4 cách A hàng ngang lệch tầng (khuyên) ·
+  B xếp tầng dọc · C tầng trời cao · D chia đôi cột 2 máy quay. Phát hiện: máy quay chếch trên-sau ⇒ drone 2 cao hơn chút là trồi lên đè xe / tâm (B); cách A = drone 2 cao 13 m (drone 1 12 m)
+  nhưng LÙI 0,7 m ⇒ 2 drone ngang hàng sát đáy (82 %), mỗi chiếc giữ nửa đường đội mình; máy quay chung lùi ×1,15 + nhìn tới 42 m. Bảng đạn A1 trên trời / A2 dưới chân.
+  ⬜ CHỜ THẦY CHỌN: cách bố trí · A1/A2 · NEAR/FAR (a trung bình 2 iPad / b chỉ Settings / c nhích drone mình) · mẫu drone chung hay riêng. Chọn xong mới làm bản 5e.
 
 **Bản CHỐT: 5d** (19/10 tối) — trang `mau-5d-chot-drone.html` · gói `core/rw-5d.js` (+ CSS `rw-4w.css`, `rw-4y.css` sau rw-4r.css) · lõi `core/sr3d-5d.js` · iPad `pad-5c.html` (`sr3d-padlink-5a.js` + `sr3d-padui-5c.js`) · trang `mau-5c-ban-lai-dien-thoai.html` · icon `core/rw-icons-4x.js` · đạn `core/sr3d-dammo-4w.js` · iPad `pad-4x.html` (`sr3d-padlink-4u.js` + `sr3d-padui-4x.js`) · mẫu drone `core/sr3d-drone3d-4p.js` + `drone3d/*.glb`
 · iPad `pad-4l.html` (đường nối `sr3d-padlink-4l.js`, giao diện `sr3d-padui-4l.js`) · CSS (đúng thứ tự, sau rw-4j.css): `rw-4k.css · rw-4l.css · rw-4o.css · rw-4r.css`.

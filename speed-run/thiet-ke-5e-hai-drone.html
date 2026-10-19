@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RACING WORDS — Thiết kế 5e · 2 DRONE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,500;0,700;0,800;0,900;1,800;1,900&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+<!-- Thiết kế 5e (19/10/2026) — chế độ 2 DRONE: bố trí màn hình. Ảnh trong anh-5e/ là ẢNH THẬT chụp từ game 5d (máy quay drone đặt lại bằng tay, drone 2 = bản sao drone 1). -->
+<style>
+:root { --bg: #0b0f17; --card: #141a26; --line: #263044; --tx: #e8edf6; --mu: #93a0b8; --t1: #3b8cff; --t2: #ff7a00; --ok: #38d39f; --bad: #ff5a5a; --hi: #b07cff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--tx); font: 500 15px/1.55 "Exo 2", system-ui, sans-serif; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 28px 18px 80px; }
+h1 { font: italic 900 30px/1.15 "Exo 2"; letter-spacing: .02em; margin: 0 0 6px; }
+h1 small { font: 700 15px "Exo 2"; color: var(--mu); letter-spacing: 0; font-style: normal; }
+h2 { font: italic 900 21px/1.2 "Exo 2"; margin: 44px 0 12px; padding-top: 18px; border-top: 1px solid var(--line); }
+h3 { font: 800 17px/1.3 "Exo 2"; margin: 0 0 6px; }
+p { margin: 6px 0; }
+.mu { color: var(--mu); }
+.lead { font-size: 16px; max-width: 920px; }
+b.t1 { color: var(--t1); } b.t2 { color: var(--t2); }
+.box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.find { display: grid; grid-template-columns: 1.25fr 1fr; gap: 18px; align-items: start; }
+.find ol { margin: 6px 0 0; padding-left: 20px; } .find li { margin: 5px 0; }
+svg text { font-family: "Exo 2", sans-serif; }
+
+/* ---- cột drone giả lập (ảnh thật + chữ / bảng HTML vẽ lên) ---- */
+.col { position: relative; aspect-ratio: 308 / 568; width: 100%; background: #000 center / cover no-repeat; border-radius: 6px; overflow: hidden; container-type: size; }
+.col .ban { position: absolute; top: 1.6cqh; left: 50%; transform: translateX(-50%); padding: .9cqh 2.4cqh; border-radius: 3cqh; background: rgba(10,14,22,.82); border: 1px solid rgba(255,255,255,.18);
+  font: italic 900 2.6cqh/1 "Exo 2"; color: #fff; white-space: nowrap; }
+.col .ban i { font: 800 1.3cqh "Exo 2"; color: #ffb36b; letter-spacing: .14em; font-style: normal; margin-left: .5cqh; }
+.col .old-top { position: absolute; top: 8cqh; left: 0; right: 0; text-align: center; font: italic 900 2.3cqh/1 "Exo 2"; letter-spacing: .22em; color: var(--hi); text-shadow: 0 .2cqh .8cqh #000; }
+.col .old-top span { display: block; font: 800 1.35cqh/1.6 "Exo 2"; letter-spacing: .16em; color: #fff; opacity: .85; }
+.col .old-bot { position: absolute; left: 0; right: 0; bottom: 0; height: 19.5cqh; background: linear-gradient(transparent, rgba(6,9,15,.88) 30%); }
+.col .old-bot .lk { position: absolute; left: 0; right: 0; top: 3cqh; text-align: center; font: italic 900 1.9cqh "Exo 2"; letter-spacing: .1em; text-shadow: 0 .2cqh .8cqh #000; }
+.col .old-bot .am { position: absolute; left: 6%; right: 6%; bottom: 4.2cqh; display: flex; gap: .7cqh; }
+.col .old-bot .am span { flex: 1; text-align: center; font: italic 900 1.5cqh/1 "Exo 2"; padding: 1.1cqh .4cqh; border-radius: .8cqh; border: 1px solid rgba(255,255,255,.2); background: rgba(8,12,20,.85); color: #cfd6e2; }
+.col .old-bot .am span.on { border-color: #ff63c3; background: color-mix(in srgb, #ff63c3 30%, #0b111c); color: #fff; }
+.col .old-bot .bt { position: absolute; left: 6%; right: 6%; bottom: 2cqh; height: .8cqh; border-radius: 1cqh; background: rgba(255,255,255,.14); }
+.col .old-bot .bt i { position: absolute; inset: 0 30% 0 0; border-radius: inherit; background: var(--hi); }
+/* bảng đạn MỚI cho 2 drone: 2 ô nhỏ cạnh nhau */
+.col .hud2 { position: absolute; left: 3%; right: 3%; display: flex; gap: 2.5%; }
+.col .hud2.top { top: 7.2cqh; } .col .hud2.bot { bottom: 1.4cqh; }
+.hp { flex: 1; min-width: 0; border-radius: 1.2cqh; padding: .8cqh .9cqh .9cqh; background: rgba(8,12,20,.78); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+  box-shadow: 0 0 1.6cqh color-mix(in srgb, var(--c) 30%, transparent); }
+.hp .hd { display: flex; align-items: center; gap: .7cqh; font: italic 900 1.45cqh/1 "Exo 2"; color: #fff; letter-spacing: .06em; white-space: nowrap; }
+.hp .hd b { display: grid; place-items: center; width: 2.3cqh; height: 2.3cqh; border-radius: 50%; background: var(--c); color: #fff; font: 900 1.5cqh/1 "Chakra Petch"; font-style: normal; }
+.hp .hd em { margin-left: auto; font: 800 1.15cqh "Exo 2"; color: rgba(255,255,255,.6); font-style: normal; }
+.hp .ch { display: flex; gap: .5cqh; margin-top: .7cqh; }
+.hp .ch span { flex: 1; display: grid; place-items: center; height: 3.3cqh; border-radius: .7cqh; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); opacity: .55; }
+.hp .ch span.on { opacity: 1; border-color: var(--ac); background: color-mix(in srgb, var(--ac) 26%, #0b111c); }
+.hp .ch span.wait { opacity: .35; }
+.hp .ch .rwi { height: 2.2cqh; width: auto; }
+.hp .bt { margin-top: .7cqh; height: .7cqh; border-radius: 1cqh; background: rgba(255,255,255,.14); overflow: hidden; }
+.hp .bt i { display: block; height: 100%; width: var(--b); background: var(--c); border-radius: inherit; }
+.hp .st { margin-top: .5cqh; font: italic 900 1.15cqh/1 "Exo 2"; letter-spacing: .08em; color: rgba(255,255,255,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* nhận diện trên cảnh: vòng sáng dưới drone + số · thẻ số cạnh tâm ngắm */
+.glow { position: absolute; width: 38%; height: 7cqh; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 80%, transparent), transparent); mix-blend-mode: screen; }
+.dn { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; width: 3.4cqh; height: 3.4cqh; border-radius: 50%; background: var(--c); border: .35cqh solid #fff;
+  font: 900 1.9cqh/1 "Chakra Petch"; color: #fff; box-shadow: 0 0 1.6cqh var(--c); }
+.rt { position: absolute; transform: translate(0, -50%); padding: .25cqh .7cqh; border-radius: .6cqh; background: var(--c); font: 900 1.3cqh/1.1 "Chakra Petch"; color: #fff; box-shadow: 0 0 1cqh var(--c); }
+.x { position: absolute; transform: translate(-50%, -50%); width: 9cqh; height: 9cqh; border: .5cqh solid var(--bad); border-radius: 50%; box-shadow: 0 0 2cqh var(--bad); }
+.split-line { position: absolute; left: 0; right: 0; top: 50%; height: .5cqh; background: #06080d; }
+
+/* ---- thẻ phương án ---- */
+.opts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.opt { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.opt.rec { border-color: var(--ok); box-shadow: 0 0 0 1px var(--ok), 0 0 26px rgba(56,211,159,.18); }
+.opt .tag { display: inline-block; font: 900 12px/1 "Exo 2"; letter-spacing: .08em; padding: 5px 8px; border-radius: 6px; background: rgba(255,255,255,.08); }
+.opt.rec .tag { background: var(--ok); color: #04130d; }
+.opt h3 { margin: 2px 0 0; }
+.opt ul { margin: 0; padding-left: 18px; font-size: 14px; } .opt li { margin: 3px 0; }
+.opt li.y::marker { content: "✓  "; color: var(--ok); } .opt li.n::marker { content: "✗  "; color: var(--bad); }
+.score { display: flex; gap: 6px; flex-wrap: wrap; font: 800 12px "Exo 2"; }
+.score span { padding: 3px 7px; border-radius: 6px; background: rgba(255,255,255,.06); }
+.score span.g { color: var(--ok); } .score span.r { color: var(--bad); }
+
+/* ---- toàn màn ---- */
+.full { position: relative; aspect-ratio: 16 / 9; width: 100%; background: url(anh-5e/nen-man.png) center / 100% 100% no-repeat; border-radius: 10px; overflow: hidden; }
+.full .slot { position: absolute; left: 37.97%; width: 24.06%; top: 1.389%; height: 78.89%; }
+.full .slot .col { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0; }
+.full.w18 .slot { left: 41%; width: 18%; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.cap { margin: 8px 2px 0; font-size: 14px; }
+.cap b { font-weight: 900; }
+
+/* ---- luật ---- */
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rules .box h3 { display: flex; gap: 8px; align-items: baseline; }
+.rules .box h3 i { font: 900 13px "Chakra Petch"; color: var(--hi); font-style: normal; }
+.ch3 { display: grid; gap: 6px; margin-top: 8px; }
+.ch3 div { padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,.04); border: 1px solid var(--line); font-size: 14px; }
+.ch3 div.k { border-color: var(--ok); }
+.ch3 div b { font-weight: 900; }
+.diag { width: 100%; height: auto; background: #0f1520; border-radius: 12px; border: 1px solid var(--line); }
+.ask { border-color: var(--hi); }
+.ask ol { margin: 6px 0 0; padding-left: 20px; } .ask li { margin: 6px 0; }
+@media (max-width: 1000px) { .opts { grid-template-columns: 1fr 1fr; } .find, .pair, .rules { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>RACING WORDS · 2 DRONE <small>— thiết kế 5e · bố trí màn hình (19/10/2026)</small></h1>
+<p class="lead mu">Tất cả ảnh cảnh đua dưới đây là <b>ảnh thật chụp từ game 5d</b> (1280×720, cột drone 24 %, View zoom Wide như thầy đang lưu).
+Em đặt lại máy quay drone và thêm một bản sao drone để làm drone 2. Phần chữ và bảng đạn phía trên ảnh là bản vẽ mẫu, chưa phải code game.</p>
+
+<h2>1 · Em đo được gì</h2>
+<div class="find">
+  <svg class="diag" viewBox="0 0 640 340" aria-label="Nhìn ngang: máy quay, 2 drone, 2 xe">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8fa0bd"/></marker></defs>
+    <text x="16" y="24" fill="#93a0b8" font-size="13" font-weight="800">NHÌN NGANG (mặt cắt dọc đường) · 1 m ngang = 10 px, dọc = 13 px</text>
+    <line x1="20" y1="300" x2="620" y2="300" stroke="#3a465e" stroke-width="2"/>
+    <text x="620" y="320" fill="#5b6780" font-size="11" text-anchor="end">mặt đường → phía trước</text>
+    <rect x="70" y="32" width="34" height="22" rx="4" fill="#d9e1ef"/><circle cx="108" cy="43" r="7" fill="#d9e1ef"/>
+    <text x="40" y="70" fill="#d9e1ef" font-size="12" font-weight="800">MÁY QUAY</text>
+    <line x1="112" y1="46" x2="370" y2="296" stroke="#ffd166" stroke-width="2" marker-end="url(#ar)"/>
+    <line x1="112" y1="46" x2="164" y2="140" stroke="#3b8cff" stroke-width="2.5"/>
+    <line x1="112" y1="46" x2="156" y2="127" stroke="#ff7a00" stroke-width="2.5"/>
+    <line x1="112" y1="46" x2="200" y2="112" stroke="#ff5a5a" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <rect x="152" y="140" width="32" height="8" rx="3" fill="#3b8cff"/>
+    <rect x="145" y="127" width="32" height="8" rx="3" fill="#ff7a00"/>
+    <rect x="189" y="111" width="32" height="8" rx="3" fill="none" stroke="#ff5a5a" stroke-width="1.6" stroke-dasharray="3 2"/>
+    <line x1="186" y1="146" x2="250" y2="176" stroke="#3b8cff"/><text x="254" y="181" fill="#3b8cff" font-size="12.5" font-weight="900">1 · cao 12 m</text>
+    <line x1="150" y1="135" x2="120" y2="196" stroke="#ff7a00"/><text x="40" y="212" fill="#ff7a00" font-size="12.5" font-weight="900">2 (cách A) · 13 m, lùi 0,7 m</text>
+    <line x1="222" y1="113" x2="254" y2="96" stroke="#ff5a5a"/><text x="258" y="94" fill="#ff5a5a" font-size="12.5" font-weight="900">2 (cách B) · 14 m, lên trước 2,5 m</text>
+    <rect x="352" y="288" width="36" height="12" rx="4" fill="#ffd166"/><text x="370" y="280" fill="#ffd166" font-size="12" font-weight="900" text-anchor="middle">2 XE (trước drone 20 m)</text>
+    <polygon points="554,300 562,294 578,294 586,300 578,306 562,306" fill="none" stroke="#ff63c3" stroke-width="2"/><text x="570" y="282" fill="#ff63c3" font-size="12" font-weight="900" text-anchor="middle">tâm ngắm (40 m)</text>
+    <g transform="translate(470 54)">
+      <rect x="0" y="0" width="140" height="190" rx="8" fill="#0b0f17" stroke="#3a465e"/>
+      <text x="70" y="-8" fill="#93a0b8" font-size="11" font-weight="800" text-anchor="middle">TRÊN MÀN HÌNH CỘT</text>
+      <text x="70" y="34" fill="#ff63c3" font-size="11" font-weight="800" text-anchor="middle">tâm ngắm</text>
+      <text x="70" y="66" fill="#ffd166" font-size="11" font-weight="800" text-anchor="middle">2 xe</text>
+      <text x="70" y="86" fill="#ff5a5a" font-size="11" font-weight="800" text-anchor="middle">↑ cách B đè lên đây</text>
+      <line x1="10" y1="120" x2="130" y2="120" stroke="#263044"/>
+      <text x="38" y="160" fill="#3b8cff" font-size="14" font-weight="900" text-anchor="middle">1</text>
+      <text x="102" y="160" fill="#ff7a00" font-size="14" font-weight="900" text-anchor="middle">2 (A)</text>
+      <text x="70" y="180" fill="#93a0b8" font-size="10" text-anchor="middle">sát đáy, ngang hàng</text>
+    </g>
+  </svg>
+  <div class="box">
+    <h3>3 điều rút ra từ ảnh thật</h3>
+    <ol>
+      <li>Bây giờ drone 1 nằm ở <b>72 %</b> chiều cao cột. Dải chữ "AIM ON THE ROAD", 3 nút đạn và thanh pin che <b>20 %</b> dưới cùng. Phần trời phía trên (khoảng 30 %) gần như bỏ trống.</li>
+      <li>Máy quay nhìn chếch từ <b>trên-sau</b> xuống. Vì vậy drone 2 chỉ cần <b>cao hơn chút</b> là đã trồi lên giữa màn hình, đúng chỗ 2 xe và tâm ngắm (tia đỏ đứt). Muốn không che thì phải bay rất cao, khi đó drone 2 thành chấm nhỏ ở chân trời.</li>
+      <li>Cách gọn nhất: drone 2 vẫn <b>cao hơn 1 m</b> (để không bao giờ va nhau) nhưng <b>lùi 0,7 m</b>, rồi xếp <b>ngang hàng</b> với drone 1, mỗi chiếc lệch về phía đội mình. Máy quay chung lùi xa thêm 15 % và ngẩng lên để <b>cả 2 drone tụt sát đáy</b> (82 %). Khoảng giữa dành cho xe và tâm ngắm, bảng đạn chuyển lên phần trời đang trống.</li>
+    </ol>
+  </div>
+</div>
+
+<h2>2 · Bốn cách bố trí (ảnh thật · cột 24 %)</h2>
+<div class="opts">
+  <div class="opt rec">
+    <span class="tag">A · KHUYÊN DÙNG</span>
+    <div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-top"></div>
+    <h3>Hàng ngang lệch tầng</h3>
+    <ul>
+      <li class="y">2 drone sát đáy, to bằng nhau ⇒ 2 đội công bằng</li>
+      <li class="y">Giữa cột thoáng: 2 xe + 2 tâm ngắm không bị che</li>
+      <li class="y">Cao lệch 1 m + mỗi chiếc giữ nửa đường của mình ⇒ không va, không che nhau</li>
+      <li class="y">Bảng đạn lên phần trời đang bỏ trống</li>
+      <li class="n">Cột 18 % hơi chật ⇒ có 2 drone thì drone nhỏ lại 15 %</li>
+    </ul>
+    <div class="score"><span class="g">Gọn ★★★</span><span class="g">Công bằng ★★★</span><span class="g">Nhẹ máy ★★★</span></div>
+  </div>
+  <div class="opt">
+    <span class="tag">B</span>
+    <div class="col" style="background-image:url(anh-5e/cot-b.jpg)" data-ui="b"></div>
+    <h3>Xếp tầng dọc</h3>
+    <ul>
+      <li class="y">Đúng ý ban đầu: drone 2 bay ngay trên drone 1</li>
+      <li class="n">Drone 2 (14 m) trồi lên giữa màn, <b>đè lên tâm ngắm và xe xanh</b> (vòng đỏ)</li>
+      <li class="n">Drone 2 to hơn, che nhiều hơn khi lùi lại</li>
+    </ul>
+    <div class="score"><span class="r">Gọn ★</span><span>Công bằng ★★</span><span class="g">Nhẹ máy ★★★</span></div>
+  </div>
+  <div class="opt">
+    <span class="tag">C</span>
+    <div class="col" style="background-image:url(anh-5e/cot-c.jpg)" data-ui="c"></div>
+    <h3>Tầng trời cao</h3>
+    <ul>
+      <li class="y">Không che xe: drone 2 lên 18 m, nằm ở chân trời</li>
+      <li class="n">Drone 2 <b>bé xíu</b>, cách xa tâm ngắm của nó, đội 2 thấy thiệt</li>
+      <li class="n">Lẫn với cây và cổng đích ở xa</li>
+    </ul>
+    <div class="score"><span>Gọn ★★</span><span class="r">Công bằng ★</span><span class="g">Nhẹ máy ★★★</span></div>
+  </div>
+  <div class="opt">
+    <span class="tag">D</span>
+    <div class="col" style="background-image:url(anh-5e/cot-d.jpg)" data-ui="d"></div>
+    <h3>Chia đôi cột (2 máy quay)</h3>
+    <ul>
+      <li class="y">Mỗi drone có khung riêng, NEAR / FAR giữ như cũ</li>
+      <li class="n">Xe và tâm ngắm <b>bé một nửa</b>, đường lặp lại 2 lần</li>
+      <li class="n">Vẽ cảnh thêm 1 lần ⇒ TOMKO nặng thêm khoảng 1/3</li>
+    </ul>
+    <div class="score"><span class="r">Gọn ★</span><span class="g">Công bằng ★★★</span><span class="r">Nhẹ máy ★</span></div>
+  </div>
+</div>
+<p class="mu" style="margin-top:12px">Em đã loại cách thứ 5, <b>2 cột drone hẹp</b> đặt cạnh nhau: 2 nửa đội sẽ chỉ còn khoảng 26 % mỗi bên, nhìn xe rất chật.</p>
+
+<h2>3 · Cách A trên toàn màn</h2>
+<div class="pair">
+  <div>
+    <div class="full"><div class="slot"><div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-top"></div></div></div>
+    <p class="cap"><b>A1 · bảng đạn trên trời</b> (khuyên): 2 ô nhỏ ngay dưới dải "m LEFT", ô trái = drone 1 (xanh), ô phải = drone 2 (cam). Phần đáy chỉ có 2 drone, không còn dải chữ che.</p>
+  </div>
+  <div>
+    <div class="full"><div class="slot"><div class="col" style="background-image:url(anh-5e/cot-a.jpg)" data-ui="a-bot"></div></div></div>
+    <p class="cap"><b>A2 · bảng đạn dưới chân drone</b>: mỗi ô nằm ngay dưới drone của mình, dễ nhìn nhưng che mất phần thân dưới của 2 drone.</p>
+  </div>
+</div>
+<div class="pair" style="margin-top:18px">
+  <div>
+    <div class="full"><div class="slot"><div class="col" style="background-image:url(anh-5e/cot-now.jpg)" data-ui="old"></div></div></div>
+    <p class="cap"><b>Bây giờ (1 drone)</b> để so sánh: drone ở 72 %, dải chữ và nút đạn che phần đáy.</p>
+  </div>
+  <div>
+    <div class="col" style="background-image:url(anh-5e/cot18-a.jpg); max-width: 240px; aspect-ratio: 230 / 568" data-ui="a18"></div>
+    <p class="cap"><b>Thử cột hẹp 18 %</b> (Column width nhỏ nhất ở Settings): 2 drone vẫn vừa nhưng sát mép, nên em đề xuất drone nhỏ lại 15 % khi chơi 2 drone.</p>
+  </div>
+</div>
+
+<h2>4 · Luật đi kèm cách A</h2>
+<div class="rules">
+  <div class="box"><h3><i>01</i> Drone nào của đội nào</h3>
+    <p><b class="t1">Drone 1 = TEAM 1</b> (xanh), bay bên trái, thấp 12 m. <b class="t2">Drone 2 = TEAM 2</b> (cam), bay bên phải, cao 13 m.</p>
+    <p>Nhận diện có 2 lớp: vòng sáng màu đội dưới bụng kèm số 1 / 2, và thẻ số nhỏ màu đội đặt cạnh tâm ngắm. Màu tâm vẫn theo loại đạn như thầy đã chốt: Heart hồng, Boost xanh ngọc, Missile đỏ.</p></div>
+  <div class="box"><h3><i>02</i> Không va · không che</h3>
+    <p>Mỗi drone chỉ bay trong <b>nửa đường của mình</b> (drone 1 bên trái, drone 2 bên phải) nên không bao giờ bay chéo qua nhau. Tâm ngắm vẫn bắn được <b>khắp đường</b>.</p>
+    <p>Hai drone cao lệch nhau 1 m, nên kể cả khi đến gần nhau cũng không đụng.</p></div>
+  <div class="box"><h3><i>03</i> NEAR / FAR (2 drone dùng chung 1 máy quay)</h3>
+    <div class="ch3">
+      <div class="k"><b>a · Trung bình 2 iPad</b> (khuyên): mỗi iPad vẫn bấm NEAR / FAR, máy quay đứng ở khoảng trung bình của 2 bên. Drone của ai cũng nhích lên / lùi ±3 m theo ý người đó.</div>
+      <div><b>b · Chỉ thầy chỉnh</b>: ẩn NEAR / FAR trên iPad, khoảng cách lấy theo View zoom ở Settings.</div>
+      <div><b>c · Chỉ nhích drone mình</b>: máy quay đứng yên ở 20 m, NEAR / FAR chỉ dời drone của mình ±4 m.</div>
+    </div></div>
+  <div class="box"><h3><i>04</i> Đạn · tâm ngắm · iPad thứ 4</h3>
+    <p>Luật giống "Team drone": Heart và Boost chỉ cho đội mình, Missile chỉ bắn đội kia. <b>Mỗi drone</b> có pin và thời gian chờ riêng, mỗi drone 1 quả bay một lúc. Vùng nổ giữ như bản 4z.</p>
+    <p>Trên đường có 2 tâm ngắm, mỗi drone 1 tâm. iPad thứ 4 (vai DRONE 2): QR riêng ở xưởng, màn chọn vai thành 4 nút, bảng lái AERO YOKE giữ nguyên, chỉ đổi màu đội và chữ "DRONE 2".</p></div>
+</div>
+
+<h2>5 · Thầy chọn giúp em</h2>
+<div class="box ask">
+  <ol>
+    <li><b>Cách bố trí:</b> A (khuyên) · B · C · D?</li>
+    <li><b>Bảng đạn:</b> A1 trên trời (khuyên) hay A2 dưới chân drone?</li>
+    <li><b>NEAR / FAR:</b> a trung bình 2 iPad (khuyên) · b chỉ thầy chỉnh · c chỉ nhích drone mình?</li>
+    <li><b>Mẫu drone:</b> 2 drone dùng chung 1 mẫu (khác màu đội), hay mỗi đội chọn mẫu riêng ở Settings?</li>
+  </ol>
+  <p class="mu">Thầy chốt xong em mới làm bản 5e trong myGame (chưa đụng AWord).</p>
+</div>
+</div>
+
+<script type="module">
+import { icon } from "./core/rw-icons-4x.js";
+const T1 = "#3b8cff", T2 = "#ff7a00", AC = { heart: "#ff63c3", boost: "#2ee6c9", missile: "#ff2020" };
+const chips = (sel, wait = []) => `<div class="ch">${["heart", "boost", "missile"].map(k => `<span class="${k === sel ? "on" : ""} ${wait.includes(k) ? "wait" : ""}" style="--ac:${AC[k]}">${icon(k)}</span>`).join("")}</div>`;
+const panel = (n, c, sel, bat, st, wait) => `<div class="hp" style="--c:${c}"><div class="hd"><b>${n}</b>DRONE ${n}<em>TEAM ${n}</em></div>${chips(sel, wait)}<div class="bt" style="--b:${bat}%"><i></i></div><div class="st">${st}</div></div>`;
+const ban = `<div class="ban">721 m<i>LEFT</i></div>`;
+const at = (cls, x, y, c, txt = "") => `<div class="${cls}" style="left:${x}%;top:${y}%;--c:${c}">${txt}</div>`;
+// vị trí đo trên ảnh 308×568 (%)
+const UI = {
+  "a-top": () => ban + at("glow", 35.7, 86, T1) + at("glow", 78, 85, T2) + at("dn", 35.7, 74, T1, "1") + at("dn", 78, 73.5, T2, "2") + at("rt", 70, 51, T1, "1") + at("rt", 41, 47.5, T2, "2")
+    + `<div class="hud2 top">${panel(1, T1, "heart", 72, "AIM ON THE ROAD")}${panel(2, T2, "missile", 46, "IN SIGHT · TEAM 1", ["boost"])}</div>`,
+  "a-bot": () => ban + at("glow", 35.7, 86, T1) + at("glow", 78, 85, T2) + at("dn", 35.7, 74, T1, "1") + at("dn", 78, 73.5, T2, "2") + at("rt", 70, 51, T1, "1") + at("rt", 41, 47.5, T2, "2")
+    + `<div class="hud2 bot">${panel(1, T1, "heart", 72, "AIM ON THE ROAD")}${panel(2, T2, "missile", 46, "IN SIGHT · TEAM 1", ["boost"])}</div>`,
+  "a18": () => ban + at("dn", 30, 74, T1, "1") + at("dn", 76, 73.5, T2, "2") + `<div class="hud2 top">${panel(1, T1, "heart", 72, "AIM")}${panel(2, T2, "missile", 46, "AIM")}</div>`,
+  "b": () => ban + at("dn", 56.5, 70, T1, "1") + at("dn", 57, 40, T2, "2") + at("x", 57, 48, "#ff5a5a"),
+  "c": () => ban + at("dn", 56.5, 72, T1, "1") + at("dn", 61, 15, T2, "2"),
+  "d": () => `<div class="split-line"></div>` + at("dn", 56, 38, T2, "2") + at("dn", 56, 88, T1, "1"),
+  "old": () => ban + `<div class="old-top">DRONE<span>NEUTRAL</span></div><div class="old-bot"><div class="lk">AIM ON THE ROAD</div><div class="am"><span class="on">Heart</span><span>Boost</span><span>Missile</span></div><div class="bt"><i></i></div></div>`,
+};
+document.querySelectorAll("[data-ui]").forEach(el => { el.innerHTML = UI[el.dataset.ui](); });
+</script>
+</body>
+</html>
