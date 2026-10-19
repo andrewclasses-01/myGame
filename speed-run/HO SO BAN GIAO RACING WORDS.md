@@ -4,7 +4,7 @@
 
 ## ⏭ VIỆC CHỜ SỐ 1 — PHIÊN SAU VÀO THẲNG: TEST LẠI + TỐI ƯU TRÊN TOMKO (ghi 19/10/2026)
 **✅ ĐÃ LÀM 19/10 ⇒ MẪU 5h** (`mau-5h-tomko.html` · `core/rw-5h.js` · `core/sr3d-5h.js` · `core/rw-5h.css`) — số đo + nguyên nhân: NGHIEN CUU mục 48.
-2 drone: đua ≈ 85 ⇒ ≈ 40 khung trễ / ván, 5 đèn 56 ⇒ 60, độ nét giữ 0,9–1,0 (5f tụt 0,7), không còn khung > 50 ms. **⬜ thầy chốt ⇒ đưa lên AWord** như Đợt 554:
+2 drone: đua ≈ 85 ⇒ ≈ 40 khung trễ / ván, 5 đèn 56 ⇒ 60, độ nét giữ 0,9–1,0 (5f tụt 0,7), không còn khung > 50 ms. **✅ ĐÃ LÊN AWORD THẬT Đợt 556 `a4170d8`** (live kiểm 6/6, đo lại thư mục AWord thật: 2 drone 5 đèn 58–59 · đua 59,7). ⬜ thầy thử TOMKO thật + 4 iPad. Cách đã làm:
 `chep-racing-words.py` GOC = "rw-5h.js" + CSS thêm "rw-5h.css" (đúng thứ tự, cuối) + template `GAME`/`CSS` ⇒ đo lại trên thư mục AWord thật. Không bỏ hiệu ứng nào (chỉ ẩn mảnh xe < 0,22 m trong cột drone).
 
 Thầy 19/10: "sau đợt tối ưu game gần nhất cho TOMKO, hiện đã nâng phiên bản và thêm nhiều tính năng mới. Ghi việc chờ test lại trên TOMKO để tiếp tục tối ưu

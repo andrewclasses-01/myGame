@@ -1140,7 +1140,7 @@ Câu hỏi của thầy: iPad cầm ngang xoay như vô lăng, có thể CHÚC L
   5. iOS cần bấm nút để xin quyền chuyển động + trang HTTPS (nút TILT đã làm) ⇒ thử thật phải qua trang thử ẩn AWord, máy nhà http không được.
 - Đề xuất build (chờ thầy): nút TILT 3 nấc Off · Steer · Steer + Pitch; vòng tròn nhỏ có chấm hiện hướng đang nghiêng; bàn thử máy tính giả góc bằng `tiltDebug`.
 
-## 48. ✅ MẪU 5h (19/10/2026) — TEST LẠI + TỐI ƯU TRÊN TOMKO SAU 3r (drone, 2 drone, traffic…) — ⬜ thầy chốt ⇒ lên AWord
+## 48. ✅ MẪU 5h (19/10/2026) — TEST LẠI + TỐI ƯU TRÊN TOMKO SAU 3r (drone, 2 drone, traffic…) — ✅ ĐÃ LÊN AWORD Đợt 556 `a4170d8`
 Trang thử: `speed-run/mau-5h-tomko.html` (= mau-5g + gói nhúng `core/rw-5h.js` → lõi `core/sr3d-5h.js`, CSS thêm `core/rw-5h.css`; xưởng, iPad, mô-đun khác giữ bản 5f/5g).
 **Cách đo** (y mục 30): myActivity `--remote-debugging-port=9333`, act thật 572, server cục bộ `tools/do-game-3d/serve.mjs` (sửa: đường có dấu cách + móc `rw-<mẫu>.js`),
 kịch bản mới `scen5.js` + `runfull5.sh <root> <out> off|d1|d2|d2tr` (chế độ iPad 0 = HUD trên màn lớn, drone bắn mỗi 1,6 s, 2 xe chênh tốc, PLAY AGAIN),
@@ -1175,3 +1175,7 @@ PointLight xưởng 5f: KHÔNG gây hại (xưởng 60 cả 4 cấu hình).
 | Độ nét | 1,0 | 0,9–1,0 | 0,9–0,95 | 0,9–1,0 |
 0 lỗi · 0 dịch shader · **không còn khung > 50 ms trong đua (LOAF trống)** · GPU WebGL 2 drone 7,1–7,3 ms · lệnh vẽ ~760.
 Còn lại (nhẹ): màn kết slow motion 58,6–58,9 có drone; 5 đèn 2 drone + Traffic 57,7 (cột trượt + xe khác cùng lúc).
+**Lên AWord Đợt 556 `a4170d8`** — đo lại trên THƯ MỤC AWORD THẬT (worktree, `AWORD_WEB=<worktree> node serve.mjs`): không drone đua 59,8–59,9 · 1 drone 59,7–59,8 · 2 drone 5 đèn 58,4 /
+đua 59,7 · 2 drone + Traffic + Sky 5 đèn 59,0 / đua 59,7 (lần đầu ngay sau khi mở myActivity, card 84 °C SW Thermal Slowdown: 56,3 / 58,7 — nguội + nóng, JS chỉ 6–10 ms/khung).
+`load-files.js` 98 file 5,37 MB ghi bằng `recload.js` (TOMKO không có scratch/dot543-rec.html). Live: kiem-live 6/6, trang thật nạp rw-5h / sr3d-5h / rw-5h.css, xưởng 60 fps, 0 lỗi
+(START chờ 2 iPad theo cài đặt Drive on iPad của thầy — không đổi cài đặt thầy).

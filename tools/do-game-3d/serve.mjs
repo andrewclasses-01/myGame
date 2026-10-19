@@ -4,7 +4,7 @@ import path from 'node:path';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 const DIR = path.dirname(fileURLToPath(import.meta.url));   // đường có dấu cách (%20) ⇒ phải giải mã
-const WEB = 'E:/LAP TRINH APP/AWord/web';
+const WEB = process.env.AWORD_WEB || 'E:/LAP TRINH APP/AWord/web';   // 5h: worktree Đợt mới ⇒ AWORD_WEB=<thư mục web-wt-dotNNN>
 const rootNow = () => fs.readFileSync(path.join(DIR, 'root.txt'), 'utf8').trim();
 const CT = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.glb': 'model/gltf-binary', '.mp3': 'audio/mpeg', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon', '.wasm': 'application/wasm', '.txt': 'text/plain' };
 const PORT = +process.argv[2] || 5733;
