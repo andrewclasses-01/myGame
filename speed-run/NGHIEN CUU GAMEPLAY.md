@@ -1126,7 +1126,7 @@ Thiết kế: `thiet-ke-4k-drone-v2.html` (luật, iPad) · `chon-drone-4l.html`
 Trang thử từng bước: mau-4l-drone-ipad · mau-4m-drone-3d · mau-4n-drone-bay · mau-4o-chon-drone · mau-4p-drone-5-mau · mau-4q-tam-ngam · mau-4r-dan-drone · mau-4s-dan-gon.
 Tóm tắt + việc còn lại: HO SO BAN GIAO mục 0.
 
-## 47. 🔬 iPad LÁI NGHIÊNG 2 TRỤC (vô lăng + chúc lên / xuống) — nghiên cứu 19/10/2026, CHƯA build
+## 47. ✅ iPad LÁI NGHIÊNG 4 HƯỚNG (vô lăng + chúc lên / xuống) — nghiên cứu 19/10/2026 → BUILD 4u (thầy: kiểu cần lái, tư thế vô lăng ô tô = tâm giữa)
 Câu hỏi của thầy: iPad cầm ngang xoay như vô lăng, có thể CHÚC LÊN / CHÚC XUỐNG để điều khiển nhiều hướng không? ⇒ **ĐƯỢC.**
 - iPad báo hướng trọng lực theo 3 trục (sự kiện `devicemotion`, `accelerationIncludingGravity` x · y · z). Bảng lái 4l đang dùng x · y (góc vô lăng trong mặt màn).
   Thêm z ⇒ góc CHÚC: `pitch = atan2(z, hypot(x, y))` — tách hẳn khỏi góc vô lăng `atan2(x, y)` nên xoay và chúc cùng lúc không lẫn nhau.
