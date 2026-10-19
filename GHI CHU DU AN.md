@@ -886,3 +886,10 @@ Thử S9 góc rộng: vẫn rõ xanh / cam, bớt loá; 0 lỗi console. Ghi ch�
 **Thầy:** Retro Toy, Toy Rocket giảm chút · Northstar giảm nhiều · Low Poly Ship tăng nhiều · Space Fighter tăng chút ⇒ trường riêng trong `SHIPS` (game11/rr3d-ships.js):
 R1 / R2 `glow 0,26` (mặc định tên lửa 0,34) · S9 `glow 0,28 + bright 1,2` (mặc định phi thuyền 0,45 + 1,45) · S5 `glow 0,78 + bright 1,75` · S7 `glow 0,56`; R8, S10 giữ mặc định.
 Chụp lại 14 ảnh mô phỏng. Thử S5 góc rộng: sáng rõ xanh / cam; 0 lỗi. Chỉnh tiếp: sửa 2 trường glow / bright của mẫu đó.
+
+## Rocket Race MẪU 12 ⇒ ✅ GHÉP AWORD Đợt 557 (19/10/2026) · AWord `10c1298`
+**Thầy:** "commit và push cả myGame, cả AWord". myGame `f4deb77` đã push. Chép 4 file 3D + tau3d bằng `tools/chep-rr-mau12-sang-aword.py` (MỚI — đổi import three ⇒
+./vendor/three/, ../tau3d/ ⇒ ./tau3d/; soát: dòng cũ của AWord bị đổi chỉ là phần mẫu 12). AWord tự viết thêm ⚙ Settings trong `rocket-race.js` (`rr3dSettings`, nút trong
+`rr3dToolbar`, tab iPad gọi ctl.setIpadLive / applyOptions, ẩn nút iPad engine) — bản AWord KHÁC trang mẫu 12 ở phần giao diện này (mẫu 12 vẫn dùng popup iPad của mẫu 10).
+Thử AWord `scratch/dot416-rr-endless.html`: R8 / S9 intro + đua, đổi tàu APPLY, iPad Controller bật tại chỗ / tắt — 0 lỗi. Hồ sơ AWord: GHI CHU DU AN Đợt 557 + GHI CHU ROCKET-RACE mục 48.
+⬜ còn: bảng tên lửa iPad (rr-padscene) vẫn kiểu cũ · thầy thử TOMKO.
