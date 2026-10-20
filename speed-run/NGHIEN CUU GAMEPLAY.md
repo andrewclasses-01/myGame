@@ -1180,7 +1180,7 @@ Còn lại (nhẹ): màn kết slow motion 58,6–58,9 có drone; 5 đèn 2 dron
 `load-files.js` 98 file 5,37 MB ghi bằng `recload.js` (TOMKO không có scratch/dot543-rec.html). Live: kiem-live 6/6, trang thật nạp rw-5h / sr3d-5h / rw-5h.css, xưởng 60 fps, 0 lỗi
 (START chờ 2 iPad theo cài đặt Drive on iPad của thầy — không đổi cài đặt thầy).
 
-## 49. ✅ MẪU 5i (20/10/2026) — VẠCH LỬA khi drone bắn trúng xe dẫn · ⚙ Settings ▸ BOOST 5 thanh kéo · sai ⇒ boost đỏ xịt + khói (CHƯA lên AWord)
+## 49. ✅ MẪU 5i (20/10/2026) — VẠCH LỬA khi drone bắn trúng xe dẫn · ⚙ Settings ▸ BOOST 5 thanh kéo · sai ⇒ boost đỏ xịt + khói — ✅ ĐÃ LÊN AWORD Đợt 558 `12eeef7` (LIVE 9/9)
 Trang thử: `speed-run/mau-5i-vach-lua.html` (= 5h + gói `core/rw-5i.js` → lõi `core/sr3d-5i.js`, CSS thêm `core/rw-5i.css` sau rw-5h.css) · iPad `pad-5i.html` (`core/sr3d-padui-5i.js`) ·
 mô-đun chung mới `core/rw-bloss-5i.js` (hiệu ứng boost mất, tự chèn CSS). Xưởng, đường nối iPad (padlink-5e), drone, mọi mô-đun khác giữ 5h.
 
