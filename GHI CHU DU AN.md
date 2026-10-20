@@ -659,6 +659,7 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
 
 ## VIỆC ĐANG CHỜ
+- ⏸ **RACING WORDS — TẠM CHỐT 20/10** sau 5i (= AWord Đợt 558). Phiên sau: đọc speed-run/HO SO BAN GIAO mục "MỚI NHẤT — MẪU 5i" trước.
 - ⬜ **RACING WORDS 5i** (20/10, ✅ ĐÃ LÊN AWord Đợt 558 `12eeef7`): thầy thử trên AWord thật (hoặc `speed-run/mau-5i-vach-lua.html` + `pad-5i.html?t=0|1`) trên TOMKO ⇒ thử vạch lửa (Settings ▸ Drone ▸ 1 drone, Help the losing team,
   bắn Missile vào xe dẫn) + tab ⚙ Settings ▸ Boost. Trả lời 2 câu: "Boost max" có đúng ý (mức nạp khi trả lời nhanh nhất) không · thanh thứ 5 (Fire line slow) có đúng ý không.
   OK ⇒ lên AWord: HO SO BAN GIAO mục 4 (GOC rw-5i, GOC_THEM padui-5i, CSS + rw-5i.css, pad.js, load-files đo lại).

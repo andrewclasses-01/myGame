@@ -8,6 +8,9 @@
   không bao giờ vượt; hết mất lái ⇒ thả cả 2 cùng lúc, xe đuổi chậm Fire line slow % trong 1,6 s. Trượt / 2 drone / trúng xe sau = như cũ.
 - **⚙ Settings ▸ Boost** (nhớ theo máy `racingwords.boost.v1`): Next question 1–5 s (3) · Boost gain 0–100 % (15) · Boost max 0–100 % (50) · Boost off 0–100 % (15) · Fire line slow 0–50 % (15).
 - Sai ⇒ khúc boost mất ĐỎ rồi xịt xuống + khói đen trên bàn đạp (màn lớn + iPad).
+- ⏸ **TẠM CHỐT 20/10/2026** (thầy: "tạm chốt đến đây, tôi sẽ tiếp tục trong các phiên sau"). Phiên sau VÀO THẲNG: (1) hỏi thầy kết quả thử TOMKO vạch lửa + tab Boost + tab Driver;
+  (2) 2 câu chờ thầy: nghĩa "Boost max" (em đang hiểu = mức nạp khi đúng NHANH NHẤT) · thanh thứ 5 = Fire line slow có đúng ý không; (3) chưa đo fps TOMKO lúc vạch lửa cháy
+  (150 hạt lửa/s dùng chung pool tên lửa — nghi nhẹ, đo nếu thầy thấy khựng). Sửa tiếp = bản mới 5j ở myGame rồi chép AWord như Đợt 558.
 - ✅ Lên AWord Đợt 558 (GOC rw-5i, GOC_THEM padui-5i, CSS + rw-5i.css, pad.js, load-files thay 4 mục). Sửa luôn tab Driver bấm không ăn (lỗi từ 4w). ⬜ Thầy thử TOMKO (+ iPad). Câu hỏi chờ thầy: nghĩa thanh "Boost max" + thanh thứ 5 (xem mục 49).
 
 ## ⏭ VIỆC CHỜ SỐ 1 — PHIÊN SAU VÀO THẲNG: TEST LẠI + TỐI ƯU TRÊN TOMKO (ghi 19/10/2026)
