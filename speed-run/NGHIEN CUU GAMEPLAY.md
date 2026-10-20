@@ -1179,3 +1179,50 @@ Còn lại (nhẹ): màn kết slow motion 58,6–58,9 có drone; 5 đèn 2 dron
 đua 59,7 · 2 drone + Traffic + Sky 5 đèn 59,0 / đua 59,7 (lần đầu ngay sau khi mở myActivity, card 84 °C SW Thermal Slowdown: 56,3 / 58,7 — nguội + nóng, JS chỉ 6–10 ms/khung).
 `load-files.js` 98 file 5,37 MB ghi bằng `recload.js` (TOMKO không có scratch/dot543-rec.html). Live: kiem-live 6/6, trang thật nạp rw-5h / sr3d-5h / rw-5h.css, xưởng 60 fps, 0 lỗi
 (START chờ 2 iPad theo cài đặt Drive on iPad của thầy — không đổi cài đặt thầy).
+
+## 49. ✅ MẪU 5i (20/10/2026) — VẠCH LỬA khi drone bắn trúng xe dẫn · ⚙ Settings ▸ BOOST 5 thanh kéo · sai ⇒ boost đỏ xịt + khói (CHƯA lên AWord)
+Trang thử: `speed-run/mau-5i-vach-lua.html` (= 5h + gói `core/rw-5i.js` → lõi `core/sr3d-5i.js`, CSS thêm `core/rw-5i.css` sau rw-5h.css) · iPad `pad-5i.html` (`core/sr3d-padui-5i.js`) ·
+mô-đun chung mới `core/rw-bloss-5i.js` (hiệu ứng boost mất, tự chèn CSS). Xưởng, đường nối iPad (padlink-5e), drone, mọi mô-đun khác giữ 5h.
+
+**Soát đồng bộ trước khi làm (20/10):** AWord live Đợt 556 nạp `rw-5h.js`; 50 file `templates/racing-words/3d/` (NGUON.json) GIỐNG HỆT myGame 5h trừ dòng import (three / mc3d-qr) —
+myGame và AWord đã cùng bản tốt nhất (5h), cả 2 repo sạch, khớp origin.
+
+**1. VẠCH LỬA (thầy 20/10):** "drone bắn tên lửa cản đội nhanh hơn … đôi khi tác động quá mạnh khiến đội nhanh hơn trở thành chậm hơn … tôi chỉ muốn tác động phần nào".
+Gốc: trúng ⇒ xe dẫn đứng yên L giây (Missile damages, mặc định 2) trong khi xe đuổi chạy ~31 m/s ⇒ vượt hẳn 50–60 m ⇒ drone quyết định luôn cuộc đua.
+- Chỉ khi: chế độ **1 drone** (2 drone giữ như cũ) · tên lửa DRONE **trúng** (trượt / sượt = như cũ) · trúng **đúng 1 xe** và xe đó đang **DẪN** (xe sau bị trúng ⇒ như cũ).
+  Chế độ "Help the losing team" tên lửa chỉ nhắm xe dẫn ⇒ lần trúng nào cũng có vạch; Neutral / Team drone: chỉ khi trúng xe đang dẫn.
+- Trúng ⇒ rung chấn (2 xe rung) + bùng lửa ngang đường + vết cháy (burnSk, 6 đoạn ngang) · xe bị trúng giữ đứng yên suốt lúc mất lái (như cũ) · **vạch lửa = 4,2 m SAU tâm xe bị trúng**.
+- Xe đuổi: phanh êm (v ≤ √(2·24·khoảng còn lại)), **dừng cách lửa 6 m**, không đốt boost lúc chờ, vị trí bị chặn cứng (cả lúc đang bay) — không bao giờ vượt vạch.
+  Khung xe đuổi: bảng **FIRE LINE · WAIT FOR THE FIRE** (cam lửa, nhấp nháy bằng opacity) + toast "FIRE LINE — WAIT!". Đã sát vạch lúc trúng ⇒ phanh gấp tại chỗ, vạch dời lên GIỮA 2 xe.
+- Xe bị trúng hết mất lái ⇒ **thả CẢ 2 cùng lúc** (toast GO!) · lửa tắt dần 1,6 s · xe đuổi chậm **Fire line slow %** (mặc định 15 %) trong 1,6 s đầu (băng qua lửa) ⇒ vẫn sau vạch + chậm hơn chút.
+  Kéo gần (CATCH) giữ nguyên ⇒ sau đó đua bình thường. An toàn: thả sau tối đa 8 s · hết trận / chơi lại ⇒ xoá (`fireClear` trong resetTeams) · trúng lần nữa ⇒ vạch mới thay vạch cũ.
+- Lửa = hạt dùng chung của tên lửa (`missiles.fire` 150 hạt/s + `missiles.dark` 20 hạt/s) ⇒ **0 shader mới, 0 lệnh vẽ thêm**. Tiếng: bùm trầm + crash lúc bật, tiếng "fire" sẵn có lặp suốt lúc lửa cháy, "pop" lúc thả.
+- Đo (máy nhà, bàn thử): vạch 114,8 m ⇒ xe đuổi dừng đúng 111,8 m (bản đầu dừng 3 m — lửa trùm kín kính lái ⇒ đổi 6 m), xe trúng đứng 119,4 m, 2 s sau cả 2 cùng chạy;
+  đường thật (drone bắn Missile, Auto target) ⇒ impact hit ⇒ fireline on ⇒ xe đuổi dừng 1068,7 m (lửa 1074,7 m). Ca sát vạch (cách 3 m): xe đuổi đứng tại chỗ, cách nhỏ nhất 3,9 m. 0 lỗi.
+
+**2. ⚙ Settings ▸ tab BOOST** (icon tia sét, giữa Race và Drone) — nhớ theo MÁY `racingwords.boost.v1`, áp NGAY giữa trận, nút Default:
+| Thanh | Khoảng | Mặc định | Tác dụng |
+|---|---|---|---|
+| Next question | 1–5 s (bước 0,5) | 3 s (= cũ) | khoảng chờ thanh màu trong ô câu hỏi trước câu mới (`qGap`; cũ hằng QGAP = 3) — đo 1,02 / 5,0 / 3,02 s |
+| Boost gain | 0–100 % | 15 % (= cũ 0,6 ô) | boost nạp khi ĐÚNG CHẬM (≥ 7,5 s) |
+| Boost max | 0–100 % | **50 %** (cũ 30 % = 1,2 ô) | boost nạp khi ĐÚNG NHANH (≤ 1,5 s); giữa = nội suy như cũ. Max < Gain ⇒ luôn bằng Gain |
+| Boost off | 0–100 % | 15 % (= cũ 0,6 ô) | boost mất khi SAI (hiệu ứng sai cũ giữ nguyên: khói đen ống xả, chậm ×0,86, giật lắc, −1 mạng) |
+| Fire line slow | 0–50 % | 15 % | xe đuổi chậm bao nhiêu lúc băng qua vạch lửa |
+100 % = cả thanh boost (4 ô = 320 m năng lượng). Đo: đúng ngay = 50 %, đúng sau 4,5 s = 32,4 % (đúng công thức), đúng chậm = 15 %; Boost off 40 % ⇒ 320 → 192.
+⚠️ Ghi chú cho thầy: sai VỐN ĐÃ trừ 0,6 ô từ trước (mẫu 3c) — chỉ là khi thanh đang trống (vừa đạp hết) thì không còn gì để trừ nên trông như không phạt.
+Ý "thanh boost tối đa sau mỗi câu đúng" em hiểu là mức nạp khi trả lời NHANH NHẤT (thanh 2 = mức khi trả lời chậm); nếu thầy muốn nghĩa khác (trần cả thanh) thì đổi lại.
+Thầy viết "5 thanh kéo" nhưng kể 4 ⇒ thanh thứ 5 em chọn **Fire line slow** (độ "chậm hơn một chút xíu" của xe đuổi sau vạch lửa) — thầy muốn thanh khác thì báo.
+
+**3. Khúc boost mất trên bàn đạp** (`rw-bloss-5i.js`, màn lớn + iPad): dải ĐỎ phủ đúng khúc vừa mất (mức cũ → mức mới, trong khuôn srgasclip của GAS_SVG), chớp sáng rồi co về mức mới
+(xịt xuống) + 7 cụm khói đen rìa xám bốc lên từ mép năng lượng mới (chỉ transform + opacity, không filter). Khói đen tuyền chìm vào táp-lô tối ⇒ phải có rìa xám.
+iPad: tin "i:" không đổi — padui-5i tự nhận boost TỤT ĐỘT NGỘT > 7,5 % giữa 2 tin (đốt boost ~3,5 %/tin) ⇒ cả sai câu lẫn trúng tên lửa đều hiện; Boost off < 7,5 % thì iPad không hiện.
+
+**4. SỬA LỖI tab DRIVER không chọn được (thầy báo 20/10, lỗi từ 4w → 5h, ĐANG CÓ trên AWord live Đợt 556):** 4w gắn `data-tab` lên khung `.rw-c` (để đổi tab mượt) mà dòng gắn lệnh vẫn là
+`pBody.querySelectorAll("[data-tab]")` ⇒ bắt cả khung ⇒ bấm BẤT KỲ đâu trong bảng thì sự kiện nổi lên khung ⇒ `openSettings(tab đang mở)` ⇒ dựng lại cả bảng ⇒ hộp xác nhận "Switch to …?"
+của tab Driver bị xoá ngay (tab khác trông như vẫn chạy vì tự dựng lại sau khi đổi). Sửa 5i: `"nav [data-tab]"`. Đã thử bấm chuột thật: hộp hiện, OK đổi chế độ, nút tab trái vẫn chuyển tab.
+
+**Bẫy gặp ở đợt này:** trùng tên `FL` (lõi đã có `const FL = new THREE.Vector3()` ở hàm máy quay) ⇒ biến vạch lửa tên `FIRE_L`; API game đã có `fire` (bắn tên lửa) ⇒ getter `fireL`
+(getter cùng tên đặt TRƯỚC bị hàm sau đè im lặng — gói nhúng tưởng lửa luôn cháy) · heredoc bash nuốt `\b` trong regex Python · `sed -i` trên Git Bash đổi CRLF → LF cả file.
+Bàn thử: `__rw().game.fireLine(0|1)` (cần `T[i].stallT > 0` + xe đó đang dẫn) · `.fireL` · `.boostSet` · `.setBoost({gap, gain, max, loss, fire})` · `.answer(i, true|false)`.
+**Lên AWord** (khi thầy OK): `chep-racing-words.py` GOC = "rw-5i.js", GOC_THEM padui-5g ⇒ **padui-5i**, CSS thêm "rw-5i.css" (cuối) · `racing-words.js` GAME/CSS · `pad.js` nạp padui-5i ·
+load-files đo lại (thêm rw-bloss-5i.js, rw-5i.css). Cài đặt Boost theo MÁY (như Traffic) — nếu thầy muốn theo ACT thì chuyển sang Options AWord (khoá `srQGap`… trong RW_DEF/RW_FLAT).

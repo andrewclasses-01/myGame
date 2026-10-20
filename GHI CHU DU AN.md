@@ -659,6 +659,9 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 - **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 5i** (20/10, chưa lên AWord): thầy mở `speed-run/mau-5i-vach-lua.html` (+ `pad-5i.html?t=0|1`) trên TOMKO ⇒ thử vạch lửa (Settings ▸ Drone ▸ 1 drone, Help the losing team,
+  bắn Missile vào xe dẫn) + tab ⚙ Settings ▸ Boost. Trả lời 2 câu: "Boost max" có đúng ý (mức nạp khi trả lời nhanh nhất) không · thanh thứ 5 (Fire line slow) có đúng ý không.
+  OK ⇒ lên AWord: HO SO BAN GIAO mục 4 (GOC rw-5i, GOC_THEM padui-5i, CSS + rw-5i.css, pad.js, load-files đo lại).
 - ⬜ **ROCKET RACE MẪU 12 — TÀU + TÊN LỬA 3D** (19/10, CHƯA push, CHƯA lên AWord): thầy mở `rocket-race/mau-12-tau-3d.html` trên máy nhà + TOMKO ⇒ ⚙ Settings thử
   từng tàu (R1 R2 R8 S5 S7 S9 S10) + tên lửa (M1–M5): cỡ tàu, màu sơn 2 đội, chỗ lửa đuôi (vòi đặt tay — lệch thì sửa `engines` trong `game11/rr3d-ships.js`,
   soi bằng `xem-tau-3d.html?ship=S7&view=back`), intro phi thuyền cất cánh thẳng đứng, fps TOMKO (đo: lệnh vẽ ít hơn tàu cũ, tam giác +6–12 %).
@@ -893,3 +896,17 @@ Chụp lại 14 ảnh mô phỏng. Thử S5 góc rộng: sáng rõ xanh / cam; 0
 `rr3dToolbar`, tab iPad gọi ctl.setIpadLive / applyOptions, ẩn nút iPad engine) — bản AWord KHÁC trang mẫu 12 ở phần giao diện này (mẫu 12 vẫn dùng popup iPad của mẫu 10).
 Thử AWord `scratch/dot416-rr-endless.html`: R8 / S9 intro + đua, đổi tàu APPLY, iPad Controller bật tại chỗ / tắt — 0 lỗi. Hồ sơ AWord: GHI CHU DU AN Đợt 557 + GHI CHU ROCKET-RACE mục 48.
 ⬜ còn: bảng tên lửa iPad (rr-padscene) vẫn kiểu cũ · thầy thử TOMKO.
+
+## Racing Words 5i — 20/10/2026 · VẠCH LỬA DRONE + ⚙ Settings ▸ Boost + boost mất hiện đỏ (CHƯA lên AWord) · phiên máy MSI
+**Bối cảnh (thầy):** "Đọc game RACING WORDS trên AWord và myGame — check đã đồng bộ phiên bản tốt nhất chưa" · drone 1 chiếc bắn tên lửa cản đội nhanh đôi khi quá mạnh (đội nhanh thành chậm)
+⇒ khi trúng: vụ nổ rung chấn giữ xe bị trúng + đường lửa ngay sau nó, xe đuổi dừng trước lửa (có báo trên màn), xe bị trúng chạy thì xe sau chạy cùng nhưng vẫn bất lợi + chậm hơn chút ·
+thêm tab trong Settings: thời gian chờ câu mới 1–5 s, boost mỗi câu đúng, boost tối đa (mặc định 50 %), Boost off (phạt khi sai, phần giảm đỏ rồi xịt xuống + khói đen ở bàn đạp).
+**Soát đồng bộ:** AWord `web` (main, ad63862) + myGame (main, 1fad0b6) sạch, khớp origin; AWord live nạp rw-5h; 50 file 3d/ của AWord = myGame 5h (chỉ khác dòng import) ⇒ ĐÃ ĐỒNG BỘ bản 5h.
+**Đã làm:** mẫu 5i — lõi `sr3d-5i.js` (fireLine / fireRelease / fireTick / fireClear, chặn xe đuổi trong drive(), tab boostTab + bset, qGap theo bset.gap, nạp/phạt boost theo %),
+gói `rw-5i.js` (nạp lõi 5i + tiếng vạch lửa), `rw-5i.css` (bảng FIRE LINE + thanh kéo), `rw-bloss-5i.js` (đỏ + khói bàn đạp, tự chèn CSS), iPad `sr3d-padui-5i.js` + `pad-5i.html`,
+trang `mau-5i-vach-lua.html`. Chi tiết + số đo: speed-run/NGHIEN CUU mục 49.
+**Quyết định:** vạch chỉ ở chế độ 1 drone + trúng đúng xe đang dẫn · dừng cách lửa 6 m (3 m lửa trùm kín kính lái) · lửa dùng hạt sẵn có (0 shader mới) · cài đặt Boost theo MÁY ·
+"Boost max" = mức nạp khi trả lời nhanh nhất · thanh thứ 5 = Fire line slow (thầy kể 4 thanh) · iPad nhận boost mất bằng cách so 2 tin "i:" (không đổi đường nối).
+**Sửa thêm (thầy báo):** tab DRIVER bấm không có tác dụng — lỗi từ 4w (khung `.rw-c` mang `data-tab` nên bị gắn lệnh mở tab ⇒ mọi cú bấm dựng lại bảng, xoá hộp xác nhận). 5i sửa bộ chọn thành `nav [data-tab]`. AWord live (5h) VẪN CÒN lỗi tới khi lên 5i hoặc vá nóng.
+**Lỗi & gỡ:** trùng tên `FL` với biến máy quay ⇒ `FIRE_L` · getter `fire` bị hàm `fire` (bắn) trong API đè im lặng ⇒ `fireL` · khói đen tuyền không thấy trên táp-lô ⇒ rìa xám ·
+heredoc nuốt `\b` · `sed -i` đổi CRLF ⇒ ghi lại CRLF bằng Python.

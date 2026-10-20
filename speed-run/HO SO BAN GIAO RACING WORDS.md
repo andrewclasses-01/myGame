@@ -2,6 +2,14 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5i (20/10/2026, CHƯA lên AWord) — NGHIEN CUU mục 49
+`mau-5i-vach-lua.html` · gói `core/rw-5i.js` · lõi `core/sr3d-5i.js` · CSS `core/rw-5i.css` · iPad `pad-5i.html` (`core/sr3d-padui-5i.js`) · chung `core/rw-bloss-5i.js`.
+- **VẠCH LỬA** (1 drone): tên lửa drone trúng xe ĐANG DẪN ⇒ giữ xe đó (mất lái như cũ) + lửa ngang đường 4,2 m sau nó; xe đuổi tự phanh, dừng cách lửa 6 m (bảng FIRE LINE),
+  không bao giờ vượt; hết mất lái ⇒ thả cả 2 cùng lúc, xe đuổi chậm Fire line slow % trong 1,6 s. Trượt / 2 drone / trúng xe sau = như cũ.
+- **⚙ Settings ▸ Boost** (nhớ theo máy `racingwords.boost.v1`): Next question 1–5 s (3) · Boost gain 0–100 % (15) · Boost max 0–100 % (50) · Boost off 0–100 % (15) · Fire line slow 0–50 % (15).
+- Sai ⇒ khúc boost mất ĐỎ rồi xịt xuống + khói đen trên bàn đạp (màn lớn + iPad).
+- ⬜ Thầy thử TOMKO (+ iPad) ⇒ OK thì lên AWord theo mục 4 (GOC rw-5i, GOC_THEM padui-5i, CSS + rw-5i.css, pad.js, load-files). Câu hỏi chờ thầy: nghĩa thanh "Boost max" + thanh thứ 5 (xem mục 49).
+
 ## ⏭ VIỆC CHỜ SỐ 1 — PHIÊN SAU VÀO THẲNG: TEST LẠI + TỐI ƯU TRÊN TOMKO (ghi 19/10/2026)
 **✅ ĐÃ LÀM 19/10 ⇒ MẪU 5h** (`mau-5h-tomko.html` · `core/rw-5h.js` · `core/sr3d-5h.js` · `core/rw-5h.css`) — số đo + nguyên nhân: NGHIEN CUU mục 48.
 2 drone: đua ≈ 85 ⇒ ≈ 40 khung trễ / ván, 5 đèn 56 ⇒ 60, độ nét giữ 0,9–1,0 (5f tụt 0,7), không còn khung > 50 ms. **✅ ĐÃ LÊN AWORD THẬT Đợt 556 `a4170d8`** (live kiểm 6/6, đo lại thư mục AWord thật: 2 drone 5 đèn 58–59 · đua 59,7). ⬜ thầy thử TOMKO thật + 4 iPad. Cách đã làm:
