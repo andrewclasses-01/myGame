@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>XE BAY ROADSTER — Mẫu 1 · gắn phần bay</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #0b1220; overflow: hidden; font-family: "Exo 2", system-ui, sans-serif; color: #e8f1ff; }
+  #view { position: fixed; inset: 0; }
+  .top { position: fixed; left: 16px; top: 14px; z-index: 5; pointer-events: none; }
+  .top h1 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: .5px; text-shadow: 0 2px 10px #000a; }
+  .top .st { margin-top: 4px; font-size: 14px; font-weight: 700; color: #7dd3fc; text-shadow: 0 2px 8px #000a; }
+  .bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 10px; z-index: 5; flex-wrap: wrap; justify-content: center; width: calc(100% - 32px); }
+  .bar button { font: 800 15px "Exo 2", system-ui; padding: 12px 18px; border-radius: 14px; border: 1px solid #ffffff2a; color: #fff; cursor: pointer;
+    background: #0f1b2dcc; backdrop-filter: blur(8px); transition: transform .15s cubic-bezier(.22,.9,.3,1), background .2s; }
+  .bar button:hover { transform: translateY(-2px); background: #1c3150dd; }
+  .bar button:disabled { opacity: .35; cursor: default; transform: none; }
+  .bar button.on { background: #2563ebdd; border-color: #93c5fd; }
+  .hud { position: fixed; right: 16px; top: 14px; z-index: 5; text-align: right; font-weight: 800; text-shadow: 0 2px 8px #000a; pointer-events: none; }
+  .hud .n { font-size: 30px; } .hud .u { font-size: 12px; color: #93c5fd; letter-spacing: 1px; }
+  .credit { position: fixed; left: 16px; bottom: 6px; font: 600 10px system-ui; color: #ffffff80; z-index: 4; }
+  #loading { position: fixed; inset: 0; display: grid; place-items: center; background: #0b1220; z-index: 9; font-size: 18px; font-weight: 800; transition: opacity .6s; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="view"></div>
+<div id="loading">Đang tải xe… <span id="pct">0%</span></div>
+<div class="top"><h1>TESLA ROADSTER · XE BAY</h1><div class="st" id="st">Đang đỗ trên đường băng</div></div>
+<div class="hud"><div><span class="n" id="alt">0</span> <span class="u">M CAO</span></div><div><span class="n" id="spd">0</span> <span class="u">KM/H</span></div></div>
+<div class="bar">
+  <button id="bUp">⬆ CẤT CÁNH</button>
+  <button id="bGo" disabled>🚀 PHÓNG TÊN LỬA</button>
+  <button id="bDown" disabled>⬇ HẠ CÁNH</button>
+  <button id="bCam">🎥 GÓC MÁY</button>
+</div>
+<div class="credit">Mẫu xe: "Tesla Roadtser 2026" — asiphy007 (Sketchfab), CC BY 4.0 · phần bay dựng bằng code</div>
+
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+// ── Mẫu gốc: dài 1,9 đơn vị (z), rộng 0,82 (x), cao 0,5 (y). Phóng lên ≈ 4,4 m thật.
+const SCALE = 2.3;
+const FRONT = 1;           // mũi xe nằm phía z dương của mẫu gốc (đã kiểm nhìn ngang: đèn hậu đỏ + khuếch tán ở z âm)
+const L = 0.95, W = 0.41;  // nửa dài / nửa rộng mẫu gốc
+
+// ── Cảnh
+const view = document.getElementById("view");
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.85;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+view.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const SKY = new THREE.Color(0x9ec7ee);
+scene.background = SKY;
+scene.fog = new THREE.Fog(SKY, 60, 260);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 600);
+camera.position.set(7.5, 3.2, 8.5);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.49; controls.minDistance = 4; controls.maxDistance = 30;
+controls.target.set(0, 1, 0);
+
+scene.add(new THREE.HemisphereLight(0xdbeaff, 0x4a4036, 1.1));
+const sun = new THREE.DirectionalLight(0xfff1dc, 2.6);
+sun.position.set(12, 22, 8);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 60 });
+sun.shadow.bias = -0.0004;
+scene.add(sun, sun.target);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.8, 0.5, 2.2);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+// ── Đường băng (vẽ bằng canvas, cuộn texture để tạo cảm giác bay tới)
+function runwayTex() {
+  const c = document.createElement("canvas"); c.width = 512; c.height = 512; const g = c.getContext("2d");
+  g.fillStyle = "#3b3f45"; g.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 9000; i++) { const v = 50 + Math.random() * 30 | 0; g.fillStyle = `rgb(${v},${v + 2},${v + 5})`; g.fillRect(Math.random() * 512, Math.random() * 512, 2, 2); }
+  g.fillStyle = "#a9afb6"; g.fillRect(250, 0, 12, 260);            // vạch giữa đứt
+  g.fillRect(20, 0, 10, 512); g.fillRect(482, 0, 10, 512);           // vạch mép
+  return c;
+}
+const rtex = new THREE.CanvasTexture(runwayTex());
+rtex.wrapS = rtex.wrapT = THREE.RepeatWrapping; rtex.colorSpace = THREE.SRGBColorSpace; rtex.anisotropy = 8;
+const RUN_W = 26, TILE = 26;
+rtex.repeat.set(1, 600 / TILE);
+const runway = new THREE.Mesh(new THREE.PlaneGeometry(RUN_W, 600), new THREE.MeshStandardMaterial({ map: rtex, roughness: 0.9 }));
+runway.rotation.x = -Math.PI / 2; runway.receiveShadow = true; scene.add(runway);
+
+const gtex = (() => { const c = document.createElement("canvas"); c.width = c.height = 256; const g = c.getContext("2d");
+  g.fillStyle = "#5f7d45"; g.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 5000; i++) { g.fillStyle = `hsl(${85 + Math.random() * 25},${30 + Math.random() * 20}%,${25 + Math.random() * 18}%)`; g.fillRect(Math.random() * 256, Math.random() * 256, 3, 3); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.repeat.set(60, 60); return t; })();
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ map: gtex, roughness: 1 }));
+grass.rotation.x = -Math.PI / 2; grass.position.y = -0.02; grass.receiveShadow = true; scene.add(grass);
+
+// cột đèn hai bên đường băng — cuộn theo tốc độ
+const poles = new THREE.Group(); scene.add(poles);
+const poleMat = new THREE.MeshStandardMaterial({ color: 0xcfd6df, metalness: 0.6, roughness: 0.4 });
+const lampMat = new THREE.MeshStandardMaterial({ color: 0xffd27a, emissive: 0xffb84a, emissiveIntensity: 2.5 });
+for (let i = 0; i < 24; i++) for (const s of [-1, 1]) {
+  const p = new THREE.Group();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 5, 8), poleMat); m.position.y = 2.5; m.castShadow = true; p.add(m);
+  const l = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 8), lampMat); l.position.y = 5.1; p.add(l);
+  p.position.set(s * (RUN_W / 2 + 2), 0, -120 + i * 12); poles.add(p);
+}
+
+// ── Vật liệu phần bay
+const carbon = new THREE.MeshStandardMaterial({ color: 0x17191d, metalness: 0.75, roughness: 0.32 });
+const steel = new THREE.MeshStandardMaterial({ color: 0x8f98a3, metalness: 1, roughness: 0.25 });
+const glowCyan = new THREE.MeshStandardMaterial({ color: 0x0b1a22, emissive: 0x38d6ff, emissiveIntensity: 0 });
+const glowHot = new THREE.MeshStandardMaterial({ color: 0x220b05, emissive: 0xff7a2a, emissiveIntensity: 0 });
+
+// lửa phụt: hình nón mở, shader cộng sáng, chớp theo thời gian
+function flameMat(core, edge) {
+  return new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uT: { value: 0 }, uP: { value: 0 }, uCore: { value: new THREE.Color(core) }, uEdge: { value: new THREE.Color(edge) } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader: `uniform float uT,uP; uniform vec3 uCore,uEdge; varying vec2 vUv;
+      float h(float n){return fract(sin(n)*43758.5453);}
+      void main(){ float y=vUv.y; float a=sin(vUv.x*6.2832*3.+uT*40.)*.5+.5;
+        float n=h(floor(vUv.x*24.)+floor(uT*30.))*.35;
+        float f=pow(1.-y,1.6)*(0.75+0.25*a)-n*y; vec3 c=mix(uEdge,uCore,pow(1.-y,3.));
+        float rings=0.6+0.4*sin(y*40.-uT*60.);
+        gl_FragColor=vec4(c*(1.4+rings*.6),clamp(f,0.,1.)*uP); }`
+  });
+}
+// nón dài 1, đầu loe ở gốc (y=0), nhọn dần về y=-1
+function flameCone(r, mat) {
+  const g = new THREE.ConeGeometry(r, 1, 20, 1, true); g.rotateX(Math.PI); g.translate(0, -0.5, 0);
+  // sau rotateX(π) + dời: đáy loe ở y=0 (uv.y=0), đỉnh nhọn ở y=-1 (uv.y=1)
+  const m = new THREE.Mesh(g, mat); m.renderOrder = 5; return m;
+}
+
+// ── Xe + phần bay
+const car = new THREE.Group(); scene.add(car);     // nâng/nghiêng xe
+const body = new THREE.Group(); car.add(body);     // chứa mẫu gốc (đã scale)
+body.scale.setScalar(SCALE);
+if (FRONT < 0) body.rotation.y = Math.PI;          // mũi → +z
+
+const kit = new THREE.Group(); car.add(kit);       // phần bay: toạ độ cỡ mẫu gốc, hệ "mũi = +z"
+kit.scale.setScalar(SCALE);
+
+// 4 quạt ống (hover pod) cạnh 4 bánh — thu vào gầm khi chạy đường, trượt ra khi bay
+const pods = [];
+for (const sz of [1, -1]) for (const sx of [1, -1]) {
+  const pod = new THREE.Group();
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.05), carbon); arm.position.x = -sx * 0.07; pod.add(arm);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.022, 12, 32), carbon); ring.rotation.x = Math.PI / 2; pod.add(ring);
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(0.086, 0.006, 8, 32), glowCyan); lip.rotation.x = Math.PI / 2; lip.position.y = -0.02; pod.add(lip);
+  const fan = new THREE.Group(); pod.add(fan);
+  for (let k = 0; k < 6; k++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.004, 0.022), steel); b.position.x = 0.04; b.rotation.x = 0.5; const w = new THREE.Group(); w.rotation.y = k * Math.PI / 3; w.add(b); fan.add(w); }
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.02, 12), steel); pod.add(hub);
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(0.07, 24), glowCyan); disc.rotation.x = Math.PI / 2; disc.position.y = -0.012; pod.add(disc);
+  const fm = flameMat(0xdff8ff, 0x1d8cff);
+  const fl = flameCone(0.075, fm); fl.scale.set(1, 0.35, 1); fl.position.y = -0.02; pod.add(fl);
+  pod.traverse(o => { if (o.isMesh && o !== fl) o.castShadow = true; });
+  const z = sz * 0.6, y = 0.13;
+  pod.userData = { sx, fan, fl, fm, out: new THREE.Vector3(sx * (W + 0.1), y, z), inn: new THREE.Vector3(sx * (W - 0.12), y + 0.02, z) };
+  pod.position.copy(pod.userData.inn); kit.add(pod); pods.push(pod);
+}
+
+// 2 ống phụt tên lửa đuôi xe
+const nozzles = [];
+for (const sx of [-1, 1]) {
+  const n = new THREE.Group();
+  const shell = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.062, 0.14, 24, 1, true), steel); shell.rotation.x = Math.PI / 2; n.add(shell);
+  const back = new THREE.Mesh(new THREE.CylinderGeometry(0.046, 0.046, 0.01, 24), carbon); back.rotation.x = Math.PI / 2; back.position.z = 0.068; n.add(back);
+  const inner = new THREE.Mesh(new THREE.CircleGeometry(0.055, 24), glowHot); inner.position.z = -0.06; inner.rotation.y = Math.PI; n.add(inner);
+  const fm = flameMat(0xfff4d6, 0xff5a1a);
+  const fl = flameCone(0.055, fm); fl.rotation.x = Math.PI / 2; fl.position.z = -0.07; n.add(fl);   // lửa phụt về -z (phía sau)
+  const fm2 = flameMat(0xe6f2ff, 0x4f7dff);
+  const core = flameCone(0.028, fm2); core.rotation.x = Math.PI / 2; core.position.z = -0.07; n.add(core);
+  n.traverse(o => { if (o.isMesh && o !== fl && o !== core) o.castShadow = true; });
+  n.userData = { fl, fm, core, fm2, out: new THREE.Vector3(sx * 0.2, 0.2, -L - 0.03), inn: new THREE.Vector3(sx * 0.2, 0.2, -L + 0.1) };
+  n.position.copy(n.userData.inn); kit.add(n); nozzles.push(n);
+}
+
+// 2 cánh nhỏ hai bên hông sau — rút ra khi bay
+const wings = [];
+for (const sx of [-1, 1]) {
+  const piv = new THREE.Group(); piv.position.set(sx * (W - 0.03), 0.27, -0.42);
+  const shape = new THREE.Shape(); shape.moveTo(0, 0); shape.lineTo(0.34, -0.06); shape.lineTo(0.34, -0.14); shape.lineTo(0, -0.24); shape.closePath();
+  const g = new THREE.ExtrudeGeometry(shape, { depth: 0.012, bevelEnabled: false }); g.rotateX(Math.PI / 2); g.translate(0, 0, 0.12);
+  const w = new THREE.Mesh(g, carbon); w.castShadow = true; if (sx < 0) w.scale.x = -1;
+  const tip = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.006, 0.08), glowCyan); tip.position.set(sx * 0.34, 0.004, 0.02);
+  piv.add(w, tip); piv.userData = { sx }; kit.add(piv); wings.push(piv);
+}
+
+// bóng mờ dưới xe (giúp thấy độ cao)
+const blobC = document.createElement("canvas"); blobC.width = blobC.height = 128;
+{ const g = blobC.getContext("2d"); const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, "rgba(0,0,0,.55)"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); }
+const blob = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 5.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(blobC), transparent: true, depthWrite: false }));
+blob.rotation.x = -Math.PI / 2; blob.position.y = 0.01; scene.add(blob);
+
+// bụi tung dưới gầm khi cất cánh / hạ cánh
+const DUST = 260;
+const dGeo = new THREE.BufferGeometry();
+const dPos = new Float32Array(DUST * 3), dVel = new Float32Array(DUST * 3), dLife = new Float32Array(DUST);
+dGeo.setAttribute("position", new THREE.BufferAttribute(dPos, 3));
+const dTex = (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, "rgba(230,225,215,.8)"); gr.addColorStop(1, "rgba(230,225,215,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const dust = new THREE.Points(dGeo, new THREE.PointsMaterial({ size: 1.1, map: dTex, transparent: true, depthWrite: false, opacity: 0.55 }));
+dust.frustumCulled = false; scene.add(dust);
+for (let i = 0; i < DUST; i++) { dLife[i] = 0; dPos[i * 3 + 1] = -99; }
+
+// ── Tải mẫu xe
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+loader.load("models/roadster-2026.glb", (gltf) => {
+  const m = gltf.scene;
+  m.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true;
+    const mt = o.material; if (mt.map) mt.map.anisotropy = 8; mt.side = THREE.FrontSide; mt.envMapIntensity = 0.9; } });
+  body.add(m);
+  const ld = document.getElementById("loading"); ld.style.opacity = 0; setTimeout(() => ld.remove(), 700);
+  window.__xe = { ready: true };
+}, (e) => { if (e.total) document.getElementById("pct").textContent = Math.round(e.loaded / e.total * 100) + "%"; },
+   (err) => { document.getElementById("loading").textContent = "Lỗi tải mẫu xe: " + err.message; });
+
+// ── Trạng thái bay
+// deploy 0→1: phần bay trượt ra · lift 0→1: lực quạt · alt: độ cao (m) · boost 0→1: tên lửa đuôi · speed: m/s
+const S = { mode: "park", deploy: 0, lift: 0, alt: 0, boost: 0, speed: 0, t: 0, cam: 0 };
+const ALT_HOVER = 4.2, V_MAX = 70;
+const $ = id => document.getElementById(id);
+const status = t => $("st").textContent = t;
+function setBtns() {
+  $("bUp").disabled = S.mode !== "park";
+  $("bGo").disabled = !(S.mode === "hover" || S.mode === "cruise");
+  $("bGo").classList.toggle("on", S.mode === "cruise");
+  $("bDown").disabled = !(S.mode === "hover" || S.mode === "cruise");
+}
+$("bUp").onclick = () => { S.mode = "takeoff"; status("Mở quạt bay · cất cánh…"); setBtns(); };
+$("bGo").onclick = () => { S.mode = S.mode === "cruise" ? "hover" : "cruise"; status(S.mode === "cruise" ? "Tên lửa đuôi: PHÓNG!" : "Tắt tên lửa · lơ lửng"); setBtns(); };
+$("bDown").onclick = () => { S.mode = "landing"; status("Hạ cánh…"); setBtns(); };
+const CAMS = ["Tự xoay", "Đuổi theo", "Bên hông"];
+$("bCam").onclick = () => { S.cam = (S.cam + 1) % CAMS.length; $("bCam").textContent = "🎥 " + CAMS[S.cam]; controls.enabled = S.cam === 0; };
+addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); for (const b of ["bUp", "bGo"]) if (!$(b).disabled) { $(b).click(); break; } } });
+setBtns();
+
+const ease = (cur, to, k, dt) => cur + (to - cur) * (1 - Math.exp(-k * dt));
+const clock = new THREE.Clock();
+const camOff = new THREE.Vector3();
+
+function spawnDust(dt) {
+  const near = Math.max(0, 1 - S.alt / 7) * S.lift;
+  let n = Math.floor(near * 220 * dt + Math.random());
+  for (let i = 0; i < DUST && n > 0; i++) if (dLife[i] <= 0) {
+    const a = Math.random() * Math.PI * 2, r = 0.6 + Math.random() * 1.2;
+    dPos[i * 3] = Math.cos(a) * r; dPos[i * 3 + 1] = 0.15; dPos[i * 3 + 2] = Math.sin(a) * r * 1.4;
+    const sp = 3 + Math.random() * 5; dVel[i * 3] = Math.cos(a) * sp; dVel[i * 3 + 1] = 0.4 + Math.random() * 1.2; dVel[i * 3 + 2] = Math.sin(a) * sp;
+    dLife[i] = 0.9 + Math.random() * 0.8; n--;
+  }
+  for (let i = 0; i < DUST; i++) {
+    if (dLife[i] <= 0) { dPos[i * 3 + 1] = -99; continue; }
+    dLife[i] -= dt;
+    dPos[i * 3] += dVel[i * 3] * dt; dPos[i * 3 + 1] += dVel[i * 3 + 1] * dt; dPos[i * 3 + 2] += (dVel[i * 3 + 2] - S.speed) * dt;
+    dVel[i * 3] *= 0.96; dVel[i * 3 + 2] *= 0.96; dVel[i * 3 + 1] *= 0.98;
+  }
+  dGeo.attributes.position.needsUpdate = true;
+}
+
+function tick() {
+  const dt = Math.min(clock.getDelta(), 0.05); S.t += dt;
+
+  // máy trạng thái
+  if (S.mode === "takeoff") {
+    S.deploy = Math.min(1, S.deploy + dt / 1.3);
+    if (S.deploy >= 1) { S.lift = ease(S.lift, 1, 3, dt); S.alt = ease(S.alt, ALT_HOVER, 0.9, dt); }
+    if (S.alt > ALT_HOVER - 0.15) { S.mode = "hover"; status("Lơ lửng · bấm PHÓNG TÊN LỬA để bay tới"); setBtns(); }
+  } else if (S.mode === "hover") {
+    S.boost = ease(S.boost, 0, 4, dt); S.speed = ease(S.speed, 0, 0.8, dt); S.alt = ease(S.alt, ALT_HOVER, 1.5, dt);
+  } else if (S.mode === "cruise") {
+    S.boost = ease(S.boost, 1, 5, dt); S.speed = ease(S.speed, V_MAX, 0.35, dt); S.alt = ease(S.alt, ALT_HOVER + 1.5, 0.6, dt);
+  } else if (S.mode === "landing") {
+    S.boost = ease(S.boost, 0, 4, dt); S.speed = ease(S.speed, 0, 1.2, dt);
+    if (S.speed < 3) S.alt = Math.max(0, S.alt - dt * (0.6 + S.alt * 0.45));
+    S.lift = S.alt > 0.05 ? ease(S.lift, 0.85, 3, dt) : ease(S.lift, 0, 4, dt);
+    if (S.alt <= 0) { S.deploy = Math.max(0, S.deploy - dt / 1.3); if (S.deploy <= 0 && S.lift < 0.05) { S.mode = "park"; S.lift = 0; status("Đã đáp xuống đường băng"); setBtns(); } }
+  }
+
+  // đặt phần bay
+  const d = THREE.MathUtils.smoothstep(S.deploy, 0, 1);
+  for (const p of pods) {
+    p.position.lerpVectors(p.userData.inn, p.userData.out, d);
+    p.userData.fan.rotation.y += dt * (4 + S.lift * 60);
+    p.userData.fm.uniforms.uT.value = S.t; p.userData.fm.uniforms.uP.value = S.lift * (0.85 + 0.15 * Math.sin(S.t * 31 + p.userData.sx));
+    p.userData.fl.scale.y = 0.18 + S.lift * (0.35 + 0.08 * Math.sin(S.t * 23));
+    p.rotation.x = -S.boost * 0.35;                                   // quạt ngả về sau khi phóng
+  }
+  glowCyan.emissiveIntensity = d * 0.6 + S.lift * 3.2;
+  for (const n of nozzles) {
+    n.position.lerpVectors(n.userData.inn, n.userData.out, d);
+    n.userData.fm.uniforms.uT.value = S.t; n.userData.fm2.uniforms.uT.value = S.t + 1.7;
+    n.userData.fm.uniforms.uP.value = S.boost; n.userData.fm2.uniforms.uP.value = S.boost;
+    const len = 0.35 + S.boost * (1.25 + 0.12 * Math.sin(S.t * 37));
+    n.userData.fl.scale.set(1, len, 1); n.userData.core.scale.set(1, len * 0.55, 1);
+  }
+  glowHot.emissiveIntensity = S.boost * 6;
+  for (const w of wings) w.scale.set(THREE.MathUtils.smoothstep(S.deploy, 0.3, 1) || 0.001, 1, 1);
+
+  // thân xe: nâng, bồng bềnh, chúi mũi khi tăng tốc, rung nhẹ
+  const bob = S.lift * (Math.sin(S.t * 1.7) * 0.12 + Math.sin(S.t * 2.9) * 0.05);
+  const shake = S.boost * 0.012;
+  car.position.set(Math.sin(S.t * 0.8) * 0.15 * S.lift + (Math.random() - 0.5) * shake, S.alt + bob, (Math.random() - 0.5) * shake);
+  car.rotation.x = ease(car.rotation.x, S.mode === "cruise" ? -0.06 : (S.mode === "takeoff" && S.deploy >= 1 ? 0.04 : 0), 2, dt);
+  car.rotation.z = Math.sin(S.t * 1.1) * 0.025 * S.lift;
+
+  // bóng mờ + cuộn đường
+  blob.scale.setScalar(1 + S.alt * 0.12); blob.material.opacity = Math.max(0.15, 1 - S.alt * 0.1);
+  rtex.offset.y += S.speed * dt / TILE;
+  gtex.offset.y += S.speed * dt / 20;
+  for (const p of poles.children) { p.position.z -= S.speed * dt; if (p.position.z < -150) p.position.z += 24 * 12; }
+  spawnDust(dt);
+
+  // camera
+  if (S.cam === 0) { controls.target.lerp(new THREE.Vector3(0, car.position.y + 0.8, 0), 0.08); controls.update(); }
+  else {
+    if (S.cam === 1) camOff.set(2.2, 2.4 + S.alt * 0.1, -9 - S.boost * 2); else camOff.set(9, 1.2, 1.5);
+    camera.position.lerp(new THREE.Vector3().copy(car.position).add(camOff), 0.08);
+    camera.lookAt(car.position.x, car.position.y + 0.6, car.position.z + (S.cam === 1 ? 3 : 0));
+  }
+  camera.fov = ease(camera.fov, 42 + S.boost * 12, 2, dt); camera.updateProjectionMatrix();
+  sun.position.set(car.position.x + 12, car.position.y + 22, 8); sun.target.position.copy(car.position);
+
+  $("alt").textContent = Math.max(0, S.alt).toFixed(1);
+  $("spd").textContent = Math.round(S.speed * 3.6);
+  composer.render();
+}
+renderer.setAnimationLoop(tick);
+addEventListener("resize", () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
+window.__S = S; window.__dbg = { bloom, sun, renderer, scene };
+</script>
+</body>
+</html>
