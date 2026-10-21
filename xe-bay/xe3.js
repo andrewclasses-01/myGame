@@ -338,24 +338,88 @@ function buildPlate() {
   car.add(plate); parts.plate = plate;
 }
 
-// ── Bệ tên lửa (xe bay thay drone): gắn GIỮA nắp khoang máy sau cabin, thu chìm khi đỗ, nâng lên khi bay
-const POD = { z: -1.15, w: 0.44, h: 0.15, l: 0.44, up: 0.03, down: -0.16 };
+// ── Bệ tên lửa (xe bay thay drone): gắn GIỮA nắp khoang máy sau cabin, thu chìm khi đỗ, nâng lên khi bay.
+// Dáng nêm bọc giáp: mặt trước NGỬA LÊN một góc (đo bằng bắn tia: góc nhỏ nhất để đạn bay qua mui + 5° dư) chứa 2×2 nòng,
+// nóc có chữ A nổi viền sáng, 2 bên có cánh tản nhiệt, dải đèn đỏ mép trước.
+const POD = { z: -1.15, w: 0.46, up: 0.03, down: -0.19, len: 0.46, h: 0.17 };
+function aShape(W, H, t) {                                            // chữ A nét đậm (rỗng giữa + thanh ngang)
+  const sh = new THREE.Shape();
+  sh.moveTo(-W / 2, 0); sh.lineTo(-W / 2 + t * 1.15, 0); sh.lineTo(-W * 0.19, H * 0.3); sh.lineTo(W * 0.19, H * 0.3);
+  sh.lineTo(W / 2 - t * 1.15, 0); sh.lineTo(W / 2, 0); sh.lineTo(t * 0.55, H); sh.lineTo(-t * 0.55, H); sh.closePath();
+  const hole = new THREE.Path(); hole.moveTo(-W * 0.12, H * 0.43); hole.lineTo(W * 0.12, H * 0.43); hole.lineTo(0, H * 0.74); hole.closePath();
+  sh.holes.push(hole); return sh;
+}
 function buildLauncher() {
   const h = hit(0, 5, POD.z, 0, -1, 0); const y0 = h ? h.p.y : 0.94;
   const mount = new THREE.Group(); mount.position.set(0, y0, POD.z); car.add(mount);
-  // đế cố định nằm phẳng trên nắp + 2 thanh nâng
-  const base = new THREE.Mesh(new RoundedBoxGeometry(POD.w * 0.8, 0.012, POD.l * 0.8, 2, 0.005), M.carbon); base.position.y = 0.006; mount.add(base);
   const lift = new THREE.Group(); mount.add(lift);
-  for (const sx of [-1, 1]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.2, 0.05), M.steel); st.position.set(sx * POD.w * 0.28, -0.1, 0); lift.add(st); }
-  // thân bệ: khối bo góc carbon, 2 × 2 nòng phóng chĩa về trước
-  const body = new THREE.Mesh(new RoundedBoxGeometry(POD.w, POD.h, POD.l, 3, 0.03), M.carbon); body.position.y = POD.h / 2; body.castShadow = true; lift.add(body);
-  for (const sx of [-1, 1]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.004, POD.l * 0.86), M.bronze); st.position.set(sx * POD.w * 0.36, POD.h + 0.001, 0); lift.add(st); }   // 2 chỉ đồng mảnh trên nóc
-  for (const tx of [-0.1, 0.1]) for (const ty of [0.045, 0.105]) {
-    const tube = makeNozzle(0.034, 0.02, 0.12);                       // nòng: viền đồng, lòng đen sâu
-    tube.position.set(tx, ty, POD.l / 2); lift.add(tube);
+  // 1) góc ngửa: thử từ 8° tới 40°, lấy góc nhỏ nhất mà tia từ miệng nòng (vị trí đã nâng) không chạm vỏ xe, cộng 5° dư
+  const mouthZ = POD.z + POD.len * 0.42, mouthY = y0 + POD.up + POD.h * 0.5;
+  let elev = 30;
+  for (let d = 8; d <= 40; d += 1) {
+    const r = d * Math.PI / 180; let clear = true;
+    for (const x of [-0.11, 0, 0.11]) for (const dy of [-0.04, 0.04]) { const t = hit(x, mouthY + dy, mouthZ, 0, Math.sin(r), Math.cos(r)); if (t && t.p.distanceTo(new THREE.Vector3(x, mouthY + dy, mouthZ)) < 6) clear = false; }
+    if (clear) { elev = d + 5; break; }
   }
-  const led = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.006, 0.006), M.ledRed); led.position.set(0, POD.h * 0.8, -POD.l / 2 - 0.002); lift.add(led);
-  lift.position.y = POD.down; parts.pod = { mount, lift, led };
+  const er = elev * Math.PI / 180;
+  // 2) thân nêm: tiết diện dọc (z, y) đùn theo chiều ngang x, vát mép
+  const L = POD.len, H = POD.h, fz = L * 0.42;                        // fz: chân mặt trước
+  const topF = [fz - Math.sin(er) * H * 1.05, H];                     // mặt trước ngửa theo góc er
+  const prof = new THREE.Shape();
+  prof.moveTo(-L * 0.55, 0); prof.lineTo(fz, 0); prof.lineTo(topF[0], topF[1]);
+  prof.lineTo(-L * 0.3, H * 0.8); prof.lineTo(-L * 0.55, H * 0.32); prof.closePath();
+  const bodyG = new THREE.ExtrudeGeometry(prof, { depth: POD.w - 0.03, bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.012, bevelSegments: 2 });
+  bodyG.rotateY(-Math.PI / 2); bodyG.translate((POD.w - 0.03) / 2, 0, 0);   // tiết diện nằm trong mặt (z, y)
+  // ExtrudeGeometry dựng trong mặt (x, y) ⇒ đổi trục: x hình = z xe
+  const gun = new THREE.MeshPhysicalMaterial({ color: 0x1b1e23, metalness: 0.85, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.3 });
+  const body = new THREE.Mesh(bodyG, gun); body.castShadow = true; lift.add(body);
+  // mặt trước: tấm ốp tối + 2×2 nòng theo trục ngửa
+  const nrm = new THREE.Vector3(0, Math.sin(er), Math.cos(er)), upF = new THREE.Vector3(0, Math.cos(er), -Math.sin(er));
+  const faceC = new THREE.Vector3(0, H * 0.5, (fz + topF[0]) / 2);
+  const plate = new THREE.Mesh(new THREE.PlaneGeometry(POD.w * 0.8, H * 0.9), new THREE.MeshStandardMaterial({ color: 0x07080a, metalness: 0.4, roughness: 0.55 }));
+  plate.position.copy(faceC).addScaledVector(nrm, 0.004); plate.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(plate);
+  for (const tx of [-0.095, 0.095]) for (const tu of [-0.037, 0.037]) {
+    const tube = makeNozzle(0.03, 0.03, 0.14);
+    tube.position.copy(faceC).add(new THREE.Vector3(tx, 0, 0)).addScaledVector(upF, tu).addScaledVector(nrm, 0.004);
+    tube.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(tube);
+  }
+  // dải đèn đỏ mép dưới mặt trước + 2 khe sáng hai bên nóc
+  const ledMat = new THREE.MeshStandardMaterial({ color: 0x220000, emissive: 0xff1a12, emissiveIntensity: 1.5 });
+  const led = new THREE.Mesh(new THREE.BoxGeometry(POD.w * 0.8, 0.005, 0.006), ledMat);
+  led.position.set(0, 0.012, fz + 0.006); lift.add(led);
+  // cánh tản nhiệt 2 bên (3 lá xiên)
+  const slitMat = new THREE.MeshStandardMaterial({ color: 0x1a0800, emissive: 0xff6a1a, emissiveIntensity: 1.2 });
+  for (const sx of [-1, 1]) {
+    // khe sáng cam chạy dọc hông, chếch theo dáng nêm
+    const slit = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.008, L * 0.62), slitMat);
+    slit.position.set(sx * (POD.w / 2 + 0.003), H * 0.42, -L * 0.02); slit.rotation.x = -0.12; lift.add(slit);
+    // 3 khe hút gió xiên phía sau
+    for (let k = 0; k < 3; k++) { const v = new THREE.Mesh(new THREE.BoxGeometry(0.008, H * 0.28, 0.012), M.black);
+      v.position.set(sx * (POD.w / 2 + 0.002), H * 0.24, -L * 0.42 + k * 0.035); v.rotation.x = -0.5; lift.add(v); }
+    // viền đồng dọc mép nóc (từ đuôi tới mép trước)
+    const a0 = new THREE.Vector3(sx * (POD.w / 2 - 0.012), H * 0.8 + 0.003, -L * 0.3), a1 = new THREE.Vector3(sx * (POD.w / 2 - 0.012), H + 0.003, topF[0]);
+    const trim = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.005, a0.distanceTo(a1)), M.bronze);
+    trim.position.copy(a0).add(a1).multiplyScalar(0.5); trim.quaternion.setFromUnitVectors(Z_AXIS, a1.clone().sub(a0).normalize()); lift.add(trim);
+  }
+  // nóc: chữ A nổi (đồng sáng) + viền phát sáng, nằm theo mặt nóc dốc nhẹ
+  const topA = new THREE.Vector3(0, H * 0.8, -L * 0.3), topB = new THREE.Vector3(0, topF[1], topF[0]);
+  const topN = new THREE.Vector3().subVectors(topB, topA).normalize(); topN.set(0, topN.z, -topN.y);   // pháp tuyến nóc (hướng lên)
+  if (topN.y < 0) topN.negate();
+  const aGeo = new THREE.ExtrudeGeometry(aShape(0.17, 0.15, 0.032), { depth: 0.008, bevelEnabled: true, bevelThickness: 0.003, bevelSize: 0.003, bevelSegments: 1 });
+  aGeo.translate(0, -0.075, 0);
+  const aMat = new THREE.MeshStandardMaterial({ color: 0xc8925a, metalness: 1, roughness: 0.22, emissive: 0xff7a2a, emissiveIntensity: 0.25 });
+  const A = new THREE.Mesh(aGeo, aMat);
+  const aGlow = new THREE.Mesh(new THREE.ShapeGeometry(aShape(0.19, 0.168, 0.04)), new THREE.MeshBasicMaterial({ color: 0xff5a1a, transparent: true, opacity: 0.55, depthWrite: false }));
+  aGlow.geometry.translate(0, -0.084, 0);
+  const aG = new THREE.Group(); aG.add(aGlow, A); A.position.z = 0.001;
+  const mid = new THREE.Vector3().addVectors(topA, topB).multiplyScalar(0.5).addScaledVector(topN, 0.012);
+  aG.position.copy(mid);
+  // chữ nằm trên nóc, chân chữ hướng về sau xe (đọc được khi nhìn từ máy quay đuổi theo)
+  const m = new THREE.Matrix4().makeBasis(new THREE.Vector3(-1, 0, 0), new THREE.Vector3().subVectors(topB, topA).normalize(), topN);
+  aG.quaternion.setFromRotationMatrix(m); lift.add(aG);
+  // trụ nâng (thấy khi bệ nâng lên)
+  for (const sx of [-1, 1]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 0.06), M.steel); st.position.set(sx * POD.w * 0.3, -0.11, -L * 0.05); lift.add(st); }
+  lift.position.y = POD.down; parts.pod = { mount, lift, led, aMat, slitMat, elev };
 }
 
 // ── Trạng thái
@@ -525,7 +589,7 @@ function tick(dtForce) {
   // bệ tên lửa: nâng lên khi bay, thu chìm khi đỗ
   S.pod = ease(S.pod, air0 ? 1 : 0, 2.5, dt);
   parts.pod.lift.position.y = POD.down + (POD.up - POD.down) * THREE.MathUtils.smoothstep(S.pod, 0, 1);
-  parts.pod.led.material.emissiveIntensity = 2 + 3 * S.pod;
+  parts.pod.led.material.emissiveIntensity = 0.5 + 1.2 * S.pod; parts.pod.aMat.emissiveIntensity = 0.15 + 0.5 * S.pod; parts.pod.slitMat.emissiveIntensity = 0.3 + 1.4 * S.pod;
 
   // bánh quay theo tốc độ khi còn trên đất, lúc bay quay chậm dần
   for (const w of parts.wheels) w.rotation.x += dt * (S.alt < 0.05 ? S.speed / WHEEL_R : 0.4 * (1 - S.lift));
@@ -543,7 +607,8 @@ function tick(dtForce) {
   updateSmoke(dt);
 
   // camera
-  if (S.cam === 0) { const ox = controls.target.x; controls.target.lerp(lerpTo.set(car.position.x, car.position.y + 0.6, 0), 0.08); camera.position.x += controls.target.x - ox; controls.update(); }
+  if (window.__camFix) window.__camFix(camera, car);                 // bàn thử: khoá máy quay để chụp kiểm tra
+  else if (S.cam === 0) { const ox = controls.target.x; controls.target.lerp(lerpTo.set(car.position.x, car.position.y + 0.6, 0), 0.08); camera.position.x += controls.target.x - ox; controls.update(); }
   else {
     const n = NARROW() ? 1.8 : 1;
     if (S.cam === 1) camOff.set(2.6, 2 + S.alt * 0.15, -10 - S.fwd * 2);
