@@ -3,6 +3,14 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-b (21/10, tối) — thầy góp ý sau khi thử lab:**
+- XƯỞNG: `core/sr3d-intro-5j.js` (= intro-5f + Roadster trong ô ◀ ▶ drone; rw-5j.js nhập intro này). Xe CỠ THẬT bằng 2 xe đua, lơ lửng giữa (x 0, cao 0,6 m, nhô lên trước 1,2 m), khói sàn nhẹ, đèn rọi mạnh hơn; 2 drone ⇒ chiếc đội 2 cao 2,4 m phía sau. Phim START: bay theo xe ra cửa.
+- Sơn mặc định XANH LÁ ĐẬM `#0f5c34` (PAINT trong sr3d-flycar-5j.js, bỏ map sơn) — 2 drone vẫn sơn màu đội.
+- Khói hông: carry có cả vận tốc LÊN/XUỐNG của xe ⇒ dải khói không méo khi cất/hạ cánh; nhỏ 30 % (0,05→0,035, nở ×0,7), mờ hơn (0,66→0,42); đứng yên ⇒ phụt thưa (0,9–2,7 s).
+- Cất cánh: 0,9 s đầu đứng trên đường xả khói (C.sp) rồi mới nhấc · khói tràn mặt đường `st.ground` = lift × (1 − y/4) (cả lúc hạ cánh sát đường) · hạt khói gầm chạm đất loang ngang.
+- TAKE OFF / LAND bấm giữa chừng = huỷ: đang hạ ⇒ bay lên lại ngay; đang lên ⇒ hạ.
+- load() của xe bay chỉ nạp 1 lần dù gọi 2 lần.
+
 `mau-5j-xe-bay.html` · gói `core/rw-5j.js` · lõi `core/sr3d-5j.js` (dựng từ 5i bằng script, 5i giữ nguyên) · xe `core/sr3d-flycar-5j.js` + `drone3d/flycar-F296.glb` (155k tam giác, 3,9 MB) ·
 iPad `pad-5j.html` (`core/sr3d-padui-5j.js` bảng ROADSTER gộp) · đường nối `core/sr3d-padlink-5j.js` (phím "fly", tin j: + car + kmh). Thiết kế: `thiet-ke-5j-xe-bay-v2.html` (thầy chốt).
 - Kiểm 21/10: myGame 5i ⇄ AWord Đợt 558 KHỚP 100 % trước khi làm 5j.
