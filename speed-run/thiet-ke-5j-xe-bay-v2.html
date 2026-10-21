@@ -19,12 +19,12 @@
   .cv { position: absolute; background: #0d1017; }
   .ab { position: absolute; display: flex; align-items: center; justify-content: center; font-family: "Exo 2"; font-style: italic; font-weight: 900; color: #fff; }
   /* thẻ đạn THẤP (thu ngắn) */
-  .am { position: absolute; left: 2%; width: 19.5%; height: 11.6%; border-radius: 1.6cqw; border: .2cqw solid #ffffff1c; background: linear-gradient(180deg, #151a26, #0e121b); display: flex; align-items: center; gap: 1.1cqw; padding: 0 1.2cqw; font: italic 900 1.95cqw "Exo 2"; color: #fff; }
+  .am { position: absolute; left: 2%; width: 19.5%; height: 15.8%; border-radius: 1.6cqw; border: .2cqw solid #ffffff1c; background: linear-gradient(180deg, #151a26, #0e121b); display: flex; align-items: center; gap: 1.1cqw; padding: 0 1.2cqw; font: italic 900 1.95cqw "Exo 2"; color: #fff; }
   .am .ic { width: 4.4cqw; height: 4.4cqw; border-radius: 50%; border: .25cqw solid currentColor; display: grid; place-items: center; flex: none; }
   .am .ic svg { width: 2.4cqw; height: 2.4cqw; }
   .am small { display: block; font: 700 1.05cqw "Exo 2"; color: #8c98ad; font-style: normal; }
   .am.on { border-color: var(--pk); background: linear-gradient(180deg, #2b1426, #160c18); box-shadow: 0 0 1.8cqw #ff63c355; }
-  .fire { position: absolute; right: 2%; width: 19.5%; top: 17%; height: 40.4%; border-radius: 2cqw; border: .3cqw solid var(--pk); background: radial-gradient(120% 80% at 50% 30%, #6d1f53, #1d0b1a 75%); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 2.6cqw #ff63c355; }
+  .fire { position: absolute; right: 2%; width: 19.5%; top: 17%; height: 52.2%; border-radius: 2cqw; border: .3cqw solid var(--pk); background: radial-gradient(120% 80% at 50% 30%, #6d1f53, #1d0b1a 75%); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 2.6cqw #ff63c355; }
   .fire b { font: italic 900 5.4cqw "Exo 2"; letter-spacing: .3cqw; } .fire span { font: 800 1.15cqw "Exo 2"; color: #ffd1ea; letter-spacing: .12cqw; margin-top: .4cqw; text-align: center; padding: 0 1cqw; }
   /* NEAR / FAR */
   .nf { position: absolute; width: 19.5%; top: 59.4%; height: 9.6%; border-radius: 1.6cqw; border: .2cqw solid #ffffff1c; background: linear-gradient(180deg, #151a26, #0e121b); display: flex; align-items: center; justify-content: center; gap: 1cqw; font: italic 900 1.9cqw "Exo 2"; color: #d9ccff; }
@@ -70,34 +70,30 @@
       <!-- cột trái: thẻ đạn thấp + NEAR + PHANH -->
       <div class="cv" style="left:1%;top:15.5%;width:22.5%;height:84%"></div>
       <div class="am on" style="top:17%;color:var(--pk)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 20s-7-4.4-9-8.8C1.6 7.6 3.8 4.6 7 4.6c2 0 3.3 1.1 5 3 1.7-1.9 3-3 5-3 3.2 0 5.4 3 4 6.6-2 4.4-9 8.8-9 8.8z"/></svg></span><span>HEART<small>40 % · 4 s</small></span></div>
-      <div class="am" style="top:31.4%;color:var(--tl)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>BOOST<small>25 % · 3 s</small></span></div>
-      <div class="am" style="top:45.8%;color:var(--rd)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 18l3-3M14 4.5c3-1 5.5-1 5.5 0s0 2.5-1 5.5l-7 7-4.5-4.5zM8.5 15.5l-2.5 5M8.5 15.5l-5 2.5"/></svg></span><span>MISSILE<small>35 % · 3 s</small></span></div>
-      <div class="nf" style="left:2%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 15l6-6 6 6"/></svg>NEAR</div>
+      <div class="am" style="top:35.2%;color:var(--tl)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>BOOST<small>25 % · 3 s</small></span></div>
+      <div class="am" style="top:53.4%;color:var(--rd)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 18l3-3M14 4.5c3-1 5.5-1 5.5 0s0 2.5-1 5.5l-7 7-4.5-4.5zM8.5 15.5l-2.5 5M8.5 15.5l-5 2.5"/></svg></span><span>MISSILE<small>35 % · 3 s</small></span></div>
       <div class="pedal br" style="left:2%"><i></i><b>BRAKE</b></div>
       <!-- cột phải: FIRE thấp + FAR + BOOST -->
       <div class="cv" style="left:76.5%;top:15.5%;width:22.5%;height:84%"></div>
-      <div class="fire"><b>FIRE</b><span>TAP = NEAR CAR · 2× = FAR CAR</span></div>
-      <div class="nf" style="right:2%">FAR<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="fire"><b>FIRE</b><span>TAP = NEAREST CAR · 2× = FARTHER CAR</span></div>
       <div class="pedal bo" style="right:2%"><i></i><b>BOOST</b></div>
       <!-- vô lăng: chữ ROADSTER -->
       <div class="yk">ROADSTER</div>
       <!-- TAKE OFF dưới vô lăng -->
       <div class="cv" style="left:28%;top:69%;width:44%;height:28%"></div>
       <div class="tk up"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><path d="M12 19V6M6 11.5 12 5.5l6 6"/></svg></span>TAKE OFF<em></em></div>
-      <div class="hint">STEER <b>TILT / DRAG THE YOKE</b> · BRAKE · BOOST (∞)</div>
+      <div class="hint">STEER <b>MOVE THE iPAD</b> · BRAKE · BOOST (∞)</div>
       <div class="new" style="left:7%;top:3%;width:30%;height:10%"><i>ROADSTER</i></div>
-      <div class="new" style="left:1.3%;top:16.3%;width:21%;height:42%"><i>thẻ đạn thấp hơn</i></div>
-      <div class="new" style="left:1.3%;top:58.6%;width:21%;height:11.2%"><i>NEAR</i></div>
+      <div class="new" style="left:1.3%;top:16.3%;width:21%;height:53.6%"><i>3 thẻ đạn</i></div>
       <div class="new" style="left:1.3%;top:70.3%;width:21%;height:27.5%"><i>bàn đạp PHANH</i></div>
-      <div class="new" style="right:1.3%;top:58.6%;width:21%;height:11.2%"><i>FAR</i></div>
       <div class="new" style="right:1.3%;top:70.3%;width:21%;height:27.5%"><i>bàn đạp BOOST (không vạch mức)</i></div>
       <div class="new" style="left:35%;top:69.5%;width:30%;height:12.5%"><i>TAKE OFF</i></div>
     </div>
     <ul>
       <li><b>Lái:</b> nghiêng iPad / kéo vô lăng như drone — trên đường vô lăng = lái xe (va chạm 2 xe đua như xe thật).</li>
       <li><b>BOOST vô hạn</b>, không hiện mức; thả BOOST = xe tự lướt, đạp PHANH = chậm lại. Tốc độ tối đa bằng xe đua.</li>
-      <li><b>Không tâm ngắm trên đường.</b> FIRE chạm 1 lần = bắn xe GẦN nhất phía trước · chạm đúp = bắn xe XA hơn.</li>
-      <li>NEAR / FAR trên đường: mờ đi (chỉ dùng khi bay).</li>
+      <li><b>Không tâm ngắm trên đường.</b> FIRE chạm 1 lần = bắn xe GẦN nhất · chạm đúp = bắn xe XA hơn.</li>
+      <li>Xe gần / xa tính theo khoảng cách, <b>cả phía trước lẫn phía sau</b> (bắn xe phía sau ⇒ tên lửa vòng ra sau).</li>
     </ul>
   </div>
 
@@ -108,33 +104,33 @@
       <div class="hd"><b>ROADSTER</b><small>FLYING · ALT 12 M</small></div>
       <div class="cv" style="left:1%;top:15.5%;width:22.5%;height:84%"></div>
       <div class="am on" style="top:17%;color:var(--pk)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 20s-7-4.4-9-8.8C1.6 7.6 3.8 4.6 7 4.6c2 0 3.3 1.1 5 3 1.7-1.9 3-3 5-3 3.2 0 5.4 3 4 6.6-2 4.4-9 8.8-9 8.8z"/></svg></span><span>HEART<small>40 % · 4 s</small></span></div>
-      <div class="am" style="top:31.4%;color:var(--tl)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>BOOST<small>25 % · 3 s</small></span></div>
-      <div class="am" style="top:45.8%;color:var(--rd)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 18l3-3M14 4.5c3-1 5.5-1 5.5 0s0 2.5-1 5.5l-7 7-4.5-4.5zM8.5 15.5l-2.5 5M8.5 15.5l-5 2.5"/></svg></span><span>MISSILE<small>35 % · 3 s</small></span></div>
-      <div class="nf" style="left:2%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 15l6-6 6 6"/></svg>NEAR</div>
+      <div class="am" style="top:35.2%;color:var(--tl)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>BOOST<small>25 % · 3 s</small></span></div>
+      <div class="am" style="top:53.4%;color:var(--rd)"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 18l3-3M14 4.5c3-1 5.5-1 5.5 0s0 2.5-1 5.5l-7 7-4.5-4.5zM8.5 15.5l-2.5 5M8.5 15.5l-5 2.5"/></svg></span><span>MISSILE<small>35 % · 3 s</small></span></div>
       <div class="pedal br" style="left:2%"><i></i><b>BRAKE</b></div>
       <div class="cv" style="left:76.5%;top:15.5%;width:22.5%;height:84%"></div>
       <div class="fire"><b>FIRE</b><span>HEART → ROAD</span></div>
-      <div class="nf" style="right:2%">FAR<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg></div>
       <div class="pedal bo" style="right:2%"><i></i><b>BOOST</b></div>
       <div class="yk">ROADSTER</div>
       <div class="cv" style="left:28%;top:69%;width:44%;height:28%"></div>
       <div class="tk dn"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><path d="M12 5v13M6 12.5l6 6 6-6"/></svg></span>LAND<em></em></div>
-      <div class="hint">AIM <b>TILT / DRAG THE YOKE</b> · NEAR / FAR = move the sight</div>
+      <div class="hint">AIM <b>MOVE THE iPAD</b> · BOOST = forward · BRAKE = back</div>
       <div class="new" style="left:35%;top:69.5%;width:30%;height:12.5%"><i>LAND</i></div>
     </div>
     <ul>
-      <li>Vô lăng = dời <b>tâm ngắm</b> (tâm hiện dần khi vừa cất cánh); xe bay bám tâm, ống hông phụt đúng vật lý.</li>
-      <li><b>NEAR / FAR</b> = dời tâm gần / xa như drone · BRAKE / BOOST = bay chậm lại / lao lên trước so với cụm xe.</li>
+      <li><b>Tâm ngắm = di chuyển iPad hoàn toàn</b> (tâm hiện dần khi vừa cất cánh); xe bay bám tâm, ống hông phụt đúng vật lý.</li>
+      <li><b>BOOST = bay tới</b> (4 ống đuôi phụt mạnh) · <b>BRAKE = lùi lại</b> so với cụm xe — áp dụng cho CẢ các drone khác (thay 2 mũi tên NEAR / FAR cũ).</li>
       <li>FIRE bắn loại đạn đang chọn từ đúng nòng (trái Heart · giữa Boost · phải Missile) xuống tâm ngắm.</li>
       <li>LAND ⇒ hạ xuống đường (có va chạm như xe thật), chạy tiếp, tâm ngắm tắt dần.</li>
     </ul>
   </div>
 </div>
 
-<h2>Thầy cần chốt thêm</h2>
+<h2>Đã chốt (21/10)</h2>
 <div class="card"><ul>
-  <li><span class="tag q">HỎI</span>Bố cục cột: thẻ đạn THẤP hơn (cao ~⅔ cũ) + NEAR / FAR ngay trên bàn đạp — đúng ý "thu ngắn, chừa chỗ" chưa?</li>
-  <li><span class="tag q">HỎI</span>Khi bay, BRAKE / BOOST làm gì: <b>bay chậm / lao lên so với cụm xe</b> (như trên) — hay chỉ dùng trên đường, bay thì mờ đi?</li>
-  <li><span class="tag q">HỎI</span>Trên đường "xe gần / xe xa": tính theo <b>phía trước xe mình</b> (xe gần = xe ngay trước) — có cho bắn xe phía SAU không?</li>
+  <li>MỘT bảng cho cả chạy đường + bay, gốc = màn drone · chữ trong vô lăng = ROADSTER · TAKE OFF / LAND dưới vô lăng.</li>
+  <li>Bỏ NEAR / FAR. Bàn đạp PHANH / BOOST thay 2 mũi tên — trên đường: phanh / tăng tốc (boost VÔ HẠN, không hiện mức); khi bay: lùi / tiến (cả drone thường).</li>
+  <li>Tâm ngắm khi bay = di chuyển iPad hoàn toàn. Trên đường không có tâm: FIRE 1 chạm = xe gần nhất, chạm đúp = xe xa hơn (cả trước lẫn sau).</li>
+  <li>Trên đường xe va chạm như xe thật, chạy tự do như xe đua.</li>
+  <li>3 nòng = 3 đạn drone: trái Heart · giữa Boost · phải Missile. Xe cỡ thật; bay lên thì máy quay lùi xa. Khói gầm tan sau ~3 m.</li>
 </ul></div>
 </main></body></html>
