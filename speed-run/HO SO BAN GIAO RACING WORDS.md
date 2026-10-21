@@ -2,7 +2,8 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · ✅ CHỐT 5j-i ⇒ AWord THẬT Đợt 570 `d5eeeca` LIVE (myGame `4f5cc79`)
+**Phiên đóng 21/10.** ⏭ Việc chờ: ⬜ thầy thử TOMKO (fps) + 4 iPad thật với Roadster · ⬜ 2 drone + Roadster mới chỉ bay (chưa chạy đường) · ⬜ màn chờ load-files mới đổi tên + byte, chưa đo lại lượt tải thật (tools/tao-load-files.py).
 **5j-i (21/10) — TỐI ƯU HIỆU NĂNG trước khi chốt (đo lệnh vẽ / khung, cùng máy, renderer.info cả 3 khung):**
 | | 5i | 5j trước | 5j-i (chốt) |
 |---|---|---|---|
