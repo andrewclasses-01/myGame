@@ -3,6 +3,20 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-i (21/10) — TỐI ƯU HIỆU NĂNG trước khi chốt (đo lệnh vẽ / khung, cùng máy, renderer.info cả 3 khung):**
+| | 5i | 5j trước | 5j-i (chốt) |
+|---|---|---|---|
+| tắt drone | 404 | 474 | **406** |
+| Mavic | 636 | 747 | 673 |
+| Roadster sau 2 xe | — | 1.944 (3,28 M tam giác) | **658** (1,32 M) |
+| Roadster trước 2 xe | — | 1.900 | **757** (1,64 M) |
+| Roadster bay | — | 1.971 | **768** |
+- Kính Ferrari `transmission` ⇒ three vẽ lại CẢ CẢNH thêm 1 lượt mỗi khung ⇒ đổi kính trong thường (opacity ≤ 0,38).
+- Roadster sau lưng máy quay buồng lái (ds ∉ [−6, 340] m) ⇒ khung đó không vẽ (prepView).
+- Dốc / dốc xoắn SAU vạch đích = bộ riêng rampsX / twistsX, chỉ dựng khi Roadster tới gần đích (C.s > FIN − 500).
+- 16 ống phụt (64 mảnh) gộp theo vật liệu ⇒ 3 mảnh (parts.nozM); nhóm ống giữ làm điểm neo khói / lửa.
+- ⛔ `node --check file.js` KHÔNG bắt lỗi cú pháp module ⇒ kiểm bằng bản sao .mjs.
+
 **5j-h (21/10) — LỖI thầy báo: lộn vòng từ dốc, bấm TAKE OFF ⇒ xe đứng im, bấm ga không đi:**
 - Nguyên nhân chính: bản vá 5j-g ghi chú chèn giữa dòng ⇒ lệnh `C.s += C.v * dt; d.s = C.s;` của nhánh BAY nằm sau `//` ⇒ mọi lúc bay (up / kick / air / down) xe KHÔNG TIẾN. Đã đưa về dòng riêng; đã rà các ghi chú 5j khác (không còn chỗ nào).
 - Phụ: tốc bay vT = lead.v − 14 khi Roadster ở trước ⇒ đầu trận (xe đua ~10 m/s) ÂM ⇒ trôi lùi. Nay vT ≥ max(½ lead.v, 5 m/s); bay mà bấm BOOST ⇒ vT ≥ lead.v + 14 (phóng tới thật); cất cánh đặt d.bk = khoảng đang cách xe dẫn (không bị giật về).
