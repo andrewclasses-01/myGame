@@ -2,6 +2,15 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+`mau-5j-xe-bay.html` · gói `core/rw-5j.js` · lõi `core/sr3d-5j.js` (dựng từ 5i bằng script, 5i giữ nguyên) · xe `core/sr3d-flycar-5j.js` + `drone3d/flycar-F296.glb` (155k tam giác, 3,9 MB) ·
+iPad `pad-5j.html` (`core/sr3d-padui-5j.js` bảng ROADSTER gộp) · đường nối `core/sr3d-padlink-5j.js` (phím "fly", tin j: + car + kmh). Thiết kế: `thiet-ke-5j-xe-bay-v2.html` (thầy chốt).
+- Kiểm 21/10: myGame 5i ⇄ AWord Đợt 558 KHỚP 100 % trước khi làm 5j.
+- Settings ▸ Drone ▸ FLYING CAR · Roadster (cỡ thật 4,57 m). 1 drone: đỗ sau 2 xe lúc 5 đèn (bệ thu) → GO chạy đường (BOOST vô hạn, BRAKE, lái; bệ bật lên), VA CHẠM 2 xe đua (collidePair) →
+  TAKE OFF (iPad / phím Y) bay lên độ cao drone, máy quay lùi xa → LAND về đường. Đạn ra từ đúng nòng (trái Heart · giữa Boost · phải Missile). Trên đường không tâm: FIRE 1 chạm = xe gần nhất, đúp = xe xa hơn (trước + sau).
+- Mọi drone: BOOST = tiến · BRAKE = lùi (thay NEAR / FAR). Bàn thử: `__rw().game.drone.car` · `.fly()` · `game.step(n)`.
+- ⬜ Còn: xưởng (intro) chưa hiện Roadster (vẫn Mavic) · 2 drone + Roadster chỉ bay (chưa chạy đường) · chữ đầu cột màn lớn còn "DRONE" · chưa đo TOMKO / 4 iPad thật · ⬜ thầy thử.
+
 ## ⏭ MỚI NHẤT — MẪU 5i (20/10/2026) — ✅ ĐÃ LÊN AWORD THẬT Đợt 558 `12eeef7` (LIVE 9/9) — NGHIEN CUU mục 49
 `mau-5i-vach-lua.html` · gói `core/rw-5i.js` · lõi `core/sr3d-5i.js` · CSS `core/rw-5i.css` · iPad `pad-5i.html` (`core/sr3d-padui-5i.js`) · chung `core/rw-bloss-5i.js`.
 - **VẠCH LỬA** (1 drone): tên lửa drone trúng xe ĐANG DẪN ⇒ giữ xe đó (mất lái như cũ) + lửa ngang đường 4,2 m sau nó; xe đuổi tự phanh, dừng cách lửa 6 m (bảng FIRE LINE),

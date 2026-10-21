@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>RACING WORDS 5j — xe bay ROADSTER trong bộ Drone</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&subset=vietnamese&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="core/sr3d-3g.css">
+<link rel="stylesheet" href="core/sr3d-3l.css">
+<link rel="stylesheet" href="core/sr3d-intro-3o.css">
+<link rel="stylesheet" href="core/rw-3r.css">
+<link rel="stylesheet" href="core/rw-3z.css">
+<link rel="stylesheet" href="core/rw-4a.css">
+<link rel="stylesheet" href="core/rw-4b.css">
+<link rel="stylesheet" href="core/rw-4c.css">
+<link rel="stylesheet" href="core/rw-4d.css">
+<link rel="stylesheet" href="core/rw-4e.css">
+<link rel="stylesheet" href="core/rw-4f.css">
+<link rel="stylesheet" href="core/rw-4g.css">
+<link rel="stylesheet" href="core/rw-4h.css">
+<link rel="stylesheet" href="core/rw-4i.css">
+<link rel="stylesheet" href="core/rw-4j-fb.css">
+<link rel="stylesheet" href="core/rw-4j.css">
+<link rel="stylesheet" href="core/rw-4k.css">
+<link rel="stylesheet" href="core/rw-4l.css">
+<link rel="stylesheet" href="core/rw-4o.css">
+<link rel="stylesheet" href="core/rw-4r.css">
+<link rel="stylesheet" href="core/rw-4w.css">
+<link rel="stylesheet" href="core/rw-4y.css">
+<link rel="stylesheet" href="core/rw-5e.css">
+<link rel="stylesheet" href="core/rw-5f.css">
+<link rel="stylesheet" href="core/rw-5h.css">
+<link rel="stylesheet" href="core/rw-5i.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  #host { position: fixed; inset: 0; }
+  /* 4h: màn chờ giống AWord (ảnh rw-loading.webp + thanh + LOADING x%) — % chia đều theo THỜI GIAN (core/rw-loadpace-4h.js) */
+  .ld4h { position: fixed; inset: 0; z-index: 200; background: #05070b url(rw-loading.webp) center / cover no-repeat; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 7vh; transition: opacity .5s; }
+  .ld4h.out { opacity: 0; pointer-events: none; }
+  .ld4h-bar { width: clamp(180px, 34vmin, 420px); height: 5px; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,.14); }
+  .ld4h-bar i { display: block; width: 100%; height: 100%; transform-origin: 0 50%; transform: scaleX(0); will-change: transform; background: linear-gradient(90deg, #3b8cff, #ff7a00); }
+  .ld4h-s { margin-top: 1.6vmin; font: italic 800 1.5vmin 'Exo 2', sans-serif; letter-spacing: .5em; color: #fff; }
+  .ld4h-d { margin-top: .8vmin; font: 600 12px system-ui; color: rgba(255,255,255,.45); }
+  /* bảng Options GIẢ (thay bảng thật của AWord khi thử ở myGame) */
+  .fake-opt { position: absolute; left: 50%; transform: translateX(-50%); width: min(520px, 92%); background: #f4f6fa; color: #1b2433; border-radius: 16px; padding: 16px 18px; z-index: 90;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5); font: 600 15px system-ui; }
+  .fake-opt h3 { margin: 0 0 10px; } .fake-opt label { display: flex; justify-content: space-between; margin: 8px 0; align-items: center; }
+  .fake-opt label.is-locked { opacity: .35; pointer-events: none; }   /* 4e: thanh không có tác dụng với chế độ đua đang chọn */
+  .fake-opt .act { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; } .fake-opt button { padding: 8px 14px; border-radius: 10px; border: 0; background: #2f6fe0; color: #fff; font-weight: 700; cursor: pointer; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="host"></div>
+<div id="meter" style="position:fixed;left:8px;top:8px;z-index:300;font:700 12px/1.4 system-ui;color:#fff;background:rgba(0,0,0,.6);padding:4px 8px;border-radius:8px;pointer-events:none;white-space:pre"></div>
+<script type="module">
+// Trang thử mẫu 5j (21/10/2026) = 5i + XE BAY ROADSTER (Ferrari 296 GTS) là 1 mẫu trong bộ Drone — thiết kế speed-run/thiet-ke-5j-xe-bay-v2.html.
+//   ⚙ Settings ▸ Drone ▸ 1 drone ▸ mẫu FLYING CAR · Roadster. Phím drone 1: J L lái / ngắm · I = BOOST · K = BRAKE · Y = TAKE OFF / LAND · Space = FIRE (trên đường: chạm đúp = xe xa) · 1 2 3 đạn.
+//   iPad: pad-5j.html?t=2 ở tab khác (kênh srpad4f).
+// Trang thử mẫu 5i (20/10/2026) = 5h + VẠCH LỬA (1 drone: tên lửa drone trúng xe dẫn ⇒ giữ xe + lửa chắn sau nó, xe đuổi dừng trước lửa) +
+//   ⚙ Settings ▸ Boost (5 thanh kéo: Next question · Boost gain · Boost max · Boost off · Fire line slow) + sai ⇒ boost đỏ xịt + khói trên bàn đạp. iPad: pad-5i.html.
+//   Bàn thử: __rw().game.fireLine(0|1) (giả trúng) · .fireL · .boostSet · .setBoost({...}). NGHIEN CUU mục 49.
+// Trang thử mẫu 4l (19/10/2026) = 4k + iPad DRONE: pad-4l.html?t=2 ở tab khác (cùng trình duyệt, kênh srpad4f; nhiều iPad giả: &dev=a/b/c).
+// Trang thử mẫu 4k (19/10/2026) = 4j + DRONE đợt 1: ⚙ Settings ▸ Drone (Off / 1 drone · Neutral / Help the losing team / Team drone · Ammo) ⇒ cột drone giữa màn,
+//   máy quay sau drone, tâm bắn J L (ngang) · I K (xa gần) · 1 2 3 đạn · Space (đạn có ở 4l). Góc trên trái = bàn đo fps / lệnh vẽ.
+// Trang thử mẫu 4g (= 4f + kết trận điện ảnh: Time / hết mạng chốt ngay, xe thua drift, xe thắng drift hoặc bay slow motion · số đếm 10 giây cuối ·
+//   barrel roll phải tự chỉnh · dốc xoắn không ga lật chậm · đáp đất nảy · đèn xuất phát chậm + bíp rõ · vạch boost mép mờ · mũi tên đối thủ khuất — mục 41).
+// Trang thử mẫu 4f (= 4e + CỔNG iPAD ở xưởng: START chỉ bấm được khi 2 iPad nối thẳng + đã bẻ thử trái/phải · đường nối sống qua Apply / Start again / đổi xe · iPad tự lấy mốc cân bằng, tự nối lại khi slow — mục 40).
+// iPad thử: pad-4f.html?t=0 / ?t=1 ở tab khác (kênh cục bộ srpad4f).
+// Trang thử mẫu 4e (= 4d + ⚙ Settings mở được cả trên xưởng intro và TẠM DỪNG game · mặc định mới · bay xa hơn · nghiêng đúng chiều vô lăng · BAD LANDING mất lái · Options làm mờ thanh không dùng — mục 39).
+// Trang thử mẫu 4d (= 4c + gộp 2 camera bay lên trời (cách 50–100 m · tên lửa đang bay · 150 m cuối), ⚙ Settings ▸ Camera ▸ Sky view — mục 38).
+// Trang thử mẫu 4b (= 4a + đường cong đúng vật lý, bỏ lái tự động, dốc xoắn mép đường, phần thưởng Boost / Life / Missile, vạch mạng mới — mục 36).
+// Trang thử mẫu 4a (= 3z + chế độ đua Length ×1–×3 / Time / Words, đích dời được, nhiều cua, cây/bụi/cỏ chi tiết, vạch ANDREW STUDIO, lên dốc cầu nhảy mượt — mục 35).
+// Trang thử mẫu 3z (= 3y + dải câu hỏi + bản đồ XUỐNG DƯỚI khung đua, xe không chìm, bóng đúng hình xe, nút ⚙ Cài đặt có tab iPad · Camera, góc nhìn đuôi xe — mục 33).
+// Trang thử mẫu 3y (= 3r + lái nghiêng iPad, phanh trái ga phải, dấu đỉnh vô lăng máy bay giấy — mục 31). iPad: pad-3y.html?t=0 / ?t=1 (kênh srpad3y). Gốc 3r (= 3q tối ưu mượt cho TOMKO — mục 30). Gốc 3q (= 3p + Fight options, cảnh xa, tốc độ): dựng game bằng GÓI NHÚNG (core/rw-3o.js) y như AWord sẽ làm, với cầu host GIẢ (bảng Options giả, danh sách act giả).
+// iPad thử: pad-3y.html?t=0 / ?t=1 ở tab khác (kênh cục bộ srpad3y).
+// 4h: màn chờ chia đều % (chặng files → cars → race → studio, nhớ thời gian theo máy) — gói game nạp ĐỘNG sau khi màn chờ đã hiện
+import { createLoadPace } from "./core/rw-loadpace-4h.js";
+const ld = document.createElement("div"); ld.className = "ld4h"; ld.innerHTML = `<div class="ld4h-bar"><i></i></div><div class="ld4h-s">LOADING 0%</div><div class="ld4h-d"></div>`; document.body.append(ld);
+const ldI = ld.querySelector("i"), ldS = ld.querySelector(".ld4h-s"), ldD = ld.querySelector(".ld4h-d");
+window.__pct = []; const ldT0 = performance.now();
+window.__gaps = []; { let l = performance.now(); const iv = setInterval(() => { const n = performance.now(); if (n - l > 250) window.__gaps.push([Math.round(l - ldT0), Math.round(n - l)]); l = n; if (n - ldT0 > 20000) clearInterval(iv); }, 50); }   // bàn đo: luồng chính bị chặn bao lâu
+const LP = createLoadPace({ key: "rw", paint: (p, ahead, sec) => { ldI.style.transition = `transform ${sec.toFixed(2)}s linear`; ldI.style.transform = `scaleX(${ahead.toFixed(4)})`; const s = "LOADING " + Math.floor(p * 100) + "%"; if (ldS.textContent !== s) { ldS.textContent = s; window.__pct.push([Math.round(performance.now() - ldT0), Math.floor(p * 100)]); } } });
+const { createRacingWords } = await import("./core/rw-5j.js");
+import { createPadHost, localSignal } from "./core/sr3d-padlink-5j.js";   /* 5j: + phím fly */   /* 5e: 4 chỗ (2 đội + 2 drone) */   /* 4u */   // 4l: 3 chỗ (2 đội + drone)
+import { QUESTIONS, TITLE } from "../maze-chase/core/questions-sample.js";
+let opts = { pkBoost: true, pkLife: true, pkMissile: true, twists: true, race: "len", lenK: 2, timeS: 180, steps: 12, laps: 0, ramps: true, sameQ: true, msMax: 3, lives: 5, msDmg: 2, tieWait: 0.1, missWait: 20, streak: 3 };
+const inf = v => (String(v).trim() === "inf" ? Infinity : +v);
+let rw = null;
+const hostEl = document.getElementById("host");
+const host = {
+  options({ layer, top, onClose }) {
+    const p = document.createElement("div"); p.className = "fake-opt"; p.style.bottom = (layer.clientHeight - top() + 8) + "px";
+    p.innerHTML = `<h3>Options (giả — AWord sẽ hiện bảng thật)</h3>
+      <label>Race <select id="rc"><option value="len">Length</option><option value="time">Time</option><option value="words">Words (until all words are used)</option></select></label>
+      <label data-for="len">Length (Race = Length) <select id="lk"><option value="1">×1</option><option value="1.5">×1.5</option><option value="2">×2</option><option value="3">×3</option></select></label>
+      <label data-for="time">Time (Race = Time) <select id="ts"><option value="120">2 min</option><option value="180">3 min</option><option value="240">4 min</option><option value="300">5 min</option></select></label>
+      <label>Questions <select id="q"><option value="1">Same</option><option value="0">Different</option></select></label>
+      <label>Missiles max (0 = off) <input id="m" type="number" min="0" max="10" value="${opts.msMax}"></label>
+      <label data-for="len">Track length (segments) <input id="s" type="number" min="3" max="20" value="${opts.steps}"></label>
+      <label data-for="len">Laps (0 = auto) <input id="l" type="number" min="0" max="6" value="${opts.laps}"></label>
+      <label>Jump ramps <input id="r" type="checkbox" ${opts.ramps ? "checked" : ""}></label>
+      <label>Twist ramps <input id="tw" type="checkbox" ${opts.twists ? "checked" : ""}></label>
+      <label>Road pickups: Boost <input id="pb" type="checkbox" ${opts.pkBoost ? "checked" : ""}></label>
+      <label>Road pickups: Life <input id="pl" type="checkbox" ${opts.pkLife ? "checked" : ""}></label>
+      <label>Road pickups: Missile <input id="pm" type="checkbox" ${opts.pkMissile ? "checked" : ""}></label>
+      <label>Lives (0 = off) <input id="lv" type="number" min="0" max="10" value="${opts.lives}"></label>
+      <label>Missile damages <input id="md" type="number" min="1" max="5" value="${opts.msDmg}"></label>
+      <label>Time delay s (inf) <input id="td" value="${opts.tieWait === Infinity ? "inf" : opts.tieWait}"></label>
+      <label>Miss wait s (inf) <input id="mw" value="${opts.missWait === Infinity ? "inf" : opts.missWait}"></label>
+      <label>Missile streak <input id="st" type="number" min="1" max="10" value="${opts.streak}"></label>
+      <div class="act"><button id="x">Close</button><button id="a">Apply</button></div>`;
+    p.querySelector("#q").value = opts.sameQ ? "1" : "0";
+    p.querySelector("#rc").value = opts.race;
+    const lockRace = () => { const r = p.querySelector("#rc").value; p.querySelectorAll("label[data-for]").forEach(l => l.classList.toggle("is-locked", l.dataset.for !== r)); };   // 4e
+    p.querySelector("#rc").addEventListener("change", lockRace); p.querySelector("#lk").value = String(opts.lenK); p.querySelector("#ts").value = String(opts.timeS);
+    layer.appendChild(p); lockRace();
+    const close = () => { p.remove(); onClose && onClose(); };
+    p.querySelector("#x").onclick = close;
+    p.querySelector("#a").onclick = async () => {
+      const o = { twists: p.querySelector("#tw").checked, pkBoost: p.querySelector("#pb").checked, pkLife: p.querySelector("#pl").checked, pkMissile: p.querySelector("#pm").checked, race: p.querySelector("#rc").value, lenK: +p.querySelector("#lk").value, timeS: +p.querySelector("#ts").value, sameQ: p.querySelector("#q").value === "1", msMax: +p.querySelector("#m").value, steps: +p.querySelector("#s").value, laps: +p.querySelector("#l").value, ramps: p.querySelector("#r").checked,
+        lives: +p.querySelector("#lv").value, msDmg: +p.querySelector("#md").value, tieWait: inf(p.querySelector("#td").value), missWait: inf(p.querySelector("#mw").value), streak: +p.querySelector("#st").value };
+      opts = { ...opts, ...o }; close();
+      if (!rw.setOptions(o)) { rw.destroy(); rw = await build(); }   // như AWord: setOptions false ⇒ dựng lại
+    };
+  },
+  listActs: async () => ({ folderName: "Space words", groups: [{ path: "", acts: [{ id: 1, title: "Space words 1", current: true }, { id: 2, title: "Planets" }, { id: 3, title: "Solar system" }] }] }),
+  openAct: id => alert("AWord sẽ mở act " + id),
+  templates: () => [{ type: "rocket_race", label: "Rocket race" }, { type: "maze_chase", label: "Star loot" }],
+  switchTemplate: t => alert("AWord sẽ đổi sang " + t),
+  home: () => alert("AWord sẽ về Library")
+};
+const remote = createPadHost({ signal: localSignal("srpad4f"), padUrl: t => new URL("pad-5j.html?t=" + t, location.href).href });   // 4f: SỐNG suốt trang (dựng lại game vẫn giữ)
+window.__remote = remote;
+const build = (onProgress) => createRacingWords({ mount: hostEl, questions: QUESTIONS, title: "RACING WORDS", options: opts, host, remote, onProgress, onEvent: (k, v) => { if (k !== "fps") console.log("RW", k, v); } });
+let firstFrame = null; const ffP = new Promise(r => { firstFrame = r; });
+rw = await build(k => { LP.mark(k); if (k === "frame") firstFrame(); if (k !== "warm") ldD.textContent = { cars: "cars ready", race: "race built", studio: "studio built", frame: "first frame" }[k] || ""; });
+await Promise.race([ffP, new Promise(r => setTimeout(r, 6000))]);   // 4h: màn chờ đi khi KHUNG ĐẦU đã vẽ
+LP.done(() => { window.__ldTimes = LP.times; window.__ldExp = LP.expected; ld.classList.add("out"); setTimeout(() => ld.remove(), 600); });
+window.__rw = () => rw;
+// 4k: BÀN ĐO — fps + lệnh vẽ + tam giác mỗi khung, có / không drone (thầy mở trên TOMKO đọc ở góc trên trái)
+setInterval(() => { try { const g = rw.game, d = g.draws; document.getElementById("meter").textContent = `${g.fps} fps · ${d.calls} draws · ${(d.tris / 1e6).toFixed(2)} M tris · drone ${d.drone ? "ON" : "off"} · ${g.res ? JSON.stringify(g.res) : ""}`; } catch (e) { /* */ } }, 1000);
+window.__opts = async o => { opts = { ...opts, ...o }; if (!rw.setOptions(o)) { rw.destroy(); rw = await build(); } return rw; };   // bàn thử: đổi Options như bấm Apply
+</script>
+</body>
+</html>
