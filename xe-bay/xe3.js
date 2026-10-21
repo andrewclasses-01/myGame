@@ -109,6 +109,7 @@ const M = {
   bronze: new THREE.MeshStandardMaterial({ color: 0xb07a45, metalness: 1, roughness: 0.3 }),
   black: new THREE.MeshStandardMaterial({ color: 0x050506, metalness: 0.2, roughness: 0.6 }),
   hole: new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }),   // lòng ống: đen tuyệt đối = sâu
+  pipe: new THREE.MeshStandardMaterial({ color: 0x1c1d20, metalness: 0.85, roughness: 0.3, side: THREE.DoubleSide }),
   ledWhite: new THREE.MeshStandardMaterial({ color: 0x111111, emissive: 0xffffff, emissiveIntensity: 5 }),
   ledRed: new THREE.MeshStandardMaterial({ color: 0x220000, emissive: 0xff1a12, emissiveIntensity: 5 }),
   ledAmberRed: new THREE.MeshStandardMaterial({ color: 0x200500, emissive: 0xff3b1f, emissiveIntensity: 0 }),
@@ -155,9 +156,9 @@ function plumeMat() {
 }
 
 // ── Khói: hạt mềm, bay xuống rồi loang ra mặt đất, to dần, mờ dần
-const SMOKE = 2600;
+const SMOKE = 4200;
 const sPos = new Float32Array(SMOKE * 3), sVel = new Float32Array(SMOKE * 3), sLife = new Float32Array(SMOKE), sMax = new Float32Array(SMOKE);
-const sSize = new Float32Array(SMOKE), sAlpha = new Float32Array(SMOKE), sWarm = new Float32Array(SMOKE);
+const sSize = new Float32Array(SMOKE), sAlpha = new Float32Array(SMOKE), sWarm = new Float32Array(SMOKE), sMul = new Float32Array(SMOKE);   // sMul: độ đặc riêng từng hạt
 const sGeo = new THREE.BufferGeometry();
 sGeo.setAttribute("position", new THREE.BufferAttribute(sPos, 3));
 sGeo.setAttribute("aSize", new THREE.BufferAttribute(sSize, 1));
@@ -178,12 +179,13 @@ const smokeMat = new THREE.ShaderMaterial({
 });
 const smoke = new THREE.Points(sGeo, smokeMat); smoke.frustumCulled = false; smoke.renderOrder = 4; scene.add(smoke);
 for (let i = 0; i < SMOKE; i++) sPos[i * 3 + 1] = -99;
-let sNext = 0;
+let sNext = 0, curDt = 1 / 60;
 function puff(p, v, size, life, warm = 0) {
   const i = sNext; sNext = (sNext + 1) % SMOKE;
-  sPos[i * 3] = p.x; sPos[i * 3 + 1] = p.y; sPos[i * 3 + 2] = p.z;
+  // rải đều dọc quãng xe đi trong 1 khung (chống khói rời thành cục khi bay nhanh)
+  const j = Math.random(); sPos[i * 3] = p.x + v.x * curDt * j; sPos[i * 3 + 1] = p.y + v.y * curDt * j; sPos[i * 3 + 2] = p.z + (v.z - S.speed) * curDt * j;
   sVel[i * 3] = v.x; sVel[i * 3 + 1] = v.y; sVel[i * 3 + 2] = v.z;
-  sLife[i] = sMax[i] = life; sSize[i] = size; sWarm[i] = warm;
+  sLife[i] = sMax[i] = life; sSize[i] = size; sWarm[i] = warm; sMul[i] = 1;
 }
 
 // ── Cụm xe (đơn vị MÉT; mũi xe = +z; mặt đất y = 0)
@@ -240,6 +242,24 @@ function stick(obj, h, off = 0.004) {
   obj.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), h.n);
 }
 
+// ống đẩy: ống tròn NHÔ ra khỏi vỏ (chân ống cắm sâu vào thân), viền đồng ở miệng, lòng ĐEN hoàn toàn.
+// Trục +z cục bộ = hướng phụt ra ngoài. Miệng ống ở z = len. Trả về nhóm + điểm miệng (cục bộ).
+function makeNozzle(R, len, embed = 0.05) {
+  const g = new THREE.Group();
+  const L = len + embed;
+  const outer = new THREE.Mesh(new THREE.CylinderGeometry(R, R * 1.06, L, 28, 1, true), M.pipe);
+  outer.rotation.x = Math.PI / 2; outer.position.z = len - L / 2;
+  const inner = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.82, R * 0.82, L, 28, 1, true), M.hole);
+  inner.rotation.x = Math.PI / 2; inner.position.z = len - L / 2;
+  const lip = new THREE.Mesh(new THREE.RingGeometry(R * 0.82, R * 1.0, 28), M.bronze); lip.position.z = len;
+  const lipR = new THREE.Mesh(new THREE.TorusGeometry(R * 0.91, R * 0.09, 8, 28), M.bronze); lipR.position.z = len;
+  const cap = new THREE.Mesh(new THREE.CircleGeometry(R * 0.82, 28), M.hole); cap.position.z = len * 0.25;   // đáy đen ngay trong ống (trước mặt vỏ xe)
+  g.add(outer, inner, lip, lipR, cap);
+  g.traverse(o => { if (o.isMesh && o.material !== M.hole) o.castShadow = true; });
+  return g;
+}
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
+
 function buildAll() {
   buildUnderJets();
   buildRearJets();
@@ -248,48 +268,35 @@ function buildAll() {
   buildPlate();
 }
 
-// ── Ống đẩy gầm: 4 lỗ nhỏ sát sàn (2 ngay sau bánh trước, 2 sau bánh sau), lòng đen sâu, chỉ phụt KHÓI trắng xuống
+// ── Ống đẩy gầm: 4 ống nhỏ chĩa thẳng xuống (2 ngay sau bánh trước, 2 sau bánh sau); chỉ phụt khói mờ
 function buildUnderJets() {
   for (const [x, z] of UNDER) {
     const h = hit(x, -2, z, 0, 1, 0); const y = h ? h.p.y : 0.14;
-    const g = new THREE.Group(); g.position.set(x, y - 0.003, z);
-    const R = UNDER_R;
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(R, R * 0.22, 8, 24), M.bronze); ring.rotation.x = Math.PI / 2;
-    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.92, R * 0.92, 0.05, 20, 1, true), M.hole); pipe.position.y = 0.025;
-    const back = new THREE.Mesh(new THREE.CircleGeometry(R * 0.92, 20), M.hole); back.rotation.x = Math.PI / 2; back.position.y = 0.045;
-    const pm = plumeMat(); const col = flameCone(R * 1.3, pm, R * 10); col.position.y = -0.004;     // cột khói loe dần xuống đất
-    g.add(ring, pipe, back, col); car.add(g);
-    parts.under.push({ g, col, pm, x, z, y });
+    const g = makeNozzle(UNDER_R, 0.03, 0.04);
+    g.position.set(x, y, z); g.quaternion.setFromUnitVectors(Z_AXIS, new THREE.Vector3(0, -1, 0));
+    car.add(g); parts.under.push({ g, x, z, y });
   }
 }
 
-// ── 4 ống đẩy đuôi: 4 lỗ nhỏ viền đồng, lòng đen sâu; lơ lửng = xì khói nhẹ giữ cân, bay tới = khói mạnh
+// ── 4 ống đẩy đuôi: nhô ra sau khỏi vỏ, lòng đen; lơ lửng = xì khói nhẹ giữ cân, bay tới = khói mạnh
 function buildRearJets() {
   for (const x of REAR.xs) {
     const h = hit(x, REAR.y, -6, 0, 0, 1);
-    const g = new THREE.Group();
-    if (h) g.position.copy(h.p).add(new THREE.Vector3(0, 0, -0.018)); else g.position.set(x, REAR.y, -2.25);
-    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1));   // +z cục bộ = ra sau xe
-    const R = REAR.r;
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(R, R * 0.24, 10, 28), M.bronze);
-    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.9, R * 0.9, 0.09, 24, 1, true), M.hole); pipe.rotation.x = Math.PI / 2; pipe.position.z = -0.045;
-    const back = new THREE.Mesh(new THREE.CircleGeometry(R * 0.9, 24), M.hole); back.position.z = -0.085;
-    const pm = plumeMat(); const col = flameCone(R * 1.2, pm, R * 6); col.rotation.x = -Math.PI / 2;
-    g.add(ring, pipe, back, col); car.add(g);
-    parts.rear.push({ g, col, pm, x });
+    const g = makeNozzle(REAR.r, 0.045, 0.08);
+    if (h) g.position.copy(h.p); else g.position.set(x, REAR.y, -2.25);
+    g.quaternion.setFromUnitVectors(Z_AXIS, new THREE.Vector3(0, 0, -1));
+    car.add(g); parts.rear.push({ g, x });
   }
 }
 
-// ── 4 lỗ đẩy hông (trước + sau mỗi bên): xì khói ngang từng nhịp ngẫu nhiên để giữ thăng bằng
+// ── 4 ống đẩy hông (trước + sau mỗi bên): chĩa NGANG, vuông góc trục thân xe; phụt khói ngẫu nhiên giữ cân
 function buildSideJets() {
   for (const s of [-1, 1]) for (const z of SIDE.zs) {
     const h = hit(s * 4, SIDE.y, z, -s, 0, 0); if (!h) continue;
-    const g = new THREE.Group(); stick(g, h, 0.002);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.022, 0.005, 8, 22), M.bronze);
-    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.02, 22), M.hole);
-    const pm = plumeMat(); const col = flameCone(0.025, pm, 0.16); col.rotation.x = -Math.PI / 2;
-    g.add(ring, hole, col); car.add(g);
-    parts.side.push({ g, col, pm, s, z, pow: 0, next: Math.random(), out: h.n.clone() });
+    const g = makeNozzle(0.022, 0.03, 0.06);
+    const out = new THREE.Vector3(s, 0, 0);
+    g.position.copy(h.p); g.quaternion.setFromUnitVectors(Z_AXIS, out);
+    car.add(g); parts.side.push({ g, s, z, pow: 0, next: Math.random(), out });
   }
 }
 
@@ -353,19 +360,20 @@ function updateSmoke(dt) {
     if (y < 0.15 && sVel[i * 3 + 1] < 0) {        // chạm đất → loang ngang + bốc nhẹ
       y = 0.15; const sp = Math.hypot(sVel[i * 3], sVel[i * 3 + 2]) + Math.abs(sVel[i * 3 + 1]) * 0.6;
       const a = Math.random() * Math.PI * 2; sVel[i * 3] = Math.cos(a) * sp; sVel[i * 3 + 2] = Math.sin(a) * sp; sVel[i * 3 + 1] = 0.25 + Math.random() * 0.5;
+      sMul[i] = 0.32; sLife[i] *= 0.7; sMax[i] = Math.max(sMax[i] * 0.7, 0.01);   // lớp khói nằm đất loãng hơn, tan nhanh hơn
     }
     sPos[i * 3] += sVel[i * 3] * dt; sPos[i * 3 + 1] = y; sPos[i * 3 + 2] += (sVel[i * 3 + 2] - S.speed) * dt;
     const drag = Math.exp(-1.3 * dt); sVel[i * 3] *= drag; sVel[i * 3 + 2] *= drag; sVel[i * 3 + 1] = sVel[i * 3 + 1] < 0 ? sVel[i * 3 + 1] * Math.exp(-0.6 * dt) : sVel[i * 3 + 1] * drag;
     sSize[i] += dt * (0.9 + k * 2.2);
-    sAlpha[i] = Math.min(1, k * 8) * (1 - k) * 0.55;
+    sAlpha[i] = Math.min(1, k * 25) * (1 - k) * 0.55 * sMul[i];
     sWarm[i] *= Math.exp(-1.5 * dt);
   }
   sGeo.attributes.position.needsUpdate = true; sGeo.attributes.aSize.needsUpdate = true; sGeo.attributes.aAlpha.needsUpdate = true; sGeo.attributes.aWarm.needsUpdate = true;
 }
 
 
-function tick() {
-  const dt = Math.min(clock.getDelta(), 0.05); S.t += dt;
+function tick(dtForce) {
+  const dt = dtForce || Math.min(clock.getDelta(), 0.05); S.t += dt; curDt = dt;
   if (!bodyMeshes) { composer.render(); return; }
 
   // máy trạng thái
@@ -390,18 +398,14 @@ function tick() {
   S.roll += S.rollV * dt; if (!air) { S.roll *= 0.9; S.rollV *= 0.9; }
 
   const q = car.getWorldQuaternion(new THREE.Quaternion());
-  // ống gầm: chỉ khói trắng
+  // ống gầm: chỉ khói mờ (hạt mềm), phụt xuống rồi loang ra mặt đất
   for (const p of parts.under) {
-    p.pm.uniforms.uT.value = S.t + p.x + p.z;
-    p.pm.uniforms.uP.value = S.lift * (0.48 + 0.08 * Math.sin(S.t * 23 + p.z));
-    const toGround = S.alt + p.y;
-    p.col.scale.set(1 + S.alt * 0.05, Math.max(0.05, Math.min(toGround, 4.5)), 1 + S.alt * 0.05);
     if (S.lift > 0.05) {
-      const n = Math.floor(S.lift * 60 * dt + Math.random());
+      const n = Math.floor(S.lift * 210 * dt + Math.random());
       for (let k = 0; k < n; k++) {
-        p.g.localToWorld(tmp.set(0, -0.03, 0));
-        tmpV.set((Math.random() - 0.5) * 0.8, -(13 + Math.random() * 5), (Math.random() - 0.5) * 0.8).applyQuaternion(q);
-        puff(tmp, tmpV, 0.2 + Math.random() * 0.2, 1.6 + Math.random() * 1.6, 0);
+        p.g.localToWorld(tmp.set((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02, 0.04));
+        tmpV.set((Math.random() - 0.5) * 0.9, -(11 + Math.random() * 6), (Math.random() - 0.5) * 0.9).applyQuaternion(q);
+        puff(tmp, tmpV, 0.26 + Math.random() * 0.2, 1.4 + Math.random() * 1.6, 0);
       }
     }
   }
@@ -409,30 +413,31 @@ function tick() {
   const air0 = S.alt > 0.05 ? 1 : 0;
   const rearPow = Math.max(S.fwd, air0 * S.lift * (0.22 + 0.08 * Math.sin(S.t * 2.3)));
   for (const r of parts.rear) {
-    r.pm.uniforms.uT.value = S.t + r.x * 3;
-    r.pm.uniforms.uP.value = rearPow * (0.7 + 0.15 * Math.sin(S.t * 17 + r.x * 11));
-    r.col.scale.set(1, 0.25 + rearPow * (1.6 + 0.2 * Math.sin(S.t * 13 + r.x * 7)), 1);
-    if (rearPow > 0.05 && Math.random() < rearPow * 0.9) {
-      r.g.localToWorld(tmp.set(0, 0, 0.05));
-      tmpV.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.2) * 0.4, -(2 + rearPow * 8 + Math.random() * 2)).applyQuaternion(q);
-      puff(tmp, tmpV, 0.1 + rearPow * 0.15, 0.7 + Math.random() * 0.6, 0);
+    const n = Math.floor(rearPow * (S.fwd > 0.3 ? 110 : 22) * dt + Math.random() * rearPow);
+    for (let k = 0; k < n; k++) {
+      r.g.localToWorld(tmp.set(0, 0, 0.06));
+      tmpV.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.2) * 0.35, -(1.5 + rearPow * 9 + Math.random() * 2)).applyQuaternion(q);
+      puff(tmp, tmpV, 0.06 + rearPow * 0.1 + S.speed * 0.004, 0.6 + Math.random() * 0.6, 0);
     }
   }
   M.ledAmberRed.emissiveIntensity = Math.max(S.lift, air) * 4;
   parts.underLight.intensity = S.lift * 10;
 
-  // lỗ hông: phụt NGẪU NHIÊN thường xuyên (cố giữ cân) + bên chúi xuống phụt mạnh hơn
+  // ống hông: phụt NGẪU NHIÊN thường xuyên (cố giữ cân) + bên chúi xuống phụt mạnh hơn; khói đi NGANG
   for (const j of parts.side) {
     j.next -= dt;
     if (air0 && j.next <= 0) { j.pow = Math.max(j.pow, 0.55 + Math.random() * 0.45); j.next = 0.25 + Math.random() * 1.1; }
     const need = air0 * Math.max(0, -j.s * S.roll * 18);
     j.pow = Math.max(j.pow - dt * 4, Math.min(1, need));
-    j.pm.uniforms.uT.value = S.t + j.z; j.pm.uniforms.uP.value = j.pow * 0.8;
-    j.col.scale.set(1, 0.05 + j.pow * 0.6, 1);
-    if (j.pow > 0.3 && Math.random() < 0.5) {
-      j.g.localToWorld(tmp.set(0, 0, 0.04));
-      tmpV.copy(j.out).applyQuaternion(q).multiplyScalar(5 + Math.random() * 3); tmpV.y += 0.2;
-      puff(tmp, tmpV, 0.07, 0.35 + Math.random() * 0.25, 0);
+    if (j.pow > 0.25) {
+      const n = Math.floor(j.pow * 45 * dt + Math.random() * 0.6);
+      for (let k = 0; k < n; k++) {
+        j.g.localToWorld(tmp.set(0, 0, 0.04));
+        tmpV.copy(j.out).multiplyScalar(5 + Math.random() * 3 * j.pow);
+        tmpV.y += (Math.random() - 0.5) * 0.3; tmpV.z += (Math.random() - 0.5) * 0.3;
+        tmpV.applyQuaternion(q);
+        puff(tmp, tmpV, 0.06, 0.4 + Math.random() * 0.25, 0);
+      }
     }
   }
 
@@ -470,8 +475,10 @@ function tick() {
 
   $("alt").textContent = Math.max(0, S.alt).toFixed(1);
   $("spd").textContent = Math.round(S.speed * 3.6);
-  composer.render();
+  if (!noRender) composer.render();
 }
-renderer.setAnimationLoop(tick);
+renderer.setAnimationLoop(() => tick());
 addEventListener("resize", () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
 window.__S = S; window.__dbg = { bloom, renderer, scene, camera, car, hit };
+let noRender = false;
+window.__step = (n, dt = 1 / 60) => { noRender = true; for (let i = 0; i < n; i++) { if (i === n - 1) noRender = false; tick(dt); } };   // bàn thử: tự chạy n khung khi khung xem bị ẩn
