@@ -1450,7 +1450,8 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
     mount.classList.toggle("rw-d2", two());                                    // 5e: 2 drone ⇒ bảng tối giản
     DR.forEach(d => dv2[d.n].ic.forEach((c, k) => { c.classList.toggle("on", k === d.sel); c.classList.toggle("off", !dset.ammo[AMMO[k].k]); }));
   }
-  function droneSel(k, d = D) { if (AMMO[k] && dset.ammo[AMMO[k].k]) { d.sel = k; paintDv(); droneInfo(d); } }
+  function droneSel(k, d = D, fire = false) { if (AMMO[k] && dset.ammo[AMMO[k].k]) { d.sel = k; paintDv(); droneInfo(d); if (fire && G.phase === "race" && !G.paused) droneFire(d); } }   // 5k-b (thầy): bấm nút loại đạn (iPad / phím 1 2 3) = chọn + BẮN luôn
+  function fireFw(d) { const C = d.car, f = C.fw; if (!f) return; C.fw = null; const s0 = d.sel; d.sel = f.k ?? s0; droneFire(d, f.n); d.sel = s0; }   // 5k-b: bắn phát đang chờ đúng loại đạn lúc bấm
   // 4l: tin cho iPad drone (chỉ kênh thẳng) · 5e: drone 2 = chỗ t = 3; drone không bay ⇒ báo "tắt"
   function droneInfo(d = D) { if (remote && remote.send && d.padOn) remote.send(2 + d.n, `j:${d.bat.toFixed(2)},${d.sel},${d.lock},${G.phase},${AMMO.map(a => dset.ammo[a.k] ? 1 : 0).join("")},${dMode()},${dTeam(d)},${dUsed(d) ? 1 : 0},${AMMO.map(a => Math.max(0, d.cd[a.k] - G.t).toFixed(1)).join("/")},${dammo.activeOf(d.n) > 0 ? 1 : 0},${carSt(d)},${isCar(d) ? Math.round(d.car.v * 3.6) : 0}`); }   /* 5a: + chờ · đạn bay */   /* 5j: + xe bay */
   const isCar = d => dset.model === FLYCAR.id;                                       // 5j
@@ -1480,13 +1481,16 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
   const carVel = new THREE.Vector3();   // 5j-e
   function droneFire(d = D, road = 0) {   /* 5j: road = 1 | 2 · 5k: 1 = xe XA (chạm đơn) · 2 = xe GẦN (chạm đúp) — mọi lúc (đường + bay) */
     if (d.sel < 0 || !dUsed(d)) return;
-    if (isCar(d) && !road) { const C = d.car; if (C.fw && G.t - C.fw.t < 0.3) { C.fw.n = 2; return; } C.fw = { t: G.t, n: 1 }; return; }   // 5j: chờ xem có chạm đúp · 5k: cả lúc bay
+    if (isCar(d) && !road) { const C = d.car;   // 5j: chờ xem có chạm đúp · 5k: cả lúc bay
+      if (C.fw && G.t - C.fw.t < 0.3) { if (C.fw.n === 1 && C.fw.k === d.sel) { C.fw.n = 2; return; } fireFw(d); }   // 5k-b: chạm thứ 3 liền / đổi loại đạn ⇒ bắn ngay phát đang chờ rồi chờ phát mới (bắn liên tục không mất phát)
+      C.fw = { t: G.t, n: 1, k: d.sel }; return; }
     const a = AMMO[d.sel], k = a.k, o = d.o;
     if (G.phase !== "race" || G.paused) { dvMsg("WAIT FOR THE RACE", d); return; }
-    if (dammo.activeOf(d.n) > 0) { dvMsg("WAIT · SHOT IN THE AIR", d); onEvent("droneDeny", { kind: k, why: "busy", drone: d.n }); return; }   // 4w: 1 quả một lúc (5e: mỗi drone)
-    if (d.cd[k] > G.t) { dvMsg(`${a.t.toUpperCase()} · READY IN ${Math.ceil(d.cd[k] - G.t)} s`, d); onEvent("droneDeny", { kind: k, why: "wait", drone: d.n }); return; }
-    if (d.bat < DA.COST[k] - 1e-6) { dvMsg("LOW BATTERY", d); onEvent("droneDeny", { kind: k, why: "battery", drone: d.n }); return; }
-    d.bat -= DA.COST[k]; d.cd[k] = G.t + DA.CD[k];
+    const free = !two();   // 5k-b (thầy): 1 drone ⇒ bắn THOẢI MÁI — không chờ đạn bay, không hồi, không tốn pin · 2 drone giữ luật cũ
+    if (!free && dammo.activeOf(d.n) > 0) { dvMsg("WAIT · SHOT IN THE AIR", d); onEvent("droneDeny", { kind: k, why: "busy", drone: d.n }); return; }   // 4w: 1 quả một lúc (5e: mỗi drone)
+    if (!free && d.cd[k] > G.t) { dvMsg(`${a.t.toUpperCase()} · READY IN ${Math.ceil(d.cd[k] - G.t)} s`, d); onEvent("droneDeny", { kind: k, why: "wait", drone: d.n }); return; }
+    if (!free && d.bat < DA.COST[k] - 1e-6) { dvMsg("LOW BATTERY", d); onEvent("droneDeny", { kind: k, why: "battery", drone: d.n }); return; }
+    if (!free) { d.bat -= DA.COST[k]; d.cd[k] = G.t + DA.CD[k]; }
     // 4v: KHÔNG khoá — đạn rơi đúng chỗ tâm ngắm; Auto target bật ⇒ điểm rơi trượt về xe gần (theo luật chế độ)
     const tg = d.lock, R = autoR(dset.autoK);
     const seek = dset.auto ? (x, s, tl) => { let best = null, bd = R; T.forEach(t => { if (t.done || t.dead || !canTarget(t.i, k, d)) return; const ps = t.s + t.v * tl, dd = Math.hypot(t.x - x, ps - s); if (dd < bd) { bd = dd; best = { x: t.x, s: ps }; } }); return best; } : null;
@@ -1861,7 +1865,7 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
       jump: false, low: false, vy: 0, airT: 0, airK: 1, arW: 0, ap: 0, ar: 0, flip: 0, flipDir: 1, flipGoal: null, forced: false, rollW: 0, ramp: null, rampPart: 0, twist: null, hy: 0, hopV: 0,
       kAct: false, kickT: -1, kTw: false, kr: 0, kp: 0, kvy: 0, kW: 0, kE: 0, kw: 0, kr0: 0, blast: 0, swirl: 0, flameT: 0, bK: 0 }); d.bk = D_BACK; }   /* 5j-c: + nhảy dốc · 5j-d: + kick / lửa / boost */
     const race = G.phase === "race", run = !G.paused;
-    if (run && C.fw && G.t - C.fw.t >= 0.3) { const n = C.fw.n; C.fw = null; droneFire(d, n); }   // hết 0,3 s ⇒ bắn (5k: 1 = xe XA · 2 = xe GẦN)
+    if (run && C.fw && G.t - C.fw.t >= 0.3) fireFw(d);   // hết 0,3 s ⇒ bắn (5k: 1 = xe XA · 2 = xe GẦN)
     if (run) {
       if (C.mode === "road") {
         const st = race ? clamp((d.keys.has("r") ? 1 : 0) - (d.keys.has("l") ? 1 : 0) + (pd ? pd.steer : 0), -1, 1) : 0;
@@ -2006,7 +2010,7 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
         if (!d.init) { d.ds = wantDs; d.s = F.s + d.ds; d.x = xT; d.vx = 0; d.sPrev = d.s; d.vs = 0; d.afs = 0; d.ax = side * 2.2; d.init = true; }   // 5e: tâm mới bật = nửa đường đội mình (2 tâm không chồng)
         d.ds += (wantDs - d.ds) * (1 - Math.exp(-dt * 2)); d.s = F.s + d.ds; d.y = alt + (d.n ? 1 : 0);   /* 5f: nâng theo khoảng cách */
         flyBody(d, xT, dt); poseDrone(d, dt, d.n * 1.9); aimDrone(d, dt, vis && !isCar(d));   // 5k: Roadster không tâm
-        if (isCar(d) && !G.paused && d.car.fw && G.t - d.car.fw.t >= 0.3) { const n = d.car.fw.n; d.car.fw = null; droneFire(d, n); }   // 5k: 2 Roadster cũng bắn kiểu 1 chạm = xa · đúp = gần
+        if (isCar(d) && !G.paused && d.car.fw && G.t - d.car.fw.t >= 0.3) fireFw(d);   // 5k: 2 Roadster cũng bắn kiểu 1 chạm = xa · đúp = gần
         if (!G.paused && G.phase === "race") d.bat = Math.min(1, d.bat + DA.RECHARGE * dt);
         // 7. bảng tối giản M1: icon đang chọn sáng · đang chờ = vòng chạy · thiếu pin = mờ · vạch pin màu đội (đỏ khi yếu)
         const u = dv2[d.n];
@@ -2238,12 +2242,12 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
   const onKeyDown = e => {
     if (dset.on && (DKEYS[e.code] || /^Digit[123]$/.test(e.code) || e.code === "Space" || e.code === "KeyY") && !e.target.closest?.("input,textarea,button")) {   /* 4k: phím drone */
       e.preventDefault(); if (G.paused) return;
-      if (DKEYS[e.code]) D.keys.add(DKEYS[e.code]); else if (e.code === "Space") { if (!e.repeat) droneFire(); } else if (e.code === "KeyY") { if (!e.repeat) toggleFly(D); } else droneSel(+e.code.slice(5) - 1);   /* 5j: Y */
+      if (DKEYS[e.code]) D.keys.add(DKEYS[e.code]); else if (e.code === "Space") { if (!e.repeat) droneFire(); } else if (e.code === "KeyY") { if (!e.repeat) toggleFly(D); } else if (!e.repeat) droneSel(+e.code.slice(5) - 1, D, true);   /* 5j: Y */   /* 5k-b: phím 1 2 3 = chọn + bắn */
       return;
     }
     if (two() && (DKEYS2[e.code] || /^Numpad[0-3]$/.test(e.code)) && !e.target.closest?.("input,textarea")) {   /* 5e: drone 2 = bàn số */
       e.preventDefault(); if (G.paused) return; const d2 = DR[1];
-      if (DKEYS2[e.code]) d2.keys.add(DKEYS2[e.code]); else if (e.code === "Numpad0") { if (!e.repeat) droneFire(d2); } else droneSel(+e.code.slice(6) - 1, d2);
+      if (DKEYS2[e.code]) d2.keys.add(DKEYS2[e.code]); else if (e.code === "Numpad0") { if (!e.repeat) droneFire(d2); } else if (!e.repeat) droneSel(+e.code.slice(6) - 1, d2, true);   /* 5k-b */
       return;
     }
     const m = KEYMAP[e.code]; if (!m || e.target.closest?.("input,textarea")) return;
@@ -3132,7 +3136,7 @@ export function createSpeedRun({ mount, bar = null, questions, title = "RACING W
   raf = requestAnimationFrame(loop);
 
   if (remote) remote.attach({
-    press: (i, k) => { if (i >= 2) { const dr = DR[i - 2]; if (!dr) return; if (k === "fire") droneFire(dr); else if (k === "fly") toggleFly(dr); else if (/^d[0-2]$/.test(k)) droneSel(+k[1], dr); return; }   /* 5j: fly */ if (k === "fire") fire(i); },   /* 4l: iPad drone · 5e: t = 3 = drone 2 */
+    press: (i, k) => { if (i >= 2) { const dr = DR[i - 2]; if (!dr) return; if (k === "fire") droneFire(dr); else if (k === "fly") toggleFly(dr); else if (/^d[0-2]$/.test(k)) droneSel(+k[1], dr, true); return; }   /* 5k-b: nút loại đạn iPad = chọn + bắn */   /* 5j: fly */ if (k === "fire") fire(i); },   /* 4l: iPad drone · 5e: t = 3 = drone 2 */
     drive: (i, d) => { if (i >= 2) { const dr = DR[i - 2]; if (dr) { dr.pad = d; dr.padT = G.t; } return; } T[i].pad = d; T[i].padT = G.t; },
     status: (i, s) => { if (i >= 2) { const dr = DR[i - 2]; if (!dr) return; dr.padSt = s; dr.padOn = s === "on" || s === "relay"; onEvent("pad", { team: i, s }); droneInfo(dr); return; } T[i].padSt = s; T[i].padOn = s === "on" || s === "relay"; onEvent("pad", { team: i, s }); if (T[i].padOn) shareSteer(); },
     answer: (i, k, n) => { if (padMode === 1 && T[i].qn === n) answer(i, k); },
