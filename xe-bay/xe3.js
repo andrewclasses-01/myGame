@@ -160,7 +160,7 @@ const SMOKE = 6000;
 const sPos = new Float32Array(SMOKE * 3), sVel = new Float32Array(SMOKE * 3), sLife = new Float32Array(SMOKE), sMax = new Float32Array(SMOKE);
 const sSize = new Float32Array(SMOKE), sAlpha = new Float32Array(SMOKE), sWarm = new Float32Array(SMOKE), sMul = new Float32Array(SMOKE);   // sMul: độ đặc riêng từng hạt
 // sFol: phần tốc độ xe mà hạt còn bám theo (1 = đi cùng xe) · sLim: quãng (m) được bám theo trước khi bị gió cuốn · sDist: quãng đã đi
-const sFol = new Float32Array(SMOKE), sLim = new Float32Array(SMOKE), sDist = new Float32Array(SMOKE), sGrow = new Float32Array(SMOKE);   // sGrow: độ nở riêng
+const sFol = new Float32Array(SMOKE), sLim = new Float32Array(SMOKE), sDist = new Float32Array(SMOKE), sGrow = new Float32Array(SMOKE), sDrag = new Float32Array(SMOKE);   // sGrow: độ nở riêng · sDrag: lực cản riêng
 const sGeo = new THREE.BufferGeometry();
 sGeo.setAttribute("position", new THREE.BufferAttribute(sPos, 3));
 sGeo.setAttribute("aSize", new THREE.BufferAttribute(sSize, 1));
@@ -182,14 +182,14 @@ const smokeMat = new THREE.ShaderMaterial({
 const smoke = new THREE.Points(sGeo, smokeMat); smoke.frustumCulled = false; smoke.renderOrder = 4; scene.add(smoke);
 for (let i = 0; i < SMOKE; i++) sPos[i * 3 + 1] = -99;
 let sNext = 0, curDt = 1 / 60;
-function puff(p, v, size, life, warm = 0, fol = 0, lim = 0, mul = 1, grow = 1) {
+function puff(p, v, size, life, warm = 0, fol = 0, lim = 0, mul = 1, grow = 1, drag = 1.3) {
   const i = sNext; sNext = (sNext + 1) % SMOKE;
   // rải đều dọc quãng đi trong 1 khung (chống khói rời thành cục khi bay nhanh)
   const j = Math.random(), back = S.speed * (1 - fol);
   sPos[i * 3] = p.x + v.x * curDt * j; sPos[i * 3 + 1] = p.y + v.y * curDt * j; sPos[i * 3 + 2] = p.z + (v.z - back) * curDt * j;
   sVel[i * 3] = v.x; sVel[i * 3 + 1] = v.y; sVel[i * 3 + 2] = v.z;
   sLife[i] = sMax[i] = life; sSize[i] = size; sWarm[i] = warm; sMul[i] = mul;
-  sFol[i] = fol; sLim[i] = lim; sDist[i] = 0; sGrow[i] = grow;
+  sFol[i] = fol; sLim[i] = lim; sDist[i] = 0; sGrow[i] = grow; sDrag[i] = drag;
 }
 
 // ── Cụm xe (đơn vị MÉT; mũi xe = +z; mặt đất y = 0)
@@ -371,7 +371,7 @@ function updateSmoke(dt) {
     sDist[i] += Math.hypot(sVel[i * 3], sVel[i * 3 + 1], sVel[i * 3 + 2]) * dt;
     if (sDist[i] > sLim[i]) sFol[i] *= Math.exp(-2.2 * dt);   // quá quãng được bám → gió tốc độ cuốn dần về sau
     sPos[i * 3] += sVel[i * 3] * dt; sPos[i * 3 + 1] = y; sPos[i * 3 + 2] += (sVel[i * 3 + 2] - S.speed * (1 - sFol[i])) * dt;
-    const drag = Math.exp(-1.3 * dt); sVel[i * 3] *= drag; sVel[i * 3 + 2] *= drag; sVel[i * 3 + 1] = sVel[i * 3 + 1] < 0 ? sVel[i * 3 + 1] * Math.exp(-0.6 * dt) : sVel[i * 3 + 1] * drag;
+    const drag = Math.exp(-sDrag[i] * dt); sVel[i * 3] *= drag; sVel[i * 3 + 2] *= drag; sVel[i * 3 + 1] = sVel[i * 3 + 1] < 0 ? sVel[i * 3 + 1] * Math.exp(-0.6 * dt) : sVel[i * 3 + 1] * drag;
     sSize[i] += dt * (0.9 + k * 2.2) * sGrow[i];
     sAlpha[i] = Math.min(1, k * 25) * (1 - k) * 0.55 * sMul[i];
     sWarm[i] *= Math.exp(-1.5 * dt);
@@ -438,13 +438,13 @@ function tick(dtForce) {
     const need = air0 * Math.max(0, -j.s * S.roll * 18);
     j.pow = Math.max(j.pow - dt * 7, Math.min(1, need));          // nhịp ngắn ~0,1 s
     if (j.pow > 0.3) {
-      const n = Math.floor(j.pow * 170 * dt + Math.random());
+      const n = Math.floor(j.pow * 600 * dt + Math.random());
       for (let k = 0; k < n; k++) {
         j.g.localToWorld(tmp.set(0, 0, 0.04));
-        tmpV.copy(j.out).multiplyScalar(7 + Math.random() * 1.5);  // 7–8,5 m/s, có lực cản ⇒ đi ~2 m trong 0,4 s rồi tan
+        tmpV.copy(j.out).multiplyScalar(26 + Math.random() * 4);   // phụt cực nhanh 26–30 m/s, cản mạnh ⇒ dừng ở ~2 m
         tmpV.y += (Math.random() - 0.5) * 0.08; tmpV.z += (Math.random() - 0.5) * 0.08;
         tmpV.applyQuaternion(q);
-        puff(tmp, tmpV, 0.07, 0.32 + Math.random() * 0.1, 0, 1, 1e9, 1.2, 0.3);   // bám xe suốt đời hạt = không bị tốc độ bẻ
+        puff(tmp, tmpV, 0.14, 0.22 + Math.random() * 0.05, 0, 1, 1e9, 1.3, 0.6, 13);   // tan đúng lúc tới ~2 m (không dồn cục ở cuối)   // bám xe suốt đời hạt = không bị tốc độ bẻ
       }
     }
   }
