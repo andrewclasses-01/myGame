@@ -3,6 +3,12 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-c (21/10, khuya) — thầy góp ý tiếp:**
+- XƯỞNG: Roadster ĐỨNG SÀN như xe thường, đặt CHÉO phía sau (z CAR_Z+3,6, quay 0,55 rad; 2 drone ⇒ 2 chiếc x ±1,9), giấu ống phụt + bệ (`fc.stealth(true)`), đèn trần riêng `fcSpot` + cột sáng `fcBeam`; phim START: lăn theo 2 xe ra cửa.
+- Sơn mặc định tươi hơn `#1e8f4e` (export PAINT). Settings ▸ Drone: chọn Roadster ⇒ hàng **Roadster colour** (12 màu + ô custom), `dset.carCol` nhớ trên máy, `fc.setPaint()`; xưởng nhận qua setDrone.
+- BÁNH: mẫu có camber 2–3° ⇒ quay quanh trục X làm vành đảo. Nay mỗi bánh quay quanh TRỤC THẬT (PCA đỉnh lốp, `piv.userData.ax`, rotateOnAxis), tâm = đỉnh lốp − bán kính.
+- DỐC NHẢY / DỐC XOẮN khi chạy đường: chép luật xe đua (carRamp · carGround · carLaunch · carAir · carLand): dốc thẳng vọt ~5 m, dốc 1 bên / xoắn ⇒ barrel roll, trên không ◀ ▶ = nghiêng, BRAKE + lái = lộn, đáp lệch > 32° = BAD (mất đà). Không có toast PERFECT (cột drone). Bàn thử: `game.drone.carPut({s, x, v})`.
+
 **5j-b (21/10, tối) — thầy góp ý sau khi thử lab:**
 - XƯỞNG: `core/sr3d-intro-5j.js` (= intro-5f + Roadster trong ô ◀ ▶ drone; rw-5j.js nhập intro này). Xe CỠ THẬT bằng 2 xe đua, lơ lửng giữa (x 0, cao 0,6 m, nhô lên trước 1,2 m), khói sàn nhẹ, đèn rọi mạnh hơn; 2 drone ⇒ chiếc đội 2 cao 2,4 m phía sau. Phim START: bay theo xe ra cửa.
 - Sơn mặc định XANH LÁ ĐẬM `#0f5c34` (PAINT trong sr3d-flycar-5j.js, bỏ map sơn) — 2 drone vẫn sơn màu đội.
