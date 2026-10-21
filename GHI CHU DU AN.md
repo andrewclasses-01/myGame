@@ -665,6 +665,7 @@ bỏ tâm tên lửa — tên lửa tự đuổi tới khi trúng, 1 chạm = xe
 **Đã làm:** mẫu 5k (file mới, 5j giữ nguyên) — chi tiết + số đo + bẫy ở `speed-run/HO SO BAN GIAO RACING WORDS.md` mục "MẪU 5k". Tóm tắt: tốc độ theo xe = vEff (×airK khi bay dốc), trần Roadster 342 km/h,
 lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update trước phát + theo vận tốc hiện tại); đạn tự đuổi (dammo-5k home/tgt), không tâm, droneHit trúng chắc xe đích.
 **Lỗi gặp:** hàm phụ `sp` trùng biến `sp` ⇒ đổi `lui`. **Kiểm:** 6/6 phát trúng đúng xe, đuổi kịp xe dẫn qua dốc, 0 lỗi console.
+**5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
 ## VIỆC ĐANG CHỜ
 - ⬜ **RACING WORDS 5k** (21/10, myGame, CHƯA lên AWord): thầy chạy `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:

@@ -5,6 +5,10 @@
 ## ⏭ MỚI NHẤT — MẪU 5k (21/10/2026) — ROADSTER BÁM XE NHANH + TÊN LỬA TỰ ĐUỔI · myGame (CHƯA lên AWord)
 **Thầy yêu cầu:** (1) Roadster đạt tốc độ cao hơn, luôn bám được xe nhanh hơn kể cả khi xe đó vượt dốc 150–200 km/h — đang đuối. (2) Tốc độ cao Roadster giật, đuối, khói xịt 2 bên bay lệch lung tung — mượt mọi tốc độ.
 (3) Bỏ tâm tên lửa: tên lửa tự đuổi tới khi trúng — bấm 1 cái = xe XA, chạm đúp = xe GẦN, trúng 100 %; trên đường cũng vậy.
+**5k-b (cùng ngày, thầy thêm):** "bấm 1 trong 3 nút loại tên lửa thì cũng bắn luôn · 1 drone bắn thoải mái không cần chờ, bắn liên tục". `droneSel(k, d, fire)` — nút iPad (`d0–2`) + phím 1 2 3 (bàn số 1 2 3 drone 2) = chọn + BẮN.
+  1 drone (`!two()`): bỏ chờ đạn đang bay, bỏ hồi chiêu, không trừ pin (2 drone giữ luật cũ). Roadster: chạm thứ 3 liền / đổi loại đạn trong 0,3 s ⇒ `fireFw` bắn ngay phát đang chờ (đúng loại lúc bấm, `fw.k`) rồi chờ phát mới ⇒ bấm liên tục không mất phát.
+  Kiểm: phím 3 ×3 ⇒ 3 phát / 3 trúng, 0 bị chặn · Space ×6 cách 0,1 s ⇒ 3 phát đúp (xe gần) / 3 trúng · phím 1 rồi 2 liền ⇒ 1 Heart + 1 Boost, đúng loại, trúng cả 2.
+  ⚠️ Bấm dồn < 0,3 s thì 2 chạm gộp thành 1 phát ĐÚP (xe gần) — bản chất của luật đơn / đúp. Thẻ đạn iPad vẫn ghi "40 % · 4 s" (chữ cũ, 1 drone không còn áp dụng).
 **Soát đồng bộ trước khi làm:** AWord Đợt 570 `d5eeeca` ⇄ myGame 5j-i `4f5cc79` — 40 file `templates/racing-words/3d/` giống hệt (chỉ khác dòng import three), glb Roadster giống byte; `mc3d-qr.js` chỉ AWord có (đúng).
 **Nguyên nhân "đuối":** xe đua bay khỏi dốc đi `t.v × airK` (tới ×1,5, cộng ×1,2 lúc rời mép ⇒ ~350 km/h hiệu dụng) nhưng Roadster bám theo `t.v`; BOOST trên đường dừng ở VBOOST 47 m/s (169 km/h) < NITRO 57; tự bám xe cuối kẹp +7 m/s, gia tốc 10; bay kẹp ±14 m/s, nhịp 1,5/s; rời dốc bị hãm về VNITRO×1,15.
 **Đã làm (`mau-5k-roadster-ten-lua-tu-duoi.html` · gói `core/rw-5k.js` · lõi `core/sr3d-5k.js` · `sr3d-dammo-5k.js` · `sr3d-flycar-5k.js` · `sr3d-intro-5k.js` = intro-5j chỉ đổi import flycar-5k; iPad vẫn `pad-5j.html`):**
