@@ -3,6 +3,13 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-g (21/10) — thầy góp ý tiếp:**
+- PHANH trên đường (Roadster): vệt bánh (2 bánh sau; > 22 m/s cả 4) + khói lốp ở đuôi (carSkid).
+- XƯỞNG: Roadster lùi sâu FC_Z = CAR_Z + 7 (cũ +3,6: cảnh 2 máy quay cận ống xả xe đội 1 đứng ĐÚNG chỗ Roadster ⇒ che). Đã xem lại cảnh 1–3 bằng intro.seek: sạch.
+- Bật thrust từ dốc: văng tiếp theo quán tính 0,4 s (thân thẳng) / tới lúc gầm song song đất (đang lộn) rồi mới nổ; giữ đà tiến, bám cụm xe từ từ. Máy quay đường ⇄ trời chuyển MƯỢT (C.ck êm, 0,9/s khi kick / hạ).
+- Roadster ĐÂM XE GIAO THÔNG như xe thường (carTrafficHit).
+- Tên lửa trúng xe giao thông: vùng nổ rộng ~6,5 m (dễ bắt lửa).
+
 **5j-f (21/10) — thầy góp ý tiếp:**
 - DỐC / DỐC XOẮN đặt tiếp QUA vạch đích tới FIN + 4 km (RMAX; chừa ±70 m quanh đích) ⇒ Roadster chạy xa trước vẫn gặp dốc.
 - Chạy đường KHÔNG bấm BOOST ⇒ tự giữ ~14 m SAU xe cuối (vT theo xe cuối, a = (vT − v)·2,4) — thấy cả 2 xe. BOOST mới vượt lên.
