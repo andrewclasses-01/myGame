@@ -2,7 +2,7 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## ⏭ MỚI NHẤT — MẪU 5k (21/10/2026) — ROADSTER BÁM XE NHANH + TÊN LỬA TỰ ĐUỔI · myGame (CHƯA lên AWord)
+## ⏭ MỚI NHẤT — MẪU 5k (21/10/2026) — ROADSTER BÁM XE NHANH + TÊN LỬA TỰ ĐUỔI · ✅ myGame `43b74cf` = AWord THẬT Đợt 571 `178fa41` LIVE
 **Thầy yêu cầu:** (1) Roadster đạt tốc độ cao hơn, luôn bám được xe nhanh hơn kể cả khi xe đó vượt dốc 150–200 km/h — đang đuối. (2) Tốc độ cao Roadster giật, đuối, khói xịt 2 bên bay lệch lung tung — mượt mọi tốc độ.
 (3) Bỏ tâm tên lửa: tên lửa tự đuổi tới khi trúng — bấm 1 cái = xe XA, chạm đúp = xe GẦN, trúng 100 %; trên đường cũng vậy.
 **5k-b (cùng ngày, thầy thêm):** "bấm 1 trong 3 nút loại tên lửa thì cũng bắn luôn · 1 drone bắn thoải mái không cần chờ, bắn liên tục". `droneSel(k, d, fire)` — nút iPad (`d0–2`) + phím 1 2 3 (bàn số 1 2 3 drone 2) = chọn + BẮN.
@@ -19,7 +19,7 @@
 - Bắn (`droneFire`): Roadster mọi lúc (đường + bay + 2 drone) chờ 0,3 s xem chạm đúp; 1 = xe XA · 2 = xe GẦN; `dammo-5k` `fire({ home, tgt })` — mỗi khung điểm rơi = chỗ xe đích sẽ tới khi chạm (s + vEff·tl, theo cả y), bay 1,2–3,2 s theo khoảng cách, không dấu điểm rơi; `droneHit` coi xe `h.tgt` là trúng chắc (kể cả đang bay khỏi dốc). Tâm ngắm Roadster tắt hẳn. Chữ cột: "AUTO-HOMING · FIRE = FARTHER · 2× = NEAREST". Sự kiện droneShot thêm `tgt`.
 **Đã kiểm (localhost, bàn thử step):** BOOST đuổi từ 110 m sau xe dẫn đang bay dốc (236 km/h × airK) ⇒ bắt kịp + vượt · bay: xe dẫn rời dốc tụt tạm ~20 m rồi bắt lại ~2 s · 6/6 phát tên lửa trúng ĐÚNG xe (đơn = xa, đúp = gần; đường 2 + bay 4) · ảnh cột Roadster bay: không tâm, khói đuôi thành dải · 0 lỗi console · node --check bản .mjs 5 file sạch.
 **Chưa kiểm:** cảm giác thật trên TOMKO + iPad (giật còn không) · 2 drone Roadster bắn (đã nối logic, chưa thử).
-**Lên AWord (khi thầy OK):** mục 4 — `chep-racing-words.py` GOC = "rw-5k.js" (GOC_THEM / CSS giữ nguyên) · load-files đo lại (đổi tên 4 file 5j → 5k).
+**ĐÃ lên AWord Đợt 571 `178fa41` (LIVE, 21/10):** GOC = "rw-5k.js" (GOC_THEM / CSS giữ) · load-files đổi 5 dòng 5j → 5k theo byte (chưa đo lượt tải thật) · bàn thử `scratch/dot571-rw.html` nạp đúng 5k, 0 lỗi · live là bản đã nén ⇒ kiểm bằng grep chuỗi. ⏭ Phiên sau: ⬜ thầy thử TOMKO + iPad · sửa chữ thẻ đạn iPad ở 1 drone · thử 2 Roadster bắn.
 **Bẫy đợt này:** hàm phụ `sp` trùng tên biến tốc độ `sp` trong vòng khói tràn đường ⇒ "sp is not a function" chỉ khi bay sát đất — đổi tên `lui`. Phím thử: phát `keydown` trên `document` là NỔI lên `window` ⇒ gửi 2 lần (Space thành chạm đúp) — chỉ gửi trên window.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · ✅ CHỐT 5j-i ⇒ AWord THẬT Đợt 570 `d5eeeca` LIVE (myGame `4f5cc79`)

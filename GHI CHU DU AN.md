@@ -668,8 +668,8 @@ lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update tr�
 **5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
 ## VIỆC ĐANG CHỜ
-- ⬜ **RACING WORDS 5k** (21/10, myGame, CHƯA lên AWord): thầy chạy `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:
-  BOOST đuổi xe NITRO / xe qua dốc, bay bám xe dẫn, còn giật không, khói hông; FIRE 1 chạm = tên lửa tự đuổi xe XA, đúp = xe GẦN. OK ⇒ AWord: HO SO BAN GIAO mục 4 với GOC = "rw-5k.js".
+- ⬜ **RACING WORDS 5k + 5k-b** (21/10, ✅ ĐÃ LÊN AWord Đợt 571 `178fa41` LIVE): thầy thử trên AWord thật (hoặc `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:
+  BOOST đuổi xe NITRO / xe qua dốc, bay bám xe dẫn, còn giật không, khói hông; FIRE 1 chạm = tên lửa tự đuổi xe XA, đúp = xe GẦN. Thêm 5k-b: nút loại đạn = bắn, 1 drone bắn không chờ. Còn: chữ thẻ đạn iPad "40 % · 4 s" sai ở 1 drone · 2 Roadster bắn chưa thử · load-files chưa đo lại lượt tải thật.
 - ⏸ **RACING WORDS — TẠM CHỐT 20/10** sau 5i (= AWord Đợt 558). Phiên sau: đọc speed-run/HO SO BAN GIAO mục "MỚI NHẤT — MẪU 5i" trước.
 - ⬜ **RACING WORDS 5i** (20/10, ✅ ĐÃ LÊN AWord Đợt 558 `12eeef7`): thầy thử trên AWord thật (hoặc `speed-run/mau-5i-vach-lua.html` + `pad-5i.html?t=0|1`) trên TOMKO ⇒ thử vạch lửa (Settings ▸ Drone ▸ 1 drone, Help the losing team,
   bắn Missile vào xe dẫn) + tab ⚙ Settings ▸ Boost. Trả lời 2 câu: "Boost max" có đúng ý (mức nạp khi trả lời nhanh nhất) không · thanh thứ 5 (Fire line slow) có đúng ý không.
