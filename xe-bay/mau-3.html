@@ -15,6 +15,7 @@
   .bar button { font: 800 15px "Exo 2", system-ui; padding: 12px 18px; border-radius: 14px; border: 1px solid #ffffff2a; color: #fff; cursor: pointer;
     background: #0f1b2dcc; backdrop-filter: blur(8px); transition: transform .15s cubic-bezier(.22,.9,.3,1), background .2s; }
   .bar button:hover { transform: translateY(-2px); background: #1c3150dd; }
+  .bar #bL, .bar #bR { touch-action: none; user-select: none; }
   .bar button:disabled { opacity: .35; cursor: default; transform: none; }
   .bar button.on { background: #2563ebdd; border-color: #93c5fd; }
   .hud { position: fixed; right: 16px; top: 14px; z-index: 5; text-align: right; font-weight: 800; text-shadow: 0 2px 8px #000a; pointer-events: none; }
@@ -42,9 +43,11 @@
 <div class="top"><h1>FERRARI 296 · XE BAY</h1><div class="st" id="st">Đang đỗ trên đường băng</div></div>
 <div class="hud"><div><span class="n" id="alt">0</span> <span class="u">M CAO</span></div><div><span class="n" id="spd">0</span> <span class="u">KM/H</span></div></div>
 <div class="bar">
+  <button id="bL" title="Giữ để lái sang trái (phím ← hoặc A)">◀ TRÁI</button>
   <button id="bUp">⬆ CẤT CÁNH</button>
   <button id="bGo" disabled>➡ BAY TỚI</button>
   <button id="bDown" disabled>⬇ HẠ CÁNH</button>
+  <button id="bR" title="Giữ để lái sang phải (phím → hoặc D)">PHẢI ▶</button>
   <button id="bCam">🎥 GÓC MÁY</button>
 </div>
 <div class="credit">Thân xe: "2023 Ferrari 296 GTS" — Ddiaz Design (Sketchfab), CC BY-NC-SA 4.0 · ống đẩy, đèn gầm, biển dựng bằng code · chỉ dùng thử, không thương mại</div>

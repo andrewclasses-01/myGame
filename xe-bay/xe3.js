@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -274,6 +275,7 @@ function buildAll() {
   buildSideJets();
   buildUnderGlow();
   buildPlate();
+  buildLauncher();
 }
 
 // ── Ống đẩy gầm: 4 ống nhỏ chĩa thẳng xuống (2 ngay sau bánh trước, 2 sau bánh sau); chỉ phụt khói mờ
@@ -336,9 +338,30 @@ function buildPlate() {
   car.add(plate); parts.plate = plate;
 }
 
+// ── Bệ tên lửa (xe bay thay drone): gắn GIỮA nắp khoang máy sau cabin, thu chìm khi đỗ, nâng lên khi bay
+const POD = { z: -1.15, w: 0.44, h: 0.15, l: 0.44, up: 0.03, down: -0.16 };
+function buildLauncher() {
+  const h = hit(0, 5, POD.z, 0, -1, 0); const y0 = h ? h.p.y : 0.94;
+  const mount = new THREE.Group(); mount.position.set(0, y0, POD.z); car.add(mount);
+  // đế cố định nằm phẳng trên nắp + 2 thanh nâng
+  const base = new THREE.Mesh(new RoundedBoxGeometry(POD.w * 0.8, 0.012, POD.l * 0.8, 2, 0.005), M.carbon); base.position.y = 0.006; mount.add(base);
+  const lift = new THREE.Group(); mount.add(lift);
+  for (const sx of [-1, 1]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.2, 0.05), M.steel); st.position.set(sx * POD.w * 0.28, -0.1, 0); lift.add(st); }
+  // thân bệ: khối bo góc carbon, 2 × 2 nòng phóng chĩa về trước
+  const body = new THREE.Mesh(new RoundedBoxGeometry(POD.w, POD.h, POD.l, 3, 0.03), M.carbon); body.position.y = POD.h / 2; body.castShadow = true; lift.add(body);
+  for (const sx of [-1, 1]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.004, POD.l * 0.86), M.bronze); st.position.set(sx * POD.w * 0.36, POD.h + 0.001, 0); lift.add(st); }   // 2 chỉ đồng mảnh trên nóc
+  for (const tx of [-0.1, 0.1]) for (const ty of [0.045, 0.105]) {
+    const tube = makeNozzle(0.034, 0.02, 0.12);                       // nòng: viền đồng, lòng đen sâu
+    tube.position.set(tx, ty, POD.l / 2); lift.add(tube);
+  }
+  const led = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.006, 0.006), M.ledRed); led.position.set(0, POD.h * 0.8, -POD.l / 2 - 0.002); lift.add(led);
+  lift.position.y = POD.down; parts.pod = { mount, lift, led };
+}
+
 // ── Trạng thái
 // lift 0→1 lực đẩy gầm · alt độ cao (m) · fwd 0→1 ống đuôi · speed m/s
-const S = { mode: "park", lift: 0, alt: 0, fwd: 0, speed: 0, t: 0, cam: 0, roll: 0, rollV: 0 };
+const S = { mode: "park", lift: 0, alt: 0, fwd: 0, speed: 0, t: 0, cam: 0, roll: 0, rollV: 0,
+  x: 0, vx: 0, xHold: 0, yaw: 0, yawV: 0, steer: 0, steerIn: 0, sideNext: 0.5, pod: 0 };   // x, vx: dạt ngang (m, m/s) · yaw: quay mũi · steer: lái (+1 = sang TRÁI xe = +x)
 const ALT_HOVER = 3.6, V_MAX = 60;
 const $ = id => document.getElementById(id);
 function setBtns() {
@@ -353,6 +376,15 @@ $("bDown").onclick = () => { S.mode = "landing"; status("Hạ cánh…"); setBtn
 const CAMS = ["Tự xoay", "Đuổi theo", "Bên hông", "Đuôi xe", "Gầm xe"];
 $("bCam").onclick = () => { S.cam = (S.cam + 1) % CAMS.length; $("bCam").textContent = "🎥 " + CAMS[S.cam]; controls.enabled = S.cam === 0; };
 addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); for (const b of ["bUp", "bGo"]) if (!$(b).disabled) { $(b).click(); break; } } });
+// lái: ← / A = sang trái, → / D = sang phải (giữ phím / giữ nút)
+const keys = { L: false, R: false }, btn = { L: false, R: false };
+const keyOf = c => (c === "ArrowLeft" || c === "KeyA") ? "L" : (c === "ArrowRight" || c === "KeyD") ? "R" : null;
+addEventListener("keydown", e => { const k = keyOf(e.code); if (k) { keys[k] = true; e.preventDefault(); } });
+addEventListener("keyup", e => { const k = keyOf(e.code); if (k) keys[k] = false; });
+for (const [id, k] of [["bL", "L"], ["bR", "R"]]) { const b = $(id); if (!b) continue;
+  b.addEventListener("pointerdown", e => { btn[k] = true; b.setPointerCapture(e.pointerId); });
+  for (const ev of ["pointerup", "pointercancel", "lostpointercapture"]) b.addEventListener(ev, () => { btn[k] = false; }); }
+car.rotation.order = "YXZ";   // quay mũi trước, rồi chúc, rồi nghiêng
 setBtns();
 
 const ease = (cur, to, k, dt) => cur + (to - cur) * (1 - Math.exp(-k * dt));
@@ -414,10 +446,9 @@ function tick(dtForce) {
     if (S.alt <= 0 && S.lift < 0.04) { S.mode = "park"; S.lift = 0; status("Đã đáp xuống đường băng"); setBtns(); }
   }
 
-  // thăng bằng: xe chao nhẹ (lò xo), lỗ hông bên chúi xuống phun để đẩy lại
   const air = S.alt > 0.05 ? 1 : 0;
-  S.rollV += (-S.roll * 6 - S.rollV * 1.2 + (Math.random() - 0.5) * 3.2 * air * S.lift) * dt;
-  S.roll += S.rollV * dt; if (!air) { S.roll *= 0.9; S.rollV *= 0.9; }
+  S.steerIn = air ? ((keys.L || btn.L) ? 1 : 0) - ((keys.R || btn.R) ? 1 : 0) : 0;
+  S.steer = ease(S.steer, S.steerIn, 6, dt);
 
   const q = car.getWorldQuaternion(new THREE.Quaternion());
   // ống gầm: chỉ khói mờ (hạt mềm), phụt xuống rồi loang ra mặt đất
@@ -445,25 +476,56 @@ function tick(dtForce) {
   M.ledAmberRed.emissiveIntensity = Math.max(S.lift, air) * 4;
   parts.underLight.intensity = S.lift * 10;
 
-  // ống hông: mỗi nhịp = 1 dải khói LIỀN phóng thẳng ngang ~2 m, rồi CẢ dải tan cùng lúc
-  for (const j of parts.side) {
-    j.next -= dt; j.emit = Math.max(0, (j.emit || 0) - dt);
-    const need = air0 * -j.s * S.roll * 18;                            // bên chúi xuống thì phụt sớm
-    if (air0 && j.emit <= 0 && (j.next <= 0 || (need > 0.6 && j.next < 0.9))) {
-      j.burst = newBurst(); j.emit = B_EMIT; j.next = 0.3 + Math.random() * 1.0;
+  // ── ống hông theo VẬT LÝ: ống bên s phun khí ra phía s ⇒ đẩy xe về phía −s; ống trước/sau tạo mô-men quay mũi.
+  //    Lực ngang Fx = −s · F ; mô-men quanh trục đứng τ = z_ống · Fx  (z > 0 = ống trước).
+  //    Lơ lửng / bay thẳng: mỗi lúc CHỈ 1 ống, chọn ống sửa đúng độ dạt + quay mũi. Lái trái ⇒ ống bên PHẢI (s = −1) phụt đẩy xe sang trái.
+  const F_SIDE = 2.6, F_STEER = 6.5, V_SIDE = 5;                       // V_SIDE: tốc độ dạt ngang tối đa khi lái (m/s)                                   // gia tốc ngang 1 nhịp (m/s²): giữ cân · khi lái
+  let active = null;
+  for (const j of parts.side) { j.emit = Math.max(0, (j.emit || 0) - dt); if (j.emit > 0) active = j; }
+  S.sideNext -= dt;
+  if (air0 && !active && S.sideNext <= 0) {
+    let fx, ty;
+    if (Math.abs(S.steerIn) > 0) {                                     // đang lái: cần lực về phía lái (tới 5 m/s thì thôi đẩy), mũi quay theo
+      fx = S.steerIn * S.vx < V_SIDE ? S.steerIn : 0; ty = (S.steerIn * 0.12 - S.yaw) * 3 - S.yawV;
+      S.xHold = S.x + S.vx * 0.9;                                      // thả tay: phanh dừng ở gần chỗ này
+    } else {                                                           // giữ cân: kéo về chỗ đứng + triệt quay mũi
+      fx = -((S.x - S.xHold) * 1.0 + S.vx * 2.2); ty = -(S.yaw * 3 + S.yawV * 2);
+      if (Math.abs(fx) < 0.05) fx = (Math.random() - 0.5) * 0.1;      // gần như đứng yên: vẫn nhích nhẹ (cố giữ cân)
     }
-    if (j.emit > 0) {
-      const n = Math.floor(900 * dt + Math.random());
-      for (let k = 0; k < n; k++) {
-        j.g.localToWorld(tmp.set(0, 0, 0.04));
-        tmpV.copy(j.out).multiplyScalar(2 + Math.random() * 26);   // 2–28 m/s, cản 13/s ⇒ mỗi hạt dừng ở 0,15–2,1 m ⇒ dải phủ đều từ miệng ống tới 2 m
-        const vv = tmpV.length(), g1 = (Math.random() + Math.random() + Math.random() - 1.5), g2 = (Math.random() + Math.random() + Math.random() - 1.5);
-        tmpV.y += g1 * vv * 0.077 + vv * 0.025; tmpV.z += g2 * vv * 0.077;   // loe ~±0,3 m ở cuối, hơi bốc lên
-        tmpV.applyQuaternion(q);
-        puff(tmp, tmpV, 0.05, 9, 1, 1, 1e9, 1.2, 0.6 + Math.random() * 0.8, 13, j.burst + 1);   // 1,2 = mờ hơn   // bám xe suốt đời hạt; sống theo nhịp (không tự tan lẻ)
-      }
+    const big = Math.min(Math.abs(fx), 4);                             // lệch nhiều (vd vừa thả lái) ⇒ phụt mạnh + dồn dập hơn
+    const sSide = fx > 0 ? -1 : 1;                                      // muốn Fx > 0 ⇒ phun ở bên −x (s = −1)
+    const zSign = Math.sign(ty || 1) * Math.sign(-sSide);              // τ = z · Fx ⇒ dấu z = dấu τ · dấu Fx
+    const j = parts.side.find(q => q.s === sSide && Math.sign(q.z) === zSign) || parts.side.find(q => q.s === sSide);
+    if (j && fx !== 0) { j.burst = newBurst(); j.emit = B_EMIT; active = j; j.kick = S.steerIn ? F_STEER : F_SIDE + big * 1.6; }
+    S.sideNext = S.steerIn ? 0.08 + Math.random() * 0.1 : big > 0.8 ? 0.06 + Math.random() * 0.1 : 0.35 + Math.random() * 0.75;
+  }
+  if (active) {                                                        // lực của nhịp đang phụt tác động lên xe
+    const Fx = -active.s * active.kick;
+    S.vx += Fx * dt;
+    S.yawV += active.z * Fx * 0.12 * dt;
+    const n = Math.floor(900 * dt + Math.random());
+    for (let k = 0; k < n; k++) {
+      active.g.localToWorld(tmp.set(0, 0, 0.04));
+      tmpV.copy(active.out).multiplyScalar(2 + Math.random() * 26);   // 2–28 m/s, cản 13/s ⇒ mỗi hạt dừng ở 0,15–2,1 m ⇒ dải phủ đều từ miệng ống tới 2 m
+      const vv = tmpV.length(), g1 = (Math.random() + Math.random() + Math.random() - 1.5), g2 = (Math.random() + Math.random() + Math.random() - 1.5);
+      tmpV.y += g1 * vv * 0.077 + vv * 0.025; tmpV.z += g2 * vv * 0.077;   // loe ~±0,3 m ở cuối, hơi bốc lên
+      tmpV.applyQuaternion(q);
+      puff(tmp, tmpV, 0.05, 9, 1, 1, 1e9, 1.2, 0.6 + Math.random() * 0.8, 13, active.burst + 1);   // bám xe suốt đời hạt; cả dải tan cùng lúc
     }
   }
+  // động lực ngang: gió nhiễu (khi bay) + cản không khí; giữ trong đường băng
+  if (air0) { S.vx += (Math.random() - 0.5) * 1.6 * dt; S.yawV += (Math.random() - 0.5) * 0.35 * dt; }
+  S.vx *= Math.exp(-0.35 * dt); S.yawV *= Math.exp(-0.9 * dt);
+  S.x += S.vx * dt; S.yaw += S.yawV * dt;
+  if (Math.abs(S.x) > 11) { S.x = Math.sign(S.x) * 11; S.vx = 0; S.xHold = S.x; }
+  if (!air0) { S.vx *= 0.8; S.yawV *= 0.8; S.yaw *= 0.95; }
+  // nghiêng thân theo hướng dạt (dạt sang trái +x ⇒ nghiêng trái = rotation.z âm) + chao nhẹ
+  S.roll = ease(S.roll, air0 * (-S.vx * 0.02 - S.steer * 0.04 + Math.sin(S.t * 1.3) * 0.012), 3, dt);   // ~8° khi lái hết cỡ
+
+  // bệ tên lửa: nâng lên khi bay, thu chìm khi đỗ
+  S.pod = ease(S.pod, air0 ? 1 : 0, 2.5, dt);
+  parts.pod.lift.position.y = POD.down + (POD.up - POD.down) * THREE.MathUtils.smoothstep(S.pod, 0, 1);
+  parts.pod.led.material.emissiveIntensity = 2 + 3 * S.pod;
 
   // bánh quay theo tốc độ khi còn trên đất, lúc bay quay chậm dần
   for (const w of parts.wheels) w.rotation.x += dt * (S.alt < 0.05 ? S.speed / WHEEL_R : 0.4 * (1 - S.lift));
@@ -471,9 +533,9 @@ function tick(dtForce) {
   // thân xe
   const bob = S.lift * air * (Math.sin(S.t * 1.6) * 0.1 + Math.sin(S.t * 2.7) * 0.04);
   const shake = S.lift * 0.006 + S.fwd * 0.008;
-  car.position.set((Math.random() - 0.5) * shake, S.alt + bob, (Math.random() - 0.5) * shake);
+  car.position.set(S.x + (Math.random() - 0.5) * shake, S.alt + bob, (Math.random() - 0.5) * shake);
   car.rotation.x = ease(car.rotation.x, S.mode === "cruise" ? 0.04 : (S.mode === "takeoff" && S.lift > 0.6 ? -0.03 : 0), 2, dt);
-  car.rotation.z = S.roll;
+  car.rotation.z = S.roll; car.rotation.y = S.yaw;
 
   // cuộn mặt đất
   rtex.offset.y += S.speed * dt / TILE;
@@ -481,7 +543,7 @@ function tick(dtForce) {
   updateSmoke(dt);
 
   // camera
-  if (S.cam === 0) { controls.target.lerp(lerpTo.set(0, car.position.y + 0.6, 0), 0.08); controls.update(); }
+  if (S.cam === 0) { const ox = controls.target.x; controls.target.lerp(lerpTo.set(car.position.x, car.position.y + 0.6, 0), 0.08); camera.position.x += controls.target.x - ox; controls.update(); }
   else {
     const n = NARROW() ? 1.8 : 1;
     if (S.cam === 1) camOff.set(2.6, 2 + S.alt * 0.15, -10 - S.fwd * 2);
