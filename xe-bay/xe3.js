@@ -384,7 +384,7 @@ function updateSmoke(dt) {
     const drag = Math.exp(-sDrag[i] * dt); sVel[i * 3] *= drag; sVel[i * 3 + 2] *= drag; sVel[i * 3 + 1] = (sVel[i * 3 + 1] < 0 && !sOwn[i]) ? sVel[i * 3 + 1] * Math.exp(-0.6 * dt) : sVel[i * 3 + 1] * drag;
     if (sOwn[i]) {                                                      // hạt của nhịp hông: đậm theo cả nhịp, nhịp tắt thì hạt tắt
       const d = Math.min(sDist[i] / 2.2, 1);                            // 0 = miệng ống, 1 = cuối luồng
-      sSize[i] = (0.045 + sDist[i] * 0.16) * sGrow[i] + (sMax[i] - sLife[i]) * 0.1;   // mảnh ở ống, loe dần, nở thêm chút theo thời gian
+      sSize[i] = (0.038 + sDist[i] * 0.136) * sGrow[i] + (sMax[i] - sLife[i]) * 0.085;   // hẹp hơn 15% (21/10)   // mảnh ở ống, loe dần, nở thêm chút theo thời gian
       const b = sOwn[i] - 1; sAlpha[i] = Math.min(1, (sMax[i] - sLife[i]) * 40) * 0.55 * sMul[i] * (1 - 0.7 * d) * bEnv[b];
       if (!bLive[b]) { sLife[i] = 0; sAlpha[i] = 0; }
     } else { sSize[i] += dt * (0.9 + k * 2.2) * sGrow[i]; sAlpha[i] = Math.min(1, k * 25) * (1 - k) * 0.55 * sMul[i]; }
@@ -458,9 +458,9 @@ function tick(dtForce) {
         j.g.localToWorld(tmp.set(0, 0, 0.04));
         tmpV.copy(j.out).multiplyScalar(2 + Math.random() * 26);   // 2–28 m/s, cản 13/s ⇒ mỗi hạt dừng ở 0,15–2,1 m ⇒ dải phủ đều từ miệng ống tới 2 m
         const vv = tmpV.length(), g1 = (Math.random() + Math.random() + Math.random() - 1.5), g2 = (Math.random() + Math.random() + Math.random() - 1.5);
-        tmpV.y += g1 * vv * 0.09 + vv * 0.025; tmpV.z += g2 * vv * 0.09;   // loe ~±0,3 m ở cuối, hơi bốc lên
+        tmpV.y += g1 * vv * 0.077 + vv * 0.025; tmpV.z += g2 * vv * 0.077;   // loe ~±0,3 m ở cuối, hơi bốc lên
         tmpV.applyQuaternion(q);
-        puff(tmp, tmpV, 0.06, 9, 1, 1, 1e9, 1.5, 0.6 + Math.random() * 0.8, 13, j.burst + 1);   // bám xe suốt đời hạt; sống theo nhịp (không tự tan lẻ)
+        puff(tmp, tmpV, 0.05, 9, 1, 1, 1e9, 1.2, 0.6 + Math.random() * 0.8, 13, j.burst + 1);   // 1,2 = mờ hơn   // bám xe suốt đời hạt; sống theo nhịp (không tự tan lẻ)
       }
     }
   }
