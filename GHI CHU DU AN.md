@@ -658,7 +658,17 @@ rèm toa thôi dùng kính truyền sáng (transmission — vẽ thêm cả cả
 
 - **Bổ sung cùng ngày — KHOÁ ĐỘI iPad (= AWord Đợt 539):** iPad 2 chọn trùng đội đã có iPad ⇒ cũ: 2 máy Connecting mãi; nay đội có CHỦ (mã máy), máy khác bị chặn + màn chọn đội làm mờ, chủ thoát / mất > 8 s mới nhả. Chi tiết mục 40 (cuối).
 
+## Chặng 21/10/2026 (tối) · RACING WORDS MẪU 5k — Roadster bám xe nhanh + tên lửa tự đuổi
+**Bối cảnh (thầy):** soát RACING WORDS AWord ⇄ myGame đã đồng bộ chưa; Roadster phải đạt tốc cao hơn, luôn bám xe nhanh kể cả khi xe vượt dốc 150–200 km/h; ở tốc cao Roadster giật + khói hông bay lệch;
+bỏ tâm tên lửa — tên lửa tự đuổi tới khi trúng, 1 chạm = xe xa, đúp = xe gần, trúng 100 %, trên đường cũng vậy.
+**Đồng bộ:** AWord Đợt 570 = myGame 5j-i, KHỚP 100 % (chỉ khác import three).
+**Đã làm:** mẫu 5k (file mới, 5j giữ nguyên) — chi tiết + số đo + bẫy ở `speed-run/HO SO BAN GIAO RACING WORDS.md` mục "MẪU 5k". Tóm tắt: tốc độ theo xe = vEff (×airK khi bay dốc), trần Roadster 342 km/h,
+lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update trước phát + theo vận tốc hiện tại); đạn tự đuổi (dammo-5k home/tgt), không tâm, droneHit trúng chắc xe đích.
+**Lỗi gặp:** hàm phụ `sp` trùng biến `sp` ⇒ đổi `lui`. **Kiểm:** 6/6 phát trúng đúng xe, đuổi kịp xe dẫn qua dốc, 0 lỗi console.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 5k** (21/10, myGame, CHƯA lên AWord): thầy chạy `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:
+  BOOST đuổi xe NITRO / xe qua dốc, bay bám xe dẫn, còn giật không, khói hông; FIRE 1 chạm = tên lửa tự đuổi xe XA, đúp = xe GẦN. OK ⇒ AWord: HO SO BAN GIAO mục 4 với GOC = "rw-5k.js".
 - ⏸ **RACING WORDS — TẠM CHỐT 20/10** sau 5i (= AWord Đợt 558). Phiên sau: đọc speed-run/HO SO BAN GIAO mục "MỚI NHẤT — MẪU 5i" trước.
 - ⬜ **RACING WORDS 5i** (20/10, ✅ ĐÃ LÊN AWord Đợt 558 `12eeef7`): thầy thử trên AWord thật (hoặc `speed-run/mau-5i-vach-lua.html` + `pad-5i.html?t=0|1`) trên TOMKO ⇒ thử vạch lửa (Settings ▸ Drone ▸ 1 drone, Help the losing team,
   bắn Missile vào xe dẫn) + tab ⚙ Settings ▸ Boost. Trả lời 2 câu: "Boost max" có đúng ý (mức nạp khi trả lời nhanh nhất) không · thanh thứ 5 (Fire line slow) có đúng ý không.
