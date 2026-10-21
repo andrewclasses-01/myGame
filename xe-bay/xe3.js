@@ -156,9 +156,11 @@ function plumeMat() {
 }
 
 // ── Khói: hạt mềm, bay xuống rồi loang ra mặt đất, to dần, mờ dần
-const SMOKE = 4200;
+const SMOKE = 6000;
 const sPos = new Float32Array(SMOKE * 3), sVel = new Float32Array(SMOKE * 3), sLife = new Float32Array(SMOKE), sMax = new Float32Array(SMOKE);
 const sSize = new Float32Array(SMOKE), sAlpha = new Float32Array(SMOKE), sWarm = new Float32Array(SMOKE), sMul = new Float32Array(SMOKE);   // sMul: độ đặc riêng từng hạt
+// sFol: phần tốc độ xe mà hạt còn bám theo (1 = đi cùng xe) · sLim: quãng (m) được bám theo trước khi bị gió cuốn · sDist: quãng đã đi
+const sFol = new Float32Array(SMOKE), sLim = new Float32Array(SMOKE), sDist = new Float32Array(SMOKE);
 const sGeo = new THREE.BufferGeometry();
 sGeo.setAttribute("position", new THREE.BufferAttribute(sPos, 3));
 sGeo.setAttribute("aSize", new THREE.BufferAttribute(sSize, 1));
@@ -180,12 +182,14 @@ const smokeMat = new THREE.ShaderMaterial({
 const smoke = new THREE.Points(sGeo, smokeMat); smoke.frustumCulled = false; smoke.renderOrder = 4; scene.add(smoke);
 for (let i = 0; i < SMOKE; i++) sPos[i * 3 + 1] = -99;
 let sNext = 0, curDt = 1 / 60;
-function puff(p, v, size, life, warm = 0) {
+function puff(p, v, size, life, warm = 0, fol = 0, lim = 0, mul = 1) {
   const i = sNext; sNext = (sNext + 1) % SMOKE;
-  // rải đều dọc quãng xe đi trong 1 khung (chống khói rời thành cục khi bay nhanh)
-  const j = Math.random(); sPos[i * 3] = p.x + v.x * curDt * j; sPos[i * 3 + 1] = p.y + v.y * curDt * j; sPos[i * 3 + 2] = p.z + (v.z - S.speed) * curDt * j;
+  // rải đều dọc quãng đi trong 1 khung (chống khói rời thành cục khi bay nhanh)
+  const j = Math.random(), back = S.speed * (1 - fol);
+  sPos[i * 3] = p.x + v.x * curDt * j; sPos[i * 3 + 1] = p.y + v.y * curDt * j; sPos[i * 3 + 2] = p.z + (v.z - back) * curDt * j;
   sVel[i * 3] = v.x; sVel[i * 3 + 1] = v.y; sVel[i * 3 + 2] = v.z;
-  sLife[i] = sMax[i] = life; sSize[i] = size; sWarm[i] = warm; sMul[i] = 1;
+  sLife[i] = sMax[i] = life; sSize[i] = size; sWarm[i] = warm; sMul[i] = mul;
+  sFol[i] = fol; sLim[i] = lim; sDist[i] = 0;
 }
 
 // ── Cụm xe (đơn vị MÉT; mũi xe = +z; mặt đất y = 0)
@@ -360,9 +364,13 @@ function updateSmoke(dt) {
     if (y < 0.15 && sVel[i * 3 + 1] < 0) {        // chạm đất → loang ngang + bốc nhẹ
       y = 0.15; const sp = Math.hypot(sVel[i * 3], sVel[i * 3 + 2]) + Math.abs(sVel[i * 3 + 1]) * 0.6;
       const a = Math.random() * Math.PI * 2; sVel[i * 3] = Math.cos(a) * sp; sVel[i * 3 + 2] = Math.sin(a) * sp; sVel[i * 3 + 1] = 0.25 + Math.random() * 0.5;
-      sMul[i] = 0.32; sLife[i] *= 0.7; sMax[i] = Math.max(sMax[i] * 0.7, 0.01);   // lớp khói nằm đất loãng hơn, tan nhanh hơn
+      sMul[i] = 0.32 + Math.min(S.speed / 60, 1) * 0.18; sLife[i] *= 0.7; sMax[i] = Math.max(sMax[i] * 0.7, 0.01);   // lớp khói nằm đất loãng hơn, tan nhanh hơn
+      sLim[i] = 0;                                   // chạm đất rồi thì bắt đầu bị tốc độ cuốn (nhả dần, không giật)
+      sSize[i] += Math.min(S.speed / 60, 1) * 0.5;   // bay nhanh: hạt nằm đất to hơn để vệt liền, không lốm đốm
     }
-    sPos[i * 3] += sVel[i * 3] * dt; sPos[i * 3 + 1] = y; sPos[i * 3 + 2] += (sVel[i * 3 + 2] - S.speed) * dt;
+    sDist[i] += Math.hypot(sVel[i * 3], sVel[i * 3 + 1], sVel[i * 3 + 2]) * dt;
+    if (sDist[i] > sLim[i]) sFol[i] *= Math.exp(-2.2 * dt);   // quá quãng được bám → gió tốc độ cuốn dần về sau
+    sPos[i * 3] += sVel[i * 3] * dt; sPos[i * 3 + 1] = y; sPos[i * 3 + 2] += (sVel[i * 3 + 2] - S.speed * (1 - sFol[i])) * dt;
     const drag = Math.exp(-1.3 * dt); sVel[i * 3] *= drag; sVel[i * 3 + 2] *= drag; sVel[i * 3 + 1] = sVel[i * 3 + 1] < 0 ? sVel[i * 3 + 1] * Math.exp(-0.6 * dt) : sVel[i * 3 + 1] * drag;
     sSize[i] += dt * (0.9 + k * 2.2);
     sAlpha[i] = Math.min(1, k * 25) * (1 - k) * 0.55 * sMul[i];
@@ -401,11 +409,11 @@ function tick(dtForce) {
   // ống gầm: chỉ khói mờ (hạt mềm), phụt xuống rồi loang ra mặt đất
   for (const p of parts.under) {
     if (S.lift > 0.05) {
-      const n = Math.floor(S.lift * 210 * dt + Math.random());
+      const n = Math.floor(S.lift * (210 + S.speed * 3) * dt + Math.random());
       for (let k = 0; k < n; k++) {
         p.g.localToWorld(tmp.set((Math.random() - 0.5) * 0.02, (Math.random() - 0.5) * 0.02, 0.04));
         tmpV.set((Math.random() - 0.5) * 0.9, -(11 + Math.random() * 6), (Math.random() - 0.5) * 0.9).applyQuaternion(q);
-        puff(tmp, tmpV, 0.26 + Math.random() * 0.2, 1.4 + Math.random() * 1.6, 0);
+        puff(tmp, tmpV, 0.26 + Math.random() * 0.2, 1.4 + Math.random() * 1.6, 0, 0.92, 99, 1 + Math.min(S.speed / 60, 1) * 0.4);
       }
     }
   }
@@ -413,11 +421,11 @@ function tick(dtForce) {
   const air0 = S.alt > 0.05 ? 1 : 0;
   const rearPow = Math.max(S.fwd, air0 * S.lift * (0.22 + 0.08 * Math.sin(S.t * 2.3)));
   for (const r of parts.rear) {
-    const n = Math.floor(rearPow * (S.fwd > 0.3 ? 110 : 22) * dt + Math.random() * rearPow);
+    const n = Math.floor(rearPow * (S.fwd > 0.3 ? 220 : 55) * dt + Math.random());
     for (let k = 0; k < n; k++) {
       r.g.localToWorld(tmp.set(0, 0, 0.06));
       tmpV.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.2) * 0.35, -(1.5 + rearPow * 9 + Math.random() * 2)).applyQuaternion(q);
-      puff(tmp, tmpV, 0.06 + rearPow * 0.1 + S.speed * 0.004, 0.6 + Math.random() * 0.6, 0);
+      puff(tmp, tmpV, 0.07 + rearPow * 0.08, 0.7 + Math.random() * 0.7, 0, 1, 0.8, 1.5);
     }
   }
   M.ledAmberRed.emissiveIntensity = Math.max(S.lift, air) * 4;
@@ -428,15 +436,15 @@ function tick(dtForce) {
     j.next -= dt;
     if (air0 && j.next <= 0) { j.pow = Math.max(j.pow, 0.55 + Math.random() * 0.45); j.next = 0.25 + Math.random() * 1.1; }
     const need = air0 * Math.max(0, -j.s * S.roll * 18);
-    j.pow = Math.max(j.pow - dt * 4, Math.min(1, need));
+    j.pow = Math.max(j.pow - dt * 2.4, Math.min(1, need));
     if (j.pow > 0.25) {
-      const n = Math.floor(j.pow * 45 * dt + Math.random() * 0.6);
+      const n = Math.floor(j.pow * 110 * dt + Math.random());
       for (let k = 0; k < n; k++) {
         j.g.localToWorld(tmp.set(0, 0, 0.04));
         tmpV.copy(j.out).multiplyScalar(5 + Math.random() * 3 * j.pow);
         tmpV.y += (Math.random() - 0.5) * 0.3; tmpV.z += (Math.random() - 0.5) * 0.3;
         tmpV.applyQuaternion(q);
-        puff(tmp, tmpV, 0.06, 0.4 + Math.random() * 0.25, 0);
+        puff(tmp, tmpV, 0.07, 0.6 + Math.random() * 0.35, 0, 1, 1.0, 1.6);
       }
     }
   }
