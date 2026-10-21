@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XE BAY — chọn mẫu Ferrari 296</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0b1220; --card: #13213a; --line: #ffffff1a; --tx: #e8f1ff; --mut: #a9b8cf; --ac: #60a5fa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--tx); font: 600 15px "Exo 2", system-ui, sans-serif; padding: 20px 16px 40px; }
+  h1 { margin: 0 0 4px; font-size: 24px; font-weight: 900; } .sub { color: var(--mut); margin: 0 0 18px; font-weight: 500; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .view { position: relative; aspect-ratio: 16/9; background: #000 center/cover no-repeat; cursor: pointer; }
+  .view iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .view .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); background: #0f1b2dcc; border: 1px solid #93c5fd; padding: 10px 16px; border-radius: 12px; font-weight: 800; }
+  .info { padding: 12px 16px 16px; }
+  .info h2 { margin: 0 0 6px; font-size: 18px; } .num { color: var(--ac); margin-right: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .tag { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: #ffffff12; color: var(--mut); }
+  .tag.ok { background: #14532d; color: #bbf7d0; } .tag.warn { background: #713f12; color: #fde68a; } .tag.bad { background: #7f1d1d; color: #fecaca; }
+  .info p { margin: 0; color: var(--mut); font-weight: 500; line-height: 1.45; }
+  a { color: var(--ac); }
+</style></head>
+<body>
+<h1>Chọn thân xe bay · Ferrari 296</h1>
+<p class="sub">Bấm vào ảnh để xoay mẫu 3D thật (kéo chuột xoay, lăn chuột phóng to). Nhãn xanh = bản quyền sạch hơn, vàng = chỉ dùng trong lớp, đỏ = có vấn đề.</p>
+<div class="grid" id="g"></div>
+<script>
+const M = [
+  { n: 1, uid: "269f4fd01b584dd38f7e512de60c4645", name: "2022 Ferrari 296 GTB", user: "ddiaz-design", faces: "251 nghìn", lic: ["CC BY-NC-SA · cấm thương mại", "warn"], thumb: "https://media.sketchfab.com/models/269f4fd01b584dd38f7e512de60c4645/thumbnails/a8ac023958c34e5da2ec466b274291ed/23a672efa9f24ba3afa85880f0f7b622.jpeg",
+    note: "Bản 296 GTB thường, mui cứng, đỏ. Có khoang lái và kính. Nhẹ nhất trong nhóm đẹp → chạy game tốt. Tác giả là kho mẫu xe nổi tiếng (nguồn gốc không ghi rõ)." },
+  { n: 2, uid: "9a596b9d09414adfad64fc1f5fd019f9", name: "2023 Ferrari 296 GTS", user: "ddiaz-design", faces: "278 nghìn", lic: ["CC BY-NC-SA · cấm thương mại", "warn"], thumb: "https://media.sketchfab.com/models/9a596b9d09414adfad64fc1f5fd019f9/thumbnails/9cde9841640544428cf5871aed8f30dd/bc60624a7c1a4a8db77bab982ddda58a.jpeg",
+    note: "Bản GTS (mui trần xếp, mái đen), cùng tác giả #1. Được thích nhiều nhất trong các mẫu 296 đường phố." },
+  { n: 3, uid: "3b7f4d3f48364a5c832ca3b94272f759", name: "2026 Ferrari 296 Speciale A", user: "outpiston", faces: "373 nghìn", lic: ["Bóc từ game CSR2", "bad"], thumb: "https://media.sketchfab.com/models/3b7f4d3f48364a5c832ca3b94272f759/thumbnails/2e0dc244a8e541648c1fdd7c5d6ac63c/28a9dbe71f6f4758a783acebc71dd922.jpeg",
+    note: "Mẫu thầy gửi. Đẹp nhất, bản Speciale mới (cánh gió, nắp capo khoét). Tác giả ghi rõ lấy từ game CSR2 → chỉ nên dùng thử/trong lớp." },
+  { n: 4, uid: "9bf45e6115f24b2ca23813b76df16b11", name: "Ferrari 296 GTB", user: "saba.tchanturia1", faces: "1,1 triệu", lic: ["CC BY · dùng được", "ok"], thumb: "https://media.sketchfab.com/models/9bf45e6115f24b2ca23813b76df16b11/thumbnails/5e1fb47fb68344f8b216cf0dbe4ae734/26fbec1d3a5842f08e09fb11eaa4d171.jpeg",
+    note: "Giấy phép thoáng nhất, rất chi tiết nhưng NẶNG (1,1 triệu mặt) → phải nén mạnh. Ít người thích, cần xoay kiểm tra chất lượng." },
+  { n: 5, uid: "e6760847bb2d4b579d43cf916f348526", name: "Ferrari 296 GT3 (xe đua)", user: "MattDoesBlender", faces: "412 nghìn", lic: ["CC BY · dùng được", "ok"], thumb: "https://media.sketchfab.com/models/e6760847bb2d4b579d43cf916f348526/thumbnails/7624936baadf4b31b9eb5fcaf567e95c/69160b2466cc44f2958a695e1965dd23.jpeg",
+    note: "Bản xe đua GT3: cánh gió lớn, sơn đua số 54. Dáng hầm hố, hợp xe bay; có thể sơn lại màu ANDREW TEAM." },
+];
+document.getElementById("g").innerHTML = M.map(m => `
+  <div class="card">
+    <div class="view" style="background-image:url('${m.thumb}')" data-uid="${m.uid}"><div class="play">▶ Xoay 3D</div></div>
+    <div class="info"><h2><span class="num">#${m.n}</span>${m.name}</h2>
+      <div class="tags"><span class="tag ${m.lic[1]}">${m.lic[0]}</span><span class="tag">${m.faces} mặt</span><span class="tag">${m.user}</span></div>
+      <p>${m.note} <a href="https://sketchfab.com/3d-models/${m.uid}" target="_blank" rel="noopener">Trang gốc ↗</a></p></div>
+  </div>`).join("");
+document.querySelectorAll(".view").forEach(v => v.addEventListener("click", () => {
+  if (v.querySelector("iframe")) return;
+  v.innerHTML = `<iframe allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen src="https://sketchfab.com/models/${v.dataset.uid}/embed?autostart=1&ui_infos=0&ui_watermark=0"></iframe>`;
+}));
+</script>
+</body></html>
