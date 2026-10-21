@@ -358,7 +358,7 @@ function buildLauncher() {
   let elev = 30;
   for (let d = 8; d <= 40; d += 1) {
     const r = d * Math.PI / 180; let clear = true;
-    for (const x of [-0.11, 0, 0.11]) for (const dy of [-0.04, 0.04]) { const t = hit(x, mouthY + dy, mouthZ, 0, Math.sin(r), Math.cos(r)); if (t && t.p.distanceTo(new THREE.Vector3(x, mouthY + dy, mouthZ)) < 6) clear = false; }
+    for (const x of [-0.13, 0, 0.13]) for (const dy of [-0.03, 0.03]) { const t = hit(x, mouthY + dy, mouthZ, 0, Math.sin(r), Math.cos(r)); if (t && t.p.distanceTo(new THREE.Vector3(x, mouthY + dy, mouthZ)) < 6) clear = false; }
     if (clear) { elev = d + 5; break; }
   }
   const er = elev * Math.PI / 180;
@@ -378,7 +378,7 @@ function buildLauncher() {
   const faceC = new THREE.Vector3(0, H * 0.5, (fz + topF[0]) / 2);
   const plate = new THREE.Mesh(new THREE.PlaneGeometry(POD.w * 0.8, H * 0.9), new THREE.MeshStandardMaterial({ color: 0x07080a, metalness: 0.4, roughness: 0.55 }));
   plate.position.copy(faceC).addScaledVector(nrm, 0.004); plate.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(plate);
-  for (const tx of [-0.095, 0.095]) for (const tu of [-0.037, 0.037]) {
+  for (const tx of [-0.13, 0, 0.13]) for (const tu of [0]) {           // 3 nòng một hàng ngang
     const tube = makeNozzle(0.03, 0.03, 0.14);
     tube.position.copy(faceC).add(new THREE.Vector3(tx, 0, 0)).addScaledVector(upF, tu).addScaledVector(nrm, 0.004);
     tube.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(tube);
@@ -405,12 +405,12 @@ function buildLauncher() {
   const topA = new THREE.Vector3(0, H * 0.8, -L * 0.3), topB = new THREE.Vector3(0, topF[1], topF[0]);
   const topN = new THREE.Vector3().subVectors(topB, topA).normalize(); topN.set(0, topN.z, -topN.y);   // pháp tuyến nóc (hướng lên)
   if (topN.y < 0) topN.negate();
-  const aGeo = new THREE.ExtrudeGeometry(aShape(0.17, 0.15, 0.032), { depth: 0.008, bevelEnabled: true, bevelThickness: 0.003, bevelSize: 0.003, bevelSegments: 1 });
-  aGeo.translate(0, -0.075, 0);
+  const aGeo = new THREE.ExtrudeGeometry(aShape(0.12, 0.11, 0.017), { depth: 0.008, bevelEnabled: true, bevelThickness: 0.003, bevelSize: 0.003, bevelSegments: 1 });
+  aGeo.translate(0, -0.055, 0);
   const aMat = new THREE.MeshStandardMaterial({ color: 0xc8925a, metalness: 1, roughness: 0.22, emissive: 0xff7a2a, emissiveIntensity: 0.25 });
   const A = new THREE.Mesh(aGeo, aMat);
-  const aGlow = new THREE.Mesh(new THREE.ShapeGeometry(aShape(0.19, 0.168, 0.04)), new THREE.MeshBasicMaterial({ color: 0xff5a1a, transparent: true, opacity: 0.55, depthWrite: false }));
-  aGlow.geometry.translate(0, -0.084, 0);
+  const aGlow = new THREE.Mesh(new THREE.ShapeGeometry(aShape(0.132, 0.121, 0.023)), new THREE.MeshBasicMaterial({ color: 0xff5a1a, transparent: true, opacity: 0.55, depthWrite: false }));
+  aGlow.geometry.translate(0, -0.0605, 0);
   const aG = new THREE.Group(); aG.add(aGlow, A); A.position.z = 0.001;
   const mid = new THREE.Vector3().addVectors(topA, topB).multiplyScalar(0.5).addScaledVector(topN, 0.012);
   aG.position.copy(mid);
