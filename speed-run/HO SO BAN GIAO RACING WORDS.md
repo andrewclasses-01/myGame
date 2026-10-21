@@ -3,6 +3,13 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-e (21/10) — thầy góp ý tiếp:**
+- RUNG sau khi bật thrust từ dốc: lỗi — C.shake chỉ tắt dần khi chạy đường ⇒ bay rồi vẫn rung mãi. Nay tắt dần ở mọi chế độ.
+- Tên lửa bệ 3 nòng: `sr3d-dammo-5j.js` fire({ dir, vel }) — rời nòng ngửa lên theo nòng, vượt qua đầu xe rồi cuộn xuống (đích sau xe ⇒ cắm từ phía trước), mang vận tốc xe (giảm (1−x)²) ⇒ không xuyên qua xe. Miệng nòng còn vương khói ~1,4 s (`fc.puffTube`).
+- VẠCH LỬA loang lổ: các đám (spots) to nhỏ, lệch trước sau, độ mạnh khác nhau; vết cháy = nhiều vệt chéo đè nhau + lấm tấm muội; lửa / khói phát theo từng đám (flSpot).
+- Biển số: ẩn hẳn mảnh `ManufacturerPlate` của mẫu, chỉ còn biển ANDREW TEAM.
+- Cảnh: `sr3d-world-5j.js` update(…, sAlt) — Roadster ra khỏi cửa sổ cảnh của 2 xe ⇒ rải thêm cây / cột quanh nó (thử 2,2 km trước: có cây).
+
 **5j-d (21/10) — thầy góp ý tiếp:**
 - Khói hông lúc GIỮ CÂN: nhịp 1/2 thời gian (`burst(k)`, bS), 1/2 số hạt, dải ngắn hơn (tốc 2–14), mờ hơn (0,26). Lúc lái / dạt mạnh giữ như cũ.
 - Tâm bắn khi Roadster BAY: `home = d.bk + v(xe nhanh nhất) × DA.T (1,5 s) + 4 m`, iPad chúc chỉ chỉnh −18…+12 m quanh đó (d.adO).
