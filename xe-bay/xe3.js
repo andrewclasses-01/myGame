@@ -374,14 +374,14 @@ function buildLauncher() {
   const gun = new THREE.MeshPhysicalMaterial({ color: 0x1b1e23, metalness: 0.85, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.3 });
   const body = new THREE.Mesh(bodyG, gun); body.castShadow = true; lift.add(body);
   // mặt trước: tấm ốp tối + 2×2 nòng theo trục ngửa
-  const nrm = new THREE.Vector3(0, Math.sin(er), Math.cos(er)), upF = new THREE.Vector3(0, Math.cos(er), -Math.sin(er));
+  const nrm = new THREE.Vector3(0, Math.sin(er), Math.cos(er)), upF = new THREE.Vector3(0, Math.cos(er), -Math.sin(er)); const tubes = [];
   const faceC = new THREE.Vector3(0, H * 0.5, (fz + topF[0]) / 2);
   const plate = new THREE.Mesh(new THREE.PlaneGeometry(POD.w * 0.8, H * 0.9), new THREE.MeshStandardMaterial({ color: 0x07080a, metalness: 0.4, roughness: 0.55 }));
   plate.position.copy(faceC).addScaledVector(nrm, 0.004); plate.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(plate);
   for (const tx of [-0.13, 0, 0.13]) for (const tu of [0]) {           // 3 nòng một hàng ngang
     const tube = makeNozzle(0.03, 0.03, 0.14);
     tube.position.copy(faceC).add(new THREE.Vector3(tx, 0, 0)).addScaledVector(upF, tu).addScaledVector(nrm, 0.004);
-    tube.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(tube);
+    tube.quaternion.setFromUnitVectors(Z_AXIS, nrm); lift.add(tube); tubes.push(tube);
   }
   // dải đèn đỏ mép dưới mặt trước + 2 khe sáng hai bên nóc
   const ledMat = new THREE.MeshStandardMaterial({ color: 0x220000, emissive: 0xff1a12, emissiveIntensity: 1.5 });
@@ -419,22 +419,135 @@ function buildLauncher() {
   aG.quaternion.setFromRotationMatrix(m); lift.add(aG);
   // trụ nâng (thấy khi bệ nâng lên)
   for (const sx of [-1, 1]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 0.06), M.steel); st.position.set(sx * POD.w * 0.3, -0.11, -L * 0.05); lift.add(st); }
-  lift.position.y = POD.down; parts.pod = { mount, lift, led, aMat, slitMat, elev };
+  lift.position.y = POD.down; parts.pod = { mount, lift, led, aMat, slitMat, elev, tubes };
+}
+
+
+// ── TÊN LỬA: bắn từ 3 nòng (lần lượt trái → giữa → phải). Ra nòng theo góc ngửa, mồi đẩy rồi bẻ lái về TÂM NGẮM
+//    trên mặt đường phía trước; chạm đất ⇒ nổ (cầu lửa + chớp sáng + khói + vệt cháy). Đường chạy cuộn về sau ⇒ mọi thứ chạm đất trôi theo.
+const RK = { v0: 24, vMax: 85, acc: 140, turn: 6.5, cool: 0.38, life: 4 };   // turn: bẻ lái rad/s (cao ⇒ vòng cung thấp, không vọt lên trời)
+const rockets = [], blasts = [];
+const rkBodyM = new THREE.MeshStandardMaterial({ color: 0xd9dde2, metalness: 0.6, roughness: 0.35 });
+const rkNoseM = new THREE.MeshStandardMaterial({ color: 0xff5a1a, emissive: 0x401000, metalness: 0.3, roughness: 0.4 });
+const glowTex = (() => { const c = document.createElement("canvas"); c.width = c.height = 128; const g = c.getContext("2d");
+  const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, "rgba(255,255,240,1)"); gr.addColorStop(0.25, "rgba(255,200,90,.9)"); gr.addColorStop(0.6, "rgba(255,90,20,.35)"); gr.addColorStop(1, "rgba(255,40,0,0)");
+  g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+function makeRocket() {
+  const g = new THREE.Group();                                        // trục +z = mũi
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.26, 12), rkBodyM); body.rotation.x = Math.PI / 2; g.add(body);
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.026, 0.08, 12), rkNoseM); nose.rotation.x = Math.PI / 2; nose.position.z = 0.17; g.add(nose);
+  for (let k = 0; k < 4; k++) { const f = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.05, 0.05), M.carbon); const a = k * Math.PI / 2;
+    f.position.set(Math.cos(a) * 0.035, Math.sin(a) * 0.035, -0.1); f.rotation.z = a; g.add(f); }
+  const flame = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffd08a, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  flame.scale.setScalar(0.35); flame.position.z = -0.17; g.add(flame);
+  g.userData.flame = flame; return g;
+}
+// tâm ngắm trên mặt đường
+const reticle = new THREE.Group(); scene.add(reticle);
+{ const rm = new THREE.MeshBasicMaterial({ color: 0xff6a2a, transparent: true, opacity: 0.85, depthWrite: false });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(1.1, 1.25, 48), rm); ring.rotation.x = -Math.PI / 2; reticle.add(ring);
+  for (let k = 0; k < 4; k++) { const t = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.7), rm); t.rotation.x = -Math.PI / 2; t.rotation.z = k * Math.PI / 2; const a = k * Math.PI / 2;
+    t.position.set(Math.sin(a) * 1.65, 0, Math.cos(a) * 1.65); reticle.add(t); }
+  reticle.position.y = 0.03; reticle.visible = false; }
+const flash = new THREE.PointLight(0xff8a3a, 0, 40, 1.6); scene.add(flash);
+const _p = new THREE.Vector3(), _d = new THREE.Vector3(), _t = new THREE.Vector3();
+function fireRocket() {
+  const tubes = parts.pod.tubes; const tube = tubes[S.tube % tubes.length]; S.tube++;
+  car.updateMatrixWorld(true);
+  tube.localToWorld(_p.set(0, 0, 0.02)); _d.set(0, 0, 1).transformDirection(tube.matrixWorld);
+  const m = makeRocket(); m.position.copy(_p); m.lookAt(_t.copy(_p).add(_d)); scene.add(m);
+  const target = new THREE.Vector3(S.x, 0, S.aim);                   // khoá điểm trên mặt đường lúc bắn
+  rockets.push({ m, v: _d.clone().multiplyScalar(RK.v0), target, t: 0 });
+  for (let k = 0; k < 14; k++) { tmpV.copy(_d).multiplyScalar(2 + Math.random() * 3).add(new THREE.Vector3((Math.random() - .5) * 1.5, (Math.random() - .5) * 1.5, (Math.random() - .5) * 1.5));
+    puff(_p, tmpV, 0.1, 0.5 + Math.random() * 0.4, 0.4, 0, 0, 1.2, 1, 3); }  // khói đầu nòng
+  status("Phóng tên lửa!");
+}
+function explode(pos) {
+  const core = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffffff, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  const ball = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xff7a2a, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  core.position.copy(pos).setY(0.6); ball.position.copy(pos).setY(1.0); scene.add(core, ball);
+  const scorch = new THREE.Mesh(new THREE.CircleGeometry(1.6, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.6, depthWrite: false }));
+  scorch.rotation.x = -Math.PI / 2; scorch.position.set(pos.x, 0.025, pos.z); scene.add(scorch);
+  blasts.push({ core, ball, scorch, t: 0 });
+  flash.position.set(pos.x, 1.5, pos.z); flash.intensity = 420;
+  for (let k = 0; k < 46; k++) {                                     // khói nổ bung lên + loang
+    const a = Math.random() * Math.PI * 2, sp = 2 + Math.random() * 6;
+    tmpV.set(Math.cos(a) * sp, 1.5 + Math.random() * 5, Math.sin(a) * sp);
+    _p.set(pos.x + (Math.random() - .5) * 0.8, 0.3 + Math.random() * 0.6, pos.z + (Math.random() - .5) * 0.8);
+    puff(_p, tmpV, 0.5 + Math.random() * 0.5, 1.6 + Math.random() * 1.6, 0, 0, 0, 1.3, 1.3, 1.8);   // khói nổ xám
+  }
+}
+function updateRockets(dt) {
+  // bắn
+  S.fireCd = Math.max(0, S.fireCd - dt);
+  const ready = S.pod > 0.85 && parts.pod && parts.pod.tubes.length;
+  $("bFire").disabled = !ready;
+  if (ready && (fireKey.k || fireKey.b) && S.fireCd <= 0) { fireRocket(); S.fireCd = RK.cool; }
+  // tâm ngắm: phía trước xe trên mặt đường, theo làn xe
+  reticle.visible = !!ready; reticle.position.x = S.x; reticle.position.z = S.aim; reticle.rotation.y += dt * 0.8;
+  reticle.children[0].material.opacity = 0.55 + 0.3 * Math.sin(S.t * 6);
+  // bay
+  for (let i = rockets.length - 1; i >= 0; i--) {
+    const r = rockets[i]; r.t += dt;
+    r.target.z -= S.speed * dt;                                       // điểm trên đường trôi về sau theo tốc độ xe
+    const sp = Math.min(RK.vMax, r.v.length() + RK.acc * dt);
+    if (r.t > 0.12) {                                                 // ra khỏi nòng rồi mới bẻ lái về tâm ngắm
+      _d.copy(r.target).sub(r.m.position).normalize(); _t.copy(r.v).normalize();
+      const ang = _t.angleTo(_d), k = Math.min(1, RK.turn * dt / Math.max(ang, 1e-4));
+      _t.lerp(_d, k).normalize(); r.v.copy(_t).multiplyScalar(sp);
+    } else r.v.setLength(sp);
+    r.m.position.addScaledVector(r.v, dt);
+    r.m.lookAt(_t.copy(r.m.position).add(r.v));
+    r.m.userData.flame.scale.setScalar(0.28 + Math.random() * 0.14);
+    for (let k = 0; k < 7; k++) { tmpV.set((Math.random() - .5) * 0.5, (Math.random() - .5) * 0.5, (Math.random() - .5) * 0.5);
+      _p.copy(r.m.position).addScaledVector(r.v, -dt * Math.random() - 0.004);
+      puff(_p, tmpV, 0.13, 0.7 + Math.random() * 0.5, 0.3, 0, 0, 0.75, 0.8, 1.2); }   // vệt khói (đứng yên giữa trời ⇒ trôi theo tốc độ)
+    if (r.m.position.y <= 0.05 || r.m.position.distanceTo(r.target) < 0.6 || r.t > RK.life) {
+      _p.copy(r.m.position).setY(0); explode(_p); scene.remove(r.m); rockets.splice(i, 1);
+    }
+  }
+  // nổ
+  flash.intensity *= Math.exp(-9 * dt);
+  for (let i = blasts.length - 1; i >= 0; i--) {
+    const b = blasts[i]; b.t += dt; const dz = -S.speed * dt;
+    b.core.position.z += dz; b.ball.position.z += dz; b.scorch.position.z += dz; flash.position.z += dz / Math.max(blasts.length, 1);
+    b.core.scale.setScalar(1.5 + b.t * 22); b.core.material.opacity = Math.max(0, 1 - b.t / 0.25);
+    b.ball.scale.setScalar(2.5 + b.t * 12); b.ball.position.y = 1 + b.t * 2; b.ball.material.opacity = Math.max(0, 1 - b.t / 0.55);
+    b.scorch.material.opacity = 0.6 * Math.max(0, 1 - b.t / 4);
+    if (b.t > 4) { scene.remove(b.core, b.ball, b.scorch); blasts.splice(i, 1); }
+  }
 }
 
 // ── Trạng thái
 // lift 0→1 lực đẩy gầm · alt độ cao (m) · fwd 0→1 ống đuôi · speed m/s
 const S = { mode: "park", lift: 0, alt: 0, fwd: 0, speed: 0, t: 0, cam: 0, roll: 0, rollV: 0,
-  x: 0, vx: 0, xHold: 0, yaw: 0, yawV: 0, steer: 0, steerIn: 0, sideNext: 0.5, pod: 0 };   // x, vx: dạt ngang (m, m/s) · yaw: quay mũi · steer: lái (+1 = sang TRÁI xe = +x)
-const ALT_HOVER = 3.6, V_MAX = 60;
+  x: 0, vx: 0, xHold: 0, yaw: 0, yawV: 0, steer: 0, steerIn: 0, sideNext: 0.5, pod: 0, cd: 0, fireCd: 0, tube: 0, aim: 42 };
+// mode: park (đỗ) → count (đếm 3-2-1, bệ CHƯA hiện) → drive (chạy đường, bệ bật lên) ⇄ takeoff/hover/cruise/landing (bay) · stop (phanh về đỗ)   // x, vx: dạt ngang (m, m/s) · yaw: quay mũi · steer: lái (+1 = sang TRÁI xe = +x)
+const ALT_HOVER = 3.6, V_MAX = 60, V_DRIVE = 32;                     // V_DRIVE: tốc độ chạy đường (≈115 km/h)
 const $ = id => document.getElementById(id);
 function setBtns() {
-  $("bUp").disabled = S.mode !== "park";
+  const ground = S.mode === "park" || S.mode === "drive" || S.mode === "stop";
+  $("bStart").disabled = !(S.mode === "park" || S.mode === "drive");
+  $("bStart").textContent = S.mode === "drive" ? "■ DỪNG" : "▶ CHẠY";
+  $("bUp").disabled = !(S.mode === "park" || S.mode === "drive");
   $("bGo").disabled = !(S.mode === "hover" || S.mode === "cruise");
   $("bGo").classList.toggle("on", S.mode === "cruise");
   $("bDown").disabled = !(S.mode === "hover" || S.mode === "cruise");
 }
 $("bUp").onclick = () => { S.mode = "takeoff"; status("Mở ống đẩy gầm · cất cánh…"); setBtns(); };
+$("bStart").onclick = () => {
+  if (S.mode === "park") { S.mode = "count"; S.cd = 3.6; showCount("3"); status("Chuẩn bị xuất phát…"); }
+  else if (S.mode === "drive") { S.mode = "stop"; status("Phanh…"); }
+  setBtns();
+};
+const cdEl = $("cd");
+function showCount(t) { if (!cdEl) return; cdEl.textContent = t; cdEl.classList.remove("pop"); void cdEl.offsetWidth; cdEl.classList.add("pop"); }
+// bắn: phím F / giữ nút BẮN
+const fireKey = { k: false, b: false };
+addEventListener("keydown", e => { if (e.code === "KeyF") { fireKey.k = true; e.preventDefault(); } });
+addEventListener("keyup", e => { if (e.code === "KeyF") fireKey.k = false; });
+{ const b = $("bFire"); b.addEventListener("pointerdown", e => { fireKey.b = true; b.setPointerCapture(e.pointerId); });
+  for (const ev of ["pointerup", "pointercancel", "lostpointercapture"]) b.addEventListener(ev, () => { fireKey.b = false; }); }
 $("bGo").onclick = () => { S.mode = S.mode === "cruise" ? "hover" : "cruise"; status(S.mode === "cruise" ? "4 ống đuôi: bay tới!" : "Lơ lửng · ống hông giữ thăng bằng"); setBtns(); };
 $("bDown").onclick = () => { S.mode = "landing"; status("Hạ cánh…"); setBtns(); };
 const CAMS = ["Tự xoay", "Đuổi theo", "Bên hông", "Đuôi xe", "Gầm xe"];
@@ -495,23 +608,32 @@ function tick(dtForce) {
   if (!bodyMeshes) { composer.render(); return; }
 
   // máy trạng thái
-  if (S.mode === "takeoff") {
+  if (S.mode === "count") {
+    const before = Math.ceil(S.cd - 0.6); S.cd -= dt; const now = Math.ceil(S.cd - 0.6);
+    if (now !== before) showCount(now > 0 ? String(now) : "GO!");
+    if (S.cd <= 0.6 && before > 0) { S.mode = "drive"; status("Chạy trên đường · bệ tên lửa bật lên · F = BẮN"); setBtns(); }
+  } else if (S.mode === "drive") {
+    S.speed = ease(S.speed, V_DRIVE, 0.45, dt);
+  } else if (S.mode === "stop") {
+    S.speed = Math.max(0, S.speed - dt * 14);
+    if (S.speed <= 0) { S.mode = "park"; status("Đã dừng"); setBtns(); }
+  } else if (S.mode === "takeoff") {
     S.lift = ease(S.lift, 1, 2.2, dt);
     if (S.lift > 0.6) S.alt = ease(S.alt, ALT_HOVER, 0.8, dt);
-    if (S.alt > ALT_HOVER - 0.15) { S.mode = "hover"; status("Lơ lửng · bấm BAY TỚI"); setBtns(); }
+    if (S.alt > ALT_HOVER - 0.15) { const go = S.speed > 5; S.mode = go ? "cruise" : "hover"; status(go ? "Bay tới · 4 ống đuôi" : "Lơ lửng · bấm BAY TỚI"); setBtns(); }
   } else if (S.mode === "hover") {
     S.fwd = ease(S.fwd, 0, 3, dt); S.speed = ease(S.speed, 0, 0.8, dt); S.alt = ease(S.alt, ALT_HOVER, 1.5, dt); S.lift = ease(S.lift, 1, 3, dt);
   } else if (S.mode === "cruise") {
     S.fwd = ease(S.fwd, 1, 2.5, dt); S.speed = ease(S.speed, V_MAX, 0.3, dt); S.alt = ease(S.alt, ALT_HOVER + 1.2, 0.6, dt); S.lift = ease(S.lift, 0.75, 2, dt);
   } else if (S.mode === "landing") {
-    S.fwd = ease(S.fwd, 0, 3, dt); S.speed = ease(S.speed, 0, 1.2, dt);
-    if (S.speed < 3) S.alt = Math.max(0, S.alt - dt * (0.5 + S.alt * 0.4));
+    S.fwd = ease(S.fwd, 0, 3, dt); S.speed = ease(S.speed, Math.min(S.speed, V_DRIVE), 1.2, dt);   // đáp xuống khi vẫn chạy ⇒ về chạy đường
+    S.alt = Math.max(0, S.alt - dt * (0.5 + S.alt * 0.4));
     S.lift = S.alt > 0.02 ? ease(S.lift, 0.85, 3, dt) : ease(S.lift, 0, 2.5, dt);
-    if (S.alt <= 0 && S.lift < 0.04) { S.mode = "park"; S.lift = 0; status("Đã đáp xuống đường băng"); setBtns(); }
+    if (S.alt <= 0 && S.lift < 0.04) { const run = S.speed > 3; S.mode = run ? "drive" : "park"; S.lift = 0; status(run ? "Đã đáp · chạy tiếp trên đường" : "Đã đáp xuống đường băng"); setBtns(); }
   }
 
   const air = S.alt > 0.05 ? 1 : 0;
-  S.steerIn = air ? ((keys.L || btn.L) ? 1 : 0) - ((keys.R || btn.R) ? 1 : 0) : 0;
+  S.steerIn = (air || S.speed > 1) ? ((keys.L || btn.L) ? 1 : 0) - ((keys.R || btn.R) ? 1 : 0) : 0;   // chạy đường cũng lái được (bằng bánh)
   S.steer = ease(S.steer, S.steerIn, 6, dt);
 
   const q = car.getWorldQuaternion(new THREE.Quaternion());
@@ -582,17 +704,22 @@ function tick(dtForce) {
   S.vx *= Math.exp(-0.35 * dt); S.yawV *= Math.exp(-0.9 * dt);
   S.x += S.vx * dt; S.yaw += S.yawV * dt;
   if (Math.abs(S.x) > 11) { S.x = Math.sign(S.x) * 11; S.vx = 0; S.xHold = S.x; }
-  if (!air0) { S.vx *= 0.8; S.yawV *= 0.8; S.yaw *= 0.95; }
+  if (!air0) {                                                        // trên đường: lái bằng bánh (đổi làn), không dùng ống hông
+    S.vx = ease(S.vx, S.steerIn * 4.5 * Math.min(1, S.speed / 8), 3, dt); S.yawV = 0;
+    S.yaw = ease(S.yaw, S.steerIn * 0.07 * Math.min(1, S.speed / 8), 4, dt); S.xHold = S.x;
+  }
   // nghiêng thân theo hướng dạt (dạt sang trái +x ⇒ nghiêng trái = rotation.z âm) + chao nhẹ
   S.roll = ease(S.roll, air0 * (-S.vx * 0.02 - S.steer * 0.04 + Math.sin(S.t * 1.3) * 0.012), 3, dt);   // ~8° khi lái hết cỡ
 
   // bệ tên lửa: nâng lên khi bay, thu chìm khi đỗ
-  S.pod = ease(S.pod, air0 ? 1 : 0, 2.5, dt);
+  const podOn = air0 || (S.speed > 0.3 && S.mode !== "count");
+  S.pod = ease(S.pod, podOn ? 1 : 0, 4, dt);
   parts.pod.lift.position.y = POD.down + (POD.up - POD.down) * THREE.MathUtils.smoothstep(S.pod, 0, 1);
   parts.pod.led.material.emissiveIntensity = 0.5 + 1.2 * S.pod; parts.pod.aMat.emissiveIntensity = 0.15 + 0.5 * S.pod; parts.pod.slitMat.emissiveIntensity = 0.3 + 1.4 * S.pod;
 
   // bánh quay theo tốc độ khi còn trên đất, lúc bay quay chậm dần
   for (const w of parts.wheels) w.rotation.x += dt * (S.alt < 0.05 ? S.speed / WHEEL_R : 0.4 * (1 - S.lift));
+  updateRockets(dt);
 
   // thân xe
   const bob = S.lift * air * (Math.sin(S.t * 1.6) * 0.1 + Math.sin(S.t * 2.7) * 0.04);

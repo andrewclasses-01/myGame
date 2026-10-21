@@ -21,6 +21,10 @@
   .hud { position: fixed; right: 16px; top: 14px; z-index: 5; text-align: right; font-weight: 800; text-shadow: 0 2px 8px #000a; pointer-events: none; }
   .hud .n { font-size: 30px; } .hud .u { font-size: 12px; color: #93c5fd; letter-spacing: 1px; }
   .credit { position: fixed; left: 16px; bottom: 6px; font: 600 10px system-ui; color: #ffffff70; z-index: 4; }
+  #cd { position: fixed; left: 50%; top: 38%; transform: translate(-50%,-50%); font: 900 120px "Exo 2", system-ui; color: #fff; text-shadow: 0 6px 30px #000c; z-index: 6; pointer-events: none; opacity: 0; }
+  #cd.pop { animation: cdpop .9s cubic-bezier(.22,.9,.3,1) forwards; }
+  @keyframes cdpop { 0% { opacity: 0; transform: translate(-50%,-50%) scale(1.8); } 20% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 75% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(.85); } }
+  .bar #bFire, .bar #bL, .bar #bR { touch-action: none; user-select: none; }
   #loading { position: fixed; inset: 0; display: grid; place-items: center; background: #05070d; z-index: 9; font-size: 18px; font-weight: 800; transition: opacity .6s; }
   @media (max-width: 600px) {
     .top h1 { font-size: 16px; } .top .st { font-size: 12px; }
@@ -42,11 +46,14 @@
 <div id="loading">Đang tải xe… <span id="pct">0%</span></div>
 <div class="top"><h1>FERRARI 296 · XE BAY</h1><div class="st" id="st">Đang đỗ trên đường băng</div></div>
 <div class="hud"><div><span class="n" id="alt">0</span> <span class="u">M CAO</span></div><div><span class="n" id="spd">0</span> <span class="u">KM/H</span></div></div>
+<div id="cd"></div>
 <div class="bar">
   <button id="bL" title="Giữ để lái sang trái (phím ← hoặc A)">◀ TRÁI</button>
+  <button id="bStart">▶ CHẠY</button>
   <button id="bUp">⬆ CẤT CÁNH</button>
   <button id="bGo" disabled>➡ BAY TỚI</button>
   <button id="bDown" disabled>⬇ HẠ CÁNH</button>
+  <button id="bFire" disabled title="Giữ để bắn liên tục (phím F)">🚀 BẮN</button>
   <button id="bR" title="Giữ để lái sang phải (phím → hoặc D)">PHẢI ▶</button>
   <button id="bCam">🎥 GÓC MÁY</button>
 </div>
