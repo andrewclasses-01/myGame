@@ -3,6 +3,15 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-f (21/10) — thầy góp ý tiếp:**
+- DỐC / DỐC XOẮN đặt tiếp QUA vạch đích tới FIN + 4 km (RMAX; chừa ±70 m quanh đích) ⇒ Roadster chạy xa trước vẫn gặp dốc.
+- Chạy đường KHÔNG bấm BOOST ⇒ tự giữ ~14 m SAU xe cuối (vT theo xe cuối, a = (vT − v)·2,4) — thấy cả 2 xe. BOOST mới vượt lên.
+- Đang HẠ CÁNH + BOOST ⇒ C.dF: đuôi phụt lửa + khói, vT + 20 m/s, vừa phi tới vừa xuống; chạm đất lửa dài thêm.
+- XE GIAO THÔNG trúng tên lửa: `sr3d-traffic-5j.js` blast(v, side) — hất lên, lộn tới nằm NGHIÊNG (π/2) hoặc NGỬA (π), nảy, cháy 5,5 s (lõi burnTraffic phát lửa + khói đen), sơn cháy đen, tiếng "trafficBoom".
+- Roadster có chấm "R" (màu xe) trên BẢN ĐỒ (.m-rd).
+- Vết cháy vạch lửa = `scorch` (InstancedMesh ảnh mờ nhiều vòng loang, xoay + kéo dãn ngẫu nhiên) thay vệt chữ nhật burnSk.
+- ĐÈN PHANH: tách tam giác đuôi của mảnh LightA ra mảnh riêng (parts.tail), phanh ⇒ emissive đỏ 3,75 (bình thường 0,35).
+
 **5j-e (21/10) — thầy góp ý tiếp:**
 - RUNG sau khi bật thrust từ dốc: lỗi — C.shake chỉ tắt dần khi chạy đường ⇒ bay rồi vẫn rung mãi. Nay tắt dần ở mọi chế độ.
 - Tên lửa bệ 3 nòng: `sr3d-dammo-5j.js` fire({ dir, vel }) — rời nòng ngửa lên theo nòng, vượt qua đầu xe rồi cuộn xuống (đích sau xe ⇒ cắm từ phía trước), mang vận tốc xe (giảm (1−x)²) ⇒ không xuyên qua xe. Miệng nòng còn vương khói ~1,4 s (`fc.puffTube`).
