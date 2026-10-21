@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>XE BAY ROADSTER — Mẫu 2 · chi tiết như xe thật</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #05070d; overflow: hidden; font-family: "Exo 2", system-ui, sans-serif; color: #e8f1ff; }
+  #view { position: fixed; inset: 0; }
+  .top { position: fixed; left: 16px; top: 14px; z-index: 5; pointer-events: none; }
+  .top h1 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: .5px; text-shadow: 0 2px 10px #000a; }
+  .top .st { margin-top: 4px; font-size: 14px; font-weight: 700; color: #7dd3fc; text-shadow: 0 2px 8px #000a; }
+  .bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 10px; z-index: 5; flex-wrap: wrap; justify-content: center; width: calc(100% - 32px); }
+  .bar button { font: 800 15px "Exo 2", system-ui; padding: 12px 18px; border-radius: 14px; border: 1px solid #ffffff2a; color: #fff; cursor: pointer;
+    background: #0f1b2dcc; backdrop-filter: blur(8px); transition: transform .15s cubic-bezier(.22,.9,.3,1), background .2s; }
+  .bar button:hover { transform: translateY(-2px); background: #1c3150dd; }
+  .bar button:disabled { opacity: .35; cursor: default; transform: none; }
+  .bar button.on { background: #2563ebdd; border-color: #93c5fd; }
+  .hud { position: fixed; right: 16px; top: 14px; z-index: 5; text-align: right; font-weight: 800; text-shadow: 0 2px 8px #000a; pointer-events: none; }
+  .hud .n { font-size: 30px; } .hud .u { font-size: 12px; color: #93c5fd; letter-spacing: 1px; }
+  .credit { position: fixed; left: 16px; bottom: 6px; font: 600 10px system-ui; color: #ffffff70; z-index: 4; }
+  #loading { position: fixed; inset: 0; display: grid; place-items: center; background: #05070d; z-index: 9; font-size: 18px; font-weight: 800; transition: opacity .6s; }
+  @media (max-width: 600px) {
+    .top h1 { font-size: 16px; } .top .st { font-size: 12px; }
+    .hud { top: 58px; } .hud .n { font-size: 22px; }
+    .bar button { padding: 10px 12px; font-size: 13px; }
+    .credit { display: none; }
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.8.3/build/index.module.js"
+} }
+</script>
+</head>
+<body>
+<div id="view"></div>
+<div id="loading">Đang tải xe… <span id="pct">0%</span></div>
+<div class="top"><h1>TESLA ROADSTER · XE BAY</h1><div class="st" id="st">Đang đỗ trên đường băng</div></div>
+<div class="hud"><div><span class="n" id="alt">0</span> <span class="u">M CAO</span></div><div><span class="n" id="spd">0</span> <span class="u">KM/H</span></div></div>
+<div class="bar">
+  <button id="bUp">⬆ CẤT CÁNH</button>
+  <button id="bGo" disabled>➡ BAY TỚI</button>
+  <button id="bDown" disabled>⬇ HẠ CÁNH</button>
+  <button id="bDoor">🚪 MỞ CỬA</button>
+  <button id="bCam">🎥 GÓC MÁY</button>
+</div>
+<div class="credit">Thân xe: "Tesla Roadtser 2026" — asiphy007 (Sketchfab), CC BY 4.0 · đèn, bánh, biển, ống phụt, cửa dựng bằng code</div>
+<script type="module" src="xe2.js"></script>
+</body>
+</html>
