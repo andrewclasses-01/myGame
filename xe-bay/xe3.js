@@ -180,8 +180,8 @@ const smokeMat = new THREE.ShaderMaterial({
   vertexShader: `uniform float uScale; attribute float aSize, aAlpha, aWarm; varying float vA, vW;
     void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv; gl_PointSize=aSize*uScale/-mv.z; vA=aAlpha; vW=aWarm; }`,
   fragmentShader: `uniform sampler2D uTex; varying float vA, vW;
-    void main(){ vec4 t=texture2D(uTex,gl_PointCoord); vec3 c=mix(vec3(.9,.92,.96),vec3(1.,.8,.78),vW*.3);
-      gl_FragColor=vec4(c*(0.55+0.5*vW), t.a*vA); }`
+    void main(){ vec4 t=texture2D(uTex,gl_PointCoord); vec3 c=vec3(.9,.92,.96);
+      gl_FragColor=vec4(c*(0.55+0.6*vW), t.a*vA); }`
 });
 const smoke = new THREE.Points(sGeo, smokeMat); smoke.frustumCulled = false; smoke.renderOrder = 4; scene.add(smoke);
 for (let i = 0; i < SMOKE; i++) sPos[i * 3 + 1] = -99;
@@ -189,8 +189,8 @@ let sNext = 0, curDt = 1 / 60;
 function puff(p, v, size, life, warm = 0, fol = 0, lim = 0, mul = 1, grow = 1, drag = 1.3, own = 0) {
   const i = sNext; sNext = (sNext + 1) % SMOKE;
   // rải đều dọc quãng đi trong 1 khung (chống khói rời thành cục khi bay nhanh)
-  const j = Math.random(), back = S.speed * (1 - fol);
-  sPos[i * 3] = p.x + v.x * curDt * j; sPos[i * 3 + 1] = p.y + v.y * curDt * j; sPos[i * 3 + 2] = p.z + (v.z - back) * curDt * j;
+  const j = Math.random(), back = S.speed * (1 - fol), tj = curDt * j, dj = (1 - Math.exp(-drag * tj)) / drag;
+  sPos[i * 3] = p.x + v.x * dj; sPos[i * 3 + 1] = p.y + v.y * tj; sPos[i * 3 + 2] = p.z + v.z * dj - back * tj;
   sVel[i * 3] = v.x; sVel[i * 3 + 1] = v.y; sVel[i * 3 + 2] = v.z;
   sLife[i] = sMax[i] = life; sSize[i] = size; sWarm[i] = warm; sMul[i] = mul;
   sFol[i] = fol; sLim[i] = lim; sDist[i] = 0; sGrow[i] = grow; sDrag[i] = drag; sOwn[i] = own;
@@ -379,14 +379,15 @@ function updateSmoke(dt) {
     }
     sDist[i] += Math.hypot(sVel[i * 3], sVel[i * 3 + 1], sVel[i * 3 + 2]) * dt;
     if (sDist[i] > sLim[i]) sFol[i] *= Math.exp(-2.2 * dt);   // quá quãng được bám → gió tốc độ cuốn dần về sau
-    sPos[i * 3] += sVel[i * 3] * dt; sPos[i * 3 + 1] = y; sPos[i * 3 + 2] += (sVel[i * 3 + 2] - S.speed * (1 - sFol[i])) * dt;
+    const fd = (1 - Math.exp(-sDrag[i] * dt)) / sDrag[i];          // quãng đúng khi vận tốc đang giảm theo lực cản
+    sPos[i * 3] += sVel[i * 3] * fd; sPos[i * 3 + 1] = y; sPos[i * 3 + 2] += sVel[i * 3 + 2] * fd - S.speed * (1 - sFol[i]) * dt;
     const drag = Math.exp(-sDrag[i] * dt); sVel[i * 3] *= drag; sVel[i * 3 + 2] *= drag; sVel[i * 3 + 1] = sVel[i * 3 + 1] < 0 ? sVel[i * 3 + 1] * Math.exp(-0.6 * dt) : sVel[i * 3 + 1] * drag;
     sSize[i] += dt * (0.9 + k * 2.2) * sGrow[i];
     if (sOwn[i]) {                                                      // hạt của nhịp hông: đậm theo cả nhịp, nhịp tắt thì hạt tắt
       const b = sOwn[i] - 1; sAlpha[i] = Math.min(1, (sMax[i] - sLife[i]) * 40) * 0.55 * sMul[i] * bEnv[b];
       if (!bLive[b]) { sLife[i] = 0; sAlpha[i] = 0; }
     } else sAlpha[i] = Math.min(1, k * 25) * (1 - k) * 0.55 * sMul[i];
-    sWarm[i] *= Math.exp(-1.5 * dt);
+    if (!sOwn[i]) sWarm[i] *= Math.exp(-1.5 * dt);
   }
   sGeo.attributes.position.needsUpdate = true; sGeo.attributes.aSize.needsUpdate = true; sGeo.attributes.aAlpha.needsUpdate = true; sGeo.attributes.aWarm.needsUpdate = true;
 }
@@ -457,7 +458,7 @@ function tick(dtForce) {
         tmpV.copy(j.out).multiplyScalar(2 + Math.random() * 26);   // 2–28 m/s, cản 13/s ⇒ mỗi hạt dừng ở 0,15–2,1 m ⇒ dải phủ đều từ miệng ống tới 2 m
         tmpV.y += (Math.random() - 0.5) * 0.08; tmpV.z += (Math.random() - 0.5) * 0.08;
         tmpV.applyQuaternion(q);
-        puff(tmp, tmpV, 0.14, 9, 0, 1, 1e9, 1.3, 0.6, 13, j.burst + 1);   // bám xe suốt đời hạt; sống theo nhịp (không tự tan lẻ)
+        puff(tmp, tmpV, 0.14, 9, 1, 1, 1e9, 1.5, 0.6, 13, j.burst + 1);   // bám xe suốt đời hạt; sống theo nhịp (không tự tan lẻ)
       }
     }
   }
