@@ -3,6 +3,11 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-h (21/10) — LỖI thầy báo: lộn vòng từ dốc, bấm TAKE OFF ⇒ xe đứng im, bấm ga không đi:**
+- Nguyên nhân chính: bản vá 5j-g ghi chú chèn giữa dòng ⇒ lệnh `C.s += C.v * dt; d.s = C.s;` của nhánh BAY nằm sau `//` ⇒ mọi lúc bay (up / kick / air / down) xe KHÔNG TIẾN. Đã đưa về dòng riêng; đã rà các ghi chú 5j khác (không còn chỗ nào).
+- Phụ: tốc bay vT = lead.v − 14 khi Roadster ở trước ⇒ đầu trận (xe đua ~10 m/s) ÂM ⇒ trôi lùi. Nay vT ≥ max(½ lead.v, 5 m/s); bay mà bấm BOOST ⇒ vT ≥ lead.v + 14 (phóng tới thật); cất cánh đặt d.bk = khoảng đang cách xe dẫn (không bị giật về).
+- ⛔ Bài học: vá bằng python thay CẢ DÒNG; nếu thêm chú thích cuối dòng thì chắc chắn chuỗi bị thay nằm ở CUỐI dòng.
+
 **5j-g (21/10) — thầy góp ý tiếp:**
 - PHANH trên đường (Roadster): vệt bánh (2 bánh sau; > 22 m/s cả 4) + khói lốp ở đuôi (carSkid).
 - XƯỞNG: Roadster lùi sâu FC_Z = CAR_Z + 7 (cũ +3,6: cảnh 2 máy quay cận ống xả xe đội 1 đứng ĐÚNG chỗ Roadster ⇒ che). Đã xem lại cảnh 1–3 bằng intro.seek: sạch.
