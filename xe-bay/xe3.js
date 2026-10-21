@@ -19,8 +19,10 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 const MODEL_SCALE = 100;                 // mẫu gốc tính bằng 1/100 m
 const WHEEL_R = 0.35;                    // bán kính bánh (m) — đo hộp bao cụm bánh
 // vị trí ống đẩy (m), đo trên mẫu: thân rộng ±1,16 · dài −2,29…+2,28 · bánh trước z 1,13 · bánh sau z −1,47
-const UNDER = [[-0.45, 0.55], [0.45, 0.55], [-0.45, -0.85], [0.45, -0.85]];
-const REAR = { xs: [-0.56, -0.2, 0.2, 0.56], y: 0.63, r: 0.07 };   // nằm trong dải lưới đen dưới đèn hậu
+// gầm: 2 ống ngay sau bánh trước (bánh trước z 1,13 r 0,35) + 2 ống sau bánh sau (bánh sau z −1,47)
+const UNDER = [[-0.6, 0.7], [0.6, 0.7], [-0.6, -1.93], [0.6, -1.93]];
+const UNDER_R = 0.026;
+const REAR = { xs: [-0.4, -0.135, 0.135, 0.4], y: 0.575, r: 0.033 };   // 4 lỗ nhỏ xếp hàng trong dải lưới đen dưới đèn hậu
 const SIDE = { zs: [1.75, -1.95], y: 0.45 };
 const PLATE = { y: 0.4, w: 0.42 };
 
@@ -106,6 +108,7 @@ const M = {
   steel: new THREE.MeshStandardMaterial({ color: 0x9aa3ad, metalness: 1, roughness: 0.22 }),
   bronze: new THREE.MeshStandardMaterial({ color: 0xb07a45, metalness: 1, roughness: 0.3 }),
   black: new THREE.MeshStandardMaterial({ color: 0x050506, metalness: 0.2, roughness: 0.6 }),
+  hole: new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }),   // lòng ống: đen tuyệt đối = sâu
   ledWhite: new THREE.MeshStandardMaterial({ color: 0x111111, emissive: 0xffffff, emissiveIntensity: 5 }),
   ledRed: new THREE.MeshStandardMaterial({ color: 0x220000, emissive: 0xff1a12, emissiveIntensity: 5 }),
   ledAmberRed: new THREE.MeshStandardMaterial({ color: 0x200500, emissive: 0xff3b1f, emissiveIntensity: 0 }),
@@ -134,6 +137,23 @@ function flameCone(r, mat, rb = 0) {
   const m = new THREE.Mesh(g, mat); m.renderOrder = 5; return m;
 }
 
+// cột khói trắng (KHÔNG phát sáng): nón mở, hoà trộn thường, mờ dần về cuối + gợn chuyển động
+function plumeMat() {
+  return new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    uniforms: { uT: { value: 0 }, uP: { value: 0 } },
+    vertexShader: `varying vec2 vUv; varying vec3 vN, vV; void main(){ vUv=uv; vec4 mv=modelViewMatrix*vec4(position,1.); vN=normalize(normalMatrix*normal); vV=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }`,
+    fragmentShader: `uniform float uT,uP; varying vec2 vUv; varying vec3 vN, vV;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float n2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+      void main(){ float y=vUv.y;
+        float edge=pow(abs(dot(normalize(vN),normalize(vV))),0.8);          // giữa đặc, mép mờ
+        float turb=n2(vec2(vUv.x*10.,y*7.-uT*9.))*.5+n2(vec2(vUv.x*22.,y*15.-uT*16.))*.35;
+        float a=uP*edge*(1.-pow(y,1.3))*(0.45+0.55*turb)*smoothstep(0.,0.06,y+0.02);
+        gl_FragColor=vec4(vec3(0.93,0.95,0.98)*(0.85+0.15*turb),clamp(a,0.,0.85)); }`
+  });
+}
+
 // ── Khói: hạt mềm, bay xuống rồi loang ra mặt đất, to dần, mờ dần
 const SMOKE = 2600;
 const sPos = new Float32Array(SMOKE * 3), sVel = new Float32Array(SMOKE * 3), sLife = new Float32Array(SMOKE), sMax = new Float32Array(SMOKE);
@@ -153,7 +173,7 @@ const smokeMat = new THREE.ShaderMaterial({
   vertexShader: `uniform float uScale; attribute float aSize, aAlpha, aWarm; varying float vA, vW;
     void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv; gl_PointSize=aSize*uScale/-mv.z; vA=aAlpha; vW=aWarm; }`,
   fragmentShader: `uniform sampler2D uTex; varying float vA, vW;
-    void main(){ vec4 t=texture2D(uTex,gl_PointCoord); vec3 c=mix(vec3(.86,.88,.93),vec3(1.,.62,.55),vW);
+    void main(){ vec4 t=texture2D(uTex,gl_PointCoord); vec3 c=mix(vec3(.9,.92,.96),vec3(1.,.8,.78),vW*.3);
       gl_FragColor=vec4(c*(0.55+0.5*vW), t.a*vA); }`
 });
 const smoke = new THREE.Points(sGeo, smokeMat); smoke.frustumCulled = false; smoke.renderOrder = 4; scene.add(smoke);
@@ -228,48 +248,48 @@ function buildAll() {
   buildPlate();
 }
 
-// ── Ống đẩy gầm: 4 miệng phẳng nằm SÁT sàn xe (gần như không thấy), phụt thẳng xuống
+// ── Ống đẩy gầm: 4 lỗ nhỏ sát sàn (2 ngay sau bánh trước, 2 sau bánh sau), lòng đen sâu, chỉ phụt KHÓI trắng xuống
 function buildUnderJets() {
   for (const [x, z] of UNDER) {
-    const h = hit(x, -2, z, 0, 1, 0); const y = h ? h.p.y : 0.12;
-    const g = new THREE.Group(); g.position.set(x, y - 0.004, z);
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.052, 0.07, 28), M.black); ring.rotation.x = Math.PI / 2;
-    const hot = new THREE.Mesh(new THREE.CircleGeometry(0.052, 28), M.nozzleHot); hot.rotation.x = Math.PI / 2; hot.position.y = -0.001;
-    const fm = flameMat(0xeaf6ff, 0x2f7dff); const fl = flameCone(0.05, fm, 0.012); fl.position.y = -0.004;
-    const cm = flameMat(0xffffff, 0x9fc4ff, 1); const col = flameCone(0.06, cm, 0.16); col.position.y = -0.004;   // cột khí trắng loe xuống đất
-    g.add(ring, hot, fl, col); car.add(g);
-    parts.under.push({ g, fl, fm, col, cm, x, z, y });
+    const h = hit(x, -2, z, 0, 1, 0); const y = h ? h.p.y : 0.14;
+    const g = new THREE.Group(); g.position.set(x, y - 0.003, z);
+    const R = UNDER_R;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(R, R * 0.22, 8, 24), M.bronze); ring.rotation.x = Math.PI / 2;
+    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.92, R * 0.92, 0.05, 20, 1, true), M.hole); pipe.position.y = 0.025;
+    const back = new THREE.Mesh(new THREE.CircleGeometry(R * 0.92, 20), M.hole); back.rotation.x = Math.PI / 2; back.position.y = 0.045;
+    const pm = plumeMat(); const col = flameCone(R * 1.3, pm, R * 10); col.position.y = -0.004;     // cột khói loe dần xuống đất
+    g.add(ring, pipe, back, col); car.add(g);
+    parts.under.push({ g, col, pm, x, z, y });
   }
 }
 
-// ── 4 ống đẩy đuôi: xếp hàng ngang ở khe khuếch tán dưới đuôi, phụt ra sau → đẩy xe bay tới
+// ── 4 ống đẩy đuôi: 4 lỗ nhỏ viền đồng, lòng đen sâu; lơ lửng = xì khói nhẹ giữ cân, bay tới = khói mạnh
 function buildRearJets() {
   for (const x of REAR.xs) {
     const h = hit(x, REAR.y, -6, 0, 0, 1);
     const g = new THREE.Group();
-    if (h) g.position.copy(h.p).add(new THREE.Vector3(0, 0, -0.02)); else g.position.set(x, REAR.y, -2.25);
-    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1));   // luôn hướng thẳng ra sau
+    if (h) g.position.copy(h.p).add(new THREE.Vector3(0, 0, -0.018)); else g.position.set(x, REAR.y, -2.25);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1));   // +z cục bộ = ra sau xe
     const R = REAR.r;
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(R, R * 0.2, 12, 32), M.steel);
-    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.95, R * 0.95, 0.12, 28, 1, true), M.black); pipe.rotation.x = Math.PI / 2; pipe.position.z = -0.06;
-    const hot = new THREE.Mesh(new THREE.CircleGeometry(R * 0.95, 28), M.rearHot); hot.position.z = -0.05;
-    const fm = flameMat(0xfff4dc, 0x3b82ff); const fl = flameCone(R * 0.9, fm, 0.02); fl.rotation.x = -Math.PI / 2;   // dọc +z cục bộ = ra sau xe
-    const fm2 = flameMat(0xffffff, 0x9cc8ff); const core = flameCone(R * 0.45, fm2); core.rotation.x = -Math.PI / 2;
-    g.add(ring, pipe, hot, fl, core); car.add(g);
-    parts.rear.push({ g, fl, fm, core, fm2, x });
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(R, R * 0.24, 10, 28), M.bronze);
+    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.9, R * 0.9, 0.09, 24, 1, true), M.hole); pipe.rotation.x = Math.PI / 2; pipe.position.z = -0.045;
+    const back = new THREE.Mesh(new THREE.CircleGeometry(R * 0.9, 24), M.hole); back.position.z = -0.085;
+    const pm = plumeMat(); const col = flameCone(R * 1.2, pm, R * 6); col.rotation.x = -Math.PI / 2;
+    g.add(ring, pipe, back, col); car.add(g);
+    parts.rear.push({ g, col, pm, x });
   }
 }
 
-// ── 4 lỗ đẩy hông (trước + sau mỗi bên): phun ngang từng luồng để giữ thăng bằng
+// ── 4 lỗ đẩy hông (trước + sau mỗi bên): xì khói ngang từng nhịp ngẫu nhiên để giữ thăng bằng
 function buildSideJets() {
   for (const s of [-1, 1]) for (const z of SIDE.zs) {
     const h = hit(s * 4, SIDE.y, z, -s, 0, 0); if (!h) continue;
     const g = new THREE.Group(); stick(g, h, 0.002);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.007, 8, 22), M.steel);
-    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.03, 22), M.nozzleHot);
-    const fm = flameMat(0xffffff, 0x7fb2ff, 0.4); const fl = flameCone(0.03, fm, 0.08); fl.rotation.x = -Math.PI / 2;
-    g.add(ring, hole, fl); car.add(g);
-    parts.side.push({ g, fl, fm, s, z, pow: 0, out: h.n.clone() });
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.022, 0.005, 8, 22), M.bronze);
+    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.02, 22), M.hole);
+    const pm = plumeMat(); const col = flameCone(0.025, pm, 0.16); col.rotation.x = -Math.PI / 2;
+    g.add(ring, hole, col); car.add(g);
+    parts.side.push({ g, col, pm, s, z, pow: 0, next: Math.random(), out: h.n.clone() });
   }
 }
 
@@ -370,51 +390,49 @@ function tick() {
   S.roll += S.rollV * dt; if (!air) { S.roll *= 0.9; S.rollV *= 0.9; }
 
   const q = car.getWorldQuaternion(new THREE.Quaternion());
-  // ống gầm
+  // ống gầm: chỉ khói trắng
   for (const p of parts.under) {
-    p.fm.uniforms.uT.value = S.t; p.cm.uniforms.uT.value = S.t + 0.7;
-    const fl = 0.85 + 0.15 * Math.sin(S.t * 37 + p.x * 9 + p.z * 5);
-    p.fm.uniforms.uP.value = S.lift * fl; p.fl.scale.set(1, 0.1 + S.lift * 0.35 * fl, 1);
-    p.cm.uniforms.uP.value = S.lift * 0.32;
-    const toGround = S.alt + p.y + 0.05;
-    p.col.scale.set(1 + S.alt * 0.08, Math.max(0.05, Math.min(toGround, 4.5)), 1 + S.alt * 0.08);
+    p.pm.uniforms.uT.value = S.t + p.x + p.z;
+    p.pm.uniforms.uP.value = S.lift * (0.48 + 0.08 * Math.sin(S.t * 23 + p.z));
+    const toGround = S.alt + p.y;
+    p.col.scale.set(1 + S.alt * 0.05, Math.max(0.05, Math.min(toGround, 4.5)), 1 + S.alt * 0.05);
     if (S.lift > 0.05) {
-      const n = Math.floor(S.lift * 70 * dt + Math.random());
+      const n = Math.floor(S.lift * 60 * dt + Math.random());
       for (let k = 0; k < n; k++) {
-        p.g.localToWorld(tmp.set(0, -0.05, 0));
-        tmpV.set((Math.random() - 0.5) * 1.2, -(14 + Math.random() * 5), (Math.random() - 0.5) * 1.2).applyQuaternion(q);
-        puff(tmp, tmpV, 0.4 + Math.random() * 0.35, 1.6 + Math.random() * 1.6, 0.9);
+        p.g.localToWorld(tmp.set(0, -0.03, 0));
+        tmpV.set((Math.random() - 0.5) * 0.8, -(13 + Math.random() * 5), (Math.random() - 0.5) * 0.8).applyQuaternion(q);
+        puff(tmp, tmpV, 0.2 + Math.random() * 0.2, 1.6 + Math.random() * 1.6, 0);
       }
     }
   }
-  M.nozzleHot.emissiveIntensity = S.lift * 4;
-  // 4 ống đuôi
+  // 4 ống đuôi: lơ lửng xì nhẹ (giữ cân), bay tới xì mạnh
+  const air0 = S.alt > 0.05 ? 1 : 0;
+  const rearPow = Math.max(S.fwd, air0 * S.lift * (0.22 + 0.08 * Math.sin(S.t * 2.3)));
   for (const r of parts.rear) {
-    r.fm.uniforms.uT.value = S.t + r.x; r.fm2.uniforms.uT.value = S.t + 1.7 + r.x;
-    const f = 0.88 + 0.12 * Math.sin(S.t * 41 + r.x * 13);
-    r.fm.uniforms.uP.value = S.fwd * f; r.fm2.uniforms.uP.value = S.fwd * f;
-    const len = 0.15 + S.fwd * (1.3 + 0.15 * Math.sin(S.t * 33 + r.x * 7));
-    r.fl.scale.set(1, len, 1); r.core.scale.set(1, len * 0.55, 1);
-    if (S.fwd > 0.2 && Math.random() < S.fwd * 0.8) {
-      r.g.localToWorld(tmp.set(0, 0, 0.3 + len * 0.6));
-      tmpV.set((Math.random() - 0.5) * 0.6, (Math.random() - 0.3) * 0.5, -6 - Math.random() * 4).applyQuaternion(q);
-      puff(tmp, tmpV, 0.3, 0.9 + Math.random() * 0.6, 0.25);
+    r.pm.uniforms.uT.value = S.t + r.x * 3;
+    r.pm.uniforms.uP.value = rearPow * (0.7 + 0.15 * Math.sin(S.t * 17 + r.x * 11));
+    r.col.scale.set(1, 0.25 + rearPow * (1.6 + 0.2 * Math.sin(S.t * 13 + r.x * 7)), 1);
+    if (rearPow > 0.05 && Math.random() < rearPow * 0.9) {
+      r.g.localToWorld(tmp.set(0, 0, 0.05));
+      tmpV.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.2) * 0.4, -(2 + rearPow * 8 + Math.random() * 2)).applyQuaternion(q);
+      puff(tmp, tmpV, 0.1 + rearPow * 0.15, 0.7 + Math.random() * 0.6, 0);
     }
   }
-  M.rearHot.emissiveIntensity = S.fwd * 6;
   M.ledAmberRed.emissiveIntensity = Math.max(S.lift, air) * 4;
-  parts.underLight.intensity = S.lift * 30;
+  parts.underLight.intensity = S.lift * 10;
 
-  // lỗ hông: bên nào chúi xuống thì phun bên đó; thêm nhịp ngẫu nhiên nhỏ khi lơ lửng
+  // lỗ hông: phụt NGẪU NHIÊN thường xuyên (cố giữ cân) + bên chúi xuống phụt mạnh hơn
   for (const j of parts.side) {
-    const need = air * Math.max(0, -j.s * S.roll * 18 + (Math.random() < 0.004 * S.lift ? 1 : 0));
-    j.pow = Math.max(j.pow - dt * 3.5, Math.min(1, need));
-    j.fm.uniforms.uT.value = S.t; j.fm.uniforms.uP.value = j.pow;
-    j.fl.scale.set(1, 0.05 + j.pow * 0.45, 1);
-    if (j.pow > 0.3 && Math.random() < 0.25) {
-      j.g.localToWorld(tmp.set(0, 0, 0.05));
-      tmpV.copy(j.out).applyQuaternion(q).multiplyScalar(8 + Math.random() * 3); tmpV.y += 0.3;
-      puff(tmp, tmpV, 0.08, 0.35 + Math.random() * 0.2, 0.2);
+    j.next -= dt;
+    if (air0 && j.next <= 0) { j.pow = Math.max(j.pow, 0.55 + Math.random() * 0.45); j.next = 0.25 + Math.random() * 1.1; }
+    const need = air0 * Math.max(0, -j.s * S.roll * 18);
+    j.pow = Math.max(j.pow - dt * 4, Math.min(1, need));
+    j.pm.uniforms.uT.value = S.t + j.z; j.pm.uniforms.uP.value = j.pow * 0.8;
+    j.col.scale.set(1, 0.05 + j.pow * 0.6, 1);
+    if (j.pow > 0.3 && Math.random() < 0.5) {
+      j.g.localToWorld(tmp.set(0, 0, 0.04));
+      tmpV.copy(j.out).applyQuaternion(q).multiplyScalar(5 + Math.random() * 3); tmpV.y += 0.2;
+      puff(tmp, tmpV, 0.07, 0.35 + Math.random() * 0.25, 0);
     }
   }
 
