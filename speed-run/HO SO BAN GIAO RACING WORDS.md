@@ -3,6 +3,14 @@
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
 ## ⏭ MỚI NHẤT — MẪU 5j (21/10/2026) — XE BAY ROADSTER trong bộ Drone · CHỈ ở myGame (CHƯA lên AWord)
+**5j-d (21/10) — thầy góp ý tiếp:**
+- Khói hông lúc GIỮ CÂN: nhịp 1/2 thời gian (`burst(k)`, bS), 1/2 số hạt, dải ngắn hơn (tốc 2–14), mờ hơn (0,26). Lúc lái / dạt mạnh giữ như cũ.
+- Tâm bắn khi Roadster BAY: `home = d.bk + v(xe nhanh nhất) × DA.T (1,5 s) + 4 m`, iPad chúc chỉ chỉnh −18…+12 m quanh đó (d.adO).
+- Trên đường: BOOST ⇒ lửa đuôi nhẹ + khói đuôi + máy quay tụt lại chút (C.bK) · nhảy dốc ⇒ gầm hé thrust + khói đuôi. Lửa đuôi = nón cộng sáng `parts.flames`, st.flame.
+- KICK (đang bay khỏi dốc mà bấm TAKE OFF, mode "kick"): thân thẳng ⇒ nổ ngay; đang lộn ⇒ lộn tiếp, gầm phụt mạnh (khói xoáy theo thân), tới lúc gầm song song mặt đất mới nổ. Nổ = st.blast (300×) + st.swirl khói xoáy, tiếng boom+boost+hit (rw-5j "carKick"), hất kvy 14 (xoắn 17), lắc tắt dần 3,2 s (carKickPose kr/kp), thrust hông giữ cân theo kr.
+- LAND: hạ nhanh hơn (2,6 + 0,6·y m/s), vừa tiến vừa xuống; chạm đất văng đuôi nhẹ + nảy + đuôi phụt LỬA 1,6 s tăng tốc (C.flameT), tiếng "carTouch".
+- iPad: lúc đang hạ nút hiện TAKE OFF và BẤM ĐƯỢC (cũ bị khoá "LANDING" ⇒ không huỷ được trên iPad).
+
 **5j-c (21/10, khuya) — thầy góp ý tiếp:**
 - XƯỞNG: Roadster ĐỨNG SÀN như xe thường, đặt CHÉO phía sau (z CAR_Z+3,6, quay 0,55 rad; 2 drone ⇒ 2 chiếc x ±1,9), giấu ống phụt + bệ (`fc.stealth(true)`), đèn trần riêng `fcSpot` + cột sáng `fcBeam`; phim START: lăn theo 2 xe ra cửa.
 - Sơn mặc định tươi hơn `#1e8f4e` (export PAINT). Settings ▸ Drone: chọn Roadster ⇒ hàng **Roadster colour** (12 màu + ô custom), `dset.carCol` nhớ trên máy, `fc.setPaint()`; xưởng nhận qua setDrone.
