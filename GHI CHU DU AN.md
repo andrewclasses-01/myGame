@@ -668,6 +668,8 @@ lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update tr�
 **5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **ROCKET RACE 12g** (24/10, = AWord Đợt 581): thầy xem TOMKO — lớp chờ mềm/nhoè đủ chưa, ô gập lúc 30 %, thanh câu hỏi nền đặc
+  `#0b1430` không còn bị mặt trời làm mờ; viền bo thanh có răng cưa không (lớp phủ không qua MSAA).
 - ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, myGame `8094dba` ✅ ĐÃ LÊN AWord Đợt 580 `4fe37ff` LIVE): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp
   giữ 2,1 s của trọng tài), màu lớp chờ có rõ không; muốn chỉnh tay thì thêm thanh ⚙ Settings như RACING WORDS (Next question 1–5 s).
 - ⬜ **RACING WORDS 5k + 5k-b** (21/10, ✅ ĐÃ LÊN AWord Đợt 571 `178fa41` LIVE): thầy thử trên AWord thật (hoặc `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:
@@ -945,3 +947,14 @@ của game11 chỉ khác 2 dòng chú thích đầu; layout.json cùng nội dun
 trong nhóm thanh câu hỏi (dựng lại theo thanh khi câu dài làm thanh dãn — trạng thái nằm ở `QG` nên không mất).
 **Lỗi & gỡ:** ảnh chụp màn hình đầu tiên trông như chưa chạy vì rAF bị kìm (3 khung/giây ⇒ giờ cảnh chạy ~0,15 s mỗi giây thật) — không
 phải lỗi (đo cảnh 3D phải lái `step` hoặc đưa tab lên trước).
+
+## Rocket Race MẪU 12g — 24/10/2026 · lớp chờ MỀM + ô cũ đóng ở 30 % + thanh câu hỏi đặc, trên cùng · = AWord Đợt 581
+**Bối cảnh (thầy, sau 12f):** "Phần load đó trông cứng và viền trông nét quá… mềm hơn, blur hơn. Khi load được 30% thanh câu hỏi thì câu
+trả lời cũ cũng đóng lại luôn. … Nền ở khung câu hỏi để opacity lên 100%, màu đặc và hoàn toàn không bị ảnh hưởng bởi ánh sáng … lên trên cùng".
+**Đã làm (`game11/rr3d-view.js`):** `qFillMat` (ShaderMaterial: đầu sóng smoothstep 30 %, quầng gauss, nhoè trên/dưới/mép ngoài, màu sRGB) thay
+tấm co giãn + vạch trắng · `closeTiles` + `Q_SHUT = 0.3` (gập về sau từng ô, thu cao + dày ×0,03; `setAnswers` ô đóng ⇒ `flip = 0.501`) ·
+thanh câu hỏi sang `qScene`/`qRoot` vẽ bằng `drawQLayer()` sau `composer.render` (không bloom/ACES/grade, depthTest off, renderOrder cố định,
+nền `Q_BG #0b1430` opacity 1) · `buildUI` dọn `qRoot`.
+**Lỗi & gỡ:** thanh cũ đứng lại chồng thanh mới (chữ nhoè đôi) vì `buildUI` chỉ dọn `ui` — thêm dọn `qRoot`. Ảnh trắng xoá lúc thử trang mẫu
+là lớp DOM `#flash` của trang (giờ thật) — không phải lỗi; lớp cảnh phóng của AWord cũng tan theo giờ thật nên phải đợi rồi mới chụp.
+**Đã kiểm:** trang mẫu + AWord `scratch/dot413-rr.html` Same/Different, bắn resize giữa lúc chờ, 0 lỗi console.
