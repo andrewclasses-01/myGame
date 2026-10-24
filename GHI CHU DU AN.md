@@ -668,7 +668,7 @@ lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update tr�
 **5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
 ## VIỆC ĐANG CHỜ
-- ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, ✅ ĐÃ LÊN AWord Đợt 580): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp
+- ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, myGame `8094dba` ✅ ĐÃ LÊN AWord Đợt 580 `4fe37ff` LIVE): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp
   giữ 2,1 s của trọng tài), màu lớp chờ có rõ không; muốn chỉnh tay thì thêm thanh ⚙ Settings như RACING WORDS (Next question 1–5 s).
 - ⬜ **RACING WORDS 5k + 5k-b** (21/10, ✅ ĐÃ LÊN AWord Đợt 571 `178fa41` LIVE): thầy thử trên AWord thật (hoặc `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:
   BOOST đuổi xe NITRO / xe qua dốc, bay bám xe dẫn, còn giật không, khói hông; FIRE 1 chạm = tên lửa tự đuổi xe XA, đúp = xe GẦN. Thêm 5k-b: nút loại đạn = bắn, 1 drone bắn không chờ. Còn: chữ thẻ đạn iPad "40 % · 4 s" sai ở 1 drone · 2 Roadster bắn chưa thử · load-files chưa đo lại lượt tải thật.
