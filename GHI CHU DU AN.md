@@ -668,7 +668,7 @@ lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update tr�
 **5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
 ## VIỆC ĐANG CHỜ
-- ⬜ **ROCKET RACE 12g** (24/10, = AWord Đợt 581): thầy xem TOMKO — lớp chờ mềm/nhoè đủ chưa, ô gập lúc 30 %, thanh câu hỏi nền đặc
+- ⬜ **ROCKET RACE 12g** (24/10, myGame `7a16642` = AWord Đợt 581 `f97cb15` LIVE): thầy xem TOMKO — lớp chờ mềm/nhoè đủ chưa, ô gập lúc 30 %, thanh câu hỏi nền đặc
   `#0b1430` không còn bị mặt trời làm mờ; viền bo thanh có răng cưa không (lớp phủ không qua MSAA).
 - ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, myGame `8094dba` ✅ ĐÃ LÊN AWord Đợt 580 `4fe37ff` LIVE): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp
   giữ 2,1 s của trọng tài), màu lớp chờ có rõ không; muốn chỉnh tay thì thêm thanh ⚙ Settings như RACING WORDS (Next question 1–5 s).
