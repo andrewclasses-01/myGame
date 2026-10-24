@@ -668,6 +668,8 @@ lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update tr�
 **5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
 ## VIỆC ĐANG CHỜ
+- ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, ✅ ĐÃ LÊN AWord Đợt 580): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp
+  giữ 2,1 s của trọng tài), màu lớp chờ có rõ không; muốn chỉnh tay thì thêm thanh ⚙ Settings như RACING WORDS (Next question 1–5 s).
 - ⬜ **RACING WORDS 5k + 5k-b** (21/10, ✅ ĐÃ LÊN AWord Đợt 571 `178fa41` LIVE): thầy thử trên AWord thật (hoặc `speed-run/mau-5k-roadster-ten-lua-tu-duoi.html` (+ `pad-5j.html?t=2`) trên TOMKO ⇒ Settings ▸ Drone ▸ 1 drone ▸ Roadster:
   BOOST đuổi xe NITRO / xe qua dốc, bay bám xe dẫn, còn giật không, khói hông; FIRE 1 chạm = tên lửa tự đuổi xe XA, đúp = xe GẦN. Thêm 5k-b: nút loại đạn = bắn, 1 drone bắn không chờ. Còn: chữ thẻ đạn iPad "40 % · 4 s" sai ở 1 drone · 2 Roadster bắn chưa thử · load-files chưa đo lại lượt tải thật.
 - ⏸ **RACING WORDS — TẠM CHỐT 20/10** sau 5i (= AWord Đợt 558). Phiên sau: đọc speed-run/HO SO BAN GIAO mục "MỚI NHẤT — MẪU 5i" trước.
@@ -922,3 +924,24 @@ trang `mau-5i-vach-lua.html`. Chi tiết + số đo: speed-run/NGHIEN CUU mục 
 **Sửa thêm (thầy báo):** tab DRIVER bấm không có tác dụng — lỗi từ 4w (khung `.rw-c` mang `data-tab` nên bị gắn lệnh mở tab ⇒ mọi cú bấm dựng lại bảng, xoá hộp xác nhận). 5i sửa bộ chọn thành `nav [data-tab]`. AWord live (5h) VẪN CÒN lỗi tới khi lên 5i hoặc vá nóng.
 **Lỗi & gỡ:** trùng tên `FL` với biến máy quay ⇒ `FIRE_L` · getter `fire` bị hàm `fire` (bắn) trong API đè im lặng ⇒ `fireL` · khói đen tuyền không thấy trên táp-lô ⇒ rìa xám ·
 heredoc nuốt `\b` · `sed -i` đổi CRLF ⇒ ghi lại CRLF bằng Python.
+
+## Rocket Race MẪU 12f — 24/10/2026 · MÀN CHỜ CÂU MỚI kiểu RACING WORDS · ✅ AWord Đợt 580
+**Bối cảnh (thầy):** "Đọc game Rocket Race trên AWord và myGame. Kiểm tra xem chúng đồng bộ chưa. Sửa như sau: trước khi sang một câu mới
+cũng sẽ có màn chạy load ở khung câu hỏi một vài giây tương tự cách chờ câu hỏi mới trong game RACING WORDS".
+**Soát đồng bộ:** fetch 2 kho (0/0, cây sạch) · `tools/chep-rr-mau12-sang-aword.py --thu` ⇒ view/launch/missile/ships 0 dòng khác; 4 file còn lại
+của game11 chỉ khác 2 dòng chú thích đầu; layout.json cùng nội dung ⇒ game11 = AWord Đợt 557 (đồng bộ).
+**Đã làm:**
+- `game11/rr3d-view.js`: thanh câu hỏi có thêm 2 tấm màu đội (`fills`, gốc ở giữa, dãn bằng `scale.x`, nằm trên chữ) + tấm chớp `flash`;
+  `QG` khai sớm cạnh `questionPanel` (tránh TDZ khi buildQuestion chạy lúc dựng); `qGapTick(dt)` trong `tick` (tạm dừng = dừng);
+  API `qGap(sides, T, done)` · `qGapClear()` · `qGapBusy`; `win()` xoá khoảng chờ; tiếng qua `cfg.sfxQGap(kind, T)`.
+- `game11/rr3d-sfx.js`: `qWait(T)` / `qNew()` = tiếng `qRiser/qBoom` của RACING WORDS (rw-5k.js), vào kênh fx.
+- `mau-12-tau-3d.html` (12f): `gapRound()` / `gapFor(side)` thay mọi chỗ hẹn `nextRound` / `nextFor` (câu đầu trận vẫn ra ngay);
+  `?gap=0–5` (mặc định 3, 0 = tắt); `finish` gọi `view.qGapClear()`. Thẻ mẫu 12 trong `rocket-race/index.html` ghi thêm 12f.
+- Chép AWord: `tools/chep-rr-mau12-sang-aword.py` (view) + chép tay `rr3d-sfx.js` (bỏ 2 dòng đầu) ⇒ AWord Đợt 580 (luật hoãn câu ở
+  `rocket-race.js` `goToIndex`, `RR_QGAP_S = 3`).
+**Đã kiểm:** trang mẫu (khung xem trước bị kìm 3 khung/giây ⇒ lái bằng `__view.step`): nửa trái xanh / phải cam dãn từ giữa, mép ngoài trắng,
+đầy ⇒ câu mới bật ra, lớp màu tan trong 0,35 s; AWord bàn thử `scratch/dot413-rr.html` Same + Different đúng, chạm trong lúc chờ bị bỏ qua.
+**Quyết định:** 3 s = mặc định của RACING WORDS · không đụng core/fight.js (chờ tính sau nhịp giữ 2,1 s của trọng tài) · lớp chờ là lưới 3D
+trong nhóm thanh câu hỏi (dựng lại theo thanh khi câu dài làm thanh dãn — trạng thái nằm ở `QG` nên không mất).
+**Lỗi & gỡ:** ảnh chụp màn hình đầu tiên trông như chưa chạy vì rAF bị kìm (3 khung/giây ⇒ giờ cảnh chạy ~0,15 s mỗi giây thật) — không
+phải lỗi (đo cảnh 3D phải lái `step` hoặc đưa tab lên trước).

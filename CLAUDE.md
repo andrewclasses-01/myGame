@@ -36,6 +36,8 @@ rocket-race/
   game10/ + mau-10-khop-aword.html            MẪU 10 (13/10) = chép NGUYÊN AWord 20110c4 (Đợt 511 — đã ghép mẫu 9)
   game11/ + mau-12-tau-3d.html                MẪU 12 (MỚI NHẤT, 19/10) = AWord a4170d8 + TÀU / TÊN LỬA 3D CÓ SẴN: game11/rr3d-ships.js (bảng mẫu, chuẩn hoá về khung tàu cũ,
                               sơn màu đội, lửa nhiều vòi, mảnh vỡ cắt từ thân, vết cháy dán vỏ) + sửa view/launch/missile; ⚙ Settings (Ship · Missile) lưu localStorage
+                              12f (24/10): view qGap/qGapClear/qGapBusy (màn chờ câu mới kiểu RACING WORDS, hook cfg.sfxQGap) + sfx qWait/qNew;
+                              trang mẫu ?gap=0–5 ⇒ đã lên AWord Đợt 580 (rr3d-sfx.js không có trong tool chép — chép tay, bỏ 2 dòng chú thích đầu)
   tau3d/*.glb                 7 tàu (R1 R2 R8 S5 S7 S9 S10) + 5 tên lửa (M1–M5) đã nén — gốc ở Desktop\MAU TAU ROCKET; nén lại: tools/nen-tau3d/nen.sh
                               ⇒ ĐÃ LÊN AWord Đợt 557 (10c1298): sửa ở game11/ rồi chạy tools/chep-rr-mau12-sang-aword.py (chép 4 file 3D + tau3d, đổi import three); ⚙ Settings của AWord viết riêng trong rocket-race.js
   tao-anh-tau.html            (12b) chụp ảnh mô phỏng cho ô chọn Settings ⇒ tau3d/anh/*.webp (?save=1 + máy nhận tạm cổng 8877)
