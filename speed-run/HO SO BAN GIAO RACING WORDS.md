@@ -2,7 +2,7 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## ⏭ MỚI NHẤT — MẪU 5l (27/10/2026) — ĐƯỜNG THẬT CUA GẮT + RÀO HÃM + DỐC HẸP + BAY CHÔNG CHÊNH / LỘN VÒNG + XE GIAO THÔNG 3D · ⬜ CHƯA commit, CHƯA lên AWord
+## ⏭ MỚI NHẤT — MẪU 5l (27/10/2026) — ĐƯỜNG THẬT CUA GẮT + RÀO HÃM + DỐC HẸP + BAY CHÔNG CHÊNH / LỘN VÒNG + XE GIAO THÔNG 3D · myGame `56dc03a` = AWord Đợt 589 `7eb5829` LIVE · ⬜ thầy thử TOMKO + iPad
 **Thầy yêu cầu:** đường thật dài hơn (không tăng vòng) · cua gấp ~90° + zigzag, xe cua tốt hơn nhưng cần kỹ thuật · cọ lan can: tóe lửa nhiều + khói đen ở điểm chạm + hãm
 nặng khi chạm lâu · dốc rộng 1,5 lần xe · nửa xe trên dốc thẳng ⇒ không xoay trục dọc, chỉ vọt + nghiêng nhiều, phải nghiêng ngược để đáp · dốc xoắn bay nhanh hơn dốc thẳng ·
 trên không bẻ lái mạnh ⇒ lộn vòng tới 360° đáp perfect, lộn ⇒ nhanh + xa hơn, có chữ + boost · bay dốc thẳng không bao giờ thẳng tắp, vô lăng nhạy hơn, khó perfect · xe traffic 3D nhẹ.

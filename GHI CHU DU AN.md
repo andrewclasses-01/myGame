@@ -699,9 +699,9 @@ xe3d/drone3d/sfx/anh-pad khớp (myGame thừa H3.glb + 4 drone không dùng). L
 ⇒ phát theo nhịp / giây. (4) ảnh chụp khung Browser ẩn bị cũ ⇒ trang tự POST canvas về máy nhận cổng 8877 rồi đọc file.
 
 ## VIỆC ĐANG CHỜ
-- ⬜ **RACING WORDS 5l** (27/10, CHƯA commit, CHƯA lên AWord): thầy thử `speed-run/mau-5l-duong-cua-gat.html` (+ `pad-5j.html?t=0|1`) trên TOMKO + iPad —
+- ⬜ **RACING WORDS 5l** (27/10, myGame `56dc03a` · ĐÃ lên AWord Đợt 589 `7eb5829` LIVE — thầy cho đưa lên trước khi thử TOMKO): thầy thử `speed-run/mau-5l-duong-cua-gat.html` (+ `pad-5j.html?t=0|1`) trên TOMKO + iPad —
   độ khó cua (bám 58 m/s²), mức hãm khi cọ rào, độ nhạy vô lăng trên không (AIR.STEER 10, gió GUST 1,6 + lệch 0,5–1,2), ngưỡng lộn vòng, dốc 3,1 m có hẹp quá không;
-  đo fps TOMKO (đất tính độ cao theo toạ độ thật + nước phủ cả khung). OK ⇒ chép AWord (GOC rw-5l + thêm traffic3d/ + load-files đo lại).
+  đo fps TOMKO (đất tính độ cao theo toạ độ thật + nước phủ cả khung). Sửa gì ⇒ mẫu mới ở myGame rồi chạy lại AWord tools/chep-racing-words.py (đã chép traffic3d/; load-files mới tính byte, chưa đo lượt tải thật).
 - ⬜ **ROCKET RACE 12g** (24/10, myGame `7a16642` = AWord Đợt 581 `f97cb15` LIVE): thầy xem TOMKO — lớp chờ mềm/nhoè đủ chưa, ô gập lúc 30 %, thanh câu hỏi nền đặc
   `#0b1430` không còn bị mặt trời làm mờ; viền bo thanh có răng cưa không (lớp phủ không qua MSAA).
 - ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, myGame `8094dba` ✅ ĐÃ LÊN AWord Đợt 580 `4fe37ff` LIVE): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp
