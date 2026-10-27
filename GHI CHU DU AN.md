@@ -667,7 +667,41 @@ lò xo bám chặt hơn; rung mượt (sin); khói hông dính ống (update tr�
 **Lỗi gặp:** hàm phụ `sp` trùng biến `sp` ⇒ đổi `lui`. **Kiểm:** 6/6 phát trúng đúng xe, đuổi kịp xe dẫn qua dốc, 0 lỗi console.
 **5k-b (thầy thêm):** bấm nút loại đạn (iPad / phím 1 2 3) = chọn + bắn luôn; 1 drone bắn thoải mái (không chờ đạn bay, không hồi, không tốn pin); bấm liên tục không mất phát (`fireFw`). Kiểm: 3/3, 3/3, Heart + Boost liền nhau đúng loại.
 
+## Chặng 27/10/2026 · RACING WORDS MẪU 5l — đường thật cua gắt ~90° · rào hãm · dốc hẹp · bay chông chênh + lộn vòng bằng vô lăng · xe giao thông 3D
+**Bối cảnh (thầy):** "Đọc game Racing Cars trên AWord và myGame, check đồng bộ" + 9 việc: đường thực tế dài hơn (không phải tăng vòng) · nhiều cua gấp ~90°, zigzag,
+xe cua tốt hơn nhưng cần kỹ thuật · cọ lan can tóe lửa nhiều + khói đen ở điểm va chạm + giảm tốc nghiêm trọng khi chạm lâu · dốc chỉ rộng 1,5 lần xe · dốc thẳng nửa
+xe trên mép KHÔNG lộn vòng mà bay nghiêng, phải nghiêng ngược lại · dốc xoắn bay nhanh hơn dốc thẳng · trên không bẻ lái mạnh ⇒ lộn vòng tới 360° để đáp perfect, lộn
+vòng ⇒ nhanh + xa hơn, có chữ + boost · bay dốc thẳng không bao giờ thẳng tắp, vô lăng nhạy hơn, khó perfect · tìm model 3D xe traffic nhẹ thay xe "máy vẽ".
+**Soát đồng bộ:** 2 kho fetch 0/0, cây sạch; 41 file `templates/racing-words/3d/` AWord ⇄ `speed-run/core` giống hệt (chỉ khác dòng import mc3d-qr — đúng thiết kế),
+xe3d/drone3d/sfx/anh-pad khớp (myGame thừa H3.glb + 4 drone không dùng). Live AWord có rw-5k / sr3d-5k ⇒ AWord Đợt 571 = myGame 5k (đồng bộ).
+**Đã làm (mẫu 5l, file mới — 5k giữ nguyên):** `mau-5l-duong-cua-gat.html` · gói `core/rw-5l.js` · lõi `core/sr3d-5l.js` · `core/sr3d-track-5l.js` (MỚI) ·
+`core/sr3d-world-5l.js` · `core/sr3d-car-5l.js` / `sr3d-missile-5l.js` / `sr3d-flycar-5l.js` / `sr3d-dammo-5l.js` / `sr3d-intro-5l.js` (chỉ đổi shader uốn / import) ·
+`core/sr3d-traffic-5l.js` + `traffic3d/` (6 glb Quaternius CC0, NGUON.md). iPad vẫn `pad-5j.html`. Chi tiết kỹ thuật + số đo: `speed-run/HO SO BAN GIAO RACING WORDS.md` mục "MẪU 5l".
+- ĐƯỜNG: vòng đa giác bo góc (cạnh thẳng + cung R 45–60 m) dài 3.530 m, cố định — trận mặc định 1.920 m = ~½ vòng, KHÔNG lặp vòng 480 m như cũ.
+  Zigzag vuông 4 cua ~82°, cua chéo 45°, kẹp tóc phải 2 × 90°, chicane ven biển, 2 cua 90° hai đầu. 4 cầu nhảy + 2 dốc xoắn / vòng ở đoạn thẳng còn ≥ 240 m để đáp.
+- HÌNH: shader uốn đổi từ XÔ NGANG (trần 63°, đường xiên hẹp) sang XOAY THẬT (bảng RGBA phải/tới/φ, pháp tuyến xoay theo); đất + biển theo TOẠ ĐỘ THẬT (trường khoảng
+  cách 4 m tới đường ⇒ sát đường phẳng, xa thành đồi núi, phía Nam là biển) — vì đất gắn theo đường sẽ GẬP chồng ở trong lòng cua 90°; cây rải 2 bên, bỏ chỗ sẽ gập / sát đoạn đường khác.
+- VẬT LÝ: bám đường ~58 m/s² (cũ 16) — BOOST 169 km/h ôm cua R45 với ~85 % vô lăng, sau dốc (≥ 200 km/h) không ôm nổi phải nhả/phanh. Xe tự lái chạy hết 1.920 m giữ
+  ~155 km/h chỉ cọ rào 4 lần ở zigzag ⇒ qua được nhưng cần kỹ thuật.
+- RÀO: chạm lần đầu mất 3–20 % theo góc đâm, giữ cọ hãm tăng dần (k 1,6 ⇒ 7,5 / s sau ~1,2 s): thử 162 ⇒ 43 km/h sau 0,67 s; tia lửa 160–700 hạt/s bị thân xe kéo theo
+  + văng ra lòng đường, khói đen ở góc xe miết rào, tiếng crash + rít; hạt sáng sát ống kính tự mờ (không thành đốm to trong buồng lái).
+- DỐC: rộng 3,1 m (cũ 7). Nửa xe trên dốc ⇒ bay NGHIÊNG 38–48° + đang lật tiếp, chữ "TILTED! STEER BACK" (không còn tự lộn vòng).
+- BAY: vô lăng = MÔ-MEN nghiêng (10 rad/s², quán tính) + gió giật + gió lệch 1 phía cả lần bay; rời mép luôn nghiêng 4–9° và đang lật 0,25–0,55 rad/s; không tự cân;
+  PERFECT ≤ 10° (cũ 15), OK ≤ 30°. Giữ hết lái ⇒ lật nhanh > 3,4 rad/s + quá 86° ⇒ "BARREL ROLL! +SPEED": ×1,3 quãng bay, +1,4 m/s lên cao, +18 km/h, tiếng boost.
+  Dốc xoắn: ×1,35 quãng bay + ×1,1 tốc (225 km/h, ×2,03 so với dốc thẳng 207 km/h, ×1,5).
+- XE GIAO THÔNG: 6 mẫu glb (sedan A/B, SUV, taxi, bán tải, thể thao — 165–275 KB, ~3–6k tam giác), gộp 1 lưới / mẫu, màu đỉnh, chỉ thân đổi màu từng xe; nạp chưa xong dùng hộp cũ.
+**Đã kiểm (localhost, bàn thử step + máy nhận ảnh 8877):** bay dốc thẳng không lái 3/4 BAD, giữ thăng bằng 2/2 PERFECT · lộn vòng 3 lần 434–445° (2 PERFECT, 1 OK), bay 242–281 m
+(thường 199 m) · nửa xe trên dốc không chỉnh 2/2 BAD, chỉnh 2/2 PERFECT · dốc xoắn 225 km/h ×2,03 · ảnh cua 82°, xe phía trước ôm cua, đất/cây không gập · 6 mẫu xe hiện
+đúng hướng (xe ngược chiều thấy đầu xe) · 0 lỗi console · 298 lệnh vẽ / 0,80 M tam giác khi Traffic Both.
+**Chưa kiểm:** TOMKO / fps thật · iPad nghiêng thật (độ nhạy mô-men trên không) · máy quay trời (Sky view) / drone / Roadster trên đường mới · vạch lửa · chế độ Time / Words.
+**Lỗi & gỡ:** (1) đoạn thẳng sau dốc quá ngắn ⇒ xe bay ~200 m rơi vào cua ⇒ kéo dài vòng (2,7 ⇒ 3,5 km) và chỉ đặt dốc khi còn ≥ 240 m. (2) dốc xoắn ở 3.064 m nằm sau
+đích 1.920 m ⇒ trận mặc định không có dốc xoắn ⇒ thêm dốc xoắn ở đoạn 5 (964 m). (3) tia lửa không thấy: phát theo KHUNG quá nhiều làm tràn bể 300 hạt (hạt mới đè hạt cũ)
+⇒ phát theo nhịp / giây. (4) ảnh chụp khung Browser ẩn bị cũ ⇒ trang tự POST canvas về máy nhận cổng 8877 rồi đọc file.
+
 ## VIỆC ĐANG CHỜ
+- ⬜ **RACING WORDS 5l** (27/10, CHƯA commit, CHƯA lên AWord): thầy thử `speed-run/mau-5l-duong-cua-gat.html` (+ `pad-5j.html?t=0|1`) trên TOMKO + iPad —
+  độ khó cua (bám 58 m/s²), mức hãm khi cọ rào, độ nhạy vô lăng trên không (AIR.STEER 10, gió GUST 1,6 + lệch 0,5–1,2), ngưỡng lộn vòng, dốc 3,1 m có hẹp quá không;
+  đo fps TOMKO (đất tính độ cao theo toạ độ thật + nước phủ cả khung). OK ⇒ chép AWord (GOC rw-5l + thêm traffic3d/ + load-files đo lại).
 - ⬜ **ROCKET RACE 12g** (24/10, myGame `7a16642` = AWord Đợt 581 `f97cb15` LIVE): thầy xem TOMKO — lớp chờ mềm/nhoè đủ chưa, ô gập lúc 30 %, thanh câu hỏi nền đặc
   `#0b1430` không còn bị mặt trời làm mờ; viền bo thanh có răng cưa không (lớp phủ không qua MSAA).
 - ⬜ **ROCKET RACE 12f — màn chờ câu mới** (24/10, myGame `8094dba` ✅ ĐÃ LÊN AWord Đợt 580 `4fe37ff` LIVE): thầy chơi trên TOMKO — 3 s có dài quá không (AWord còn cộng nhịp

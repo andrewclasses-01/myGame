@@ -2,6 +2,40 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5l (27/10/2026) — ĐƯỜNG THẬT CUA GẮT + RÀO HÃM + DỐC HẸP + BAY CHÔNG CHÊNH / LỘN VÒNG + XE GIAO THÔNG 3D · ⬜ CHƯA commit, CHƯA lên AWord
+**Thầy yêu cầu:** đường thật dài hơn (không tăng vòng) · cua gấp ~90° + zigzag, xe cua tốt hơn nhưng cần kỹ thuật · cọ lan can: tóe lửa nhiều + khói đen ở điểm chạm + hãm
+nặng khi chạm lâu · dốc rộng 1,5 lần xe · nửa xe trên dốc thẳng ⇒ không xoay trục dọc, chỉ vọt + nghiêng nhiều, phải nghiêng ngược để đáp · dốc xoắn bay nhanh hơn dốc thẳng ·
+trên không bẻ lái mạnh ⇒ lộn vòng tới 360° đáp perfect, lộn ⇒ nhanh + xa hơn, có chữ + boost · bay dốc thẳng không bao giờ thẳng tắp, vô lăng nhạy hơn, khó perfect · xe traffic 3D nhẹ.
+**Soát đồng bộ trước khi làm:** AWord Đợt 588 HEAD, racing-words = Đợt 571 = myGame 5k — 41 file `3d/` giống hệt (chỉ khác import mc3d-qr).
+**File (5l, 5k giữ nguyên):** `mau-5l-duong-cua-gat.html` · `core/rw-5l.js` · `core/sr3d-5l.js` · `core/sr3d-track-5l.js` (MỚI) · `core/sr3d-world-5l.js` · `core/sr3d-traffic-5l.js` ·
+`core/sr3d-car-5l.js` · `core/sr3d-missile-5l.js` · `core/sr3d-flycar-5l.js` · `core/sr3d-dammo-5l.js` · `core/sr3d-intro-5l.js` · `traffic3d/*.glb` (+ NGUON.md). iPad: `pad-5j.html`.
+- **ĐƯỜNG (`sr3d-track-5l.js` `buildTrack()`):** đa giác `POLY` [x, y, R] (màn: x Đông, y Nam; θ tăng = cua PHẢI) bo cung R ⇒ bảng 1 m: κ (làm mượt ±3 m cho vật lý), θ, x, y.
+  LAP 3.530 m, khép đúng 2π. Đoạn thẳng: 292 · 361 · 289 · 331 · 721 m (+ ngắn). `RAMP_SITES` / `TWIST_SITES` = [chỉ số cạnh thẳng, mét từ đầu đoạn, ±1] — chỉ nhận khi còn
+  ≥ 240 / 230 m để đáp (xe bay dốc thẳng ~200 m, lộn vòng ~250–280 m, xoắn ~240 m). Vòng sau đổi bên dốc. Trường khoảng cách 4 m (byte = mét, trần 255) + `distAt` song tuyến
+  như GPU; `SHORE_Y` = bờ biển (Nam đường ven biển + 55 m); `mapPts` 400 điểm vừa khung SVG 940×180. Lõi: `LAP` cố định, `LAPS = ceil(FIN / LAP − 0,02)`, đích ở đâu cũng được.
+  ⚠️ Sửa hình đường ⇒ chạy lại kiểm khép vòng + khoảng cách đoạn (≥ ~120 m, cảnh/đất dựa vào đó) — bản thử node ở scratch: in LAP, TURN/2π, đoạn thẳng, sites, min sep.
+- **HÌNH (`sr3d-world-5l.js` BEND_GLSL):** `uBendT` RGBA float 256 mẫu / 1.400 m: r = PHẢI, g = TỚI của tim đường so với máy quay, b = φ ⇒ đỉnh (x, a) = C(a) + x·(cos φ, −sin φ);
+  xa hơn ⇒ tiếp tuyến; sau máy quay không uốn; độ võng uBend.y theo khoảng cách TỚI sau khi xoay. `bPhi` ⇒ makeBend xoay `vNormal` (chỉ vật liệu có normal_vertex).
+  Lõi `bendProfile` lấy thẳng từ bảng thật (không tích phân) ⇒ cùng hệ với đất; `bendPJ` = bản JS (thẻ tên / mũi tên). ⚠️ Mọi shader có bản sao bendW (car / missile / flycar)
+  nay import BEND_GLSL của world-5l — thêm module có shader riêng thì cũng phải lấy bản này.
+  ĐẤT / BIỂN không uốn: lưới bám máy quay, `toW()` = tim đường tại máy quay + hướng (`U.uTrk` đặt trong prepView mỗi máy quay) ⇒ toạ độ thật ⇒ `groundH(q)` (TERRAIN_GLSL,
+  ảnh `uDistT` R8 lọc tuyến tính) — JS `groundW(trk, X, Y)` / `sandW` đặt cây. Biển = tấm phủ cả quanh máy quay, chỗ nào đất thấp hơn −1,3 m thì thấy nước.
+  Cây / bụi / cỏ / dừa / cột đèn: 2 bên, bỏ khi κ·x > 0,55 trong ±36 m (đỉnh uốn sẽ gập) hoặc khoảng cách tới đường < 12–13,5 m (sát đoạn khác); dừa chỉ trên cát.
+- **VẬT LÝ:** `yawR = min(2,4, 58 / v)` (cũ min(1,25, 16 / v)); AI nhìn trước κ 0,12 s. Tự lái 1.920 m ~155 km/h: cọ rào 4 lần (zigzag).
+- **RÀO (`railScrape`):** lần đầu −3…20 % theo vận tốc đâm ngang; cọ tiếp `v *= e^(−k·dt)`, k = 1,6 + 5,9·smooth(0,12, 1,2, railT) (rời > 0,3 s ⇒ reset); tia lửa theo nhịp
+  (160 + 4v + 260·… hạt / s — ⚠️ bể `missiles.sparks` chỉ 300 hạt, phát theo khung là tràn) từ góc trước phía rào, vận tốc tới 25–70 % xe + văng ra lòng đường; khói đen
+  `missiles.dark` mỗi 15–35 ms; sự kiện `rail` (crash + screech, cọ lâu rít mỗi 0,55 s). missile-5l: hạt cộng sáng mờ dần khi cách máy quay < 3,5 m.
+- **DỐC:** `RAMP_W` 3,1 m. Nửa xe ⇒ `t.ar` = ±atan(H/W)·1,3–1,65 (38–48°), `t.arV` ±0,55–1,0 cùng chiều, toast "TILTED! STEER BACK", sự kiện `tilt`. Không còn forced barrel roll.
+- **BAY (`flyStep`):** `AIR.STEER` 10 rad/s² · `DAMP` 0,45 · `RMAX` 8 · `GUST` 1,6 (2 sin) + `t.gB` ±0,5–1,2 cố định cả lần bay · rời mép `ar` ±0,07–0,16, `arV` ±0,25–0,55 ·
+  không tự cân khi đang đua · lộn vòng khi |arV| > `ROLL_V` 3,4 và |ar − ar0| > `ROLL_A` 1,5 ⇒ `airK ×ROLL_K` 1,3, vy +1,4, v +5 m/s, toast "BARREL ROLL! +SPEED", sự kiện `roll`.
+  PERFECT 10° / OK 30°. Dốc xoắn: `airK ×TWIST_K` 1,35, v ×1,1 (trần VNITRO×1,3), lộn ép như cũ; lệch sau lộn = `t.arVk` (vận tốc lật). AI trên không tự giữ thăng bằng.
+- **XE GIAO THÔNG (`sr3d-traffic-5l.js`):** `MODELS` 6 mẫu (tỉ lệ ra xe), `loadModel` gộp mảnh (kể cả atlas của bán tải: lấy màu ảnh tại UV), mũi về −z theo vật liệu Headlights,
+  bề ngang đích W ⇒ TSIZE đo lại; vật liệu chung chèn `aPaint` (thân = 1 ⇒ nhân instanceColor; taxi / bán tải giữ màu gốc). Hộp cũ làm lưới tạm khi chưa nạp.
+**Đã kiểm:** xem GHI CHU DU AN chặng 27/10 (bay 3/4 BAD khi không lái, giữ cân PERFECT, lộn 434–445° bay 242–281 m, nửa dốc chỉnh ⇒ PERFECT, xoắn 225 km/h ×2,03, rào 162 ⇒ 43 km/h / 0,67 s,
+6 mẫu xe đúng hướng, 0 lỗi, 298 lệnh vẽ). **Chưa kiểm:** TOMKO fps · iPad thật · Sky view / drone / Roadster / vạch lửa trên đường mới · Time / Words.
+**Bàn thử:** `__rw().game` — `start()`, `step(n)` (sau start cần ~550 bước mới hết đếm đèn), `place(i, s, x)`, `T[i].manual = { steer, boost, brake }`, `ramps()`, `twists()`,
+`traffic()`, `setTraffic("both")`. Ảnh khi khung Browser ẩn: vẽ canvas sang canvas 2D rồi `fetch` POST dataURL về máy nhận tạm (scratch recv.py, cổng 8877).
+
 ## ⏭ MỚI NHẤT — MẪU 5k (21/10/2026) — ROADSTER BÁM XE NHANH + TÊN LỬA TỰ ĐUỔI · ✅ myGame `43b74cf` = AWord THẬT Đợt 571 `178fa41` LIVE
 **Thầy yêu cầu:** (1) Roadster đạt tốc độ cao hơn, luôn bám được xe nhanh hơn kể cả khi xe đó vượt dốc 150–200 km/h — đang đuối. (2) Tốc độ cao Roadster giật, đuối, khói xịt 2 bên bay lệch lung tung — mượt mọi tốc độ.
 (3) Bỏ tâm tên lửa: tên lửa tự đuổi tới khi trúng — bấm 1 cái = xe XA, chạm đúp = xe GẦN, trúng 100 %; trên đường cũng vậy.
