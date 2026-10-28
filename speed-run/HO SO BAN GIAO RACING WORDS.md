@@ -2,6 +2,23 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5o (28/10/2026) — DỐC DÀY NGẪU NHIÊN ĐỔI BÊN · DỐC RỘNG 4,65 m · HÔNG DỐC = TƯỜNG · BỜ HỒ CÁT + DỪA NHƯ 4x · ⬜ thầy thử (CHƯA lên AWord)
+**Thầy (28/10):** dốc thẳng + xoắn quá ít ⇒ tăng (chọn "bay qua góc cua"; thẳng / xoắn ngẫu nhiên mỗi trận, không bao giờ 2 dốc liền nhau cùng bên để tránh bay liên tục) ·
+dốc thẳng rộng thêm 50 % · phải lăn vào mép dốc mới bay, đâm hông nửa sau dốc = đâm tường · bờ hồ dùng dừa + bãi cát như 4x / đầu 5x.
+**File (5n giữ nguyên):** `mau-5o-doc-day.html` · `core/rw-5o.js` · `core/sr3d-5o.js` · `core/sr3d-track-5o.js` · `core/sr3d-world-5o.js` (traffic vẫn 5n).
+- **DỐC (`featSites` trong track-5o, `layRamps` trong sr3d-5o):** cứ 255 m một chỗ, từ 200 m sau vạch, chỉ cần chân dốc + 16 m nằm trên khúc lượn ⇒ 25 chỗ / vòng (cũ 8 thẳng + 4 xoắn),
+  trận 1.920 m gặp 7 (cũ 3). Mỗi chỗ 50 % thẳng / 50 % xoắn (Math.random, bốc lại mỗi start), bên đường đảo dấu liên tục (dốc thẳng x = ±4,1; dốc xoắn side ±1).
+  Xe bay ~200–280 m có thể qua góc cua: trên không xe đi theo đường (như khúc lượn), đáp tính hướng theo vx. Tự lái 2 xe hết trận: 0 NaN, 0 lỗi.
+- **RỘNG:** `RAMP_W` 4,65 (x ±4,1 ⇒ phủ 1,8–6,4 m, rào 8,3).
+- **HÔNG DỐC = TƯỜNG (`rampContact` → `wall`, `rampWall`):** chạm dốc lần đầu (t.ramp ≠ dốc đó) mà bánh trước đã quá RAMP.LEN/2 ⇒ đẩy xe ra sát hông dốc, bỏ vận tốc ngang hướng vào dốc,
+  hướng xe không được quay vào dốc, gọi railScrape (toé lửa / khói / tiếng / hãm như cọ rào, kèm cân bằng mức dẫn). Nửa đầu (thấp) vẫn leo từ hông được.
+  Đo: hông nửa sau ⇒ không lên dốc, 32 khung cọ; hông nửa đầu ⇒ leo lên (cao 1,1 m); thẳng vào ⇒ cất cánh. Roadster (xe bay) giữ luật cũ.
+- **BỜ HỒ (world-5o):** trong vòng R = smoothstep(24, 80, d + bờ lượn) ⇒ nước ~30–55 m; gờ bãi BH = 0,32·smoothstep(16, 24, d) (4b từ 11 m — lưới đất ô 10 m kéo gờ lên mặt đường,
+  nên bắt đầu 16 m); cát = trong vòng × smoothstep(11,5, 13,5, d) ⇒ ngay sau rào; dừa 5 / ô 48 m ở 13,6–29,6 m bên phải, NPa 110 ⇒ 240; bụi trên cát chỉ lác đác sát rào.
+  ⛔ Bẫy: cửa sổ rải cây là 1 dải liền [xe sau − 220, xe dẫn + 1.000] ⇒ 2 xe cách xa (5n bỏ trần 150 m) thì hết suất cây trước khi tới xe dẫn ⇒ nay cách > 900 m rải quanh TỪNG xe trước.
+**Số đo:** 326 lệnh vẽ (5n 265–284) · 0 lỗi console. **Chưa kiểm:** TOMKO fps · iPad · cảm nhận bay qua góc cua.
+**Lên AWord:** chep-racing-words GOC `rw-5o.js` · racing-words.js GAME `./3d/rw-5o.js` · load-files: rw/sr3d/track/world 5n ⇒ 5o (traffic-5n, world-5l giữ).
+
 ## ⏭ MỚI NHẤT — MẪU 5n (28/10/2026) — BOOST TỐI ĐA + CÂN BẰNG THEO MỨC DẪN · ĐƯỜNG 7 KM QUANH HỒ · ĐỘ NHẠY VÔ LĂNG · SỐ XE TRAFFIC · ⬜ thầy thử (CHƯA lên AWord)
 **Thầy yêu cầu (28/10):** (1) boost nửa sau thanh tụt còn ~25 km/h ⇒ còn thanh là còn tối đa, hết mới giảm dần · giữ mục đích hạn chế chênh lệch bằng: dẫn > 100 m giảm tốc tối đa
 từ từ khó nhận ra; xe dẫn chạm rào ghì hơn, bay rung lắc hơn / dễ BAD hơn (lái giỏi vẫn PERFECT), dốc xoắn dễ BAD hơn, đúng nạp ít hơn, sai trừ nhiều hơn; xe sau ngược lại ·
