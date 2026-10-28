@@ -2,6 +2,35 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5n (28/10/2026) — BOOST TỐI ĐA + CÂN BẰNG THEO MỨC DẪN · ĐƯỜNG 7 KM QUANH HỒ · ĐỘ NHẠY VÔ LĂNG · SỐ XE TRAFFIC · ⬜ thầy thử (CHƯA lên AWord)
+**Thầy yêu cầu (28/10):** (1) boost nửa sau thanh tụt còn ~25 km/h ⇒ còn thanh là còn tối đa, hết mới giảm dần · giữ mục đích hạn chế chênh lệch bằng: dẫn > 100 m giảm tốc tối đa
+từ từ khó nhận ra; xe dẫn chạm rào ghì hơn, bay rung lắc hơn / dễ BAD hơn (lái giỏi vẫn PERFECT), dốc xoắn dễ BAD hơn, đúng nạp ít hơn, sai trừ nhiều hơn; xe sau ngược lại ·
+(2) bản đồ dài gấp đôi, không đoạn thẳng tắp — chỉ cua gần vuông hoặc lượn sóng; dốc đặt trên khúc lượn nhẹ (thầy chọn) · (3) trái núi, phải bãi cát rồi nước: HỒ rộng ở giữa,
+núi bao ngoài, nhìn được đối thủ phía xa · (4) Settings ▸ DRIVER thanh kéo độ nhạy vô lăng · (5) Settings ▸ RACE số xe traffic 0–100 % (100 % = ×10), màu khác nhau.
+**Gốc lỗi boost (đo 5l):** `vT = VBOOST·(1 − 0,3·ahead)` (ahead từ 25 m) + trần cứng `GAP_MAX` 150 m khoá tốc độ xe dẫn = tốc độ xe sau ⇒ xe kia không ai lái cọ rào ~25 km/h thì xe dẫn
+cũng 25 km/h dù còn 3/4 thanh. Bàn thử: giữ boost, xe kia đứng ⇒ 5l khoá 53 km/h ở khoảng cách 270 m; 5n giữ 160–169 km/h tới 300 m.
+**File (5l giữ nguyên):** `mau-5n-duong-quanh-ho.html` (iPad pad-5m) · `core/rw-5n.js` · `core/sr3d-5n.js` · `core/sr3d-track-5n.js` · `core/sr3d-world-5n.js` · `core/sr3d-traffic-5n.js`.
+- **CÂN BẰNG (`leadK`, `LEAD` trong sr3d-5n):** L = smooth(30, 250, khoảng dẫn), B = smooth(30, 250, khoảng bị bỏ). Trần tốc −10 %·smooth(100, 400) (cả khi boost) · hết boost hãm
+  −clamp(Δv·0,7, 2,5, 12) (cũ ×1,6 tới 26) · rào k×(1+0,8L−0,4B) · gió bay ×(1+0,8L−0,4B) · khung OK 30° −8L +8B (PERFECT giữ 10°) · arVk dốc xoắn ×(1+0,5L−0,3B) ·
+  nạp boost (trả lời đúng, lộn vòng, nhặt boost) ×(1−0,4L+0,4B) · trừ khi sai ×(1+0,5L−0,3B). Kéo gần cũ "xe sau +5 m/s nền" giữ.
+- **ĐƯỜNG (`sr3d-track-5n.js`):** 17 đỉnh (x ×0,9), chạy theo chiều kim đồng hồ ⇒ PHẢI = trong vòng = hồ. Cạnh ≥ 160 m lượn: f(u) = W·sin(π·m·u/L)·cửa sổ sin² 90 m, bước sóng ~230 m,
+  W ≤ 8 m, R lượn ≥ 89 m; cạnh ngắn (nối zigzag) không lượn. Đo: LAP 6.990 m, khép 2π, R góc ≥ 50 m, đoạn gần thẳng dài nhất 73 m (nối zigzag), 2 đoạn đường gần nhau nhất 220 m,
+  8 dốc + 4 dốc xoắn, dựng 87 ms. Trường khoảng cách tô đĩa (nhanh), `dist.ins` + `insideAt` (quét hàng chẵn–lẻ). Kiểm: `node tools/kiem-track-5n.mjs` (gốc myGame).
+- **CẢNH (`sr3d-world-5n.js`):** uDistT 2 kênh (r khoảng cách, g trong vòng). sy = trong vòng d − 55 (+ bờ lượn) / ngoài −(d + 300) ⇒ cát từ ~12 m, nước từ ~45–70 m; ngoài là đồi núi như 5l.
+  Nước hồ xanh ngọc hơn, phản chiếu trời 0,12 + 0,38·fres (cũ 0,25 + 0,65 — nhìn thấp trông như sương). ⛔ Bỏ gờ cát 0,35 m sát mép (lưới đất ô 10 m kéo gờ LẤN lên mặt đường
+  ở khúc cua — thấy mảng cỏ trên đường), sát đường −0,15. Xa > 180 m: mặt đất vẽ màu nhựa + vạch rào ở d < 9 m ⇒ thấy đường bờ bên kia. makeBend: vật xa hơn uBendD − 40 m ⇒ bỏ
+  (tiếp tuyến xa có thể rơi giữa hồ); khoá shader "bend5n".
+- **ĐỐI THỦ XA (`farCars` trong prepView):** ds > 1.250 m hoặc < −40 m ⇒ ẩn rig + bóng xe thật trong khung đó, hiện khối xe màu đội ×1,25 + quầng sáng cộng (cao 2,2 m, to theo khoảng cách)
+  ở toạ độ thật (TRK.worldAt → khung máy quay bằng trkV[i], sag bendQ như đất), mờ theo sương ≤ 45 %. Khung drone không dùng. Bàn thử `game.far()`, `game.farLog()`.
+  Đã kiểm: tô hồng ×6 ⇒ hiện đúng chỗ tính; góc thấp thường bị rào / dừa / sườn đồi khúc cua che (đúng như thật) — nhìn rõ nhất khi xe trên khúc lượn ven hồ nhìn chéo qua hồ.
+- **TRAFFIC (`sr3d-traffic-5n.js`):** NMAX 140 cấp sẵn, `set(mode, sMin, sMax, n)`, khoảng sinh = 58·14/n; màu `pickCol` bước tỉ lệ vàng trên vòng màu (+ ~20 % trắng/bạc/đen).
+  Lõi: hướng ở "racingwords.traffic.v2" (bản cũ "off" ⇒ 0 %), số % ở "racingwords.trafficAmt.v1"; options.trafficAmt (AWord sau này). Kéo = đổi chữ, thả tay = sinh lại xe.
+- **VÔ LĂNG:** steer.sens 50–200 % (lưu trong "racingwords.steer.v2", gửi kèm "c:" cho iPad — iPad bỏ qua), nhân yawR khi người lái (AI giữ 1).
+**Đã kiểm (máy nhà):** 0 lỗi console · boost giữ 169 km/h khi dẫn xa · traffic 100 % = 140 xe 118 màu, 0 % = off, 10 % = 14 · 265 lệnh vẽ ở 140 xe · độ nhạy 50/100/200 % ⇒ quay 3,7°/9°/17,5° ·
+cảnh: trái đồi thông, phải cát + dừa + hồ · tab DRIVER / RACE hiện đủ. **Chưa kiểm:** TOMKO fps · iPad thật · thầy cảm nhận cân bằng (số LEAD có thể chỉnh) · Time / Words trên đường mới.
+**Lên AWord (khi thầy bảo):** chep-racing-words GOC `rw-5n.js` (GOC_THEM giữ padui-5m / padlink-5m) · racing-words.js GAME `./3d/rw-5n.js` · load-files đổi 5l ⇒ 5n (đo lại byte) ·
+có thể thêm Option srTrafficAmt ⇒ options.trafficAmt.
+
 ## ⏭ MỚI NHẤT — MẪU 5l (27/10/2026) — ĐƯỜNG THẬT CUA GẮT + RÀO HÃM + DỐC HẸP + BAY CHÔNG CHÊNH / LỘN VÒNG + XE GIAO THÔNG 3D · myGame `56dc03a` = AWord Đợt 589 `7eb5829` LIVE · ⬜ thầy thử TOMKO + iPad
 **Thầy yêu cầu:** đường thật dài hơn (không tăng vòng) · cua gấp ~90° + zigzag, xe cua tốt hơn nhưng cần kỹ thuật · cọ lan can: tóe lửa nhiều + khói đen ở điểm chạm + hãm
 nặng khi chạm lâu · dốc rộng 1,5 lần xe · nửa xe trên dốc thẳng ⇒ không xoay trục dọc, chỉ vọt + nghiêng nhiều, phải nghiêng ngược để đáp · dốc xoắn bay nhanh hơn dốc thẳng ·
