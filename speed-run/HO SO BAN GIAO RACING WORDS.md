@@ -2,7 +2,25 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## ⏭ MỚI NHẤT — MẪU 5o (28/10/2026) — DỐC DÀY NGẪU NHIÊN ĐỔI BÊN · DỐC RỘNG 4,65 m · HÔNG DỐC = TƯỜNG · BỜ HỒ CÁT + DỪA NHƯ 4x · ⬜ thầy thử (CHƯA lên AWord)
+## ⏭ MỚI NHẤT — MẪU 5p (29/10/2026) — BAY DỄ CÂN · TRẦN NGHIÊNG 135° · TIA LỬA BÁNH KHI ĐÁP · NẢY VÀI NHỊP · LÁI GẮT HƠN · DỐC RỘNG +30 % · = AWord Đợt 595 · ⬜ thầy thử TOMKO + iPad
+**Thầy (29/10):** trên không quá chòng chành, khó cân ⇒ toàn BAD · bỏ xoay 360°, tối đa nghiêng 135° · vô lăng giữa ⇒ giữ y góc, bẻ ngược ⇒ kéo về cân dần, cân rồi trả giữa ⇒ giữ cân (chỉ rung nhẹ) ·
+đáp đất toé tia lửa ở bánh · vô lăng càng lệch càng bẻ gắt, tốc độ cao lái đúng chiều cua thì tự ôm cua hơn · đáp nảy vài nhịp · dốc thẳng + xoắn rộng +30 %. Thầy chọn: dốc xoắn VẪN tự lộn 1 vòng.
+**Soát trước khi làm:** AWord Đợt 592 = 5o `179c5cf`, 31 file 3d giống hệt (so sau khi đổi import).
+**File (5o giữ nguyên):** `mau-5p-bay-de-can.html` · `core/rw-5p.js` · `core/sr3d-5p.js` · `core/sr3d-stunt-5p.js` (TWIST.W 3,8 ⇒ 4,94).
+- **NGHIÊNG TRÊN KHÔNG (`flyStep`):** arV đuổi theo −lái·`AIR.TILT_W` (2 rad/s) với `TILT_RESP` 5/s (quán tính ~0,2 s) + rung `AIR.WOB` 0,9 trung bình 0 (×gk của LEAD) ⇒ buông là đứng góc.
+  Kẹp |ar − vòng trọn gần nhất| ≤ `TILT_MAX` 135°. takeOff: `gB` = 0 (bỏ gió lệch 1 phía); cú hất cất cánh (ar 4–9°, arV 0,25–0,55) vẫn có nhưng tắt dần ⇒ không chỉnh thì lệch ~7–15°.
+- **BỎ LỘN VÒNG BẰNG TAY:** bỏ khối `rollOn` (lật nhanh ⇒ BARREL ROLL +SPEED) + bỏ PHANH + lái = flip. Dốc xoắn (t.forced) giữ; rung 0,45 s cuối sau lộn: nearW 0,35–0,65 ⇒ 0,08–0,15, sin 1,6 ⇒ 0,4.
+  Roadster đi đường (`carAir`): bỏ phanh + lái lộn, arW tắt dần e^−4t, trần 135°.
+- **ĐÁP:** `wheelSparks(t, n)` — tia lửa ở 4 bánh (theo `cars[i].ax` + M.W), n = 4–10 theo vy lúc chạm; mỗi nhịp nảy n = 2 + bnc. `bounce`: hopV ×0,32 (1–3 m/s), bnc 3; vòng nảy hồi 0,48, ngưỡng −0,5.
+- **LÁI (`drive`):** người lái `gain = sens × (1 + STEER_X·lái²)` (STEER_X 0,6 ⇒ hết cỡ ×1,6); `help = v·κ × CORNER_HELP (0,3) × smooth(25, 55, v) × min(1, 2,5·|lái|)` chỉ khi lái cùng chiều cua. AI (src "ai") giữ cũ.
+- **DỐC:** RAMP_W 6,05 (x ±4,1 ⇒ 1,1–7,1 m, rào 8,3).
+**Đã đo (máy nhà, Time 600 s, `__rw().game`):** buông ⇒ −6…−9° suốt 2,2 s PERFECT · bẻ ngược ⇒ 1–2° PERFECT · hết lái ⇒ đứng −135° BAD · dốc 1 bên buông ⇒ −66° BAD / bẻ ngược ⇒ cân ~1 s PERFECT ·
+dốc xoắn lộn 360° rồi lệch ~15° đứng yên · nảy 35 / 10 / 4 / 2 cm · 40 tia lửa lúc chạm + 16 ở nhịp nảy · cua R 50 m giữ tốc 216/238/259 km/h: 5o chạm rào 1/3/7 khung, 5p 0/0/0 ·
+tự lái 90 s: 17 bay 17 PERFECT 0 NaN · 0 lỗi console. Bàn thử bay: `place(0, dốc − 14, 4.1)` + `drive(0, {steer, boost: 1})` + `step(1)`; xe 1 đặt xa 600 m.
+**Chưa kiểm:** TOMKO fps · iPad thật (nghiêng iPad ⇒ tốc độ nghiêng có quá nhạy không: chỉnh TILT_W / TILT_RESP).
+**Lên AWord:** Đợt 595 — chep-racing-words GOC `rw-5p.js` · racing-words.js GAME `./3d/rw-5p.js` · load-files rw/sr3d 5o ⇒ 5p + stunt-4b ⇒ stunt-5p.
+
+## MẪU 5o (28/10/2026) — DỐC DÀY NGẪU NHIÊN ĐỔI BÊN · DỐC RỘNG 4,65 m · HÔNG DỐC = TƯỜNG · BỜ HỒ CÁT + DỪA NHƯ 4x · ⬜ thầy thử (CHƯA lên AWord)
 **Thầy (28/10):** dốc thẳng + xoắn quá ít ⇒ tăng (chọn "bay qua góc cua"; thẳng / xoắn ngẫu nhiên mỗi trận, không bao giờ 2 dốc liền nhau cùng bên để tránh bay liên tục) ·
 dốc thẳng rộng thêm 50 % · phải lăn vào mép dốc mới bay, đâm hông nửa sau dốc = đâm tường · bờ hồ dùng dừa + bãi cát như 4x / đầu 5x.
 **File (5n giữ nguyên):** `mau-5o-doc-day.html` · `core/rw-5o.js` · `core/sr3d-5o.js` · `core/sr3d-track-5o.js` · `core/sr3d-world-5o.js` (traffic vẫn 5n).
