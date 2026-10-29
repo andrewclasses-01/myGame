@@ -2,7 +2,7 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## ⏭ MỚI NHẤT — MẪU 5p (29/10/2026) — BAY DỄ CÂN · TRẦN NGHIÊNG 135° · TIA LỬA BÁNH KHI ĐÁP · NẢY VÀI NHỊP · LÁI GẮT HƠN · DỐC RỘNG +30 % · = AWord Đợt 595 · ⬜ thầy thử TOMKO + iPad
+## ⏭ MỚI NHẤT — MẪU 5p (29/10/2026) — BAY DỄ CÂN · TRẦN NGHIÊNG 135° · TIA LỬA BÁNH KHI ĐÁP · NẢY VÀI NHỊP · LÁI GẮT HƠN · DỐC RỘNG +30 % · = AWord Đợt 595 `31ecb7f` LIVE (kiem-live 6/6) · myGame đã push · ⬜ thầy thử TOMKO + iPad
 **Thầy (29/10):** trên không quá chòng chành, khó cân ⇒ toàn BAD · bỏ xoay 360°, tối đa nghiêng 135° · vô lăng giữa ⇒ giữ y góc, bẻ ngược ⇒ kéo về cân dần, cân rồi trả giữa ⇒ giữ cân (chỉ rung nhẹ) ·
 đáp đất toé tia lửa ở bánh · vô lăng càng lệch càng bẻ gắt, tốc độ cao lái đúng chiều cua thì tự ôm cua hơn · đáp nảy vài nhịp · dốc thẳng + xoắn rộng +30 %. Thầy chọn: dốc xoắn VẪN tự lộn 1 vòng.
 **Soát trước khi làm:** AWord Đợt 592 = 5o `179c5cf`, 31 file 3d giống hệt (so sau khi đổi import).
