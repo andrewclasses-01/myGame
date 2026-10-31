@@ -2,6 +2,25 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5q (31/10/2026) — TAB DRIVER LUÔN CÓ + TEST MODE · TRỢ CUA SÁT MÉP · BAY KHÔNG XUYÊN DỐC · = AWord Đợt 597 · ⬜ thầy thử TOMKO + iPad
+**Thầy (31/10):** (1) nút cài đặt mất tab DRIVE, reload lại được · (2) góc cua va / cọ rào quá nhiều — đang lái đúng thì bớt, không lái / lái sai vẫn va như cũ (chọn mức VỪA, đội dẫn xa trợ yếu hơn) ·
+(3) lên dốc rồi giật 1 cái rồi đi xuyên qua dốc · (4) TEST mode trong tab DRIVE: đội trái chạy mãi, không câu hỏi, boost đầy, không ghìm tốc; giữ traffic / dốc / thưởng / drone.
+**Soát trước khi làm:** AWord Đợt 595 = 5p `9cfba48` (58 file giống hệt sau khi bỏ dòng import).
+**File (5p giữ nguyên):** `mau-5q-test-tro-cua.html` · `core/rw-5q.js` · `core/sr3d-5q.js` · `core/rw-5q.css` (nạp SAU rw-5i.css).
+- **(1) GỐC:** `openSettings` chỉ thêm tab Driver khi có `remote`; AWord `rwPadLink` tải hụt file nối ⇒ remote null ⇒ mất tab (cả Drive on game + độ nhạy). Nay tab Driver luôn có + dòng `.sr-nolink` + Reconnect (`onEvent("padRetry")`). Phía AWord thử lại import (GHI CHU Đợt 597).
+- **(2) TRỢ CUA (`ASSIST` trong `drive`):** trong 1,3 m sát rào, người lái (không phải AI) đánh lái RA XA rào gần, HOẶC ôm cua (lái cùng chiều cua, nhớ độ cong vừa qua `vkF` ~0,5 s) mà rào gần là rào TRONG ⇒
+  quay bớt mũi về dọc đường ≤ 1,6 rad/s + đẩy vào 3 m/s²; chạm rào khi đang được trợ ⇒ `railScrape` × (1 − 0,65·asK). Đội dẫn xa ×(1 − 0,4·L). Phát hiện: phần lớn cú chạm khi đang lái đúng là RÀO TRONG (bẻ quá tay / ra cua chưa trả lái).
+- **(3) XUYÊN DỐC — GỐC (bắt được trên bàn thử 5p):** lúc BAY không xét dốc ⇒ xe rơi xuyên vào thân dốc; chạm y = 0 ở nửa sau dốc ⇒ `rampContact` coi là đâm HÔNG (5o) ⇒ `rampWall` hất ngang 4,2 m rồi chạy dưới đất.
+  Sửa: `airSurf` (mặt dốc / dốc xoắn dưới xe đang bay, bỏ dốc vừa rời `t.offR`) ⇒ không xuống thấp hơn mặt, chạm thì `land` + gắn `t.ramp` · trượt khỏi mép dốc / dốc xoắn giữa chừng ⇒ `sideDrop` (rơi theo trọng lực, cũ tụt y = 0) ·
+  chuyển 1 bên ↔ cả xe trên dốc: hệ số `rpK` mượt (cũ tụt / bật 0,5 m trong 1 khung).
+- **(4) TEST (`testOn`, không nhớ qua lần dựng lại):** Settings ▸ Driver ▸ TEST mode On/Off; đang có trận ⇒ hỏi rồi về màn chờ START. start: không vạch đích, `T[1].done` (đứng yên, ẩn ở `farCars`); go: không câu hỏi; `drive`: E = đầy;
+  `leadK` = 0, `modeTick` bỏ (không hết giờ / hết từ), `loseLife` bỏ, không gộp camera trời. CSS `.is-test`: ẩn ô câu hỏi, mũi tên / gương / nhãn đối thủ, bảng đếm, đồng hồ.
+**Đã đo (máy nhà, `__rw().game`):** đáp xuống dốc ở u 2–8 m: 5p hất ngang 4,2 m 8/10 ca ⇒ 5q 0/10, xe lên dốc rồi cất cánh ở mép · trượt khỏi dốc: tụt/khung 0,45 m ⇒ 0 · dốc xoắn trượt mép ngoài ⇒ rơi (A) ·
+trợ cua 4 khúc cua gắt nhất × 6 kiểu "lái đúng" (non tay → bẻ quá tay): khung chạm rào 47 ⇒ 20, cú tệ nhất 24 ⇒ 5; không đánh lái: 73 khung (va như cũ) · tự lái 3 phút: 10 PERFECT, 0 NaN, 0 hất ngang ·
+TEST: xe phải đứng ở 0 m, boost đầy, không đích, đồng hồ đứng, câu hỏi ẩn; tắt TEST ⇒ trận thường có câu hỏi. 0 lỗi console.
+**Chưa kiểm:** TOMKO fps · iPad thật · thầy cảm nhận mức trợ (chỉnh `ASSIST`: DIST / YAW / PUSH / SOFT / LEAD).
+**Lên AWord:** Đợt 597 — chep-racing-words GOC `rw-5q.js` + CSS thêm `rw-5q.css` · racing-words.js GAME `./3d/rw-5q.js` + CSS + `importRetry` / `padRetry` · load-files rw/sr3d 5p ⇒ 5q + rw-5q.css.
+
 ## ⏭ MỚI NHẤT — MẪU 5p (29/10/2026) — BAY DỄ CÂN · TRẦN NGHIÊNG 135° · TIA LỬA BÁNH KHI ĐÁP · NẢY VÀI NHỊP · LÁI GẮT HƠN · DỐC RỘNG +30 % · = AWord Đợt 595 `31ecb7f` LIVE (kiem-live 6/6) · myGame đã push · ⬜ thầy thử TOMKO + iPad
 **Thầy (29/10):** trên không quá chòng chành, khó cân ⇒ toàn BAD · bỏ xoay 360°, tối đa nghiêng 135° · vô lăng giữa ⇒ giữ y góc, bẻ ngược ⇒ kéo về cân dần, cân rồi trả giữa ⇒ giữ cân (chỉ rung nhẹ) ·
 đáp đất toé tia lửa ở bánh · vô lăng càng lệch càng bẻ gắt, tốc độ cao lái đúng chiều cua thì tự ôm cua hơn · đáp nảy vài nhịp · dốc thẳng + xoắn rộng +30 %. Thầy chọn: dốc xoắn VẪN tự lộn 1 vòng.
