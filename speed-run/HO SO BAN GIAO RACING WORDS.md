@@ -2,7 +2,7 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
-## ⏭ MỚI NHẤT — MẪU 5q (31/10/2026) — TAB DRIVER LUÔN CÓ + TEST MODE · TRỢ CUA SÁT MÉP · BAY KHÔNG XUYÊN DỐC · = AWord Đợt 597 · ⬜ thầy thử TOMKO + iPad
+## ⏭ MỚI NHẤT — MẪU 5q (31/10/2026) — TAB DRIVER LUÔN CÓ + TEST MODE · TRỢ CUA SÁT MÉP · BAY KHÔNG XUYÊN DỐC · = AWord Đợt 597 `849b80c` LIVE (kiem-live 6/6) · myGame `cbf507c` đã push · ⬜ thầy thử TOMKO + iPad
 **Thầy (31/10):** (1) nút cài đặt mất tab DRIVE, reload lại được · (2) góc cua va / cọ rào quá nhiều — đang lái đúng thì bớt, không lái / lái sai vẫn va như cũ (chọn mức VỪA, đội dẫn xa trợ yếu hơn) ·
 (3) lên dốc rồi giật 1 cái rồi đi xuyên qua dốc · (4) TEST mode trong tab DRIVE: đội trái chạy mãi, không câu hỏi, boost đầy, không ghìm tốc; giữ traffic / dốc / thưởng / drone.
 **Soát trước khi làm:** AWord Đợt 595 = 5p `9cfba48` (58 file giống hệt sau khi bỏ dòng import).
