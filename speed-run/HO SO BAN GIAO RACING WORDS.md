@@ -2,6 +2,20 @@
 
 Đọc file này TRƯỚC khi làm tiếp ở phiên sau. Chi tiết từng mẫu: `NGHIEN CUU GAMEPLAY.md` (mục 31–40). Ghi chú phía AWord: `AWord/web/templates/racing-words/GHI CHU RACING-WORDS.md`.
 
+## ⏭ MỚI NHẤT — MẪU 5r (31/10/2026) — TEST CHỈ CẦN 1 iPad · TEST GIỮ DỐC + TRAFFIC · XƯỞNG ĐỔI XE HẾT ĐỨNG HÌNH · = AWord Đợt 598 `de8e3df` LIVE (kiem-live 6/6) · myGame `1c36177` · ⬜ thầy thử TOMKO + iPad
+**Thầy (31/10):** (1) bật TEST thì ở xưởng cho START khi chỉ nối 1 iPad · (2) TEST chạy một chút là hết dốc thẳng / xoắn — giữ dốc + xe traffic suốt · (3) màn chọn xe trong xưởng rất lag, đôi khi không bấm được (sẵn sàng bỏ bớt xe).
+**File (5q giữ nguyên):** `mau-5r-test-xuong.html` · `core/rw-5r.js` · `core/sr3d-5r.js` · `core/sr3d-intro-5r.js` (CSS vẫn rw-5q.css).
+- **(1)** rw-5r `gTeams()` = TEST ? [0] : [0, 1] cho cổng START, thẻ TEAM 2 ẩn. Lõi thêm `game.test` / `game.setTest`.
+- **(2) GỐC:** dốc chỉ rải tới đích + 4 km (Length) · xe traffic + phần thưởng rải trong cửa sổ [xe sau … xe trước] — TEST xe phải đứng 0 m ⇒ cửa sổ giãn mãi, xe traffic không bao giờ "bị bỏ lại" để sinh lại phía trước, phần thưởng hết suất cho đoạn phía sau.
+  Sửa: TEST rải dốc 14 km rồi `layRamps(true)` nối 7 km khi xe trái cách cuối dải 2,5 km (giữ dốc từ 400 m sau xe, gắn lại tham chiếu t.ramp / t.twist / t.offR vì set() chép lại) · `sLo()` = TEST ? xe trái : xe sau cho traffic / phần thưởng.
+  Đo: ở 0,2 / 5 / 9 / 12,7 / 16 / 22 / 30 km luôn 6–9 dốc trong 2 km phía trước, 14 xe traffic trong 800 m.
+- **(3) GỐC (đo):** mỗi lần đổi xe luồng chính chặn 1,7–2,4 s (khung hiện) — dựng xe thẳng vào cảnh rồi `warmIntro` vẽ ngay ⇒ dịch shader xe mới kiểu CHẶN; riêng KÍNH (trong suốt 2 mặt) three vẽ 2 lượt BackSide + FrontSide, mỗi lượt 1 shader ~250 ms mà `compileAsync` bỏ sót.
+  Sửa (intro-5r): bấm liên tiếp chỉ dựng xe CUỐI (chờ 220 ms) · xe mới dựng trong cảnh TẠM, bật lửa pô/boost, `compileCar` = compileAsync + thêm 2 lượt đổi side kính · đặt vào xưởng không chụp lại môi trường (lúc chụp xe vốn ẩn).
+  Đo cùng điều kiện (khung trình duyệt ẩn, đo bằng MessageChannel): 5q chặn lớn nhất 0,31–0,94 s / lần ⇒ 5r 0,13–0,39 s; không còn shader dịch chặn > 30 ms. Số xe KHÔNG phải nguyên nhân (mỗi lần chỉ dựng 1 xe) ⇒ không bỏ xe.
+  ⛔ Bẫy đo: khung Browser ẩn ⇒ rAF đứng / gián đoạn ~1 s, số khung hình giả — dùng MessageChannel ping đo chặn luồng chính. `window.__introT` = thời gian từng bước đổi xe.
+**Chưa kiểm:** TOMKO (máy yếu: phần còn lại 0,1–0,4 s là dựng hình xe + vẽ làm nóng) · iPad thật.
+**Lên AWord:** Đợt 598 — GOC `rw-5r.js` · GAME `./3d/rw-5r.js` · load-files rw/sr3d 5q ⇒ 5r + intro-5l ⇒ intro-5r.
+
 ## ⏭ MỚI NHẤT — MẪU 5q (31/10/2026) — TAB DRIVER LUÔN CÓ + TEST MODE · TRỢ CUA SÁT MÉP · BAY KHÔNG XUYÊN DỐC · = AWord Đợt 597 `849b80c` LIVE (kiem-live 6/6) · myGame `cbf507c` đã push · ⬜ thầy thử TOMKO + iPad
 **Thầy (31/10):** (1) nút cài đặt mất tab DRIVE, reload lại được · (2) góc cua va / cọ rào quá nhiều — đang lái đúng thì bớt, không lái / lái sai vẫn va như cũ (chọn mức VỪA, đội dẫn xa trợ yếu hơn) ·
 (3) lên dốc rồi giật 1 cái rồi đi xuyên qua dốc · (4) TEST mode trong tab DRIVE: đội trái chạy mãi, không câu hỏi, boost đầy, không ghìm tốc; giữ traffic / dốc / thưởng / drone.
